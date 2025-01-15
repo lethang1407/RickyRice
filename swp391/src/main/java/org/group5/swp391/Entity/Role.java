@@ -35,4 +35,8 @@ public class Role {
             inverseJoinColumns = @JoinColumn(name = "PermissionID")
     )
     Set<Permission> permissions = new HashSet<Permission>();
+
+    @OneToOne
+    @JoinColumn(name = "AccountID")
+    private Account account;
 }

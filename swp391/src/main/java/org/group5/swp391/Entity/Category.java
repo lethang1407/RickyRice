@@ -30,4 +30,8 @@ public class Category {
 
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "category")
     List<Product> products = new ArrayList<>();
+
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @JoinColumn(name = "StoreID")
+    Store store;
 }

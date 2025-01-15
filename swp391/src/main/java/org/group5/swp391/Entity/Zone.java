@@ -34,4 +34,8 @@ public class Zone {
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinColumn(name = "ProductID")
     Product product;
+
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @JoinColumn(name = "StoreID")
+    Store store;
 }

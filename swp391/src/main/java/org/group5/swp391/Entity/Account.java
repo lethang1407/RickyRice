@@ -41,6 +41,12 @@ public class Account {
     @Column(name = "IsActive")
     Boolean isActive;
 
+    @Column(name = "Gender")
+    Boolean gender;
+
+    @Column(name = "BirthDate")
+    LocalDateTime birthDate;
+
     @OneToMany(mappedBy = "targetAccount",cascade = { CascadeType.PERSIST, CascadeType.MERGE})
     List<Notification> notifications = new ArrayList<>();
 
@@ -52,4 +58,7 @@ public class Account {
 
     @OneToOne(mappedBy = "employeeAccount")
     Employee employee;
+
+    @OneToOne(mappedBy = "account")
+    private Role role;
 }

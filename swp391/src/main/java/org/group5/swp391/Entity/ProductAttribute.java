@@ -27,4 +27,8 @@ public class ProductAttribute {
 
     @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST} ,mappedBy = "productAttributes")
     Set<Product> products = new HashSet<>();
+
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @JoinColumn(name = "StoreID")
+    Store store;
 }

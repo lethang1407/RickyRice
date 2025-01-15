@@ -47,4 +47,8 @@ public class Invoice {
 
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "invoice")
     List<InvoiceDetail> invoiceDetails = new ArrayList<>();
+
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @JoinColumn(name = "StoreID")
+    Store store;
 }
