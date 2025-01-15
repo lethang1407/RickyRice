@@ -36,4 +36,8 @@ public class Debt {
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinColumn(name = "CustomerID")
     Customer customer;
+
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @JoinColumn(name = "StoreID")
+    Store store;
 }
