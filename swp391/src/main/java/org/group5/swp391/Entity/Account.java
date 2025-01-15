@@ -59,6 +59,7 @@ public class Account {
     @OneToOne(mappedBy = "employeeAccount")
     Employee employee;
 
-    @OneToOne(mappedBy = "account")
-    private Role role;
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinColumn(name = "RoleID")
+    Role role;
 }

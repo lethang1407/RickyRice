@@ -7,7 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -36,7 +38,6 @@ public class Role {
     )
     Set<Permission> permissions = new HashSet<Permission>();
 
-    @OneToOne
-    @JoinColumn(name = "AccountID")
-    private Account account;
+    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "role")
+    List<Account> accounts = new ArrayList<>();
 }
