@@ -19,12 +19,15 @@ public class SubscriptionPlan {
     @Column(name = "SubscriptionPlanID")
     String subscriptionPlanID;
 
-    @Column(name = "Name")
+    @Column(name = "Name", columnDefinition = "NVARCHAR(255)")
     String name;
 
-    @Column(name = "Description")
+    @Column(name = "Description", columnDefinition = "NVARCHAR(255)")
     String description;
 
     @Column(name = "Price")
     double price;
+
+    @Column(name = "TimeOfExpiration")
+    int timeOfExpiration;
 }

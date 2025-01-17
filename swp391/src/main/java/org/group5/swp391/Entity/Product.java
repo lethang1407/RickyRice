@@ -24,13 +24,13 @@ public class Product {
     @Column(name = "ProductID")
     String productID;
 
-    @Column(name = "Name", nullable = false)
+    @Column(name = "Name", nullable = false, columnDefinition = "NVARCHAR(255)")
     String name;
 
     @Column(name = "Price", nullable = false)
     double price;
 
-    @Column(name = "Information")
+    @Column(name = "Information", columnDefinition = "NVARCHAR(255)")
     String information;
 
     @Column(name = "ProductImage", nullable = false)

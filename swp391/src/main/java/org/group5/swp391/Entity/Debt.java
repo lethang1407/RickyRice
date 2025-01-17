@@ -24,13 +24,13 @@ public class Debt {
     @Column(name = "Amount", nullable = false)
     double amount;
 
-    @Column(name = "Description")
+    @Column(name = "Description", columnDefinition = "NVARCHAR(255)")
     String description;
 
     @Column(name = "Date", nullable = false)
     LocalDate date;
 
-    @Column(name = "Status", nullable = false)
+    @Column(name = "Status", nullable = false, columnDefinition = "NVARCHAR(255)")
     String status;
 
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })

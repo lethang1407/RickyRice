@@ -24,7 +24,7 @@ public class Statistics {
     @Column(name = "Date")
     LocalDateTime date;
 
-    @Column(name = "Description")
+    @Column(name = "Description", columnDefinition = "NVARCHAR(255)")
     String description;
 
     @Column(name = "Type")

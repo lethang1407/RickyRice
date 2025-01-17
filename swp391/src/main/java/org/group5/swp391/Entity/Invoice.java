@@ -32,7 +32,7 @@ public class Invoice {
     @Column(name = "ShipMoney", nullable = false)
     Double shipMoney;
 
-    @Column(name = "Description")
+    @Column(name = "Description", columnDefinition = "NVARCHAR(255)")
     String description;
 
     @Column(name = "Type", nullable = false)

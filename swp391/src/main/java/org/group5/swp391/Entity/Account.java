@@ -47,16 +47,16 @@ public class Account {
     @Column(name = "BirthDate")
     LocalDateTime birthDate;
 
-    @OneToMany(mappedBy = "targetAccount",cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "targetAccount",cascade = { CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY)
     List<Notification> notifications = new ArrayList<>();
 
-    @OneToMany(mappedBy = "sendAccount",cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "sendAccount",cascade = { CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY)
     List<Notification> sentNotifications = new ArrayList<>();
 
-    @OneToMany(mappedBy = "storeAccount",cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "storeAccount",cascade = { CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     List<Store> stores = new ArrayList<>();
 
-    @OneToOne(mappedBy = "employeeAccount")
+    @OneToOne(mappedBy = "employeeAccount",fetch = FetchType.LAZY)
     Employee employee;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })

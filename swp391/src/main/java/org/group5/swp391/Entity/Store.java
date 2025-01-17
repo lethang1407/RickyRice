@@ -23,16 +23,16 @@ public class Store {
     @Column(name = "StoreID")
     String storeID;
 
-    @Column(name = "StoreName", nullable = false)
+    @Column(name = "StoreName", nullable = false, columnDefinition = "NVARCHAR(255)")
     String storeName;
 
-    @Column(name = "Address", nullable = false)
+    @Column(name = "Address", nullable = false, columnDefinition = "NVARCHAR(255)")
     String address;
 
     @Column(name = "Hotline", nullable = false)
     String hotline;
 
-    @Column(name = "Description", nullable = false)
+    @Column(name = "Description", nullable = false, columnDefinition = "NVARCHAR(255)")
     String description;
 
     @Column(name = "OperatingHour", nullable = false)

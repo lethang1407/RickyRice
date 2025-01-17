@@ -22,7 +22,7 @@ public class ProductAttribute {
     @Column(name = "ProductAttributeID")
     String productAttributeID;
 
-    @Column(name = "value")
+    @Column(name = "value", columnDefinition = "NVARCHAR(255)")
     String value;
 
     @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST} ,mappedBy = "productAttributes")

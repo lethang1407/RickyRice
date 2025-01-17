@@ -19,10 +19,10 @@ public class Zone {
     @Column(name = "ZoneID")
     String zoneID;
 
-    @Column(name = "Name", nullable = false)
+    @Column(name = "Name", nullable = false, columnDefinition = "NVARCHAR(255)")
     String name;
 
-    @Column(name = "Location", nullable = false)
+    @Column(name = "Location", nullable = false, columnDefinition = "NVARCHAR(255)")
     String location;
 
     @Column(name = "Quantity", nullable = false)
