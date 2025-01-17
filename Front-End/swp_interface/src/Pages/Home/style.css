@@ -1,0 +1,9 @@
+.footer{
+  background: linear-gradient(to right, #3c913c, green);
+}
+.footer__end{
+  border-color: white;;
+}
+.footer__item__title{
+  color:white;
+}

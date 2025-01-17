@@ -22,16 +22,16 @@ public class Category {
     @Column(name = "CategoryID")
     String categoryID;
 
-    @Column(name = "Name", nullable = false)
+    @Column(name = "Name", nullable = false,columnDefinition = "NVARCHAR(255)")
     String name;
 
-    @Column(name = "Description")
+    @Column(name = "Description" ,columnDefinition = "NVARCHAR(255)")
     String description;
 
-    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "category")
+    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "category", fetch = FetchType.LAZY)
     List<Product> products = new ArrayList<>();
 
-    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, fetch = FetchType.LAZY)
     @JoinColumn(name = "StoreID")
     Store store;
 }

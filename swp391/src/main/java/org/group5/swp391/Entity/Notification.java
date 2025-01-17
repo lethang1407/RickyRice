@@ -21,7 +21,7 @@ public class Notification {
     @Column(name = "NotificationID")
     String notificationID;
 
-    @Column(name = "Message", nullable = false)
+    @Column(name = "Message", nullable = false, columnDefinition = "NVARCHAR(255)")
     String message;
 
     @Column(name = "SendAt", nullable = false)

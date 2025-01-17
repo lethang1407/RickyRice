@@ -1,5 +1,6 @@
 import '../../assets/css/main.css';
 import '../../assets/css/style.css';
+import logo from '../../assets/img/logoviet.png'
 
 function HomeHeader(){
   return (
@@ -8,7 +9,7 @@ function HomeHeader(){
 			<div class="row">
 				<div class="col-xl-12">
 					<div class="header__navbar">
-						<img src="./assets/img/logo.png" alt="logo" class="header__navbar__img"/>
+						<img style={{width:'90px', marginRight:'100px'}} src={logo} alt="logo" class="header__navbar__img"/>
 						<div class="header__navbar__menu">
 							<div class="header__navbar__menu__item">Home</div>
 							<div class="header__navbar__menu__item">About</div>

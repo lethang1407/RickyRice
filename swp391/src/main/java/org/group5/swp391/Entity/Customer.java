@@ -22,13 +22,13 @@ public class Customer {
     @Column(name = "CustomerID")
     String customerID;
 
-    @Column(name = "Name", nullable = false)
+    @Column(name = "Name", nullable = false, columnDefinition = "NVARCHAR(255)")
     String name;
 
     @Column(name = "PhoneNumber", unique = true)
     String phoneNumber;
 
-    @Column(name = "Address")
+    @Column(name = "Address", columnDefinition = "NVARCHAR(255)")
     String address;
 
     @Column(name = "Email", unique = true)
