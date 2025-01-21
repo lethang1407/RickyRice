@@ -8,6 +8,7 @@ import java.util.List;
 public interface AccountRepository extends JpaRepository<Account, String> {
     public Account findByUsername(String username);
 
-    public List<Account> findByRole_Code(String roleCode); // Tìm tài khoản có vai trò là "STORE_OWNER"
+    // Tìm tài khoản theo role
+    public List<Account> findByRole_Code(String roleCode);
 
 }

@@ -12,7 +12,8 @@ import java.util.List;
 public class AccountService {
     private final AccountRepository accountRepository;
 
+    // Trả về danh sách tài khoản theo role
     public List<Account> getAccountsByRole(String roleCode) {
-        return accountRepository.findByRole_Code(roleCode);  // Trả về danh sách tài khoản có vai trò "STORE_OWNER"
+        return accountRepository.findByRole_Code(roleCode);
     }
 }
