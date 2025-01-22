@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class AccountResponse {
+    private String accountID;
     private String username;
     private String email;
     private String phoneNumber;
@@ -16,8 +17,9 @@ public class AccountResponse {
     private LocalDateTime birthDate;
 
     // Constructor
-    public AccountResponse(String username, String email, String phoneNumber, String avatar,
+    public AccountResponse(String accountID, String username, String email, String phoneNumber, String avatar,
                            LocalDateTime createdAt, Boolean isActive, Boolean gender, LocalDateTime birthDate) {
+        this.accountID = accountID;
         this.username = username;
         this.email = email;
         this.phoneNumber = phoneNumber;

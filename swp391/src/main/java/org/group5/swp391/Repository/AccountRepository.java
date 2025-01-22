@@ -11,4 +11,8 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     // Tìm tài khoản theo role
     public List<Account> findByRole_Code(String roleCode);
 
+    // Cập nhật status cho account
+
+
+
 }
