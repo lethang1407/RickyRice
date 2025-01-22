@@ -1,0 +1,33 @@
+.sidebar-link {
+  padding: 10px 15px;
+  border-radius: 5px;
+}
+
+.sidebar-link:hover {
+  background-color: #495057;
+  color: #fff;
+  text-decoration: none;
+}
+
+.sidebar-link.active-link {
+  background-color: #495057;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* Đảm bảo ảnh avatar luôn hiển thị dưới dạng khung tròn */
+.avatar-img {
+  border: 2px solid #fff; /* Viền trắng */
+  transition: transform 0.2s ease-in-out;
+}
+
+.avatar-img:hover {
+  transform: scale(1.1); /* Hiệu ứng khi hover */
+}
+
+/* Dropdown menu căn chỉnh bên phải */
+.dropdown-menu {
+  right: 0;
+  left: auto;
+  min-width: 150px;
+}
