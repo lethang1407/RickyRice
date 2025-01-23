@@ -5,7 +5,7 @@ const Sidebar = () => {
   const [activeLink, setActiveLink] = useState("Dashboard");
 
   const handleLinkClick = (linkName) => {
-    console.log("Link clicked:", linkName); // Xem giá trị được cập nhật
+    console.log("Link clicked:", linkName);
     setActiveLink(linkName);
   };
 

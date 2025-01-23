@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 const CustomNavbar = () => {
-  const avatarUrl = "https://sm.ign.com/ign_nordic/cover/a/avatar-gen/avatar-generations_prsz.jpg"; // Replace with your actual avatar URL
+  const avatarUrl = "https://sm.ign.com/ign_nordic/cover/a/avatar-gen/avatar-generations_prsz.jpg";
 
   return (
     <nav className="navbar navbar-dark bg-dark px-3">
@@ -11,7 +11,6 @@ const CustomNavbar = () => {
         Admin Dashboard
       </a>
       <div className="dropdown">
-        {/* Wrapping the image in a button with dropdown-toggle */}
         <button
           type="button"
           className="btn p-0"

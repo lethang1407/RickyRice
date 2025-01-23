@@ -1,6 +1,8 @@
 package org.group5.swp391.Controller;
 
+import org.group5.swp391.DTO.Request.UpdateAccountActiveRequest;
 import org.group5.swp391.DTO.Response.AccountResponse;
+import org.group5.swp391.DTO.Response.UpdateAccountActiveResponse;
 import org.group5.swp391.Entity.Account;
 import org.group5.swp391.Service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +45,24 @@ public class AdminAPI {
         return ResponseEntity.ok(accountResponse);
     }
 
-    @PatchMapping("/account/{id}/active")
-    public ResponseEntity<String> updateAccountActiveStatus(@PathVariable String id, @RequestParam Boolean isActive) {
+    @PatchMapping("/account_active")
+    public ResponseEntity<UpdateAccountActiveResponse> updateAccountActiveStatus(
+            @RequestBody UpdateAccountActiveRequest request) {
         try {
-            accountService.updateAccountActiveStatus(id, isActive);
-            return ResponseEntity.ok("Account active status updated successfully.");
+            // Gọi service để cập nhật trạng thái
+            accountService.updateAccountActiveStatus(request.getId(), request.getIsActive());
+
+            // Trả về phản hồi thành công
+            UpdateAccountActiveResponse response = new UpdateAccountActiveResponse(
+                    "Update status active for Account ID " + request.getId() + " successful."
+            );
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to update account active status: " + e.getMessage());
+            // Trả về phản hồi lỗi
+            UpdateAccountActiveResponse response = new UpdateAccountActiveResponse(
+                    "Update status active failed: " + e.getMessage()
+            );
+            return ResponseEntity.badRequest().body(response);
         }
     }
 
