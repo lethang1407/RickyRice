@@ -22,7 +22,7 @@ const AccountOwner = () => {
       });
   }, []);
 
-  // Hàm cập nhật trạng thái tài khoản
+  // Cập nhật trạng thái tài khoản
   const updateAccountStatus = (accountID, isActive) => {
     axios
       .patch("http://localhost:9999/admin/account_active", {
@@ -30,7 +30,6 @@ const AccountOwner = () => {
         isActive,
       })
       .then((response) => {
-        // Cập nhật trạng thái trong UI
         setUserData((prevUserData) =>
           prevUserData.map((user) =>
             user.accountID === accountID
@@ -64,7 +63,6 @@ const AccountOwner = () => {
 
   return (
     <Container className="mt-5">
-      
       <h2>User Information</h2>
       <Table striped bordered hover responsive>
         <thead>
@@ -77,7 +75,7 @@ const AccountOwner = () => {
             <th>Status</th>
             <th>Gender</th>
             <th>Birth Date</th>
-            <th>Action</th> {/* Cột cho nút gạt */}
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
