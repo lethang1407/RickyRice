@@ -180,7 +180,6 @@ body {
   padding: 100px 0px;
   width: 100%;
   position: relative;
-  z-index: -2;
 }
 .section-three__inner {
   display: flex;

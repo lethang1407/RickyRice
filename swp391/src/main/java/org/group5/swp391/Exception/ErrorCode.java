@@ -13,6 +13,9 @@ public enum ErrorCode {
     NOT_FOUND(404,"Not Found",HttpStatus.NOT_FOUND),
     UNCATEGORIZED(500,"Error not defined",HttpStatus.INTERNAL_SERVER_ERROR),
     PASSWORD_EXISTED(400,"Password already existed",HttpStatus.CONFLICT),
+    EMAIL_EXISTED(400,"Email already existed",HttpStatus.CONFLICT),
+    USERNAME_EXISTED(400,"Username already existed",HttpStatus.CONFLICT),
+    PHONENUMBER_EXISTED(400,"Phone number already existed",HttpStatus.CONFLICT),
     ;
     private int code;
     private String message;
