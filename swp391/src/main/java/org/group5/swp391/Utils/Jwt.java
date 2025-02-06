@@ -1,13 +1,15 @@
-package org.group5.swp391.JWTUtils;
+package org.group5.swp391.Utils;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import lombok.RequiredArgsConstructor;
 import org.group5.swp391.Entity.Account;
 import org.group5.swp391.Exception.AppException;
 import org.group5.swp391.Exception.ErrorCode;
+import org.group5.swp391.Repository.InvalidatedTokenRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +21,10 @@ import java.util.StringJoiner;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class Jwt {
+    private final InvalidatedTokenRepository invalidatedTokenRepository;
+
     @Value("${app.jwtSecret}")
     private String jwtSecret;
 
@@ -69,6 +74,9 @@ public class Jwt {
         Date expiryDate = signedJWT.getJWTClaimsSet().getExpirationTime();
 
         if(!(signedJWT.verify(verifier)) && expiryDate.after(new Date()))
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+
+        if(invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
             throw new AppException(ErrorCode.UNAUTHORIZED);
 
         return signedJWT;

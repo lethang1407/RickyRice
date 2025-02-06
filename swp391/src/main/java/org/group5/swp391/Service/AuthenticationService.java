@@ -1,32 +1,23 @@
 package org.group5.swp391.Service;
 
-import lombok.RequiredArgsConstructor;
-import org.group5.swp391.DTO.Request.AuthenticationRequest;
-import org.group5.swp391.DTO.Response.AuthenticationResponse;
-import org.group5.swp391.Entity.Account;
-import org.group5.swp391.JWTUtils.Jwt;
-import org.group5.swp391.Repository.AccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nimbusds.jose.JOSEException;
+import org.group5.swp391.DTO.Request.AuthenticationRequest.*;
+import org.group5.swp391.DTO.Response.AuthenticationResponse.AuthenticationResponse;
+import org.group5.swp391.DTO.Response.AuthenticationResponse.EmailAndPhoneCheckResponse;
+import org.group5.swp391.DTO.Response.AuthenticationResponse.IntrospectResponse;
+import org.group5.swp391.DTO.Response.AuthenticationResponse.SendOTPResponse;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+
 @Service
-public class AuthenticationService {
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private Jwt jwt;
-
-    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
-        Account account = accountRepository.findByUsername(authenticationRequest.getUsername());
-        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
-        if(account == null || !account.getPassword().equals(authenticationRequest.getPassword())) {
-            authenticationResponse.setSuccess(false);
-        }else{
-            String token = jwt.generateToken(account);
-            authenticationResponse.setToken(token);
-            authenticationResponse.setSuccess(true);
-        }
-        return authenticationResponse;
-    }
+public interface AuthenticationService {
+    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest);
+    public void createAccount(AccountCreationRequest request);
+    public void logout(LogoutRequest logoutRequest);
+    public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException;
+    public boolean checkUsername(String username);
+    public EmailAndPhoneCheckResponse checkEmailAndPhone(EmalAndPhoneCheckRequest request);
+    public SendOTPResponse sendOTP(String key);
+    public boolean checkOTP(String otp);
 }
