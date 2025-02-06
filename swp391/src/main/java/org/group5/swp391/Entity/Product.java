@@ -36,21 +36,21 @@ public class Product {
     @Column(name = "ProductImage", nullable = false)
     String productImage;
 
-    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, fetch = FetchType.LAZY)
     @JoinColumn(name = "StoreID")
     Store store;
 
-    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, fetch = FetchType.LAZY)
     @JoinColumn(name = "CategoryID")
     Category category;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JoinTable(
             name="hasAttribute",
             joinColumns = @JoinColumn(name = "ProductID"),
             inverseJoinColumns = @JoinColumn(name = "ProductAttributeID")
     )
-    Set<ProductAttribute> productAttributes = new HashSet<ProductAttribute>();
+    List<ProductAttribute> productAttributes = new ArrayList<>();
 
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "product")
     List<Zone> zones = new ArrayList<>();

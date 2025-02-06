@@ -47,7 +47,7 @@ public class Store {
     @Column(name = "Image", nullable = false)
     String image;
 
-    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, fetch = FetchType.LAZY)
     @JoinColumn(name = "AccountID")
     Account storeAccount;
 
