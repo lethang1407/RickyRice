@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Account")
-public class Account {
+public class Account extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "AccountID")
@@ -41,10 +41,6 @@ public class Account {
     @Column(name = "Avatar", columnDefinition = "NVARCHAR(255)")
     String avatar;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @CreationTimestamp
-    @Column(name = "CreatedAt")
-    LocalDateTime createdAt;
 
     @Column(name = "IsActive")
     Boolean isActive;

@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Debt")
-public class Debt {
+public class Debt extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "DebtID")
@@ -24,9 +24,6 @@ public class Debt {
 
     @Column(name = "Description", columnDefinition = "NVARCHAR(255)")
     String description;
-
-    @Column(name = "Date", nullable = false)
-    LocalDate date;
 
     @Column(name = "Status", nullable = false, columnDefinition = "NVARCHAR(255)")
     String status;

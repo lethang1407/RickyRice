@@ -12,16 +12,22 @@ function Register(){
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
   const [loading,setLoading] = useState(false);
+  const [file,setFile] = useState(null);
 
   const handleChangeFile = async (info) =>{
-    setLoading(true);
-    const res = await handleUpload('http://localhost:9999/image', info.fileList[0].originFileObj);
-    if(res && res.code===200){
-      setAcc({
-        ...acc,
-        avatar: res.data
-      })
-      setLoading(false);
+    if(info.fileList.length > 0){
+      if(!info.fileList[0].originFileObj.type.startsWith('image/')){
+        error('Only accept image file!', messageApi);
+        return;
+      }
+      const fileSize = info.fileList[0].originFileObj.size / 1024 / 1024 < 10
+      if(!fileSize){
+        error('Image file size over 10MB!', messageApi);
+        return;
+      }
+      setFile(info.fileList);
+    }else{
+      setFile(null);
     }
   }
 
@@ -50,17 +56,40 @@ function Register(){
       error(str, messageApi);
     }else{
       setLoading(true);
-      const response = await register('http://localhost:9999/register',acc)
-      if(response && response.code === 201){
-        setTimeout(()=>{
+      if(file){
+        const res = await handleUpload('http://localhost:9999/image', file[0].originFileObj);
+        if(res && res.code===200){
+          const response = await register('http://localhost:9999/register',{...acc, avatar: res.data})
+          if(response && response.code === 201){
+            setTimeout(()=>{
+              setLoading(false);
+              success('Register Successful!',messageApi);
+              setTimeout(()=>{
+                naviLogin();
+              },700)
+            },2000)
+          }else{
+            setLoading(false);
+            error('Register Failed!',messageApi);
+          }
+        }else{
           setLoading(false);
-          success('Register Successful!',messageApi);
-          setTimeout(()=>{
-            naviLogin();
-          },700)
-        },2000)
+          error('Upload Failed!', messageApi);
+        }
       }else{
-        error('Register Failed!',messageApi);
+        const response = await register('http://localhost:9999/register',acc)
+        if(response && response.code === 201){
+          setTimeout(()=>{
+            setLoading(false);
+            success('Register Successful!',messageApi);
+            setTimeout(()=>{
+              naviLogin();
+            },700)
+          },2000)
+        }else{
+          setLoading(false);
+          error('Register Failed!',messageApi);
+        }
       }
     }
   }
@@ -79,8 +108,11 @@ function Register(){
 
   const handleNext = async (values) =>{
     const res = await fetchDataWithoutToken(`http://localhost:9999/check-username/${values.username}`);
+    console.log(acc);
+    
     if(!res.data){
       setAcc({
+        ...acc,
         username: values.username,
         password: values.password
       });
@@ -115,6 +147,7 @@ function Register(){
                   onValuesChange={handleFormChange}
                 >
                   <Form.Item
+                    initialValue={acc.name ? acc.name : null}
                     name="name"
                     className='register__form__item'
                     rules={[
@@ -129,12 +162,16 @@ function Register(){
 
 
                   <Form.Item
+                    initialValue={acc.email ? acc.email : null}
                     name="email"
                     className='register__form__item'
                     rules={[
                       {
                         required: true,
                         message: 'Please input your Email!',
+                      },{ 
+                        pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                        message: 'Email is not Valid!'
                       }
                     ]}
                   >
@@ -142,6 +179,7 @@ function Register(){
                   </Form.Item>
 
                   <Form.Item
+                    initialValue={acc.phoneNumber ? acc.phoneNumber : null}
                     name="phone"
                     className='register__form__item'
                     rules={[
@@ -155,6 +193,7 @@ function Register(){
                   </Form.Item>
 
                   <Form.Item
+                    initialValue={acc.role ? acc.role : null}
                     name="role"
                     className='register__form__item'
                     rules={[
@@ -172,13 +211,13 @@ function Register(){
 
 
                   <Form.Item
+                    initialValue={acc.gender ? acc.gender : ''}
                     name="gender"
                     className='register__form__item'
                   >
                     <Radio.Group className='register__form__item__checkbox' options={[
                         { label: 'Male', value:0 },
                         { label: 'Female', value: 1 },
-                        { label: 'Other', value: -1 },
                     ]} />
                   </Form.Item>
 
@@ -186,14 +225,14 @@ function Register(){
                     name="date"
                     className='register__form__item'
                   >
-                    <DatePicker placeholder='Select birth Date' className='register__form__item__input register__form__item__input__pass'/>
+                    <DatePicker defaultValue={acc.birthDate ? acc.birthDate : null} placeholder='Select birth Date' className='register__form__item__input register__form__item__input__pass'/>
                   </Form.Item>
 
                   <Form.Item
                     name="avatar"
                     className='register__form__item'
                   >
-                    <Upload beforeUpload={() => false} onChange={handleChangeFile} maxCount={1} listType="picture">
+                    <Upload beforeUpload={() => false} fileList={file} onChange={handleChangeFile} maxCount={1} listType="picture">
                       <Button icon={<UploadOutlined />}>Click to Upload Your Avatar</Button>
                     </Upload>
                   </Form.Item>

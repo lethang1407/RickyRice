@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Store")
-public class Store {
+public class Store extends AbstractEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "StoreID")
@@ -35,9 +35,6 @@ public class Store {
 
     @Column(name = "OperatingHour", nullable = false)
     String operatingHour;
-
-    @Column(name = "CreatedAt")
-    LocalDateTime createdAt;
 
     @Column(name = "ExpireAt")
     LocalDateTime expireAt;
