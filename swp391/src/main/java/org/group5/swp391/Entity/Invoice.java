@@ -40,6 +40,12 @@ public class Invoice extends AbstractEntity {
     @JoinColumn(name = "CustomerID")
     Customer customer;
 
+    @Column(name = "CustomerName")
+    String customerName;
+
+    @Column(name = "CustomerPhoneNumber")
+    String customerPhoneNumber;
+
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "invoice")
     List<InvoiceDetail> invoiceDetails = new ArrayList<>();
 
