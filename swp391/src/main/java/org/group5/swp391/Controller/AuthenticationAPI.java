@@ -88,6 +88,8 @@ public class AuthenticationAPI {
                 .build();
     }
 
+    @PostMapping(value = "/")
+
     @GetMapping(value = "/change-password")
     public ApiResponse<String> changePassword(@RequestBody @Valid ChangePasswordRequest request) {
 

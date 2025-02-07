@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Notification")
-public class Notification {
+public class Notification extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "NotificationID")
@@ -21,9 +21,6 @@ public class Notification {
 
     @Column(name = "Message", nullable = false, columnDefinition = "NVARCHAR(255)")
     String message;
-
-    @Column(name = "SendAt", nullable = false)
-    LocalDateTime sendAt;
 
     @Column(name = "IsRead")
     Boolean isRead;

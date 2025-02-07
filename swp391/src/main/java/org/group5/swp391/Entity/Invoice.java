@@ -15,14 +15,11 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Invoice")
-public class Invoice {
+public class Invoice extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "InvoiceID")
     String invoiceID;
-
-    @Column(name = "CreatedAt", nullable = false)
-    LocalDateTime createdAt;
 
     @Column(name = "ProductMoney", nullable = false)
     Double productMoney;
@@ -42,6 +39,12 @@ public class Invoice {
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinColumn(name = "CustomerID")
     Customer customer;
+
+    @Column(name = "CustomerName")
+    String customerName;
+
+    @Column(name = "CustomerPhoneNumber")
+    String customerPhoneNumber;
 
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "invoice")
     List<InvoiceDetail> invoiceDetails = new ArrayList<>();
