@@ -1,12 +1,48 @@
 import './style.scss';
 import { Form, Input, Button, message,Checkbox } from 'antd';
-import {MailOutlined, GoogleOutlined, FacebookOutlined, GithubOutlined, SmileOutlined,UserOutlined} from '@ant-design/icons'
+import { GoogleOutlined, FacebookOutlined, GithubOutlined,UserOutlined} from '@ant-design/icons'
 import { useNavigate  } from 'react-router-dom';
-
+import { checkLogin } from '../../Utils/FetchUtils';
+import Down from '../../Utils/Animation/Down'
+import { success, error, successWSmile} from '../../Utils/AntdNotification';
 function Login(){
+  const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const handleLogin = async (values) =>{
+    const data = {
+      username: values.username,
+      password: values.password
+    }
+    const login = await checkLogin("http://localhost:9999/login", data);
+    if(login && login.code === 200){
+      if(values.remember){
+        localStorage.setItem('token',login.data.token)
+      }
+      else{
+        sessionStorage.setItem('token',login.data.token)
+      }
+      successWSmile('Hello Friend!', messageApi);
+      setTimeout(()=>{
+        navigate('/home');
+      },1000)
+    }else{
+      error('Wrong username or password!', messageApi);
+    }
+  }
+
+  const naviForgetPassword = () =>{
+    navigate('/forgot-password');
+  }
+
+  const naviRegister = () =>{
+    navigate('/register');
+  }
+
   return (
     <>
     <div className="login">
+      {contextHolder}
       <div className='login__overlay'></div>
       <div className='login__form'>
         <h2 className='login__title'>LOGIN</h2>
@@ -20,6 +56,7 @@ function Login(){
           initialValues={{
             remember: false, 
           }}
+          onFinish={handleLogin}
         >
           <Form.Item
             name="username"
@@ -47,8 +84,8 @@ function Login(){
 
             <Input.Password size='large' className='login__form__item__input login__form__item__input__pass' placeholder='Input password'/>
           </Form.Item>
-          <h5 className='login__form__text'>Don't have an account. <span  className='login__form__text__bold'>Register here!</span></h5>
-          <h5 style={{margin:'5px 0px'}} className='login__form__text'> <span  className='login__form__text__bold'> Forget Password?</span></h5>
+          <h5 className='login__form__text'>Don't have an account. <span onClick={naviRegister} className='login__form__text__bold'>Register here!</span></h5>
+          <h5 style={{margin:'5px 0px'}} className='login__form__text'> <span onClick={naviForgetPassword} className='login__form__text__bold'> Forget Password?</span></h5>
           <Form.Item
               labelAlign='center'
               valuePropName="checked"

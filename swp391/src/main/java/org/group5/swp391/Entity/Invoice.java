@@ -1,10 +1,7 @@
 package org.group5.swp391.Entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
@@ -12,19 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Invoice")
-public class Invoice {
+public class Invoice extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "InvoiceID")
     String invoiceID;
-
-    @Column(name = "CreatedAt", nullable = false)
-    LocalDateTime createdAt;
 
     @Column(name = "ProductMoney", nullable = false)
     Double productMoney;
@@ -44,6 +39,12 @@ public class Invoice {
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinColumn(name = "CustomerID")
     Customer customer;
+
+    @Column(name = "CustomerName")
+    String customerName;
+
+    @Column(name = "CustomerPhoneNumber")
+    String customerPhoneNumber;
 
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "invoice")
     List<InvoiceDetail> invoiceDetails = new ArrayList<>();

@@ -3,18 +3,21 @@ package org.group5.swp391.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Account")
-public class Account {
+public class Account extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "AccountID")
@@ -22,6 +25,9 @@ public class Account {
 
     @Column(name = "Username", unique = true, nullable = false)
     String username;
+
+    @Column(name = "name" ,columnDefinition = "NVARCHAR(255)")
+    String name;
 
     @Column(name = "Password", nullable = false)
     String password;
@@ -32,11 +38,9 @@ public class Account {
     @Column(name = "PhoneNumber", unique = true, nullable = false)
     String phoneNumber;
 
-    @Column(name = "Avatar")
+    @Column(name = "Avatar", columnDefinition = "NVARCHAR(255)")
     String avatar;
 
-    @Column(name = "CreatedAt")
-    LocalDateTime createdAt;
 
     @Column(name = "IsActive")
     Boolean isActive;
@@ -45,7 +49,10 @@ public class Account {
     Boolean gender;
 
     @Column(name = "BirthDate")
-    LocalDateTime birthDate;
+    LocalDate birthDate;
+
+    @Column(name = "OTP", length = 6)
+    String otp;
 
     @OneToMany(mappedBy = "targetAccount",cascade = { CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY)
     List<Notification> notifications = new ArrayList<>();

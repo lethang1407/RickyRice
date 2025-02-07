@@ -1,0 +1,139 @@
+.register{
+  background-image: url('../../assets//img/ricelogin.jpeg');
+  width: 100%;
+  height: 100vh;
+  background-size: cover; 
+  background-repeat: no-repeat; 
+  background-attachment: fixed; 
+  background-position: center;
+  position: relative;
+  &__title{
+    padding-top: 50px;
+    font-size: 48px;
+    color:#fcfff9;
+    margin-bottom: 0px;
+    font-weight: 600;
+  }
+  &__slogan{
+    margin-top: 10px;
+    color: #fcfff9;
+    font-weight: 600;
+  }
+  &__form{
+    animation: fadeUp 2s ease-in-out forwards;
+    width: 600px;
+    background-color: rgb(250 235 215 / 36%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 20px;
+    &__item{
+      width: 350px;
+      &__input{
+        font-size: 14px;
+        position: relative;
+        border-radius: 30px;
+        box-sizing: border-box;
+        & .ant-input-group-addon{
+          background-color: white;
+          border-top-right-radius: 30px;
+          border-bottom-right-radius: 30px;
+        }
+        & .ant-input{
+          border-top-left-radius: 30px;
+          border-bottom-left-radius: 30px;
+          font-size: 14px;
+        }
+      }
+    }
+    &__text{
+      color:#fcfff9;
+      margin-top: 0px;
+      margin-bottom: 2px;
+      text-align: center;
+      font-size: 13px;
+      &__bold{
+        color:#231b1b;
+        &:hover{
+          cursor: pointer;
+        }
+      }
+    }
+    &__b{
+      text-align: center;
+      &__button{
+        text-align: center;
+        border-radius: 20px;
+        width: 100px;
+        background-color: white;
+        font-weight: 600;
+        border-color: #7c9910;
+        color: #7c9910;
+        transition: all ease 0.7s;
+        padding:0px 10px;
+        &:hover{
+          color:white!important;
+          background-color: #7c9910!important;
+          border-color: #7c9910!important;
+        }
+      }
+    }
+  }
+  &__overlay{
+    animation: fadeUp 2s ease-in-out forwards;
+    width: 600px;
+    height: 54vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 20px;
+  }
+  & .ant-form-item-explain-error{
+    margin: 5px 0px 5px 10px;
+  }
+  &__icon{
+    display: flex;
+    justify-content: space-evenly;
+    font-size: 24px;
+    margin-bottom: 10px;
+    &__i{
+      margin: 0px 10px;
+      border: 1px solid  #fcfff9;
+      padding: 4px;
+      border-radius: 8px;
+      background-color: transparent;
+      color: #fcfff9;
+      transition: all ease 0.7s;
+      &:hover{
+        cursor: pointer;
+        background-color: #7c9910;
+        color:white;
+      }
+    }
+  }
+}
+.message{
+  color:#fcfff9;
+}
+.success-message{
+  color:#7c9910;
+}
+@keyframes fadeUp {
+  0% {
+      opacity: 0; 
+      transform: translate(-50%,-100px);
+  }
+  50%{
+      opacity: 0.5; 
+      transform: translate(-50%,-300px);
+  }
+  100% {
+      opacity: 1; 
+      transform: translate(-50%,-50%);
+  }
+}

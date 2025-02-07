@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public enum RoleEnums {
-    ADMIN("ADMIN"), OWNER("OWNER"), EMPLOYEE("EMPLOYEE");
+    ADMIN("ADMIN"), OWNER("STORE_OWNER"), EMPLOYEE("EMPLOYEE");
     private String value;
 }

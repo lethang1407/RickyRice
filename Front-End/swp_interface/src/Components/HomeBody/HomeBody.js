@@ -3,8 +3,12 @@ import '../../assets/css/style.css';
 import image1 from '../../assets/img/featured-item-01.png';
 import leftimage from '../../assets/img/pngegg.png';
 import rightimage from '../../assets/img/pngegg.png';
+import LeftLeft from '../../Utils/Animation/LeftLeft';
+import RightRight from '../../Utils/Animation/RightRight';
+import Down from '../../Utils/Animation/Down';
 
 function HomeBody(){
+
   return (
     <>
       <div class="section-one">
@@ -25,38 +29,44 @@ function HomeBody(){
           <div class="row">
             <div class="section-one__block">
               <div class="row">
-                <div class="section-one__block__item col-xl-4">
-                  <div class="section-one__block__item__inner">
-                    <img src={image1} alt="" class="section-one__block__item__inner__img"/>
-                    <div class="section-one__block__item__inner__h3">
-                      Modern Strategy
-                    </div>
-                    <div class="section-one__block__item__inner__text">
-                      Customize anything in this template to fit your website needs
-                    </div>
+                  <div class="section-one__block__item col-xl-4">
+                    <LeftLeft>
+                      <div class="section-one__block__item__inner">
+                        <img src={image1} alt="" class="section-one__block__item__inner__img"/>
+                        <div class="section-one__block__item__inner__h3">
+                          Modern Strategy
+                        </div>
+                        <div class="section-one__block__item__inner__text">
+                          Customize anything in this template to fit your website needs
+                        </div>
+                      </div>
+                    </LeftLeft>
                   </div>
+                <div class="section-one__block__item col-xl-4">
+                  <Down>
+                    <div class="section-one__block__item__inner">
+                      <img src={image1} alt="" class="section-one__block__item__inner__img"/>
+                      <div class="section-one__block__item__inner__h3">
+                        Modern Strategy
+                      </div>
+                      <div class="section-one__block__item__inner__text">
+                        Customize anything in this template to fit your website needs
+                      </div>
+                    </div>
+                  </Down>
                 </div>
                 <div class="section-one__block__item col-xl-4">
-                  <div class="section-one__block__item__inner">
-                    <img src={image1} alt="" class="section-one__block__item__inner__img"/>
-                    <div class="section-one__block__item__inner__h3">
-                      Modern Strategy
+                  <RightRight>
+                    <div class="section-one__block__item__inner">
+                      <img src={image1} alt="" class="section-one__block__item__inner__img"/>
+                      <div class="section-one__block__item__inner__h3">
+                        Modern Strategy
+                      </div>
+                      <div class="section-one__block__item__inner__text">
+                        Customize anything in this template to fit your website needs
+                      </div>
                     </div>
-                    <div class="section-one__block__item__inner__text">
-                      Customize anything in this template to fit your website needs
-                    </div>
-                  </div>
-                </div>
-                <div class="section-one__block__item col-xl-4">
-                  <div class="section-one__block__item__inner">
-                    <img src={image1} alt="" class="section-one__block__item__inner__img"/>
-                    <div class="section-one__block__item__inner__h3">
-                      Modern Strategy
-                    </div>
-                    <div class="section-one__block__item__inner__text">
-                      Customize anything in this template to fit your website needs
-                    </div>
-                  </div>
+                  </RightRight>
                 </div>
               </div>
             </div>
@@ -71,15 +81,17 @@ function HomeBody(){
               <div class="section-two__upper">
                 <div class="row">
                   <div class="section-two__upper__img col-xl-4">
-                    <img src={rightimage} alt="" class="section-two__upper__img__inner"/>
+                    <LeftLeft><img src={rightimage} alt="" class="section-two__upper__img__inner"/></LeftLeft>
                   </div>
                   <div class="col-xl-1"></div>
                   <div class="section-two__upper__text col-xl-6">
-                    <h3 class="section-two__upper__text__h3">Let's discuss about your project</h3>
-                    <h5 class="section-two__upper__text__h5">
-                      Nullam sit amet purus libero. Etiam ullamcorper nisl ut augue blandit, at finibus leo efficitur. Nam
-                      gravida purus non sapien auctor, ut aliquam magna ullamcorper.
-                    </h5>
+                    <RightRight>
+                      <h3 class="section-two__upper__text__h3">Let's discuss about your project</h3>
+                      <h5 class="section-two__upper__text__h5">
+                        Nullam sit amet purus libero. Etiam ullamcorper nisl ut augue blandit, at finibus leo efficitur. Nam
+                        gravida purus non sapien auctor, ut aliquam magna ullamcorper.
+                      </h5>
+                    </RightRight>
                   </div>
                 </div>
               </div>
@@ -95,15 +107,17 @@ function HomeBody(){
               <div class="section-two__upper">
                 <div class="row">
                   <div class="section-two__upper__text col-xl-6">
-                    <h3 class="section-two__upper__text__h3">Let's discuss about your project</h3>
-                    <h5 class="section-two__upper__text__h5">
-                      Nullam sit amet purus libero. Etiam ullamcorper nisl ut augue blandit, at finibus leo efficitur. Nam
-                      gravida purus non sapien auctor, ut aliquam magna ullamcorper.
-                    </h5>
+                    <LeftLeft>
+                      <h3 class="section-two__upper__text__h3">Let's discuss about your project</h3>
+                      <h5 class="section-two__upper__text__h5">
+                        Nullam sit amet purus libero. Etiam ullamcorper nisl ut augue blandit, at finibus leo efficitur. Nam
+                        gravida purus non sapien auctor, ut aliquam magna ullamcorper.
+                      </h5>
+                    </LeftLeft>
                   </div>
                   <div class="col-xl-1"></div>
                   <div class="section-two__upper__img col-xl-4">
-                    <img src={leftimage} alt="" class="section-two__upper__img__inner"/>
+                    <RightRight><img src={leftimage} alt="" class="section-two__upper__img__inner"/></RightRight>
                   </div>
                 </div>
               </div>

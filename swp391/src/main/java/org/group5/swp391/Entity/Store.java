@@ -1,10 +1,7 @@
 package org.group5.swp391.Entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
@@ -12,12 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Store")
-public class Store {
+public class Store extends AbstractEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "StoreID")
@@ -38,9 +36,6 @@ public class Store {
     @Column(name = "OperatingHour", nullable = false)
     String operatingHour;
 
-    @Column(name = "CreatedAt")
-    LocalDateTime createdAt;
-
     @Column(name = "ExpireAt")
     LocalDateTime expireAt;
 
@@ -51,7 +46,7 @@ public class Store {
     @JoinColumn(name = "AccountID")
     Account storeAccount;
 
-    @OneToOne
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinColumn(name = "SubscriptionPlanID")
     SubscriptionPlan subscriptionPlan;
 

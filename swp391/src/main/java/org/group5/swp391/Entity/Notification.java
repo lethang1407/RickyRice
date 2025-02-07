@@ -1,21 +1,19 @@
 package org.group5.swp391.Entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Notification")
-public class Notification {
+public class Notification extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "NotificationID")
@@ -23,9 +21,6 @@ public class Notification {
 
     @Column(name = "Message", nullable = false, columnDefinition = "NVARCHAR(255)")
     String message;
-
-    @Column(name = "SendAt", nullable = false)
-    LocalDateTime sendAt;
 
     @Column(name = "IsRead")
     Boolean isRead;

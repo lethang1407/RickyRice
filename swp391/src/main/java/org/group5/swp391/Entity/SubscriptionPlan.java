@@ -1,19 +1,17 @@
 package org.group5.swp391.Entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "SubscriptionPlan")
-public class SubscriptionPlan {
+public class SubscriptionPlan extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "SubscriptionPlanID")
