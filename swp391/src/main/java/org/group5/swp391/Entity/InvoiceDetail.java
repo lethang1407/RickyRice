@@ -48,9 +48,4 @@ public class InvoiceDetail {
     @Column(name = "ProductCategoryDescription")
     String productCategoryDescription;
 
-    @Column(name = "CustomerName")
-    String customerName;
-
-    @Column(name = "CustomerPhoneNumber")
-    String customerPhoneNumber;
 }
