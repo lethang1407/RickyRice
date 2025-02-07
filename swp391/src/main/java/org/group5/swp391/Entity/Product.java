@@ -16,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Product")
-public class Product {
+public class Product extends AbstractEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "ProductID")
@@ -52,7 +52,4 @@ public class Product {
 
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "product")
     List<Zone> zones = new ArrayList<>();
-
-    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "product")
-    List<InvoiceDetail> invoiceDetails = new ArrayList<>();
 }

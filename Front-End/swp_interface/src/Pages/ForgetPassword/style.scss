@@ -136,3 +136,15 @@
       transform: translate(-50%,-50%);
   }
 }
+.forgot :where(.css-dev-only-do-not-override-nqoqt9).ant-statistic .ant-statistic-content .ant-statistic-content-value{
+  text-align: center;
+  margin-left: 5px;
+  font-size: 15px!important;
+  color: red;
+  font-weight: 500;
+}
+.forgot .ant-statistic .ant-statistic-content{
+  display: flex!important;
+  align-items: center;
+  justify-content: center;
+}

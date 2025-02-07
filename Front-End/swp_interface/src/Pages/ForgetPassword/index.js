@@ -1,5 +1,5 @@
 import './style.scss';
-import { Form, Input, Button, message,Checkbox } from 'antd';
+import { Form, Input, Button, message, Statistic  } from 'antd';
 import { UserOutlined} from '@ant-design/icons'
 import { useNavigate  } from 'react-router-dom';
 import { fetchDataWithoutToken } from '../../Utils/FetchUtils';
@@ -10,6 +10,11 @@ function ForgetPassword(){
   const [loading,setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [data,setData] = useState(null);
+  const [acc, setAcc] = useState(null);
+  const navigate = useNavigate();
+  const [checkOTP, setCheckOTP] = useState(false);
+  const { Countdown } = Statistic;
+  const deadline = Date.now() + 1000*30;
 
   const handleChangeValues = (changedValues, allValues) =>{
     setData({
@@ -23,14 +28,34 @@ function ForgetPassword(){
     const res = await fetchDataWithoutToken(`http://localhost:9999/send-otp/${values.key}`);
     setLoading(false);
     if(res && res.code===200){
-      success('Email has been sent! Please check your Mail', messageApi);
+      console.log(res);
+      if(res.data.isValid){
+        success('OTP has been sent! Please check your Mail', messageApi);
+        setAcc(data);
+        setCheckOTP(true);
+      }else{
+        error('Username or Email is invalid!', messageApi);
+      }
     }else{
       error('Failed to send email!', messageApi);
     }
   }
 
+  const handleCountDown = () => {
+    setCheckOTP(false);
+    error('OTP has expired! Please try again.', messageApi);
+  }
+
   const handleChangePassword = async () =>{
     console.log(data)
+  }
+
+  const naviLogin = () =>{
+    navigate('/login');
+  }
+
+  const naviRegister = () =>{
+    navigate('/register');
   }
 
   return (
@@ -60,7 +85,7 @@ function ForgetPassword(){
               ]}
               style={{marginTop:'20px'}}
             >
-              <Input size='large' placeholder='Input your Username or Email' className='forgot__form__item__input forgot__form__item__input__mail' addonAfter={<UserOutlined />}/>
+              <Input disabled={checkOTP} size='large' placeholder='Input your Username or Email' className='forgot__form__item__input forgot__form__item__input__mail' addonAfter={<UserOutlined />}/>
             </Form.Item>
 
             <Form.Item
@@ -72,9 +97,19 @@ function ForgetPassword(){
             >
               <Input.OTP />
               </Form.Item>
-
-            <h5 className='forgot__form__text'>Don't have an account. <span className='forgot__form__text__bold'>Register here!</span></h5>
-            <h5 style={{margin:'5px 0px'}} className='forgot__form__text'>Remember your password. <span  className='forgot__form__text__bold'> Login here!</span></h5>
+              { checkOTP  && 
+                <>
+                  <div style={{display:'flex',alignItems:'center',justifyContent:'center'}}>
+                    <p style={{color:'orangered', margin:'0px'}}>OTP has been sent. OTP will be invalidated in:  </p><Countdown onFinish={handleCountDown} value={deadline}/>
+                  </div>
+                </>
+              }
+              { !checkOTP && 
+                <>
+                  <h5 className='forgot__form__text'>Don't have an account. <span onClick={naviRegister} className='forgot__form__text__bold'>Register here!</span></h5>
+                  <h5 style={{margin:'5px 0px'}} className='forgot__form__text'>Remember your password. <span onClick={naviLogin} className='forgot__form__text__bold'> Login here!</span></h5>
+                </>
+              }
             <div style={{display:'flex', alignItems:'center',justifyContent:'center'}}>
               <Form.Item style={{margin:'20px 5px 20px 5px'}} className='forgot__form__b'>
                 <Button className='forgot__form__b__button' htmlType="submit">Send OTP
