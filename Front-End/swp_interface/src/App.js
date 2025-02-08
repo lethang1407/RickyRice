@@ -15,7 +15,7 @@ function App() {
         <Route path='/home/owner' element={<OwnerLayout />}>
         </Route>
         <Route path='/login' element={<Login />}></Route>
-        <Route path='/home/owner/productlist' element={<ProductsList />}> </Route>
+        <Route path='/home/owner/products' element={<ProductsList />}> </Route>
         <Route path='/forgot-password' element={<ForgetPassword />}></Route>
         <Route path='/register' element={<Register />}></Route>
 

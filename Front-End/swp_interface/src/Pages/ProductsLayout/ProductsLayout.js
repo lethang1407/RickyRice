@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import logo from '../../assets/img/logoviet.png'
 
 import { Table, Input } from 'antd';
+import { Pagination } from "antd";
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -11,14 +12,9 @@ import {
     VideoCameraOutlined,
     InsertRowBelowOutlined,
 } from '@ant-design/icons';
-
 import axios from 'axios';
 import { Spin, List as ListItem } from 'antd';
-
 import { Button, Layout, Menu, theme, SearchOutlined, Select, Space, Modal } from 'antd';
-
-import { List } from "antd";
-
 import './style.css';
 import CustomFooter from "../../Components/Footer";
 import Search from 'antd/es/transfer/search';
@@ -27,13 +23,21 @@ const { Header, Sider, Content } = Layout;
 const ProductsList = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [products, setProducts] = useState([]);
-    const [filteredProducts, setFilteredProducts] = useState([]);
-    const [searchValue, setSearchValue] = useState("");
+
     const [loading, setLoading] = useState(true);//true la trang thai dang loading data
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectProduct, setSelectProduct] = useState(null)
-
     const [relatedProducts, setRelatedProducts] = useState([]);
+    const [currentPageRelated, setCurrentPageRelated] = useState(1);
+    const [pageSizeRelated, setPageSizeRelated] = useState(5);
+    const [totalItemsRelated, setTotalItemsRelated] = useState(0);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [totalItems, setTotalItems] = useState(0);
+
+    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTermRelated, setSearchTermRelated] = useState("");
 
 
     const columns = [
@@ -129,12 +133,20 @@ const ProductsList = () => {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
 
-    const fetchProducts = async () => {
+    const fetchProducts = async (page, size) => {
         try {
-            const response = await axios.get('http://localhost:9999/home/owner/products');
-            console.log(response.data)
-            setProducts(response.data);
-            setFilteredProducts(response.data);
+            const response = await axios.get('http://localhost:9999/home/owner/products', {
+
+                params: {
+                    page: page - 1,
+                    size: size,
+                },
+            });
+            console.log("Dữ liệu liên quan22:", response.data);
+            console.log(response.data.content)
+            setProducts(response.data.content);
+
+            setTotalItems(response.data.totalElements);
             setLoading(false); //false la trang thai  loading data xong
 
         } catch (error) {
@@ -143,36 +155,36 @@ const ProductsList = () => {
         }
 
     }
+    const handleTableChange = (pagination) => {
+        const { current, pageSize } = pagination;
+        console.log("Pagination Change (Main): Current Page:", current, "Page Size:", pageSize);
+        setCurrentPage(current);
+        setPageSize(pageSize);
+        fetchProducts(current, pageSize);
+        handleSearch(current, pageSize);
+    };
 
     useEffect(() => {
-        fetchProducts();
-    }, []);  //render 1 lanlan
+        fetchProducts(currentPage, pageSize);
+    }, [currentPage, pageSize]);  //render 1 lanlan
 
 
-    const handleSearch = () => {
-        if (!searchValue || searchValue.trim() === "") {
 
-            setFilteredProducts(products);
-            return;
-        }
-        const filtered = products.filter((item) =>
-            item.name.toLowerCase().includes(searchValue.toLowerCase())
-        );
-        setFilteredProducts(filtered);
-
-
-    };
 
 
     const showModal = async (product) => {
         setSelectProduct(product);
         console.log(product)
         setIsModalOpen(true);
+        setCurrentPageRelated(1);
+        setPageSizeRelated(5);
 
         try {
             const response = await axios.get(`http://localhost:9999/home/owner/products/byCategory`, {
                 params: {
                     categoryID: product.categoryID,
+                    page: 0,
+                    size: 10,
 
                 }
 
@@ -180,13 +192,46 @@ const ProductsList = () => {
             console.log(product.categoryID)
 
             console.log("Sản phẩm cùng Category ID:", response.data);
-            setRelatedProducts(response.data);
+            console.log(response.data)
+            setRelatedProducts(response.data.content);
+            setTotalItemsRelated(response.data.totalElements);
+
         } catch (error) {
             console.error("Lỗi khi tải sản phẩm cùng Category ID:", error);
         }
 
 
     };
+    const handleTableChangeRelated = (pagination) => {
+        setCurrentPageRelated(pagination.current);
+        setPageSizeRelated(pagination.pageSize);
+        fetchRelatedProducts(selectProduct.categoryID, pagination.current, pagination.pageSize);
+        handleSearchRelated(selectProduct.categoryID, pagination.current, pagination.pageSize)
+    };
+
+
+    const fetchRelatedProducts = async (categoryID, page, size) => {
+        try {
+            setLoading(true);
+            const response = await axios.get(`http://localhost:9999/home/owner/products/byCategory`, {
+                params: {
+                    categoryID: categoryID,
+                    page: page - 1,
+                    size: size,
+                },
+            });
+
+            console.log("Dữ liệu liên quan:", response.data);
+
+            setRelatedProducts(response.data.content);
+            setTotalItemsRelated(response.data.totalElements);
+        } catch (error) {
+            console.error("Lỗi khi lấy dữ liệu phân trang:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleOk = () => {
         setIsModalOpen(false);
     };
@@ -194,7 +239,56 @@ const ProductsList = () => {
         setIsModalOpen(false);
     };
 
+    const handleSearch = async (page, size) => {
+        setLoading(true);
+        if (!searchTerm.trim()) {
+            console.log("Không có giá trị trong ô tìm kiếm - Tải danh sách ban đầu");
+            fetchProducts(page, size);
+            return;
+        }
+        try {
+            const response = await axios.get('http://localhost:9999/home/owner/products/byCategoryName', {
+                params: {
+                    name: searchTerm,
+                    page: page - 1,
+                    size: size,
+                }
+            });
+            console.log("Search response:", response.data);
+            setProducts(response.data.content);
+            setTotalItems(response.data.totalElements);
+        } catch (error) {
+            console.error('Lỗi khi gọi API tìm kiếm:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    const handleSearchRelated = async (categoryID, page, size) => {
+        setLoading(true);
+        if (!searchTermRelated.trim()) {
+            console.log("Không có giá trị trong ô tìm kiếm - Tải danh sách ban đầu");
+            fetchRelatedProducts(categoryID, page, size)
+            return;
+        }
+        try {
+            const response = await axios.get('http://localhost:9999/home/owner/products/byProductName', {
+                params: {
+                    name: searchTermRelated,
+                    categoryID: categoryID,
+                    page: page - 1,
+                    size: size,
+                }
+            });
+            console.log("Search response:", response.data);
+            setRelatedProducts(response.data.content);
+            setTotalItems(response.data.totalElements);
+        } catch (error) {
+            console.error('Lỗi khi gọi API tìm kiếm:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
 
@@ -264,12 +358,11 @@ const ProductsList = () => {
                             }}
                         >
                             <Input
-                                placeholder='Search something here'
-                                value={searchValue}
-                                onChange={e => setSearchValue(e.target.value)}
-
+                                placeholder='Tìm Tên Loại Gạo.....'
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
                             />
-                            <Button type="primary" onClick={handleSearch}>Search</Button>
+                            <Button type="primary" onClick={() => handleSearch(1, pageSize)}>Search</Button>
                         </Space.Compact>
                     </Header>
                     <Content
@@ -286,11 +379,20 @@ const ProductsList = () => {
 
                         {loading ? (<Spin size="large" />) : (
                             <Table
-                                dataSource={filteredProducts}
+                                dataSource={products}
                                 columns={columns}
                                 rowClassName={(record) =>
                                     record.quantity === 0 ? "row-red" : ""
                                 }
+
+                                pagination={{
+                                    current: currentPage,
+                                    pageSize: pageSize,
+                                    total: totalItems,
+                                    showSizeChanger: true,
+                                    pageSizeOptions: ['1', '10', '20', '50', '100'],
+                                }}
+                                onChange={handleTableChange}
                             />
                         )}
 
@@ -300,22 +402,57 @@ const ProductsList = () => {
                             selectProduct &&
                             <>
                                 <Modal title={
-                                    <>
-                                        <span style={{ fontWeight: 800 }}> Product : </span> {selectProduct.name}
-                                    </>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <span style={{ fontWeight: 800, fontSize: '18px' }}>Product: {selectProduct.name}</span>
+                                        <Space.Compact
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'cen',
+                                                gap: '5px',
+                                                marginLeft: '950px',
+                                            }}
+                                        >
+                                            <Input
+                                                placeholder='Tìm Kiếm Tên Sản Phẩm...'
+                                                value={searchTermRelated}
+                                                onChange={(e) => setSearchTermRelated(e.target.value)}
+                                                style={{
+                                                    width: 200,
+                                                    height: 30,
+                                                    fontSize: '14px',
+                                                }}
+
+                                            />
+                                            <Button type="primary" onClick={() => handleSearchRelated(selectProduct.categoryID, 1, pageSize)}
+                                                style={{ height: 30, fontSize: '14px' }}
+                                            >
+                                                Search
+                                            </Button>
+                                        </Space.Compact>
+                                    </div>
                                 } style={{ top: 60, left: 40 }}
                                     width="75%"
-                                    bodyStyle={{ height: '50vh' }}
+                                    bodyStyle={{ height: '70vh' }}
 
                                     open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
 
                                     {loading ? (<Spin size="large" />) : (
-                                        <Table
+                                        <Table style={{ marginTop: 60 }}
                                             dataSource={relatedProducts}
                                             columns={columns2}
+                                            pagination={{
+                                                current: currentPageRelated,
+                                                pageSize: pageSizeRelated,
+                                                total: totalItemsRelated,
+                                                showSizeChanger: true,
+                                                pageSizeOptions: ['1', '5', '10'],
+
+                                            }}
                                             rowClassName={(record) =>
                                                 record.quantity === 0 ? "row-red" : ""
                                             }
+                                            onChange={handleTableChangeRelated}
+
                                         />
                                     )}
                                 </Modal>

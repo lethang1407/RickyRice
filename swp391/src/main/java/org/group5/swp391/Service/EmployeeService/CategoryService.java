@@ -1,14 +1,18 @@
-package org.group5.swp391.Service.MinhService;
+package org.group5.swp391.Service.EmployeeService;
 
 
 import lombok.RequiredArgsConstructor;
-import org.group5.swp391.DTO.MinhDTO.CategoryDTO;
+import org.group5.swp391.DTO.EmployeeDTO.CategoryDTO;
+import org.group5.swp391.DTO.EmployeeDTO.ProductDTO;
 import org.group5.swp391.Entity.Category;
 import org.group5.swp391.Entity.Product;
-import org.group5.swp391.Entity.Zone;
 import org.group5.swp391.Repository.CategoryRepository;
-import org.group5.swp391.Repository.MinhRepository.zoneRepository;
+import org.group5.swp391.Repository.EmployeeRepository.zoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,5 +50,18 @@ public class CategoryService {
         return CategoryRepository.findAll().stream()
                 .map(this::convertToCategoryDTO)
                 .collect(Collectors.toList());
+    }
+    public Page<CategoryDTO> getAllCategories( int page, int size, String sortBy, boolean descending) {
+        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Category> categoryPage = CategoryRepository.findAll(pageable);
+        return categoryPage.map(this::convertToCategoryDTO);
+    }
+
+    public Page<CategoryDTO> getCategoryBySearch(String name, int page, int size, String sortBy, boolean descending){
+        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Category> categoryPage = CategoryRepository.findByNameIgnoreCase(name, pageable);
+        return categoryPage.map(this::convertToCategoryDTO);
     }
 }

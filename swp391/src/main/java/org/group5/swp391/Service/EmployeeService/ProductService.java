@@ -1,14 +1,18 @@
-package org.group5.swp391.Service.MinhService;
+package org.group5.swp391.Service.EmployeeService;
 
 
 import lombok.RequiredArgsConstructor;
-import org.group5.swp391.DTO.MinhDTO.CategoryDTO;
-import org.group5.swp391.DTO.MinhDTO.ProductDTO;
-import org.group5.swp391.DTO.MinhDTO.zoneDTO;
+import org.group5.swp391.DTO.EmployeeDTO.CategoryDTO;
+import org.group5.swp391.DTO.EmployeeDTO.ProductDTO;
+import org.group5.swp391.DTO.EmployeeDTO.zoneDTO;
 import org.group5.swp391.Entity.Product;
 import org.group5.swp391.Entity.Zone;
-import org.group5.swp391.Repository.MinhRepository.ProductRepository;
+import org.group5.swp391.Repository.EmployeeRepository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -72,24 +76,21 @@ public class ProductService {
 
         return productDTO;
     }
-    public List<ProductDTO> getAllProducts() {
 
-        return productRepository.findAll().stream()
-                .map(this::convertToProductDTO)
-                .collect(Collectors.toList());
+
+    public Page<ProductDTO> getProductsByCateID(String CateID, int page, int size, String sortBy, boolean descending) {
+        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Product> productPage = productRepository.findAllByCategoryId(pageable, CateID);
+        return productPage.map(this::convertToProductDTO);
     }
 
-     public List<ProductDTO>getProductByCateID( String CateID){
-
-         List<Product> products = productRepository.findAllByCategoryId(CateID);
-         // Chuyển từ Product entity sang ProductDTO
-         return products.stream()
-                 .map(this::convertToProductDTO)
-                 .collect(Collectors.toList());
-
-        }
-
-
+   public Page<ProductDTO>getProductBySearch(String name,String categoryID, int page, int size, String sortBy, boolean descending){
+        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Product> productPage = productRepository.findByNameIgnoreCase(name,categoryID, pageable);
+        return productPage.map(this::convertToProductDTO);
+   }
 
 
 }

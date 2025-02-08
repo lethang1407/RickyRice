@@ -1,4 +1,4 @@
-package org.group5.swp391.DTO.MinhDTO;
+package org.group5.swp391.DTO.EmployeeDTO;
 
 
 import lombok.AccessLevel;
