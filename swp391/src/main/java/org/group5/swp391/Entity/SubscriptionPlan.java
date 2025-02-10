@@ -27,5 +27,5 @@ public class SubscriptionPlan extends AbstractEntity {
     double price;
 
     @Column(name = "TimeOfExpiration")
-    int timeOfExpiration;
+    Integer timeOfExpiration;
 }

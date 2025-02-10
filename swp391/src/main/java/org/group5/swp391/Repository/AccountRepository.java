@@ -13,9 +13,12 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
     boolean existsByPhoneNumber(String phoneNumber);
-    public Account findByUsername(String username);
+//    public Account findByUsername(String username);
 
     // Tìm tài khoản theo role
     public List<Account> findByRole_Code(String roleCode);
+
+    // Tìm tài khoản theo Account ID
+    Optional<Account> findByAccountID(String accountID);
 
 }

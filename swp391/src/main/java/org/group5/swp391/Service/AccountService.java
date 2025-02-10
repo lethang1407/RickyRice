@@ -3,10 +3,10 @@ package org.group5.swp391.Service;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.DTO.Request.UpdateAccountActiveRequest;
 import org.group5.swp391.DTO.Response.AccountResponse;
-import org.group5.swp391.DTO.Response.UpdateAccountActiveResponse;
 import org.group5.swp391.Entity.Account;
+import org.group5.swp391.Exception.AppException;
+import org.group5.swp391.Exception.ErrorCode;
 import org.group5.swp391.Repository.AccountRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,53 +17,59 @@ import java.util.stream.Collectors;
 public class AccountService {
     private final AccountRepository accountRepository;
 
-    // Trả về danh sách tài khoản theo role và chuyển đổi thành AccountResponse
+    // lấy danh sách tài khoản theo role
     public List<AccountResponse> getAccountsByRole(String roleCode) {
-        List<Account> accounts = accountRepository.findByRole_Code(roleCode);
-        return accounts.stream()
-                .map(account -> new AccountResponse(
-                        account.getAccountID(),
-                        account.getUsername(),
-                        account.getEmail(),
-                        account.getPhoneNumber(),
-                        account.getAvatar(),
-                        account.getCreatedAt(),
-                        account.getIsActive(),
-                        account.getGender(),
-                        account.getBirthDate()))
+        return accountRepository.findByRole_Code(roleCode).stream()
+                .map(account -> AccountResponse.builder()
+                        .accountID(account.getAccountID())
+                        .username(account.getUsername())
+                        .name(account.getName())
+                        .email(account.getEmail())
+                        .phoneNumber(account.getPhoneNumber())
+                        .avatar(account.getAvatar())
+                        .createdAt(account.getCreatedAt())
+                        .updatedAt(account.getUpdatedAt())
+                        .isActive(account.getIsActive())
+                        .gender(account.getGender())
+                        .birthDate(account.getBirthDate())
+                        .build())
                 .collect(Collectors.toList());
     }
 
-    // Cập nhật trạng thái Active cho tài khoản
-    public UpdateAccountActiveResponse updateAccountActiveStatus(UpdateAccountActiveRequest request) {
-        UpdateAccountActiveResponse response = new UpdateAccountActiveResponse();
-
-        // Kiểm tra tính hợp lệ của ID và trạng thái
+    // cập nhật trạng thái tài khoản
+    public void updateAccountActiveStatus(UpdateAccountActiveRequest request) {
         if (request.getId() == null || request.getId().isEmpty()) {
-            response.setMessage("Update status active failed: Account ID cannot be null or empty.");
-            return response;
+            throw new AppException(ErrorCode.NOT_FOUND);
         }
         if (request.getIsActive() == null) {
-            response.setMessage("Update status active failed: Active status cannot be null.");
-            return response;
+            throw new AppException(ErrorCode.NOT_FOUND);
         }
 
-        // Tìm kiếm tài khoản
         Account account = accountRepository.findById(request.getId())
-                .orElse(null);
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
 
-        if (account == null) {
-            response.setMessage("Update status active failed: Account with ID " + request.getId() + " not found.");
-            return response;
-        }
-
-        // Cập nhật trạng thái
         account.setIsActive(request.getIsActive());
         accountRepository.save(account);
+    }
 
-        // Trả về phản hồi thành công
-        response.setMessage("Update status active for Account ID " + request.getId() + " successful.");
-        return response;
+
+    // lấy tài khoản theo ID
+    public AccountResponse getAccountsByID(String accountID) {
+        return accountRepository.findByAccountID(accountID)
+                .map(account -> AccountResponse.builder()
+                        .accountID(account.getAccountID())
+                        .username(account.getUsername())
+                        .name(account.getName())
+                        .email(account.getEmail())
+                        .phoneNumber(account.getPhoneNumber())
+                        .avatar(account.getAvatar())
+                        .createdAt(account.getCreatedAt())
+                        .updatedAt(account.getUpdatedAt())
+                        .isActive(account.getIsActive())
+                        .gender(account.getGender())
+                        .birthDate(account.getBirthDate())
+                        .build())
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
     }
 
 }
