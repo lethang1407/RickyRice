@@ -145,10 +145,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public boolean checkOTP(OTPCheckRequest request) {
         Account account = accountRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        if(account.getOtp() != null && account.getOtp().equals(request.getOTP())) {
+        if(account.getOtp().equals(request.getOTP())) {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequest request) {
+        Account account = accountRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        if(account.getOtp().equals(request.getOTP())) {
+            account.setPassword(request.getNewPassword());
+        }else{
+            throw new AppException(ErrorCode.OTP_INVALID);
+        }
+        account.setOtp(null);
+        accountRepository.save(account);
     }
 
     private String generate6DigitCode() {
