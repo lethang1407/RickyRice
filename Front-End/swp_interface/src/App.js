@@ -25,9 +25,9 @@ function App() {
         <Route path="/admin/account_owner" element={<AccountOwner />}></Route>
         <Route path="/admin/view_stores" element={<AdminViewStores />}></Route>
         <Route path="/admin/subscription_plans" element={<SubscriptionPlans />}></Route>
-          <Route path='/home/owner/products' element={<ProductsList />}> </Route>
-          <Route path='/home/owner/ricezone' element={<ZoneList />}></Route>
-          <Route path='/home/owner/products/CreateProduct' element={<CreateProduct />}></Route>
+        <Route path='/home/owner/products' element={<ProductsList />}> </Route>
+        <Route path='/home/owner/ricezone' element={<ZoneList />}></Route>
+        <Route path='/home/owner/products/CreateProduct' element={<CreateProduct />}></Route>
       </Routes>
     </>
   );
