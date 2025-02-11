@@ -5,7 +5,6 @@ import {
   UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
-  InsertRowBelowOutlined,
 } from '@ant-design/icons';
 import { Button, Layout, Menu, theme } from 'antd';
 import './style.css';
@@ -37,7 +36,7 @@ const OwnerLayout = () => {
             items={[
               {
                 key: '1',
-                icon: <InsertRowBelowOutlined />,
+                icon: <UserOutlined />,
                 label: 'nav 1',
               },
               {
