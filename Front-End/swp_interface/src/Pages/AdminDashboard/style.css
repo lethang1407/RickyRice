@@ -17,7 +17,7 @@
 
 /* Avatar hiển thị dưới dạng khung tròn */
 .avatar-img {
-  border: 2px solid white; 
+  border: 2px solid white;
 }
 
 /* Dropdown menu căn chỉnh bên phải */
@@ -71,4 +71,46 @@ input:checked + .slider {
 
 input:checked + .slider:before {
   transform: translateX(14px);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: lightgray !important;
+  border-color: black !important;
+}
+
+.pagination .page-link {
+  color: black !important;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: #343a40;
+  z-index: 1000;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 250px;
+  width: calc(100% - 250px);
+  background-color: #212529;
+  z-index: 999;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.content {
+  margin-left: 250px;
+  margin-top: 60px;
+  padding: 20px;
+}
+
+.dropdown-menu {
+  z-index: 1050;
 }
