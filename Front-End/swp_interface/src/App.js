@@ -9,7 +9,9 @@ import AdminDashboard from "./Pages/AdminDashboard";
 import AccountOwner from "./Pages/AdminDashboard/AccountOwner";
 import AdminViewStores from "./Pages/AdminDashboard/AdminViewStores";
 import SubscriptionPlans from "./Pages/AdminDashboard/SubscriptionPlans";
-
+import ProductsList from './Pages/ProductsLayout/ProductsLayout';
+import ZoneList from './Pages/ZoneLayout/Zone';
+import CreateProduct from './Pages/CreateProduct/CreateProduct';
 function App() {
   return (
     <>
@@ -23,6 +25,9 @@ function App() {
         <Route path="/admin/account_owner" element={<AccountOwner />}></Route>
         <Route path="/admin/view_stores" element={<AdminViewStores />}></Route>
         <Route path="/admin/subscription_plans" element={<SubscriptionPlans />}></Route>
+          <Route path='/home/owner/products' element={<ProductsList />}> </Route>
+          <Route path='/home/owner/ricezone' element={<ZoneList />}></Route>
+          <Route path='/home/owner/products/CreateProduct' element={<CreateProduct />}></Route>
       </Routes>
     </>
   );
