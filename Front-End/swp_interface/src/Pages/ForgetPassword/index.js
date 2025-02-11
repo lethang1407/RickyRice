@@ -15,7 +15,7 @@ function ForgetPassword(){
   const [OTP, setOTP] = useState(null);
   const [next, setNext] = useState(false);
   const { Countdown } = Statistic;
-  const deadline = Date.now() + 1000*30;
+  const [deadline, setDeadline] = useState(Date.now() + 1000*300);
 
   const handleChangeValues = (changedValues, allValues) =>{
     setAcc({
@@ -75,6 +75,7 @@ function ForgetPassword(){
         success('OTP has been sent! Please check your Mail', messageApi);
         setAcc(res.data);
         setCheckOTP(true);
+        setDeadline(Date.now() + 1000*300);
       }else{
         error('Username or Email is invalid!', messageApi);
       }
