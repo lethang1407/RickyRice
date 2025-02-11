@@ -122,7 +122,7 @@ const SubscriptionPlan = () => {
       </div>
       <div className="content">
         <div className="container mt-5">
-          <h2>Subscription Plans</h2>
+          <h2 className="mb-4 text-center">Subscription Plans</h2>
           {successMessage && (
             <div className="alert alert-success">{successMessage}</div>
           )}
