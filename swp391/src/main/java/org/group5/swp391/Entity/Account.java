@@ -63,7 +63,7 @@ public class Account extends AbstractEntity {
     @OneToMany(mappedBy = "storeAccount",cascade = { CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     List<Store> stores = new ArrayList<>();
 
-    @OneToOne(mappedBy = "employeeAccount",fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "employeeAccount", fetch = FetchType.LAZY)
     Employee employee;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })

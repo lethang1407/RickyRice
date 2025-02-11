@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import OwnerLayout from "./Components/Layout";
 import Home from "./Pages/Home";
 import Login from "./Pages/Login";
+import StoreHome from './Pages/StoreHome';
 import Register from "./Pages/Register";
 import ForgetPassword from "./Pages/ForgetPassword";
 import AdminDashboard from "./Pages/AdminDashboard";
@@ -28,7 +29,8 @@ function App() {
         <Route path='/home/owner/products' element={<ProductsList />}> </Route>
         <Route path='/home/owner/ricezone' element={<ZoneList />}></Route>
         <Route path='/home/owner/products/CreateProduct' element={<CreateProduct />}></Route>
-      </Routes>
+        <Route path='/storehome' element={<StoreHome/>}></Route>
+    </Routes>
     </>
   );
 }

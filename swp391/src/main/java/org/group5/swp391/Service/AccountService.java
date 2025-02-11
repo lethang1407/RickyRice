@@ -7,6 +7,7 @@ import org.group5.swp391.Entity.Account;
 import org.group5.swp391.Exception.AppException;
 import org.group5.swp391.Exception.ErrorCode;
 import org.group5.swp391.Repository.AccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -72,4 +73,7 @@ public class AccountService {
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
     }
 
+    public Account getAccount(Account a) {
+        return accountRepository.findByUsername(a.getUsername());
+    }
 }
