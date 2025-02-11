@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Setter
 @MappedSuperclass
 public abstract class AbstractEntity {
-
     @Column(name = "created_by")
     private String createdBy;
 

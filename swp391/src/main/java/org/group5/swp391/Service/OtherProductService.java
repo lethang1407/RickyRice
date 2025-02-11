@@ -3,7 +3,7 @@ package org.group5.swp391.Service;
 import org.group5.swp391.Converter.ProductConverterTool.ProductConverter;
 import org.group5.swp391.DTO.ProductDTOTool.ProductDTO;
 import org.group5.swp391.Entity.Product;
-import org.group5.swp391.Repository.ProductRepository;
+import org.group5.swp391.Repository.EmployeeRepository.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ProductService {
+public class OtherProductService {
 
     @Autowired
     private ProductRepository productRepository;
