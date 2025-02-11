@@ -88,13 +88,22 @@ public class AuthenticationAPI {
                 .build();
     }
 
-    @PostMapping(value = "/")
+    @PostMapping(value = "/check-otp")
+    public ApiResponse<?> checkOTP(@RequestBody @Valid OTPCheckRequest request) {
+        boolean res = authenticationService.checkOTP(request);
+        return ApiResponse.builder()
+                .code(HttpStatus.OK.value())
+                .message("check successfully")
+                .data(res)
+                .build();
+    }
 
-    @GetMapping(value = "/change-password")
+    @PostMapping(value = "/change-password")
     public ApiResponse<String> changePassword(@RequestBody @Valid ChangePasswordRequest request) {
-
+        authenticationService.changePassword(request);
         return ApiResponse.<String>builder()
                 .code(HttpStatus.OK.value())
+                .message("Change password successfully")
                 .build();
     }
 

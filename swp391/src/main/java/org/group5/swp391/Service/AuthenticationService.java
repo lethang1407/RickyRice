@@ -17,4 +17,5 @@ public interface AuthenticationService {
     public EmailAndPhoneCheckResponse checkEmailAndPhone(EmalAndPhoneCheckRequest request);
     public SendOTPResponse sendOTP(String key);
     public boolean checkOTP(OTPCheckRequest request);
+    public void changePassword(ChangePasswordRequest request);
 }

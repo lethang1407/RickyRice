@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import org.group5.swp391.Utils.CustomConstraint.PhoneConstraint;
 
 import java.time.LocalDate;
 
@@ -26,6 +27,7 @@ public class AccountCreationRequest {
     String email;
 
     @NotNull
+    @PhoneConstraint
     String phoneNumber;
 
     String avatar;
