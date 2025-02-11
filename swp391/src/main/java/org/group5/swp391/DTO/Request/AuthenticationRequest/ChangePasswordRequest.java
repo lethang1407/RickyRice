@@ -1,6 +1,7 @@
 package org.group5.swp391.DTO.Request.AuthenticationRequest;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ChangePasswordRequest {
     @NotNull
-    private String otp;
+    private String username;
     @NotNull
-    private String key;
+    private String OTP;
+    @NotNull
+    private String newPassword;
 }

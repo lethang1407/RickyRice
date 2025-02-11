@@ -16,6 +16,7 @@ public enum ErrorCode {
     EMAIL_EXISTED(400,"Email already existed",HttpStatus.CONFLICT),
     USERNAME_EXISTED(400,"Username already existed",HttpStatus.CONFLICT),
     PHONENUMBER_EXISTED(400,"Phone number already existed",HttpStatus.CONFLICT),
+    OTP_INVALID(400,"OTP invalid",HttpStatus.CONFLICT),
     ;
     private int code;
     private String message;

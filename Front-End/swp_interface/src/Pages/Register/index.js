@@ -186,6 +186,10 @@ function Register(){
                       {
                         required: true,
                         message: 'Please input your Phone Number!',
+                      },
+                      { 
+                        pattern: /^(0[3|5|7|8|9])(\d{8})$/,
+                        message: 'Phone Number is not Valid!'
                       }
                     ]}
                   >

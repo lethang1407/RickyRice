@@ -17,10 +17,12 @@ import org.group5.swp391.Repository.InvalidatedTokenRepository;
 import org.group5.swp391.Service.AuthenticationService;
 import org.group5.swp391.Utils.Mail;
 import org.modelmapper.ModelMapper;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.text.ParseException;
+import java.time.Instant;
 
 @Slf4j
 @Service
@@ -32,6 +34,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final InvalidatedTokenRepository invalidatedTokenRepository;
     private final Mail mail;
     private final ModelMapper modelMapper;
+    private final ThreadPoolTaskScheduler taskScheduler;
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
         Account account = accountRepository.findByUsername(authenticationRequest.getUsername())
@@ -129,6 +132,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             acc.setOtp(token);
             accountRepository.save(acc);
 
+            scheduleTokenDeletion(acc.getAccountID());
+
             return SendOTPResponse.builder()
                     .email(acc.getEmail())
                     .username(acc.getUsername())
@@ -145,10 +150,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public boolean checkOTP(OTPCheckRequest request) {
         Account account = accountRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        if(account.getOtp() != null && account.getOtp().equals(request.getOTP())) {
+        if(account.getOtp().equals(request.getOTP())) {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequest request) {
+        Account account = accountRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        if(account.getOtp().equals(request.getOTP())) {
+            account.setPassword(request.getNewPassword());
+        }else{
+            throw new AppException(ErrorCode.OTP_INVALID);
+        }
+        account.setOtp(null);
+        accountRepository.save(account);
+    }
+
+    private void scheduleTokenDeletion(String accountID) {
+        taskScheduler.schedule(() -> {
+            accountRepository.clearOTP(accountID);
+        }, Instant.now().plusSeconds(300));
     }
 
     private String generate6DigitCode() {

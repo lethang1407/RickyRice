@@ -3,7 +3,6 @@ import { Form, Input, Button, message,Checkbox } from 'antd';
 import { GoogleOutlined, FacebookOutlined, GithubOutlined,UserOutlined} from '@ant-design/icons'
 import { useNavigate  } from 'react-router-dom';
 import { checkLogin } from '../../Utils/FetchUtils';
-import Down from '../../Utils/Animation/Down'
 import { success, error, successWSmile} from '../../Utils/AntdNotification';
 function Login(){
   const navigate = useNavigate();
