@@ -1,0 +1,8 @@
+.ant-layout.ant-layout-has-sider {
+  height: 100vh !important;
+}
+
+.row-red {
+  background-color: #ffcccc !important;
+  /* Màu nền đỏ nhạt */
+}

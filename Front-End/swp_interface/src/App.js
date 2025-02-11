@@ -2,10 +2,13 @@ import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import OwnerLayout from './Components/Layout';
 import ProductsList from './Pages/ProductsLayout/ProductsLayout';
+import ZoneList from './Pages/ZoneLayout/Zone';
 import Home from './Pages/Home';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
 import ForgetPassword from './Pages/ForgetPassword';
+
+import CreateProduct from './Pages/CreateProduct/CreateProduct';
 
 function App() {
   return (
@@ -16,6 +19,8 @@ function App() {
         </Route>
         <Route path='/login' element={<Login />}></Route>
         <Route path='/home/owner/products' element={<ProductsList />}> </Route>
+        <Route path='/home/owner/ricezone' element={<ZoneList />}></Route>
+        <Route path='/home/owner/products/CreateProduct' element={<CreateProduct />}></Route>
         <Route path='/forgot-password' element={<ForgetPassword />}></Route>
         <Route path='/register' element={<Register />}></Route>
 

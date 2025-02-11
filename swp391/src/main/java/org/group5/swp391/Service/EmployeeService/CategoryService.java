@@ -64,4 +64,6 @@ public class CategoryService {
         Page<Category> categoryPage = CategoryRepository.findByNameIgnoreCase(name, pageable);
         return categoryPage.map(this::convertToCategoryDTO);
     }
+
+
 }

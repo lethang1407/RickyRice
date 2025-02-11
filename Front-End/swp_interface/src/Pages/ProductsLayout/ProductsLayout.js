@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import logo from '../../assets/img/logoviet.png'
-
+import DropDown from '../ProductsEdit/ProductsEdit';
 import { Table, Input } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import { Pagination } from "antd";
 import {
     MenuFoldOutlined,
@@ -23,6 +24,9 @@ const { Header, Sider, Content } = Layout;
 const ProductsList = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [products, setProducts] = useState([]);
+    const [isSearch, setIsSearch] = useState(false);
+
+    const navigate = useNavigate();
 
     const [loading, setLoading] = useState(true);//true la trang thai dang loading data
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -155,20 +159,21 @@ const ProductsList = () => {
         }
 
     }
+
+    const handleNavigation = (path) => {
+        navigate(path);
+    };
     const handleTableChange = (pagination) => {
         const { current, pageSize } = pagination;
-        console.log("Pagination Change (Main): Current Page:", current, "Page Size:", pageSize);
+
         setCurrentPage(current);
         setPageSize(pageSize);
-        fetchProducts(current, pageSize);
         handleSearch(current, pageSize);
     };
 
     useEffect(() => {
-        fetchProducts(currentPage, pageSize);
+        handleSearch(currentPage, pageSize);
     }, [currentPage, pageSize]);  //render 1 lanlan
-
-
 
 
 
@@ -205,7 +210,6 @@ const ProductsList = () => {
     const handleTableChangeRelated = (pagination) => {
         setCurrentPageRelated(pagination.current);
         setPageSizeRelated(pagination.pageSize);
-        fetchRelatedProducts(selectProduct.categoryID, pagination.current, pagination.pageSize);
         handleSearchRelated(selectProduct.categoryID, pagination.current, pagination.pageSize)
     };
 
@@ -222,7 +226,6 @@ const ProductsList = () => {
             });
 
             console.log("Dữ liệu liên quan:", response.data);
-
             setRelatedProducts(response.data.content);
             setTotalItemsRelated(response.data.totalElements);
         } catch (error) {
@@ -240,16 +243,10 @@ const ProductsList = () => {
     };
 
     const handleSearch = async (page, size) => {
-        setLoading(true);
-        if (!searchTerm.trim()) {
-            console.log("Không có giá trị trong ô tìm kiếm - Tải danh sách ban đầu");
-            fetchProducts(page, size);
-            return;
-        }
         try {
             const response = await axios.get('http://localhost:9999/home/owner/products/byCategoryName', {
                 params: {
-                    name: searchTerm,
+                    name: isSearch ? searchTerm : '',
                     page: page - 1,
                     size: size,
                 }
@@ -266,11 +263,6 @@ const ProductsList = () => {
 
     const handleSearchRelated = async (categoryID, page, size) => {
         setLoading(true);
-        if (!searchTermRelated.trim()) {
-            console.log("Không có giá trị trong ô tìm kiếm - Tải danh sách ban đầu");
-            fetchRelatedProducts(categoryID, page, size)
-            return;
-        }
         try {
             const response = await axios.get('http://localhost:9999/home/owner/products/byProductName', {
                 params: {
@@ -311,24 +303,29 @@ const ProductsList = () => {
                         theme="light"
                         mode="inline"
                         defaultSelectedKeys={['1']}
-                        items={[
-                            {
-                                key: '1',
-                                icon: <InsertRowBelowOutlined />,
-                                label: 'Grain Selection ',
-                            },
-                            {
-                                key: '2',
-                                icon: <ShopOutlined />,
-                                label: 'nav 2',
-                            },
-                            {
-                                key: '3',
-                                icon: <UploadOutlined />,
-                                label: 'nav 3',
-                            },
-                        ]}
-                    />
+                    >
+                        <Menu.Item
+                            key="1"
+                            icon={<InsertRowBelowOutlined />}
+                            onClick={() => handleNavigation('/home/owner/products')}
+                        >
+                            Grain Selection
+                        </Menu.Item>
+                        <Menu.Item
+                            key="2"
+                            icon={<ShopOutlined />}
+                            onClick={() => handleNavigation('/home/owner/ricezone')}
+                        >
+                            Rice Zone
+                        </Menu.Item>
+                        <Menu.Item
+                            key="3"
+                            icon={<UploadOutlined />}
+                            onClick={() => console.log("Customer clicked!")}
+                        >
+                            Customer
+                        </Menu.Item>
+                    </Menu>
                 </Sider>
                 <Layout>
                     <Header
@@ -360,9 +357,9 @@ const ProductsList = () => {
                             <Input
                                 placeholder='Tìm Tên Loại Gạo.....'
                                 value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onChange={(e) => { setIsSearch(false); setSearchTerm(e.target.value) }}
                             />
-                            <Button type="primary" onClick={() => handleSearch(1, pageSize)}>Search</Button>
+                            <Button type="primary" onClick={() => { setIsSearch(true); handleSearch(1, pageSize) }}>Search</Button>
                         </Space.Compact>
                     </Header>
                     <Content
@@ -374,11 +371,13 @@ const ProductsList = () => {
                             borderRadius: borderRadiusLG,
                         }}
                     >
-                        <h3><i style={{ marginLeft: 15 }}>Category Product Preview </i></h3>
-
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 15px" }}>
+                            <h3><i style={{ marginLeft: 15 }}>Category Product Preview </i></h3>
+                            <span style={{ marginLeft: 840 }}> <DropDown /></span>
+                        </div>
 
                         {loading ? (<Spin size="large" />) : (
-                            <Table
+                            <Table style={{ marginTop: 45 }}
                                 dataSource={products}
                                 columns={columns}
                                 rowClassName={(record) =>
@@ -409,7 +408,7 @@ const ProductsList = () => {
                                                 display: 'flex',
                                                 alignItems: 'cen',
                                                 gap: '5px',
-                                                marginLeft: '950px',
+                                                marginLeft: '750px',
                                             }}
                                         >
                                             <Input
