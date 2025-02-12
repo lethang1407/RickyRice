@@ -13,6 +13,10 @@ import SubscriptionPlans from "./Pages/AdminDashboard/SubscriptionPlans";
 import ProductsList from './Pages/ProductsLayout/ProductsLayout';
 import ZoneList from './Pages/ZoneLayout/Zone';
 import CreateProduct from './Pages/CreateProduct/CreateProduct';
+import Store from "./Pages/ShopOwner/Store";
+import StoreOwnerLayout from "./Components/StoreOwner/Layout";
+import Invoice from "./Pages/ShopOwner/Invoice";
+import Product from "./Pages/ShopOwner/Product";
 function App() {
   return (
     <>
@@ -30,6 +34,11 @@ function App() {
         <Route path='/home/owner/ricezone' element={<ZoneList />}></Route>
         <Route path='/home/owner/products/CreateProduct' element={<CreateProduct />}></Route>
         <Route path='/storehome' element={<StoreHome/>}></Route>
+        <Route path="/home/store-owner" element={<StoreOwnerLayout />}>
+          <Route path="store" element={<Store />}></Route>
+          <Route path="invoice" element={<Invoice />}></Route>
+          <Route path="product" element={<Product />}></Route>
+        </Route>
     </Routes>
     </>
   );
