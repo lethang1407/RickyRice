@@ -7,7 +7,7 @@ import org.group5.swp391.DTO.EmployeeDTO.ProductDTO;
 import org.group5.swp391.DTO.EmployeeDTO.zoneDTO;
 import org.group5.swp391.Entity.Product;
 import org.group5.swp391.Entity.Zone;
-import org.group5.swp391.Repository.EmployeeRepository.ProductRepository;
+import org.group5.swp391.Repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

@@ -18,7 +18,7 @@ export const success = (str, messageApi) => {
   export const successWSmile = (str, messageApi) => {
     messageApi.open({
       icon: <SmileOutlined />,
-      content: 'Hello Friend',
+      content: str,
       duration: 3,
       className: 'success-message'
     });

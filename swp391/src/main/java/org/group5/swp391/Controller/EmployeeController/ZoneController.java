@@ -2,9 +2,8 @@ package org.group5.swp391.Controller.EmployeeController;
 
 
 import lombok.Data;
-import org.group5.swp391.DTO.EmployeeDTO.CategoryDTO;
 import org.group5.swp391.DTO.EmployeeDTO.zoneDTO;
-import org.group5.swp391.Service.EmployeeService.ZoneService;
+import org.group5.swp391.Service.Impl.ZoneService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

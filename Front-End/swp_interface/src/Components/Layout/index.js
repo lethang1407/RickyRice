@@ -18,7 +18,7 @@ const OwnerLayout = () => {
   } = theme.useToken();
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Layout>
+      <Layout style={{minHeight:'100vh'}}>
         <Sider
           style={{
             backgroundColor: 'white',

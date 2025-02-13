@@ -5,7 +5,10 @@ import leftimage from '../../assets/img/pngegg.png';
 import rightimage from '../../assets/img/pngegg.png';
 import LeftLeft from '../../Utils/Animation/LeftLeft';
 import RightRight from '../../Utils/Animation/RightRight';
+import feeback from '../../assets/img/testimonial-icon.png';
+import workprocess from '../../assets/img/work-process-item-01.png'
 import Down from '../../Utils/Animation/Down';
+import avatar from '../../assets/img/60x60.png';
 
 function HomeBody(){
 
@@ -138,7 +141,7 @@ function HomeBody(){
                   <div class="row">
                     <div class="col-xl-2">
                       <div class="section-three__process__item">
-                        <img class="section-three__process__item__img" src="./assets/img/work-process-item-01.png"
+                        <img class="section-three__process__item__img" src={workprocess}
                           alt="Process"/>
                         <h3 class="section-three__process__item__title">Get Ideas</h3>
                         <h5 class="section-three__process__item__text">Godard pabst prism fam cliche</h5>
@@ -146,7 +149,7 @@ function HomeBody(){
                     </div>
                     <div class="col-xl-2">
                       <div class="section-three__process__item">
-                        <img class="section-three__process__item__img" src="./assets/img/work-process-item-01.png"
+                        <img class="section-three__process__item__img" src={workprocess}
                           alt="Process"/>
                         <h3 class="section-three__process__item__title">Get Ideas</h3>
                         <h5 class="section-three__process__item__text">Godard pabst prism fam cliche</h5>
@@ -154,7 +157,7 @@ function HomeBody(){
                     </div>
                     <div class="col-xl-2">
                       <div class="section-three__process__item">
-                        <img class="section-three__process__item__img" src="./assets/img/work-process-item-01.png"
+                        <img class="section-three__process__item__img" src={workprocess}
                           alt="Process"/>
                         <h3 class="section-three__process__item__title">Get Ideas</h3>
                         <h5 class="section-three__process__item__text">Godard pabst prism fam cliche</h5>
@@ -162,7 +165,7 @@ function HomeBody(){
                     </div>
                     <div class="col-xl-2">
                       <div class="section-three__process__item">
-                        <img class="section-three__process__item__img" src="./assets/img/work-process-item-01.png"
+                        <img class="section-three__process__item__img" src={workprocess}
                           alt="Process"/>
                         <h3 class="section-three__process__item__title">Get Ideas</h3>
                         <h5 class="section-three__process__item__text">Godard pabst prism fam cliche</h5>
@@ -170,7 +173,7 @@ function HomeBody(){
                     </div>
                     <div class="col-xl-2">
                       <div class="section-three__process__item">
-                        <img class="section-three__process__item__img" src="./assets/img/work-process-item-01.png"
+                        <img class="section-three__process__item__img" src={workprocess}
                           alt="Process"/>
                         <h3 class="section-three__process__item__title">Get Ideas</h3>
                         <h5 class="section-three__process__item__text">Godard pabst prism fam cliche</h5>
@@ -178,7 +181,7 @@ function HomeBody(){
                     </div>
                     <div class="col-xl-2">
                       <div class="section-three__process__item">
-                        <img class="section-three__process__item__img" src="./assets/img/work-process-item-01.png"
+                        <img class="section-three__process__item__img" src={workprocess}
                           alt="Process"/>
                         <h3 class="section-three__process__item__title">Get Ideas</h3>
                         <h5 class="section-three__process__item__text">Godard pabst prism fam cliche</h5>
@@ -206,11 +209,11 @@ function HomeBody(){
                   <div class="row">
                     <div class="col-xl-4">
                       <div class="section-four__inner__box__item">
-                        <img class="section-four__inner__box__item__img" src="./assets/img/testimonial-icon.png" alt="Test"/>
+                        <img class="section-four__inner__box__item__img" src={feeback} alt="Test"/>
                         <div class="section-four__inner__box__item__text">Proin a neque nisi. Nam ipsum nisi, venenatis ut
                           nulla quis, egestas scelerisque orci. Maecenas a finibus odio.</div>
                         <div class="section-four__inner__box__item__author">
-                          <img class="section-four__inner__box__item__author__img" src="./assets/img/60x60.png" alt="IMG"/>
+                          <img class="section-four__inner__box__item__author__img" src={avatar} alt="IMG"/>
                           <div class="section-four__inner__box__item__author__des">
                             <div class="section-four__inner__box__item__author__des__name">Catherine Soft</div>
                             <div class="section-four__inner__box__item__author__des__pos">Managing Director</div>
@@ -220,11 +223,11 @@ function HomeBody(){
                     </div>
                     <div class="col-xl-4">
                       <div class="section-four__inner__box__item">
-                        <img class="section-four__inner__box__item__img" src="./assets/img/testimonial-icon.png" alt="Test"/>
+                        <img class="section-four__inner__box__item__img" src={feeback} alt="Test"/>
                         <div class="section-four__inner__box__item__text">Proin a neque nisi. Nam ipsum nisi, venenatis ut
                           nulla quis, egestas scelerisque orci. Maecenas a finibus odio.</div>
                         <div class="section-four__inner__box__item__author">
-                          <img class="section-four__inner__box__item__author__img" src="./assets/img/60x60.png" alt="IMG"/>
+                          <img class="section-four__inner__box__item__author__img" src={avatar} alt="IMG"/>
                           <div class="section-four__inner__box__item__author__des">
                             <div class="section-four__inner__box__item__author__des__name">Catherine Soft</div>
                             <div class="section-four__inner__box__item__author__des__pos">Managing Director</div>
@@ -234,11 +237,11 @@ function HomeBody(){
                     </div>
                     <div class="col-xl-4">
                       <div class="section-four__inner__box__item">
-                        <img class="section-four__inner__box__item__img" src="./assets/img/testimonial-icon.png" alt="Test"/>
+                        <img class="section-four__inner__box__item__img" src={feeback} alt="Test"/>
                         <div class="section-four__inner__box__item__text">Proin a neque nisi. Nam ipsum nisi, venenatis ut
                           nulla quis, egestas scelerisque orci. Maecenas a finibus odio.</div>
                         <div class="section-four__inner__box__item__author">
-                          <img class="section-four__inner__box__item__author__img" src="./assets/img/60x60.png" alt="IMG"/>
+                          <img class="section-four__inner__box__item__author__img" src={avatar} alt="IMG"/>
                           <div class="section-four__inner__box__item__author__des">
                             <div class="section-four__inner__box__item__author__des__name">Catherine Soft</div>
                             <div class="section-four__inner__box__item__author__des__pos">Managing Director</div>
@@ -288,7 +291,7 @@ function HomeBody(){
                     <div class="col-xl-4">
                       <div class="section-five__inner__box__item">
                         <div class="section-five__inner__box__item__title">Premium</div>
-                        <div class="section-five__inner__box__item__price" style={{backgroundColor:'#ff589e'}}>
+                        <div class="section-five__inner__box__item__price" style={{backgroundColor:'#67bb59'}}>
                           <div class="section-five__inner__box__item__price__value">$21.50</div>
                           <div class="section-five__inner__box__item__price__period">monthly</div>
                         </div>

@@ -3,7 +3,7 @@ package org.group5.swp391.Converter.StoreOwner;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.DTO.StoreOwnerDTO.StoreDTO;
 import org.group5.swp391.Entity.Store;
-import org.group5.swp391.Repository.StoreOwnerRepository.InvoiceRepository;
+import org.group5.swp391.Repository.InvoiceRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

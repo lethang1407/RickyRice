@@ -3,7 +3,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.group5.swp391.DTO.EmployeeDTO.CategoryDTO;
 import org.group5.swp391.DTO.EmployeeDTO.ProductDTO;
-import org.group5.swp391.Service.EmployeeService.CategoryService;
+import org.group5.swp391.Service.Impl.CategoryService;
 import org.group5.swp391.Service.EmployeeService.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
