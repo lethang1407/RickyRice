@@ -9,10 +9,9 @@ import {
   VideoCameraOutlined,
 } from '@ant-design/icons';
 import { Button, Layout, Menu, theme } from 'antd';
-import './style.css';
+import './style.scss';
 import CustomFooter from '../../Footer';
 import { Link, Outlet } from 'react-router-dom';
-import { hover } from 'framer-motion';
 const { Header, Sider, Content } = Layout;
 
 const StoreOwnerLayout = () => {
@@ -21,8 +20,8 @@ const StoreOwnerLayout = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Layout>
+    <div style={{ display: 'flex', flexDirection: 'column'}}>
+      <Layout style={{minHeight:'100vh'}}>
         <Sider
           style={{
             backgroundColor: 'white',

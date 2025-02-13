@@ -17,7 +17,6 @@ import {
 import axios from 'axios';
 import { Spin, List as ListItem } from 'antd';
 import { Button, Layout, Menu, theme, SearchOutlined, Select, Space, Modal } from 'antd';
-import './style.css';
 import CustomFooter from "../../Components/Footer";
 import Search from 'antd/es/transfer/search';
 const { Header, Sider, Content } = Layout;
@@ -271,7 +270,7 @@ const ZoneList = () => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <Layout>
+            <Layout style={{minHeight:'100vh'}}> 
                 <Sider
                     style={{
                         backgroundColor: 'white',

@@ -3,7 +3,7 @@ import { Form, Input, Button, message,Checkbox } from 'antd';
 import { GoogleOutlined, FacebookOutlined, GithubOutlined,UserOutlined} from '@ant-design/icons'
 import { useNavigate  } from 'react-router-dom';
 import { checkLogin } from '../../Utils/FetchUtils';
-import { success, error, successWSmile} from '../../Utils/AntdNotification';
+import { error, successWSmile} from '../../Utils/AntdNotification';
 function Login(){
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
@@ -23,7 +23,7 @@ function Login(){
       }
       successWSmile('Hello Friend!', messageApi);
       setTimeout(()=>{
-        navigate('/home');
+        navigate('/');
       },1000)
     }else{
       error('Wrong username or password!', messageApi);
