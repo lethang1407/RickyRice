@@ -1,9 +1,9 @@
 package org.group5.swp391.Service.Impl;
 
 import lombok.RequiredArgsConstructor;
-import org.group5.swp391.Converter.StoreOwner.StoreConverter;
-import org.group5.swp391.DTO.Response.ViewStoreResponse;
-import org.group5.swp391.DTO.StoreOwnerDTO.StoreDTO;
+import org.group5.swp391.Converter.StoreConverter;
+import org.group5.swp391.DTO.Response.AdminResponse.ViewStoreResponse;
+import org.group5.swp391.DTO.StoreOwnerDTO.StoreInfoDTO;
 import org.group5.swp391.Repository.StoreRepository;
 import org.group5.swp391.Service.StoreService;
 import org.springframework.data.domain.Page;
@@ -20,14 +20,14 @@ public class StoreServiceImpl implements StoreService {
     private final StoreRepository storeRepository;
     private final StoreConverter storeConverter;
     @Override
-    public Page<StoreDTO> getStores(int page, int size, String sortBy, boolean descending) {
+    public Page<StoreInfoDTO> getStores(int page, int size, String sortBy, boolean descending) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         PageRequest pageRequest = PageRequest.of(page, size, sort);
         return storeRepository.findAll(pageRequest).map(storeConverter::toStoreDTO);
     }
 
     @Override
-    public Page<StoreDTO> searchStores(String storeName, int page, int size, String sortBy, boolean descending) {
+    public Page<StoreInfoDTO> searchStores(String storeName, int page, int size, String sortBy, boolean descending) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         PageRequest pageRequest = PageRequest.of(page, size, sort);
         return storeRepository.findByStoreNameContainingIgnoreCase(storeName, pageRequest).map(storeConverter::toStoreDTO);
@@ -54,4 +54,5 @@ public class StoreServiceImpl implements StoreService {
                         .build()
         ).collect(Collectors.toList());
     }
+
 }

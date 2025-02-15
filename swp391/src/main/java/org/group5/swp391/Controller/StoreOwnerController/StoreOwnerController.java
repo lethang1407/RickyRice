@@ -1,12 +1,12 @@
 package org.group5.swp391.Controller.StoreOwnerController;
 
 import lombok.RequiredArgsConstructor;
-import org.group5.swp391.DTO.StoreOwnerDTO.InvoiceDTO;
-import org.group5.swp391.DTO.StoreOwnerDTO.ProductDTO;
-import org.group5.swp391.DTO.StoreOwnerDTO.StoreDTO;
-import org.group5.swp391.Service.Impl.InvoiceServiceImpl;
-import org.group5.swp391.Service.Impl.ProductServiceImpl;
-import org.group5.swp391.Service.Impl.StoreServiceImpl;
+import org.group5.swp391.DTO.StoreOwnerDTO.StoreInvoiceDTO;
+import org.group5.swp391.DTO.StoreOwnerDTO.StoreProductDTO;
+import org.group5.swp391.DTO.StoreOwnerDTO.StoreInfoDTO;
+import org.group5.swp391.Service.InvoiceService;
+import org.group5.swp391.Service.ProductService;
+import org.group5.swp391.Service.StoreService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/store-owner")
 @RequiredArgsConstructor
 public class StoreOwnerController {
-    private final InvoiceServiceImpl invoiceService;
-    private final StoreServiceImpl storeService;
-    private final ProductServiceImpl productService;
+    private final InvoiceService invoiceService;
+    private final StoreService storeService;
+    private final ProductService productService;
 
     @GetMapping("/invoices")
-    public Page<InvoiceDTO> getInvoices(
+    public Page<StoreInvoiceDTO> getInvoices(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
@@ -32,7 +32,7 @@ public class StoreOwnerController {
     }
 
     @GetMapping("/search-invoices")
-    public Page<InvoiceDTO> searchInvoices(
+    public Page<StoreInvoiceDTO> searchInvoices(
             @RequestParam String phoneNumber,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -44,7 +44,7 @@ public class StoreOwnerController {
     }
 
     @GetMapping("/stores")
-    public Page<StoreDTO> getStores(
+    public Page<StoreInfoDTO> getStores(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
@@ -54,7 +54,7 @@ public class StoreOwnerController {
     }
 
     @GetMapping("/search-stores")
-    public Page<StoreDTO> searchStores(
+    public Page<StoreInfoDTO> searchStores(
             @RequestParam String storeName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -65,7 +65,7 @@ public class StoreOwnerController {
     }
 
     @GetMapping("/products")
-    public Page<ProductDTO> getProducts(
+    public Page<StoreProductDTO> getProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortBy,
@@ -74,7 +74,7 @@ public class StoreOwnerController {
         return productService.getProducts(page, size, sortBy, descending);
     }
     @GetMapping("/search-products")
-    public Page<ProductDTO> searchProducts(
+    public Page<StoreProductDTO> searchProducts(
             @RequestParam String productName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

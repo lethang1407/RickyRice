@@ -1,8 +1,8 @@
 package org.group5.swp391.Service.Impl;
 
 import lombok.RequiredArgsConstructor;
-import org.group5.swp391.Converter.StoreOwner.InvoiceConverter;
-import org.group5.swp391.DTO.StoreOwnerDTO.InvoiceDTO;
+import org.group5.swp391.Converter.InvoiceConverter;
+import org.group5.swp391.DTO.StoreOwnerDTO.StoreInvoiceDTO;
 import org.group5.swp391.Repository.CustomerRepository;
 import org.group5.swp391.Repository.InvoiceRepository;
 import org.group5.swp391.Service.InvoiceService;
@@ -20,13 +20,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final CustomerRepository customerRepository;
 
     @Override
-    public Page<InvoiceDTO> getInvoices(int page, int size, String sortBy, boolean descending) {
+    public Page<StoreInvoiceDTO> getInvoices(int page, int size, String sortBy, boolean descending) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return invoiceRepository.findAll(pageable).map(invoiceConverter::toInvoiceDTO);
     }
     @Override
-    public Page<InvoiceDTO> searchInvoices(String phoneNumber, int page, int size, String sortBy, boolean descending) {
+    public Page<StoreInvoiceDTO> searchInvoices(String phoneNumber, int page, int size, String sortBy, boolean descending) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return invoiceRepository.findByCustomerIn(customerRepository.findByPhoneNumberContainingIgnoreCase(phoneNumber), pageable).map(invoiceConverter::toInvoiceDTO);
