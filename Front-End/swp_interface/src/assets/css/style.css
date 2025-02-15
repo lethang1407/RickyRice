@@ -18,11 +18,11 @@
 }
 
 .button--violet {
-  background-color: #8261ee;
+  background-color: #67bb59;
   color: white;
 }
 .button--violet:hover {
-  background-color: #ff589e;
+  background-color: green;
   cursor: pointer;
 }
 
@@ -348,7 +348,7 @@ body {
   font-weight: 600;
 }
 .section-five__inner__box__item__price {
-  background-color: #8261ee;
+  background-color: #77ba1c;
   width: 100%;
   padding: 20px;
   display: flex;
@@ -379,10 +379,11 @@ body {
 }
 
 .section-six {
-  background-image: url('../img//fun-facts-bg.png');
+  background-image: url('../img/imgsec6.jpeg');
   background-size: cover;
   background-position: center center;
   padding: 120px;
+  margin-bottom: 50px;
 }
 .section-six__item {
   display: flex;

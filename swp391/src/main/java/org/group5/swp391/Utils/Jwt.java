@@ -36,12 +36,7 @@ public class Jwt {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         StringJoiner stringJoiner = new StringJoiner(" ");
-        stringJoiner.add("ROLE_"+account.getRole());
-
-        account.getRole().getPermissions().forEach(permission -> {
-            if(!stringJoiner.toString().contains(permission.getCode()))
-                stringJoiner.add(permission.getCode());
-        });
+        stringJoiner.add("ROLE_"+account.getRole().getCode());
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(account.getUsername())
