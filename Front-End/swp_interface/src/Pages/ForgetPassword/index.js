@@ -5,6 +5,7 @@ import { useNavigate  } from 'react-router-dom';
 import { checkValid, fetchDataWithoutToken } from '../../Utils/FetchUtils';
 import { useState } from 'react';
 import { success, error } from '../../Utils/AntdNotification';
+import API from '../../Utils/API/API.js';
 import Loading from '../Loading/Loading';
 function ForgetPassword(){
   const [loading,setLoading] = useState(false);
@@ -32,7 +33,7 @@ function ForgetPassword(){
 
   const handleNextToChange = async () =>{
     if(OTP){
-      const res = await checkValid('http://localhost:9999/check-otp',{username: acc.username, OTP: OTP});
+      const res = await checkValid(API.AUTH.CHECK_OTP,{username: acc.username, OTP: OTP});
       if(res && res.code===200){
         if(res.data===true){
           setNext(true);
@@ -52,7 +53,7 @@ function ForgetPassword(){
       newPassword: values.password
     }
     setLoading(true);
-    const res = await checkValid('http://localhost:9999/change-password',data);
+    const res = await checkValid(API.AUTH.CHANGE_PASSWORD,data);
     setTimeout(()=>{
       if(res && res.code===200){
         success('Password has been changed! Please login again.', messageApi);
@@ -68,7 +69,7 @@ function ForgetPassword(){
 
   const sendOTP = async (values) => {
     setLoading(true);
-    const res = await fetchDataWithoutToken(`http://localhost:9999/send-otp/${values.key}`);
+    const res = await fetchDataWithoutToken(API.AUTH.SEND_OTP(values.key));
     setLoading(false);
     if(res && res.code===200){
       if(res.data.isValid){

@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service;
 public interface ZoneService {
     public Page<EmployeeZoneDTO> getAllZone(int page, int size, String sortBy, boolean descending);
     public Page<EmployeeZoneDTO>getFilterZones(int page, int size, String sortBy, boolean descending,
-                                               Integer quantityMin, Integer quantityMax, Integer sizeMin, Integer sizeMax);
+                                               Integer quantityMin, Integer quantityMax, Integer sizeMin, Integer sizeMax,String search);
     public Page<EmployeeZoneDTO>getSearchNameAndLocationZone(int page, int size, String sortBy, boolean descending, String search);
 }

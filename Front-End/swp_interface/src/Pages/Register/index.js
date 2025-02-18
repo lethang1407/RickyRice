@@ -6,6 +6,7 @@ import { checkValid, fetchDataWithoutToken, handleUpload, register } from '../..
 import { useNavigate } from 'react-router-dom';
 import Loading from '../Loading/Loading';
 import { success, error} from '../../Utils/AntdNotification';
+import API from '../../Utils/API/API.js';
 function Register(){
   const [next, setNext] = useState(false);
   const [acc,setAcc] = useState(null);
@@ -40,7 +41,7 @@ function Register(){
       email: values.email,
       phone: values.phone,
     }
-    const res = await checkValid('http://localhost:9999/check-email-phone',data);
+    const res = await checkValid(API.AUTH.CHECK_EMAIL_PHONE,data);
     if(!res.data.emailValid || !res.data.phoneValid){
       let str = '';
       if(!res.data.emailValid){
@@ -57,9 +58,9 @@ function Register(){
     }else{
       setLoading(true);
       if(file){
-        const res = await handleUpload('http://localhost:9999/image', file[0].originFileObj);
+        const res = await handleUpload(API.PUBLIC.UPLOAD_IMG, file[0].originFileObj);
         if(res && res.code===200){
-          const response = await register('http://localhost:9999/register',{...acc, avatar: res.data})
+          const response = await register(API.AUTH.REGISTER,{...acc, avatar: res.data})
           if(response && response.code === 201){
             setTimeout(()=>{
               setLoading(false);
@@ -77,7 +78,7 @@ function Register(){
           error('Upload Failed!', messageApi);
         }
       }else{
-        const response = await register('http://localhost:9999/register',acc)
+        const response = await register(API.AUTH.REGISTER,acc)
         if(response && response.code === 201){
           setTimeout(()=>{
             setLoading(false);
@@ -107,7 +108,7 @@ function Register(){
   }
 
   const handleNext = async (values) =>{
-    const res = await fetchDataWithoutToken(`http://localhost:9999/check-username/${values.username}`);
+    const res = await fetchDataWithoutToken(API.AUTH.CHECK_USERNAME(values.username));
     console.log(acc);
     
     if(!res.data){

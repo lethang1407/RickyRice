@@ -4,6 +4,7 @@ import { Container, Table, Form, Pagination } from "react-bootstrap";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import "./style.css";
+import API from '../../Utils/API/API.js';
 
 const AccountOwner = () => {
   const [userData, setUserData] = useState([]);
@@ -21,7 +22,7 @@ const AccountOwner = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:9999/admin/account_owner"
+          API.ADMIN.GET_ALL_ACCOUNT
         );
         if (response.data.code === 200) {
           setUserData(response.data.data);
