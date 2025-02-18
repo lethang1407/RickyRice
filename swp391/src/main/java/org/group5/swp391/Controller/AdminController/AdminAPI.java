@@ -7,10 +7,10 @@ import org.group5.swp391.DTO.Request.AdminRequest.UpdateAccountActiveRequest;
 import org.group5.swp391.DTO.Response.*;
 import org.group5.swp391.DTO.Response.AdminResponse.*;
 import org.group5.swp391.Service.*;
-import org.group5.swp391.Service.Impl.AccountServiceImpl;
-import org.group5.swp391.Service.Impl.AppStatisticsServiceServiceImpl;
-import org.group5.swp391.Service.Impl.NotificationServiceImpl;
-import org.group5.swp391.Service.Impl.SubscriptionPlanServiceImpl;
+import org.group5.swp391.Service.AccountService;
+import org.group5.swp391.Service.AppStatisticsService;
+import org.group5.swp391.Service.NotificationService;
+import org.group5.swp391.Service.SubscriptionPlanService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +21,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminAPI {
 
-    private final AccountServiceImpl accountService;
-    private final AppStatisticsServiceServiceImpl appStatisticsService;
+    private final AccountService accountService;
+    private final AppStatisticsService appStatisticsService;
     private final StoreService storeService;
-    private final SubscriptionPlanServiceImpl subscriptionPlanService;
-    private final NotificationServiceImpl notificationService;
+    private final SubscriptionPlanService subscriptionPlanService;
+    private final NotificationService notificationService;
 
 
     // Xem danh sách tài khoản có role STORE_OWNER
