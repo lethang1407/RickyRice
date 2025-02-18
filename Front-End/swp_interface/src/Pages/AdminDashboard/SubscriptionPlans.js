@@ -139,7 +139,7 @@ const SubscriptionPlan = () => {
               });
             }}
           >
-            Create New Subscription Plans
+            Create New Subscription Plan
           </button>
           {showModal && (
             <div className="modal show d-block" tabIndex="-1">

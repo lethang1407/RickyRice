@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, message, Input } from 'antd';
 import qs from 'qs';
+import Loading from '../Loading/Loading';
 
 const { Search } = Input;
 
@@ -27,7 +28,6 @@ const Product = () => {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            sorter: true, // Bật tính năng sắp xếp
             width: '20%',
         },
         {
@@ -49,7 +49,6 @@ const Product = () => {
             title: 'Category',
             dataIndex: 'categoryName',
             key: 'categoryName',
-            sorter: true, // Bật tính năng sắp xếp
             width: '20%',
         },
     ];
@@ -67,14 +66,9 @@ const Product = () => {
     const fetchInvoice = async () => {
         setLoading(true);
         try {
-            const url = searchValue
-                ? `http://localhost:9999/store-owner/search-products?productName=${encodeURIComponent(searchValue)}&${getProductParam(tableParams)}`
-                : `http://localhost:9999/store-owner/products?${getProductParam(tableParams)}`;
-
-            const response = await fetch(url);
+            const queryParams = `products?productName=${encodeURIComponent(searchValue)}&` + getProductParam(tableParams);
+            const response = await fetch(`http://localhost:9999/store-owner/${queryParams}`);
             const result = await response.json();
-
-            console.log(result);
 
             setData(result.content || []);
             setTableParams({
@@ -135,6 +129,7 @@ const Product = () => {
                 onChange={handleSearch}
                 enterButton
                 style={{ marginBottom: 16 }}
+                loading={loading}
             />
             <Table
                 columns={columns}

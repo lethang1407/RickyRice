@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Bell } from "react-bootstrap-icons";
+import API from '../../../Utils/API/API.js';
 
 const CustomNavbar = () => {
   const avatarUrl =
@@ -10,7 +11,7 @@ const CustomNavbar = () => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:9999/admin/notifications/1")
+    fetch(API.ADMIN.GET_NOTIFICATIONS_BY_ID(1))
       .then((response) => response.json())
       .then((data) => {
         if (data.code === 200) {
@@ -24,7 +25,7 @@ const CustomNavbar = () => {
     const unreadIds = notifications
       .filter((notif) => !notif.isRead)
       .map((notif) => notif.notificationId);
-    fetch("http://localhost:9999/admin/notifications/mark_as_read", {
+    fetch(API.ADMIN.MARK_NOTI_AS_READ, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -38,7 +39,7 @@ const CustomNavbar = () => {
   };
 
   const markAsRead = (notificationId) => {
-    fetch("http://localhost:9999/admin/notifications/mark_as_read", {
+    fetch(API.ADMIN.MARK_NOTI_AS_READ, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

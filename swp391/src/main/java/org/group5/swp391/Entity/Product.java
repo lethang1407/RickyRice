@@ -26,7 +26,7 @@ public class Product extends AbstractEntity{
     String name;
 
     @Column(name = "Price", nullable = false)
-    double price;
+    Double price;
 
     @Column(name = "Information", columnDefinition = "NVARCHAR(255)")
     String information;

@@ -15,41 +15,39 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/home/owner")
+@RequestMapping("/employee")
 @RequiredArgsConstructor
 public class EmployeeProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
 
-    @GetMapping("/products")
+    @GetMapping("/categories/pagination")
     public Page<EmployeeCategoryDTO> getAllCategories(@RequestParam("page") int page,
                                                       @RequestParam("size") int size) {
 
         return categoryService.getAllCategories(page,size,"categoryID",false);
     }
 
-    @GetMapping("/products/byCategoryName")
+    @GetMapping("/category")
     public Page<EmployeeCategoryDTO> getCategoryByName(@RequestParam("name")String name, @RequestParam("page") int page,
                                                        @RequestParam("size") int size) {
 
         return categoryService.getCategoryBySearch(name,page,size,"categoryID",false);
     }
 
-    @GetMapping("/products/CreateProduct")
+    @GetMapping("/categories")
     public List<EmployeeCategoryDTO> getAllCategoriesList() {
         return categoryService.getAllCategories();
     }
 
-    @GetMapping("/products/byCategory")
+    @GetMapping("/products-by-category")
     public Page<EmployeeProductDTO> getProductByCateID(@RequestParam("categoryID")String categoryID, @RequestParam("page") int page,
                                                        @RequestParam("size") int size) {
-        log.info("categoryID :" + categoryID);
        return productService.getProductsByCateID(categoryID,page,size,"price",false);
     }
-    @GetMapping("/products/byProductName")
+    @GetMapping("/products-by-name")
     public Page<EmployeeProductDTO> getProductByName(@RequestParam("name")String name, @RequestParam("categoryID")String categoryID, @RequestParam("page") int page,
                                                      @RequestParam("size") int size) {
-        log.info("name :" + name);
         return productService.getProductBySearch(name,categoryID,page,size,"price",false);
     }
 

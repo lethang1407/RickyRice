@@ -12,7 +12,7 @@ const DropDown = () => {
             label: (
                 <Button
                     type="link"
-                    onClick={() => navigate('/home/owner/products/CreateProduct')}
+                    onClick={() => navigate('/employee/products/createproduct')}
                 >
                     Add More Product
                 </Button>

@@ -204,7 +204,7 @@ const FormDisabledDemo = () => {
                     <Button
                         type="default"
                         htmlType="button"
-                        onClick={() => navigate('/home/owner/products')}
+                        onClick={() => navigate('/employee/products')}
                     >
                         Back
                     </Button>

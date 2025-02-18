@@ -28,7 +28,7 @@ public class AppStatistics extends AbstractEntity{
     String subcriptionPlanName;
 
     @Column(name = "SubcriptionPlanPrice")
-    double subcriptionPlanPrice;
+    Double subcriptionPlanPrice;
 
     @Column(name = "SubcriptionDescription")
     String subcriptionDescription;

@@ -46,7 +46,6 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
     );
   }, [revenueData, searchTerm]);
 
-  // Sắp xếp dữ liệu
   const sortedData = useMemo(() => {
     if (!sortBy) return filteredData;
     return [...filteredData].sort((a, b) => {
@@ -61,7 +60,6 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
     });
   }, [filteredData, sortBy, sortOrder]);
 
-  // Tính tổng số trang và lấy dữ liệu của trang hiện tại
   const totalPages = Math.ceil(sortedData.length / recordsPerPage);
   const currentRecords = useMemo(() => {
     return sortedData.slice(

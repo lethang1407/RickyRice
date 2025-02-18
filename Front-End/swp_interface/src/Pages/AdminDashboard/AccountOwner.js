@@ -4,6 +4,7 @@ import { Container, Table, Form, Pagination } from "react-bootstrap";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import "./style.css";
+import API from '../../Utils/API/API.js';
 
 const AccountOwner = () => {
   const [userData, setUserData] = useState([]);
@@ -15,13 +16,13 @@ const AccountOwner = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [currentPage, setCurrentPage] = useState(1);
-  const [recordsPerPage, setRecordsPerPage] = useState(10);
+  const [recordsPerPage, setRecordsPerPage] = useState(10); 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:9999/admin/account_owner"
+          API.ADMIN.GET_ALL_ACCOUNT
         );
         if (response.data.code === 200) {
           setUserData(response.data.data);
@@ -130,7 +131,7 @@ const AccountOwner = () => {
     }
     return "⇅";
   };
-
+  
   const totalPages = Math.ceil(filteredData.length / recordsPerPage);
   const currentRecords = filteredData.slice(
     (currentPage - 1) * recordsPerPage,
