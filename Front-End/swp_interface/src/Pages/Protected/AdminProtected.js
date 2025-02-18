@@ -6,7 +6,7 @@ function AdminProtected(){
   const navigate = useNavigate();
   const role = getRole();
   useEffect(()=>{
-    if(!(role=='ROLE_ADMIN')){
+    if(!(role=='ADMIN')){
       navigate('/unauthorized');
     }
   },[])

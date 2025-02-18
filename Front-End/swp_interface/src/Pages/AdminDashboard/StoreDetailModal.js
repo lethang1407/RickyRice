@@ -18,11 +18,7 @@ const StoreDetailModal = ({ show, handleClose, store }) => {
             <Card>
               <Card.Img
                 variant="top"
-                src={
-                  store.image
-                    ? `http://localhost:9999/images/${store.image}`
-                    : DEFAULT_IMAGE_URL
-                }
+                src={store.image ? `${store.image}` : DEFAULT_IMAGE_URL}
                 alt={store.storeName}
                 onError={(e) => (e.target.src = DEFAULT_IMAGE_URL)}
               />

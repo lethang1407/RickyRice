@@ -35,14 +35,11 @@ public class Jwt {
     public String generateToken(Account account) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
-        StringJoiner stringJoiner = new StringJoiner(" ");
-        stringJoiner.add("ROLE_"+account.getRole().getCode());
-
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(account.getUsername())
                 .issuer("vietfarmer.com")
                 .issueTime(new Date())
-                .claim("scope", stringJoiner.toString())
+                .claim("scope", account.getRole().getCode())
                 .expirationTime(new Date(
                         Instant.now().plus(jwtExpirations, ChronoUnit.SECONDS).toEpochMilli()
                 ))

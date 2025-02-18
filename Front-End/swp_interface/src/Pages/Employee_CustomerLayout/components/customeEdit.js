@@ -2,7 +2,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import moment from 'moment';
+
+import { getToken } from '../../../Utils/UserInfoUtils';
 import { Button, Form, Input, InputNumber, message, DatePicker, Select } from 'antd';
+import API from '../../../Utils/API/API';
+
 
 const { TextArea } = Input;
 
@@ -11,6 +15,7 @@ const CustomerIN4Edit = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const customerData = location.state;
+    const token = getToken();
     console.log(customerData);
 
     useEffect(() => {
@@ -39,10 +44,15 @@ const CustomerIN4Edit = () => {
                 updatedAt: moment().format('YYYY-MM-DDTHH:mm:ss'),
             };
 
-
             const response = await axios.put(
-                `http://localhost:9999/employee/customers/edit${customerData.customerID}`,
-                requestData
+
+                API.EMPLOYEE.UPDATE_USER(customerData.customerID), // URL endpoint
+                requestData, // Dữ liệu request payload
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Thêm token vào header
+                    },
+                }
             );
 
             if (response.status === 200 || response.status === 204) {

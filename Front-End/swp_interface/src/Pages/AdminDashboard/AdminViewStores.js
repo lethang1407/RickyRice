@@ -13,9 +13,12 @@ import axios from "axios";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import StoreDetailModal from "./StoreDetailModal";
+import API from "../../Utils/API/API.js";
+import { getToken } from "../../Utils/UserInfoUtils";
 import "./style.css";
 
 const AdminViewStores = () => {
+  const token = getToken();
   const [stores, setStores] = useState([]);
   const [filteredStores, setFilteredStores] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,9 +34,11 @@ const AdminViewStores = () => {
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:9999/admin/view_store"
-        );
+        const response = await axios.get(API.ADMIN.VIEW_ALL_STORE, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (response.data.code === 200) {
           setStores(response.data.data);
           setFilteredStores(response.data.data);

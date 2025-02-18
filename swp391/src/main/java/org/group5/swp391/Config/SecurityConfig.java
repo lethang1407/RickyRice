@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/store-owner/**").hasRole("STORE_OWNER")
                         .requestMatchers("/employee/**").hasRole("EMPLOYEE")
+                        .anyRequest().authenticated()
         );
 
         http.csrf(AbstractHttpConfigurer::disable);
@@ -72,7 +73,6 @@ public class SecurityConfig {
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
         converter.setAuthorityPrefix("ROLE_");
-
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(converter);
         return jwtAuthenticationConverter;

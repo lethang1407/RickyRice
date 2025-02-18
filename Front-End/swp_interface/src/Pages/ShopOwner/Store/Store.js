@@ -4,9 +4,13 @@ import ProductCard from '../../../Components/StoreOwner/ProductCard'; // Import 
 import qs from 'qs';
 import './style.scss'; // Thêm file CSS để căn chỉnh layout
 import Loading from '../../Loading/Loading';
+import { getToken } from '../../../Utils/UserInfoUtils';
+import API from '../../../Utils/API/API';
+import { getDataWithToken } from '../../../Utils/FetchUtils';
 const { Search } = Input;
 
 const Store = () => {
+    const token = getToken();
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchValue, setSearchValue] = useState("");
@@ -22,8 +26,8 @@ const Store = () => {
     const fetchStores = async () => {
         setLoading(true);
         try {
-            const queryParams = `stores?${getStoreParams()}`;
-            const response = await fetch(`http://localhost:9999/store-owner/${queryParams}`);
+            const queryParams = `?${getStoreParams()}`;
+            const response = await getDataWithToken(API.STORE_OWNER.GET_STORE + queryParams, token);
             const result = await response.json();
 
             // Map dữ liệu nhận được

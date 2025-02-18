@@ -1,5 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { introspect } from "../FetchUtils";
+import API from '../API/API'
 
 export  function getToken() {
   return sessionStorage.getItem('token') || localStorage.getItem('token');
@@ -18,7 +19,7 @@ export const getRole = () =>{
 
 export const logout = () => {
   const token = getToken();
-  introspect('http://localhost:9999/logout',{token})
+  introspect(API.AUTH.LOGOUT,{token})
   sessionStorage.removeItem('token');
   localStorage.removeItem('token');
 }
