@@ -7,6 +7,7 @@ import Loading from '../../Loading/Loading';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import API from '../../../Utils/API/API';
 import { getDataWithToken } from '../../../Utils/FetchUtils';
+import { SoundTwoTone } from '@ant-design/icons';
 const { Search } = Input;
 
 const Store = () => {
@@ -15,7 +16,7 @@ const Store = () => {
     const [loading, setLoading] = useState(false);
     const [searchValue, setSearchValue] = useState("");
     const [timeoutId, setTimeoutId] = useState(null);
-
+    
     const getStoreParams = () => {
         // Xử lý params (chỉ cần `searchValue` cho API chuyển sang đại diện key)
         return qs.stringify({
@@ -28,10 +29,8 @@ const Store = () => {
         try {
             const queryParams = `?${getStoreParams()}`;
             const response = await getDataWithToken(API.STORE_OWNER.GET_STORE + queryParams, token);
-            const result = await response.json();
-
+            setData(response.content); // Kết quả trả về từ API
             // Map dữ liệu nhận được
-            setData(result.content || []); // Kết quả trả về từ API
         } catch (error) {
             message.error('Không thể tải dữ liệu danh sách stores');
         } finally {
@@ -71,16 +70,20 @@ const Store = () => {
 
                 <div className="product-card-container">
                     {
-                        data.map((store) => (
-                            // Render từng ProductCard 
-                            <ProductCard
-                                key={store.storeID} // Sử dụng storeID làm key
-                                urlStore={`/store/${store.storeID}`} // Đường dẫn
-                                storeName={store.storeName} // Tên cửa hàng
-                                storeStatus={store.status === 'ACTIVE' ? 'Active' : 'Inactive'} // Trạng thái
-                                urlImg={store.imageUrl || 'https://via.placeholder.com/150'} // Ảnh mặc định nếu không có ảnh
-                            />
-                        ))
+                        data && (
+                            <>{
+                                data.map((store) => (
+                                    // Render từng ProductCard 
+                                    <ProductCard
+                                        key={store.storeID} // Sử dụng storeID làm key
+                                        urlStore={`/store/${store.storeID}`} // Đường dẫn
+                                        storeName={store.storeName} // Tên cửa hàng
+                                        storeStatus={store.status === 'ACTIVE' ? 'Active' : 'Inactive'} // Trạng thái
+                                        urlImg={store.imageUrl || 'https://via.placeholder.com/150'} // Ảnh mặc định nếu không có ảnh
+                                    />
+                                ))}
+                            </>
+                        )
                     }
                 </div>
             </Spin>
