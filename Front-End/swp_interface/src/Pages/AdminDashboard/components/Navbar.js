@@ -57,7 +57,6 @@ const CustomNavbar = () => {
 
   return (
     <nav className="navbar navbar-dark bg-dark px-3 d-flex justify-content-end">
-      {/* Notifications Dropdown */}
       <div className="dropdown me-3">
         <button
           type="button"
@@ -146,12 +145,12 @@ const CustomNavbar = () => {
           style={{ zIndex: 1050 }}
         >
           <li>
-            <a className="dropdown-item" href="/profile">
+            <a className="dropdown-item" href="#">
               Profile
             </a>
           </li>
           <li>
-            <a className="dropdown-item" href="/settings">
+            <a className="dropdown-item" href="#">
               Settings
             </a>
           </li>
@@ -159,7 +158,7 @@ const CustomNavbar = () => {
             <hr className="dropdown-divider" />
           </li>
           <li>
-            <a className="dropdown-item" href="/logout">
+            <a className="dropdown-item" href="/">
               Logout
             </a>
           </li>

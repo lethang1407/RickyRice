@@ -15,7 +15,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/home/owner")
+@RequestMapping("/employee")
 @RequiredArgsConstructor
 public class EmployeeProductController {
     private final ProductService productService;
@@ -28,7 +28,7 @@ public class EmployeeProductController {
         return categoryService.getAllCategories(page,size,"categoryID",false);
     }
 
-    @GetMapping("/products/byCategoryName")
+    @GetMapping("/products/category")
     public Page<EmployeeCategoryDTO> getCategoryByName(@RequestParam("name")String name, @RequestParam("page") int page,
                                                        @RequestParam("size") int size) {
 
@@ -43,13 +43,11 @@ public class EmployeeProductController {
     @GetMapping("/products/byCategory")
     public Page<EmployeeProductDTO> getProductByCateID(@RequestParam("categoryID")String categoryID, @RequestParam("page") int page,
                                                        @RequestParam("size") int size) {
-        log.info("categoryID :" + categoryID);
        return productService.getProductsByCateID(categoryID,page,size,"price",false);
     }
     @GetMapping("/products/byProductName")
     public Page<EmployeeProductDTO> getProductByName(@RequestParam("name")String name, @RequestParam("categoryID")String categoryID, @RequestParam("page") int page,
                                                      @RequestParam("size") int size) {
-        log.info("name :" + name);
         return productService.getProductBySearch(name,categoryID,page,size,"price",false);
     }
 

@@ -4,10 +4,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // Lấy đường dẫn hiện tại
+  const location = useLocation(); 
 
   const handleLinkClick = (path) => {
-    navigate(path); // Điều hướng trang khi click
+    navigate(path); 
   };
 
   const links = [
@@ -15,7 +15,6 @@ const Sidebar = () => {
     { name: "Store owner", path: "/admin/account_owner" },
     { name: "Store", path: "/admin/view_stores" },
     { name: "Service", path: "/admin/subscription_plans" },
-    // { name: "Settings", path: "/admin" },
   ];
 
   return (

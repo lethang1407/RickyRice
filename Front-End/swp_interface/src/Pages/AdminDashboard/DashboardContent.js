@@ -65,7 +65,6 @@ const DashboardContent = () => {
       <h2>Welcome to Admin Dashboard</h2>
       <br />
       <Row className="mt-4">
-        {/* Tổng doanh thu */}
         <Col md={3}>
           <Card className="text-center bg-success text-white">
             <Card.Body>
@@ -75,7 +74,6 @@ const DashboardContent = () => {
           </Card>
         </Col>
 
-        {/* Tổng số tài khoản Store Owners */}
         <Col md={3}>
           <Card
             className="text-center bg-primary text-white"
@@ -89,7 +87,6 @@ const DashboardContent = () => {
           </Card>
         </Col>
 
-        {/* Tổng số cửa hàng */}
         <Col md={3}>
           <Card
             className="text-center bg-warning text-white"
@@ -103,7 +100,6 @@ const DashboardContent = () => {
           </Card>
         </Col>
 
-        {/* Tổng số Subscription Plans */}
         <Col md={3}>
           <Card
             className="text-center bg-info text-white"
@@ -118,7 +114,6 @@ const DashboardContent = () => {
         </Col>
       </Row>
 
-      {/* Gửi setTotalRevenue xuống để cập nhật tổng doanh thu */}
       <RevenueStatistics setTotalRevenue={setTotalRevenue} />
     </div>
   );
