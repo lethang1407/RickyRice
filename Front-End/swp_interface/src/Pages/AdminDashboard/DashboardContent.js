@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Card, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import RevenueStatistics from "./RevenueStatistics";
+import API from "../../Utils/API/API.js";
+import { getToken } from "../../Utils/UserInfoUtils";
 
 const DashboardContent = () => {
   const [totalRevenue, setTotalRevenue] = useState(0);
@@ -11,13 +13,16 @@ const DashboardContent = () => {
   const [totalSubscriptions, setTotalSubscriptions] = useState(0);
 
   const navigate = useNavigate();
+  const token = getToken();
 
   useEffect(() => {
     const fetchTotalAccounts = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:9999/admin/account_owner"
-        );
+        const response = await axios.get(API.ADMIN.GET_ALL_ACCOUNT, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (response.data.code === 200) {
           setTotalAccounts(response.data.data.length);
         }
@@ -31,9 +36,11 @@ const DashboardContent = () => {
   useEffect(() => {
     const fetchTotalStores = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:9999/admin/view_store"
-        );
+        const response = await axios.get(API.ADMIN.VIEW_ALL_STORE, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (response.data.code === 200) {
           setTotalStores(response.data.data.length);
         }
@@ -47,9 +54,11 @@ const DashboardContent = () => {
   useEffect(() => {
     const fetchTotalSubscriptions = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:9999/admin/subscription_plans"
-        );
+        const response = await axios.get(API.ADMIN.VIEW_ALL_SUBSCRIPTION_PLAN, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (response.data.code === 200) {
           setTotalSubscriptions(response.data.data.length);
         }

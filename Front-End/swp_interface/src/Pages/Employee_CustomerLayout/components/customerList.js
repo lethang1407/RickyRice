@@ -11,7 +11,8 @@ import debounce from "lodash.debounce";
 import moment from 'moment';
 import DropDown from './customerDrop';
 import { useNavigate } from 'react-router-dom';
-
+import { getToken } from '../../../Utils/UserInfoUtils';
+import API from '../../../Utils/API/API';
 const CustomerList = () => {
     const [loading, setLoading] = useState(true);
     const [customers, setCustomers] = useState([]);
@@ -27,7 +28,7 @@ const CustomerList = () => {
     });
     const navigate = useNavigate();
 
-
+    const token = getToken();
 
     const CustomerColumns = [
         {
@@ -199,7 +200,7 @@ const CustomerList = () => {
         // const { field, order } = sorter || sorterState || {};
 
         try {
-            const response = await axios.get('http://localhost:9999/employee/customers', {
+            const response = await axios.get(API.EMPLOYEE.GET_ALL_CUSTOMER, {
 
                 params: {
                     page: page - 1,
@@ -212,6 +213,9 @@ const CustomerList = () => {
                     // sortOrder: order || false,
                     // search: search || "",
 
+                },
+                headers: {
+                    Authorization: `Bearer ${token}`, // Chèn token vào header
                 },
             });
             console.log("Dữ liệu liên quan22:", response.data);

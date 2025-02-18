@@ -3,10 +3,14 @@ import { Table, message, Input, Modal, Spin } from 'antd';
 import qs from 'qs';
 import Loading from '../Loading/Loading';
 import InvoiceDetailModal from '../../Components/StoreOwner/InvoiceDetailModal/InvoiceDetailModal';
+import {getToken} from '../../Utils/UserInfoUtils'
+import { getDataWithToken } from '../../Utils/FetchUtils';
+import API from '../../Utils/API/API';
 
 const { Search } = Input;
 
 const Invoice = () => {
+    const token = getToken();
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchValue, setSearchValue] = useState("");
@@ -130,8 +134,8 @@ const Invoice = () => {
     const fetchInvoice = async () => {
         setLoading(true);
         try {
-            const queryParams = `invoices?phoneNumber=${encodeURIComponent(searchValue)}&` + getInvoiceParam(tableParams);
-            const response = await fetch(`http://localhost:9999/store-owner/${queryParams}`);
+            const queryParams = `?phoneNumber=${encodeURIComponent(searchValue)}&` + getInvoiceParam(tableParams);
+            const response = await getDataWithToken(API.STORE_OWNER.GET_INVOICES + queryParams, token);
             const result = response.json();
 
             setData(result.content || []);

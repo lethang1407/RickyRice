@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Spin, message } from 'antd';
+import API from '../../../Utils/API/API';
+import { getToken } from '../../../Utils/UserInfoUtils';
+import { getDataWithToken } from '../../../Utils/FetchUtils';
 
 const InvoiceDetailModal = ({ visible, invoiceID, onClose }) => {
+    const token = getToken();
     const [loading, setLoading] = useState(false);
     const [details, setDetails] = useState(null);
 
@@ -10,7 +14,7 @@ const InvoiceDetailModal = ({ visible, invoiceID, onClose }) => {
         const fetchInvoiceDetails = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`http://localhost:9999/store-owner/invoice-details/${invoiceID}`);
+                const response = await getDataWithToken(API.STORE_OWNER.GET_INVOICE_DETAIL + '?invoiceId' + invoiceID, token);
                 const result = await response.json();
                 setDetails(result); // Lưu chi tiết hóa đơn vào state
             } catch (error) {

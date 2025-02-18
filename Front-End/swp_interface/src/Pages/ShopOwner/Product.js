@@ -2,10 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Table, message, Input } from 'antd';
 import qs from 'qs';
 import Loading from '../Loading/Loading';
+import API from '../../Utils/API/API';
+import { getToken } from '../../Utils/UserInfoUtils';
+import { getDataWithToken } from '../../Utils/FetchUtils';
 
 const { Search } = Input;
 
 const Product = () => {
+    const token = getToken();
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchValue, setSearchValue] = useState("");
@@ -66,8 +70,8 @@ const Product = () => {
     const fetchInvoice = async () => {
         setLoading(true);
         try {
-            const queryParams = `products?productName=${encodeURIComponent(searchValue)}&` + getProductParam(tableParams);
-            const response = await fetch(`http://localhost:9999/store-owner/${queryParams}`);
+            const queryParams = `?productName=${encodeURIComponent(searchValue)}&` + getProductParam(tableParams);
+            const response = await getDataWithToken(API.STORE_OWNER.GET_STORE_PRODUCTS + queryParams, token);
             const result = await response.json();
 
             setData(result.content || []);

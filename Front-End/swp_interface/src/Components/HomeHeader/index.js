@@ -31,23 +31,24 @@ function HomeHeader(){
 		},1000)
 	}
 	const naviDashboard = () =>{
-		if(role=='ROLE_ADMIN'){
+		console.log(role);
+		if(role=='ADMIN'){
 			setLoading(true)
 			setTimeout(()=>{
 				setLoading(false);
 				navigate('/admin');
 			},1000)
-		}else if(role=='ROLE_EMPLOYEE'){
+		}else if(role=='EMPLOYEE'){
 			setLoading(true)
 			setTimeout(()=>{
 				setLoading(false);
-				navigate('/home/owner/products');
+				navigate('/employee/products');
 			},1000)
-		}else if(role=='ROLE_STORE_OWNER'){
+		}else if(role=='STORE_OWNER'){
 			setLoading(true)
 			setTimeout(()=>{
 				setLoading(false);
-				navigate('/home/store-owner/product');
+				navigate('/store-owner/store');
 			},1000)
 		}
 	}

@@ -6,7 +6,7 @@ function EmployeeProtected(){
   const navigate = useNavigate();
   const role = getRole();
   useEffect(()=>{
-    if(!(role=='ROLE_EMPLOYEE')){
+    if(!(role=='EMPLOYEE')){
       navigate('/unauthorized');
     }
   },[])
