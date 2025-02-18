@@ -4,6 +4,8 @@ import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import "./style.css";
 import axios from "axios";
+import API from "../../Utils/API/API.js";
+import { getToken } from "../../Utils/UserInfoUtils";
 
 const SubscriptionPlan = () => {
   const [formData, setFormData] = useState({
@@ -17,13 +19,16 @@ const SubscriptionPlan = () => {
   const [editMode, setEditMode] = useState(false);
   const [editPlan, setEditPlan] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+  const token = getToken();
 
   useEffect(() => {
     const fetchPlans = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:9999/admin/subscription_plans"
-        );
+        const response = await axios.get(API.ADMIN.VIEW_ALL_SUBSCRIPTION_PLAN, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setPlans(Array.isArray(response.data.data) ? response.data.data : []);
       } catch (error) {
         console.error("Error fetching subscription plans:", error);
@@ -51,11 +56,12 @@ const SubscriptionPlan = () => {
     }
     try {
       const response = await axios.post(
-        "http://localhost:9999/admin/create_subscription_plans",
+        API.ADMIN.CREATE_SUBSCRIPTION_PLAN,
         formData,
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -86,11 +92,12 @@ const SubscriptionPlan = () => {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:9999/admin/update_subscription_plans/${editPlan.subscriptionPlanID}`,
+        `API.ADMIN.UPDATE_ACCOUNT_STATUS/${editPlan.subscriptionPlanID}`,
         formData,
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         }
       );

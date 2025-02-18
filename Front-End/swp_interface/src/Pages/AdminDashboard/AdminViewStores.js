@@ -14,6 +14,8 @@ import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import StoreDetailModal from "./StoreDetailModal";
 import "./style.css";
+import API from "../../Utils/API/API.js";
+import { getToken } from "../../Utils/UserInfoUtils";
 
 const AdminViewStores = () => {
   const [stores, setStores] = useState([]);
@@ -27,13 +29,16 @@ const AdminViewStores = () => {
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
+  const token = getToken();
 
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:9999/admin/view_store"
-        );
+        const response = await axios.get(API.ADMIN.VIEW_ALL_STORE, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (response.data.code === 200) {
           setStores(response.data.data);
           setFilteredStores(response.data.data);
@@ -102,7 +107,7 @@ const AdminViewStores = () => {
       </Pagination.Item>
     ));
   };
-  // Hàm hiển thị biểu tượng sắp xếp
+
   const getSortIcon = (key) => {
     if (sortConfig.key === key) {
       return sortConfig.direction === "asc" ? "▲" : "▼";

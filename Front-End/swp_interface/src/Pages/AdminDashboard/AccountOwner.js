@@ -4,7 +4,8 @@ import { Container, Table, Form, Pagination } from "react-bootstrap";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import "./style.css";
-import API from '../../Utils/API/API.js';
+import API from "../../Utils/API/API.js";
+import { getToken } from "../../Utils/UserInfoUtils";
 
 const AccountOwner = () => {
   const [userData, setUserData] = useState([]);
@@ -16,14 +17,19 @@ const AccountOwner = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [currentPage, setCurrentPage] = useState(1);
-  const [recordsPerPage, setRecordsPerPage] = useState(10); 
+  const [recordsPerPage, setRecordsPerPage] = useState(10);
+
+  const token = getToken();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          API.ADMIN.GET_ALL_ACCOUNT
-        );
+        const response = await axios.get(API.ADMIN.GET_ALL_ACCOUNT, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         if (response.data.code === 200) {
           setUserData(response.data.data);
           setFilteredData(response.data.data);
@@ -38,22 +44,31 @@ const AccountOwner = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [token]);
 
   const updateAccountStatus = async (accountID, isActive) => {
     try {
       const response = await axios.patch(
-        "http://localhost:9999/admin/account_active",
+        API.ADMIN.UPDATE_ACCOUNT_STATUS,
         {
           id: accountID,
           isActive,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
       );
 
       if (response.data.code === 200) {
-        const updatedResponse = await axios.get(
-          "http://localhost:9999/admin/account_owner"
-        );
+        const updatedResponse = await axios.get(API.ADMIN.GET_ALL_ACCOUNT, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         if (updatedResponse.data.code === 200) {
           setUserData(updatedResponse.data.data);
           setFilteredData(updatedResponse.data.data);
@@ -131,7 +146,7 @@ const AccountOwner = () => {
     }
     return "⇅";
   };
-  
+
   const totalPages = Math.ceil(filteredData.length / recordsPerPage);
   const currentRecords = filteredData.slice(
     (currentPage - 1) * recordsPerPage,

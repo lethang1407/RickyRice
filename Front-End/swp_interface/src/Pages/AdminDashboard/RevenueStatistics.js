@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Table, Form, Pagination } from "react-bootstrap";
 import axios from "axios";
+import API from "../../Utils/API/API.js";
+import { getToken } from "../../Utils/UserInfoUtils";
 
 const RevenueStatistics = ({ setTotalRevenue }) => {
   const [revenueData, setRevenueData] = useState([]);
@@ -11,10 +13,15 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(5);
+  const token = getToken();
 
   useEffect(() => {
     axios
-      .get("http://localhost:9999/admin/view_revenue")
+      .get(API.ADMIN.VIEW_REVENUE, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         if (response.data.code === 200) {
           const data = response.data.data;

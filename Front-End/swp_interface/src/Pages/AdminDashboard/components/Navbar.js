@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Bell } from "react-bootstrap-icons";
-import API from '../../../Utils/API/API.js';
+import API from "../../../Utils/API/API.js";
+import { getToken } from "../../../Utils/UserInfoUtils";
 
 const CustomNavbar = () => {
   const avatarUrl =
@@ -10,8 +11,14 @@ const CustomNavbar = () => {
 
   const [notifications, setNotifications] = useState([]);
 
+  const token = getToken();
+
   useEffect(() => {
-    fetch(API.ADMIN.GET_NOTIFICATIONS_BY_ID(1))
+    fetch(API.ADMIN.GET_NOTIFICATIONS_BY_ID(1), {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         if (data.code === 200) {
@@ -19,41 +26,59 @@ const CustomNavbar = () => {
         }
       })
       .catch((error) => console.error("Error fetching notifications:", error));
-  }, []);
+  }, [token]);
 
-  const markAllAsRead = () => {
+  const markAllAsRead = async () => {
     const unreadIds = notifications
       .filter((notif) => !notif.isRead)
       .map((notif) => notif.notificationId);
-    fetch(API.ADMIN.MARK_NOTI_AS_READ, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ notificationIDs: unreadIds, isRead: true }),
-    }).then(() => {
-      setNotifications(
-        notifications.map((notif) => ({ ...notif, isRead: true }))
+
+    try {
+      const response = await fetch(API.ADMIN.MARK_NOTI_AS_READ, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ notificationIDs: unreadIds, isRead: true }),
+      });
+
+      if (!response.ok) throw new Error("Failed to mark notifications as read");
+
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notif) => ({ ...notif, isRead: true }))
       );
-    });
+    } catch (error) {
+      console.error("Error marking notifications as read:", error);
+    }
   };
 
-  const markAsRead = (notificationId) => {
-    fetch(API.ADMIN.MARK_NOTI_AS_READ, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ notificationIDs: [notificationId], isRead: true }),
-    }).then(() => {
-      setNotifications(
-        notifications.map((notif) =>
+  const markAsRead = async (notificationId) => {
+    try {
+      const response = await fetch(API.ADMIN.MARK_NOTI_AS_READ, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          notificationIDs: [notificationId],
+          isRead: true,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to mark notification as read");
+
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notif) =>
           notif.notificationId === notificationId
             ? { ...notif, isRead: true }
             : notif
         )
       );
-    });
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
   };
 
   return (
