@@ -12,7 +12,7 @@ const API = {
     CREATE_SUBSCRIPTION_PLAN: `${API_BASE_URL}/admin/create-subscription-plan`,
     UPDATE_SUBSCRIPTION_PLAN: (id) => `${API_BASE_URL}/admin/update-subscription-plan/${id}`,
     GET_NOTIFICATIONS_BY_ID: (id) => `${API_BASE_URL}/admin/notifications/${id}`,
-    MARK_NOTI_AS_READ: `${API_BASE_URL}/notifications/mark-as-read`
+    MARK_NOTI_AS_READ: `${API_BASE_URL}/admin/notifications/mark-as-read`
   },
   CUSTOMER:{
     GET_ALL_PRODUCT: `${API_BASE_URL}/store/products`

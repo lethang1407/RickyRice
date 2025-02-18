@@ -16,8 +16,6 @@ import StoreDetailModal from "./StoreDetailModal";
 import API from "../../Utils/API/API.js";
 import { getToken } from "../../Utils/UserInfoUtils";
 import "./style.css";
-import API from "../../Utils/API/API.js";
-import { getToken } from "../../Utils/UserInfoUtils";
 
 const AdminViewStores = () => {
   const token = getToken();
@@ -32,7 +30,6 @@ const AdminViewStores = () => {
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
-  const token = getToken();
 
   useEffect(() => {
     const fetchStores = async () => {
