@@ -20,15 +20,12 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final CustomerRepository customerRepository;
 
     @Override
-    public Page<StoreInvoiceDTO> getInvoices(int page, int size, String sortBy, boolean descending) {
+    public Page<StoreInvoiceDTO> getInvoices(String phoneNumber, int page, int size, String sortBy, boolean descending) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return invoiceRepository.findAll(pageable).map(invoiceConverter::toInvoiceDTO);
-    }
-    @Override
-    public Page<StoreInvoiceDTO> searchInvoices(String phoneNumber, int page, int size, String sortBy, boolean descending) {
-        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return invoiceRepository.findByCustomerIn(customerRepository.findByPhoneNumberContainingIgnoreCase(phoneNumber), pageable).map(invoiceConverter::toInvoiceDTO);
+        if (phoneNumber == null || phoneNumber.isEmpty()) {
+            return invoiceRepository.findAll(pageable).map(invoiceConverter::toStoreInvoiceDTO);
+        }
+        return invoiceRepository.findByCustomerIn(customerRepository.findByPhoneNumberContainingIgnoreCase(phoneNumber), pageable).map(invoiceConverter::toStoreInvoiceDTO);
     }
 }
