@@ -24,10 +24,10 @@ public class Zone extends AbstractEntity {
     String location;
 
     @Column(name = "Quantity", nullable = false)
-    long quantity;
+    Long quantity;
 
     @Column(name = "Size", nullable = false)
-    long size;
+    Long size;
 
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, fetch = FetchType.LAZY)
     @JoinColumn(name = "ProductID")

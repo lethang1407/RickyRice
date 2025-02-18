@@ -39,7 +39,6 @@ public class Account extends AbstractEntity {
     @Column(name = "Avatar", columnDefinition = "NVARCHAR(255)")
     String avatar;
 
-
     @Column(name = "IsActive")
     Boolean isActive;
 

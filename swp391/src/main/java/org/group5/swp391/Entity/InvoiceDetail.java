@@ -21,10 +21,10 @@ public class InvoiceDetail {
     String invoiceDetailID;
 
     @Column(name = "Quantity", nullable = false)
-    long quantity;
+    Long quantity;
 
     @Column(name = "Discount")
-    int discount;
+    Integer discount;
 
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinColumn(name = "InvoiceID")
@@ -40,7 +40,7 @@ public class InvoiceDetail {
     String productImage;
 
     @Column(name = "ProductPrice")
-    double productPrice;
+    Double productPrice;
 
     @Column(name = "ProductCategoryName")
     String productCategoryName;

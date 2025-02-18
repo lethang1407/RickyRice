@@ -29,7 +29,7 @@ public class AdminAPI {
 
 
     // Xem danh sách tài khoản có role STORE_OWNER
-    @GetMapping("/account_owner")
+    @GetMapping("/account-owner")
     public ApiResponse<List<AccountResponse>> getAccountOwner() {
         List<AccountResponse> accountResponses = accountService.getAccountsByRole("STORE_OWNER");
 
@@ -41,7 +41,7 @@ public class AdminAPI {
     }
 
     // Lấy account theo ID
-    @GetMapping("/accountID/{accountID}")
+    @GetMapping("/account/{accountID}")
     public ApiResponse<AccountResponse> getAccountById(@PathVariable String accountID) {
         AccountResponse accountResponse = accountService.getAccountsByID(accountID);
         return ApiResponse.<AccountResponse>builder()
@@ -52,7 +52,7 @@ public class AdminAPI {
     }
 
     // Cập nhật trạng thái của tài khoản
-    @PatchMapping("/account_active")
+    @PatchMapping("/account-active")
     public ApiResponse<Void> updateAccountActiveStatus(@RequestBody UpdateAccountActiveRequest request) {
         accountService.updateAccountActiveStatus(request);
         return ApiResponse.<Void>builder()
@@ -62,7 +62,7 @@ public class AdminAPI {
     }
 
     // Xem thống kê các hoạt động dịch vụ của trang web
-    @GetMapping("/view_revenue")
+    @GetMapping("/view-revenue")
     public ApiResponse<List<AppStatisticsResponse>> viewRevenue() {
         List<AppStatisticsResponse> statistics = appStatisticsService.getStatistics();
         return ApiResponse.<List<AppStatisticsResponse>>builder()
@@ -73,7 +73,7 @@ public class AdminAPI {
     }
 
     // Xem danh sách cửa hàng sử dụng dịch vụ vủa trang web
-    @GetMapping("/view_store")
+    @GetMapping("/view-store")
     public ApiResponse<List<ViewStoreResponse>> viewStores() {
         List<ViewStoreResponse> stores = storeService.getAllStores();
         return ApiResponse.<List<ViewStoreResponse>>builder()
@@ -84,7 +84,7 @@ public class AdminAPI {
     }
 
     // Lấy danh sách các gói dịch vụ đăng kí của trang web
-    @GetMapping("/subscription_plans")
+    @GetMapping("/subscription-plans")
     public ApiResponse<List<SubscriptionPlanResponse>> getAllSubscriptionPlans() {
         List<SubscriptionPlanResponse> plans = subscriptionPlanService.getAllSubscriptionPlans();
         return ApiResponse.<List<SubscriptionPlanResponse>>builder()
@@ -95,7 +95,7 @@ public class AdminAPI {
     }
 
     // Lấy gói dịch vụ đăng kí của trang web theo ID
-    @GetMapping("/subscription_plans/{id}")
+    @GetMapping("/subscription-plan/{id}")
     public ApiResponse<SubscriptionPlanResponse> getSubscriptionPlanById(@PathVariable String id) {
         SubscriptionPlanResponse plan = subscriptionPlanService.getSubscriptionPlanById(id);
         return ApiResponse.<SubscriptionPlanResponse>builder()
@@ -106,7 +106,7 @@ public class AdminAPI {
     }
 
     // Thêm mới 1 gói dịch vụ của trang web
-    @PostMapping("/create_subscription_plans")
+    @PostMapping("/create-subscription-plan")
     public ApiResponse<SubscriptionPlanResponse> createSubscriptionPlan(@RequestBody SubscriptionPlanRequest request) {
         SubscriptionPlanResponse plan = subscriptionPlanService.createSubscriptionPlan(request);
         return ApiResponse.<SubscriptionPlanResponse>builder()
@@ -117,7 +117,7 @@ public class AdminAPI {
     }
 
     // Cập nhật gói dịch vụ của trang web
-    @PutMapping("/update_subscription_plans/{id}")
+    @PutMapping("/update-subscription-plan/{id}")
     public ApiResponse<SubscriptionPlanResponse> updateSubscriptionPlan(
             @PathVariable String id, @RequestBody SubscriptionPlanRequest request) {
         SubscriptionPlanResponse updatedPlan = subscriptionPlanService.updateSubscriptionPlan(id, request);
@@ -140,7 +140,7 @@ public class AdminAPI {
     }
 
     // Cập nhật trạng thái đã xem thông báo
-    @PatchMapping("/notifications/mark_as_read")
+    @PatchMapping("/notifications/mark-as-read")
     public ApiResponse<Void> markMultipleNotificationsAsRead(
             @RequestBody MarkAsReadRequest request) {
         notificationService.markMultipleAsRead(request);
@@ -149,5 +149,4 @@ public class AdminAPI {
                 .message("Notifications marked as read successfully")
                 .build();
     }
-
 }

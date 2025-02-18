@@ -20,7 +20,7 @@ public class Debt extends AbstractEntity {
     String debtID;
 
     @Column(name = "Amount", nullable = false)
-    double amount;
+    Double amount;
 
     @Column(name = "Description", columnDefinition = "NVARCHAR(255)")
     String description;
