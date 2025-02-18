@@ -62,7 +62,7 @@ export const handleUpload = async (url,file) => {
 
 export const introspect = async (url, token)=>{
   try {
-    const response = await axios.post(url, {token});
+    const response = await axios.post(url, token);
     return response.data; 
   } catch (error) {
     console.error('Lỗi khi lấy dữ liệu:', error);

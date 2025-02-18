@@ -18,18 +18,17 @@ const AccountOwner = () => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(10);
-
   const token = getToken();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(API.ADMIN.GET_ALL_ACCOUNT, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
+        const response = await axios.get(
+          API.ADMIN.GET_ALL_ACCOUNT, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
         if (response.data.code === 200) {
           setUserData(response.data.data);
           setFilteredData(response.data.data);
@@ -68,7 +67,6 @@ const AccountOwner = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
         if (updatedResponse.data.code === 200) {
           setUserData(updatedResponse.data.data);
           setFilteredData(updatedResponse.data.data);

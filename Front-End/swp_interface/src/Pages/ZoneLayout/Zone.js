@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Pagination } from "antd";
 import debounce from "lodash.debounce";
 import moment from 'moment';
+
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -21,6 +22,9 @@ import { Spin, List as ListItem } from 'antd';
 import { Button, Layout, Menu, theme, SearchOutlined, Select, Space, Modal } from 'antd';
 import CustomFooter from "../../Components/Footer";
 import Search from 'antd/es/transfer/search';
+
+import { getToken } from '../../Utils/UserInfoUtils';
+import API from '../../Utils/API/API';
 const { Header, Sider, Content } = Layout;
 
 
@@ -39,6 +43,7 @@ const ZoneList = () => {
     const [totalItems, setTotalItems] = useState(0);
     const [searchTerm, setSearchTerm] = useState("");
     const [sorterState, setSorterState] = useState(null);
+    const token = getToken();
 
     const [filters, setFilters] = useState({
         quantityMin: null,
@@ -221,11 +226,11 @@ const ZoneList = () => {
             order: sortOrder,
         }, searchTerm);
     };
-
+    // 'http://localhost:9999/employee/ricezone'
     const fetchZone = async (page, size, filters, sorter, search) => {
         const { field, order } = sorter || sorterState || {};
         try {
-            const response = await axios.get('http://localhost:9999/employee/ricezone', {
+            const response = await axios.get(API.EMPLOYEE.GET_RICEZONE, {
 
                 params: {
                     page: page - 1,
@@ -237,6 +242,9 @@ const ZoneList = () => {
                     sortBy: field,
                     sortOrder: order || false,
                     search: search || "",
+                },
+                headers: {
+                    Authorization: `Bearer ${token}`, // Chèn token vào header
                 },
             });
             console.log("Dữ liệu liên quan22:", response.data);
@@ -273,7 +281,7 @@ const ZoneList = () => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <Layout style={{minHeight:'100vh'}}> 
+            <Layout style={{ minHeight: '100vh' }}>
                 <Sider
                     style={{
                         backgroundColor: 'white',

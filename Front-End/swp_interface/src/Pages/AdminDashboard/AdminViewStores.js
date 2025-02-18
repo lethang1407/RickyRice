@@ -13,11 +13,14 @@ import axios from "axios";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import StoreDetailModal from "./StoreDetailModal";
+import API from "../../Utils/API/API.js";
+import { getToken } from "../../Utils/UserInfoUtils";
 import "./style.css";
 import API from "../../Utils/API/API.js";
 import { getToken } from "../../Utils/UserInfoUtils";
 
 const AdminViewStores = () => {
+  const token = getToken();
   const [stores, setStores] = useState([]);
   const [filteredStores, setFilteredStores] = useState([]);
   const [loading, setLoading] = useState(true);

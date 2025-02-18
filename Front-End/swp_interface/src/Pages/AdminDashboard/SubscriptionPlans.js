@@ -92,7 +92,7 @@ const SubscriptionPlan = () => {
     e.preventDefault();
     try {
       await axios.put(
-        `API.ADMIN.UPDATE_ACCOUNT_STATUS/${editPlan.subscriptionPlanID}`,
+       `API.ADMIN.UPDATE_ACCOUNT_STATUS/${editPlan.subscriptionPlanID}`,
         formData,
         {
           headers: {

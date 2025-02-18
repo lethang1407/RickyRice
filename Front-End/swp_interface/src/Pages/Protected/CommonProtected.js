@@ -4,6 +4,7 @@ import { introspect } from "../../Utils/FetchUtils";
 import { getToken } from "../../Utils/UserInfoUtils";
 import { error } from "../../Utils/AntdNotification";
 import { message } from "antd";
+import API from "../../Utils/API/API";
 
 function CommonProtected(){
   const [messageApi, contextHolder] = message.useMessage();
@@ -12,7 +13,7 @@ function CommonProtected(){
   const [authenticated,setAuthenticated] = useState(null);
   useEffect(()=>{
     const getIntrospect = async () =>{
-      const res = await introspect('http://localhost:9999/introspect',token)
+      const res = await introspect(API.AUTH.INTROSPECT, {token});
       setAuthenticated(res.data.valid);
     }
     if(token){

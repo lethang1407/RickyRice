@@ -6,7 +6,7 @@ function StoreOwnerProtected(){
   const navigate = useNavigate();
   const role = getRole();
   useEffect(()=>{
-    if(!(role=='ROLE_STORE_OWNER')){
+    if(!(role=='STORE_OWNER')){
       navigate('/unauthorized');
     }
   },[])

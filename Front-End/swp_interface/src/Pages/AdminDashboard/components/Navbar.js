@@ -10,15 +10,14 @@ const CustomNavbar = () => {
     "https://sm.ign.com/ign_nordic/cover/a/avatar-gen/avatar-generations_prsz.jpg";
 
   const [notifications, setNotifications] = useState([]);
-
   const token = getToken();
 
   useEffect(() => {
-    fetch(API.ADMIN.GET_NOTIFICATIONS_BY_ID(1), {
+    fetch(fetch(API.ADMIN.GET_NOTIFICATIONS_BY_ID(1), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    })
+    }))
       .then((response) => response.json())
       .then((data) => {
         if (data.code === 200) {
@@ -32,21 +31,20 @@ const CustomNavbar = () => {
     const unreadIds = notifications
       .filter((notif) => !notif.isRead)
       .map((notif) => notif.notificationId);
-
-    try {
-      const response = await fetch(API.ADMIN.MARK_NOTI_AS_READ, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ notificationIDs: unreadIds, isRead: true }),
-      });
-
-      if (!response.ok) throw new Error("Failed to mark notifications as read");
-
-      setNotifications((prevNotifications) =>
-        prevNotifications.map((notif) => ({ ...notif, isRead: true }))
+      try {
+        const response = await fetch(API.ADMIN.MARK_NOTI_AS_READ, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ notificationIDs: unreadIds, isRead: true }),
+        });
+  
+        if (!response.ok) throw new Error("Failed to mark notifications as read");
+  
+        setNotifications((prevNotifications) =>
+          prevNotifications.map((notif) => ({ ...notif, isRead: true }))
       );
     } catch (error) {
       console.error("Error marking notifications as read:", error);
