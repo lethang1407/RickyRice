@@ -118,7 +118,6 @@ const DashboardContent = () => {
         </Col>
       </Row>
 
-      {/* Gửi setTotalRevenue xuống để cập nhật tổng doanh thu */}
       <RevenueStatistics setTotalRevenue={setTotalRevenue} />
     </div>
   );

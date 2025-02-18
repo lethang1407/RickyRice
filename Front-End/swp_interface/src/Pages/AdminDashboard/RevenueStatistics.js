@@ -12,7 +12,6 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(5);
 
-  // Fetch dữ liệu từ API
   useEffect(() => {
     axios
       .get("http://localhost:9999/admin/view_revenue")
@@ -34,13 +33,11 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
       .finally(() => setLoading(false));
   }, [setTotalRevenue]);
 
-  // Hàm sắp xếp dữ liệu
   const handleSort = (key) => {
     setSortBy(key);
     setSortOrder(sortBy === key && sortOrder === "asc" ? "desc" : "asc");
   };
 
-  // Lọc dữ liệu theo từ khóa tìm kiếm
   const filteredData = useMemo(() => {
     return revenueData.filter((item) =>
       [item.storeName, item.subcriptionPlanName, item.createdBy].some((field) =>
@@ -77,7 +74,6 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
     <div>
       <h3 className="mt-5">Revenue Statistics</h3>
 
-      {/* Thanh tìm kiếm và bộ lọc */}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <Form.Control
           type="text"
@@ -105,7 +101,6 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
         </div>
       </div>
 
-      {/* Hiển thị dữ liệu */}
       {loading ? (
         <p>Loading data...</p>
       ) : error ? (
@@ -165,7 +160,6 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
             </tbody>
           </Table>
 
-          {/* Phân trang */}
           <Pagination className="mt-3">
             <Pagination.Prev
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
