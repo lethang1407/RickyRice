@@ -9,7 +9,6 @@ import java.util.List;
 
 @Service
 public interface StoreService {
-    public Page<StoreInfoDTO> getStores(int page, int size, String sortBy, boolean descending);
-    public Page<StoreInfoDTO> searchStores(String storeName, int page, int size, String sortBy, boolean descending);
+    public Page<StoreInfoDTO> getStores(String storeName, int page, int size, String sortBy, boolean descending);
     public List<ViewStoreResponse> getAllStores();
 }

@@ -1,0 +1,20 @@
+.product-card-container {
+  display: grid; /* Sử dụng grid layout */
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); /* Tự động sắp xếp */
+  gap: 20px; /* Khoảng cách giữa các ProductCard */
+  margin-top: 16px; /* Cách search box */
+  padding: 16px;
+  background-color: #f9f9f9; /* Màu nền cho phần danh sách */
+  border-radius: 8px; /* Làm bo góc phần danh sách */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng */
+}
+
+// Nếu cần style thêm cho ProductCard bên trong
+.wrapper {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05); /* Phóng to nhẹ */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Hiệu ứng bóng khi hover */
+  }
+}

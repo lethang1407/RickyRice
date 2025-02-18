@@ -26,16 +26,12 @@ public class ProductServiceImpl implements ProductService {
 
     // Chien
     @Override
-    public Page<StoreProductDTO> getProducts(int page, int size, String sortBy, boolean descending) {
+    public Page<StoreProductDTO> getProducts(String productName, int page, int size, String sortBy, boolean descending) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return productRepository.findAll(pageable).map(productConverter::toStoreProductDTO);
-    }
-
-    @Override
-    public Page<StoreProductDTO> searchProducts(String productName, int page, int size, String sortBy, boolean descending) {
-        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
+        if(productName == null || productName.isEmpty()){
+            productRepository.findAll(pageable).map(productConverter::toStoreProductDTO);
+        }
         return productRepository.findByNameContainingIgnoreCase(productName, pageable).map(productConverter::toStoreProductDTO);
     }
 

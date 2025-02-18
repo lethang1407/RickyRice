@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class InvoiceConverter {
 
-    public StoreInvoiceDTO toInvoiceDTO(Invoice invoice) {
+    public StoreInvoiceDTO toStoreInvoiceDTO(Invoice invoice) {
         StoreInvoiceDTO storeInvoiceDTO = new StoreInvoiceDTO();
 
         storeInvoiceDTO.setInvoiceID(invoice.getInvoiceID());

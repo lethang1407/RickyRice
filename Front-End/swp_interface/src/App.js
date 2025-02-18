@@ -12,7 +12,7 @@ import SubscriptionPlans from "./Pages/AdminDashboard/SubscriptionPlans";
 import ProductsList from './Pages/ProductsLayout/ProductsLayout';
 import ZoneList from './Pages/ZoneLayout/Zone';
 import CreateProduct from './Pages/CreateProduct/CreateProduct';
-import Store from "./Pages/ShopOwner/Store";
+import Store from "./Pages/ShopOwner/Store/Store";
 import StoreOwnerLayout from "./Components/StoreOwner/Layout";
 import Invoice from "./Pages/ShopOwner/Invoice";
 import Product from "./Pages/ShopOwner/Product";
@@ -44,7 +44,7 @@ function App() {
             <Route path='/home/owner/products/CreateProduct' element={<CreateProduct />}></Route>
           </Route>
           <Route element={<StoreOwnerProtected/>}>
-            <Route path="/home/store-owner" element={<StoreOwnerLayout />}>
+            <Route path="/store-owner" element={<StoreOwnerLayout />}>
               <Route path="store" element={<Store />}></Route>
               <Route path="invoice" element={<Invoice />}></Route>
               <Route path="product" element={<Product />}></Route>

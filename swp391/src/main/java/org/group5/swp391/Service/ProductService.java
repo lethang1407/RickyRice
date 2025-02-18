@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface ProductService {
-    public Page<StoreProductDTO> getProducts(int page, int size, String sortBy, boolean descending);
-    public Page<StoreProductDTO> searchProducts(String productName, int page, int size, String sortBy, boolean descending);
+    public Page<StoreProductDTO> getProducts(String productName, int page, int size, String sortBy, boolean descending);
     public Page<EmployeeProductDTO> getProductsByCateID(String CateID, int page, int size, String sortBy, boolean descending);
     public Page<EmployeeProductDTO>getProductBySearch(String name, String categoryID, int page, int size, String sortBy, boolean descending);
     public Page<CustomerProductDTO> getAllProducts();
