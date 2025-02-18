@@ -21,6 +21,10 @@ import Unauthorized from "./Pages/ErrorPage/Unauthorized";
 import AdminProtected from "./Pages/Protected/AdminProtected";
 import EmployeeProtected from "./Pages/Protected/EmployeeProtected";
 import StoreOwnerProtected from "./Pages/Protected/StoreOwnerProtected";
+import Employee_CustomerLayout from "./Pages/Employee_CustomerLayout";
+import Employee_Customer from "./Pages/Employee_CustomerLayout";
+import CustomerIN4Edit from "./Pages/Employee_CustomerLayout/components/customeEdit";
+import CustomerIN4Create from "./Pages/Employee_CustomerLayout/components/customerCreate";
 function App() {
   return (
     <>
@@ -38,10 +42,13 @@ function App() {
             <Route path="/admin/view_stores" element={<AdminViewStores />}></Route>
             <Route path="/admin/subscription_plans" element={<SubscriptionPlans />}></Route>
           </Route>
-          <Route element={<EmployeeProtected/>}>
-            <Route path='/home/owner/products' element={<ProductsList />}> </Route>
-            <Route path='/home/owner/ricezone' element={<ZoneList />}></Route>
-            <Route path='/home/owner/products/CreateProduct' element={<CreateProduct />}></Route>
+          <Route element={<EmployeeProtected />}>
+            <Route path='/employee/products' element={<ProductsList />}> </Route>
+            <Route path='/employee/ricezone' element={<ZoneList />}></Route>
+            <Route path='/employee/products/createproduct' element={<CreateProduct />}></Route>
+            <Route path='/employee/customers/edit' element={<CustomerIN4Edit />}></Route>
+            <Route path='/employee/customers' element={<Employee_Customer />}></Route>
+            <Route path='/employee/customers/create' element={<CustomerIN4Create />}></Route>
           </Route>
           <Route element={<StoreOwnerProtected/>}>
             <Route path="/store-owner" element={<StoreOwnerLayout />}>

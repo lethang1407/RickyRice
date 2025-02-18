@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dropdown, Space, Button } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 
 const DropDown = () => {
@@ -10,11 +10,11 @@ const DropDown = () => {
         {
             key: '1',
             label: (
-                <Button
+                <Button icon={<PlusCircleOutlined />}
                     type="link"
-                    onClick={() => navigate('/employee/products/createproduct')}
+                    onClick={() => navigate('/employee/customers/create')}
                 >
-                    Add More Product
+                    Create New Customer
                 </Button>
             ),
         },
@@ -30,7 +30,7 @@ const DropDown = () => {
         >
             <a onClick={(e) => e.preventDefault()}>
                 <Space>
-                    Add More Product
+                    Customer Options
                     <DownOutlined />
                 </Space>
             </a>

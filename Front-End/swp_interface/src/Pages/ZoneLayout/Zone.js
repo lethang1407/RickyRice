@@ -4,6 +4,7 @@ import DropDown from '../ProductsEdit/ProductsEdit';
 import { Table, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { Pagination } from "antd";
+import debounce from "lodash.debounce";
 import moment from 'moment';
 import {
     MenuFoldOutlined,
@@ -13,6 +14,7 @@ import {
     ShopOutlined,
     VideoCameraOutlined,
     InsertRowBelowOutlined,
+    TeamOutlined,
 } from '@ant-design/icons';
 import axios from 'axios';
 import { Spin, List as ListItem } from 'antd';
@@ -35,8 +37,8 @@ const ZoneList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [totalItems, setTotalItems] = useState(0);
-
-    const [searchParams, setSearchParams] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [sorterState, setSorterState] = useState(null);
 
     const [filters, setFilters] = useState({
         quantityMin: null,
@@ -52,15 +54,8 @@ const ZoneList = () => {
 
 
     useEffect(() => {
-        if (searchParams) {
-            const debounceTimeout = setTimeout(() => {
-                fetchSearchZones(currentPage, pageSize, searchParams);
-            }, 1000);
-            return () => clearTimeout(debounceTimeout);
-        } else {
-            fetchZone(currentPage, pageSize, filters);
-        }
-    }, [currentPage, pageSize, searchParams]);
+        fetchZone(currentPage, pageSize, filters, null, searchTerm);
+    }, [currentPage, pageSize, searchTerm]);
 
     const Zonecolumns = [
         {
@@ -81,21 +76,25 @@ const ZoneList = () => {
         {
             title: 'Location',
             dataIndex: 'location',
+            sorter: true,
             key: 'location',
         },
         {
             title: 'Quantity',
             dataIndex: 'quantity',
+            sorter: true,
             key: 'quantity',
         },
         {
             title: 'size',
             dataIndex: 'size',
+            sorter: true,
             key: 'size',
         },
         {
             title: 'Created At',
             dataIndex: 'created_at',
+            sorter: true,
             key: 'created_at',
         },
         {
@@ -112,8 +111,10 @@ const ZoneList = () => {
             title: "Actions",
             key: "actions",
             render: (text, record) => (
-                <Button type="primary" onClick={() =>
-                    showModal(record)}  >
+                <Button type="primary" onClick={() => {
+                    showModal(record);
+                }}
+                >
                     Store
                 </Button>
             ),
@@ -187,7 +188,7 @@ const ZoneList = () => {
         setFilters({ ...filters, [type]: value });
     };
     const handleFilterSubmit = () => {
-        fetchZone(currentPage, pageSize, filters);
+        fetchZone(currentPage, pageSize, filters, null, searchTerm);
     };
 
 
@@ -195,16 +196,36 @@ const ZoneList = () => {
         navigate(path);
     };
 
-    const handleTableChange = (pagination) => {
+    const handleSearchChange = debounce((value) => {
+        setSearchTerm(value);
+        setLoading(true);
+        fetchZone(currentPage, pageSize, filters, null, searchTerm);
+    }, 1000);
+
+    const handleTableChange = (pagination, _, sorter) => {
+
         const { current, pageSize } = pagination;
+        const sortBy = sorter.columnKey || "size";
+        const sortOrder = sorter.order
+            ? sorter.order === "ascend" ? "false" : "true"
+            : "false";
 
         setCurrentPage(current);
         setPageSize(pageSize);
-        fetchZone(current, pageSize, filters);
+        setSorterState({
+            field: sortBy,
+            order: sortOrder,
+        });
+        fetchZone(current, pageSize, filters, {
+            field: sorter.columnKey,
+            order: sortOrder,
+        }, searchTerm);
     };
-    const fetchZone = async (page, size, filters) => {
+
+    const fetchZone = async (page, size, filters, sorter, search) => {
+        const { field, order } = sorter || sorterState || {};
         try {
-            const response = await axios.get('http://localhost:9999/home/owner/ricezone', {
+            const response = await axios.get('http://localhost:9999/employee/ricezone', {
 
                 params: {
                     page: page - 1,
@@ -213,6 +234,9 @@ const ZoneList = () => {
                     quantityMax: filters ? filters.quantityMax : null,
                     sizeMin: filters ? filters.sizeMin : null,
                     sizeMax: filters ? filters.sizeMax : null,
+                    sortBy: field,
+                    sortOrder: order || false,
+                    search: search || "",
                 },
             });
             console.log("Dữ liệu liên quan22:", response.data);
@@ -230,29 +254,8 @@ const ZoneList = () => {
     }
 
 
-
-    const fetchSearchZones = async (page, size, searchParams) => {
-        try {
-            setLoading(true);
-            const response = await axios.get("http://localhost:9999/home/owner/ricezone/searchzone", {
-                params: {
-                    page: page - 1,
-                    size: size,
-                    search: searchParams
-                },
-            });
-
-            setZone(response.data.content);
-            setTotalItems(response.data.totalElements);
-            setLoading(false);
-        } catch (error) {
-            console.error("nổ lỗi rồi các cháu ơi:", error);
-            setLoading(false);
-        }
-    };
-
     const showModal = (zone) => {
-        setModalData(zone.storeDTO ? [zone.storeDTO] : []);
+        setModalData(zone.employeeStoreDTO ? [zone.employeeStoreDTO] : []);
         setSelectedZoneName(zone.name);
         setIsModalVisible(true);
     };
@@ -289,21 +292,21 @@ const ZoneList = () => {
                         <Menu.Item
                             key="1"
                             icon={<InsertRowBelowOutlined />}
-                            onClick={() => handleNavigation('/home/owner/products')}
+                            onClick={() => handleNavigation('/employee/products')}
                         >
                             Grain Selection
                         </Menu.Item>
                         <Menu.Item
                             key="2"
                             icon={<ShopOutlined />}
-                            onClick={() => handleNavigation('/home/owner/ricezone')}
+                            onClick={() => handleNavigation('/employee/ricezone')}
                         >
                             Rice Zone
                         </Menu.Item>
                         <Menu.Item
                             key="3"
-                            icon={<UploadOutlined />}
-                            onClick={() => console.log("Customer clicked!")}
+                            icon={<TeamOutlined />}
+                            onClick={() => handleNavigation('/employee/customers')}
                         >
                             Customer
                         </Menu.Item>
@@ -337,14 +340,10 @@ const ZoneList = () => {
                             }}
                         >
                             <Input
-                                placeholder='Tìm Khu Vực Gạo.....'
-                                value={searchParams}
-                                onChange={(e) => setSearchParams(e.target.value)}
+                                placeholder="Tìm kiếm khu vực..."
+                                onChange={(e) => handleSearchChange(e.target.value)}
                             />
-                            <Button type="primary"
-                                onClick={() => {
-                                    fetchSearchZones(currentPage, pageSize, searchParams);
-                                }}>Search</Button>
+                            <Button type="primary">Search</Button>
                         </Space.Compact>
                     </Header>
                     <Content
@@ -423,6 +422,11 @@ const ZoneList = () => {
                                     total: totalItems,
                                     showSizeChanger: true,
                                     pageSizeOptions: ['1', '5', '10'],
+                                    onChange: (page, size) => {
+                                        setCurrentPage(page);
+                                        setPageSize(size);
+                                        fetchZone(page, size, filters, null, searchTerm);
+                                    },
                                 }}
                                 onChange={handleTableChange}
                             />
@@ -433,7 +437,7 @@ const ZoneList = () => {
 
             <Modal
                 title={<span style={{ fontWeight: 500, fontSize: '18px' }}>Store For : {selectedZoneName}</span>}
-                visible={isModalVisible}
+                open={isModalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}
                 footer={[

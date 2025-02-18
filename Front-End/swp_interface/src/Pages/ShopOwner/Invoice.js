@@ -132,6 +132,7 @@ const Invoice = () => {
         try {
             const queryParams = `invoices?phoneNumber=${encodeURIComponent(searchValue)}&` + getInvoiceParam(tableParams);
             const response = await fetch(`http://localhost:9999/store-owner/${queryParams}`);
+            const result = response.json();
 
             setData(result.content || []);
             setTableParams({
