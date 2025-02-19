@@ -24,6 +24,18 @@ const Product = () => {
     const columns = [
         {
             title: 'ID',
+            key: 'id',
+            render: (_, __, index) => {
+                const id =
+                    (tableParams.pagination.current - 1) * tableParams.pagination.pageSize +
+                    index +
+                    1;
+                return id;
+            },
+            width: '5%',
+        },
+        {
+            title: 'Product ID',
             dataIndex: 'productID',
             key: 'productID',
             width: '10%',
@@ -40,7 +52,7 @@ const Product = () => {
             key: 'price',
             sorter: true, // Bật tính năng sắp xếp
             render: (price) => `$${price.toFixed(2)}`, // Định dạng giá tiền
-            width: '15%',
+            width: '10%',
         },
         {
             title: 'Information',

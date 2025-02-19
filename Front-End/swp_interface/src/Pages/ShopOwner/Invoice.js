@@ -3,7 +3,7 @@ import { Table, message, Input, Modal, Spin } from 'antd';
 import qs from 'qs';
 import Loading from '../Loading/Loading';
 import InvoiceDetailModal from '../../Components/StoreOwner/InvoiceDetailModal/InvoiceDetailModal';
-import {getToken} from '../../Utils/UserInfoUtils'
+import { getToken } from '../../Utils/UserInfoUtils'
 import { getDataWithToken } from '../../Utils/FetchUtils';
 import API from '../../Utils/API/API';
 
@@ -23,7 +23,7 @@ const Invoice = () => {
     });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedInvoiceID, setSelectedInvoiceID] = useState(null); // ID của invoice được chọn
+    const [selectedInvoiceID, setSelectedInvoiceID] = useState(null);
 
     const columns = [
         {
@@ -68,7 +68,7 @@ const Invoice = () => {
             dataIndex: 'productMoney',
             key: 'productMoney',
             sorter: true,
-            render: (productMoney) => `${(productMoney || 0).toLocaleString()} $`,
+            render: (productMoney) => `${(productMoney || 0).toLocaleString()} đ`,
             width: '12%',
         },
         {
@@ -76,7 +76,7 @@ const Invoice = () => {
             dataIndex: 'shipMoney',
             key: 'shipMoney',
             sorter: true,
-            render: (shipMoney) => `${(shipMoney || 0).toLocaleString()} $`,
+            render: (shipMoney) => `${(shipMoney || 0).toLocaleString()} đ`,
             width: '12%',
         },
         {
@@ -85,7 +85,7 @@ const Invoice = () => {
             dataIndex: 'totalMoney',
             render: (_, record) => {
                 const totalMoney = (record.productMoney || 0) + (record.shipMoney || 0);
-                return `${totalMoney.toLocaleString()} $`;
+                return `${totalMoney.toLocaleString()} đ`;
             },
             width: '15%',
         },
@@ -93,7 +93,16 @@ const Invoice = () => {
             title: 'Type',
             dataIndex: 'type',
             key: 'type',
-            render: (type) => (type ? 'Online' : 'Offline'),
+            sorter: true,
+            render: (type) => (
+                <span
+                    style={{
+                        color: type ? 'green' : 'red',
+                    }}
+                >
+                    {type ? 'Export' : 'Import'}
+                </span>
+            ),
             width: '10%',
         },
         {
@@ -105,7 +114,6 @@ const Invoice = () => {
                 <span
                     style={{
                         color: status ? 'green' : 'red',
-                        fontWeight: 'bold',
                     }}
                 >
                     {status ? 'Paid' : 'Unpaid'}
@@ -189,8 +197,9 @@ const Invoice = () => {
     };
 
     const onRowClick = (record) => {
-        setSelectedInvoiceID(record.invoiceID); // Lưu ID của invoice được chọn
-        setIsModalOpen(true); // Mở Modal
+        console.log(record.invoiceID); // Debug: Log the selected invoice ID
+        setSelectedInvoiceID(record.invoiceID); // Ensure this value is from the record in the table
+        setIsModalOpen(true); // Open the modal
     };
 
     // Hàm đóng Modal
@@ -225,15 +234,16 @@ const Invoice = () => {
                 })}
             />
 
-            {/* Component Modal hiển thị chi tiết hóa đơn */}
             {isModalOpen && (
                 <InvoiceDetailModal
                     visible={isModalOpen}
-                    invoiceID={selectedInvoiceID}
-                    onClose={closeModal} // Truyền callback đóng modal
+                    invoiceID={selectedInvoiceID} // Debug: Check this value
+                    totalMoney={
+                        data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.totalMoney || 0
+                    }
+                    onClose={closeModal}
                 />
             )}
-
         </div>
     );
 };
