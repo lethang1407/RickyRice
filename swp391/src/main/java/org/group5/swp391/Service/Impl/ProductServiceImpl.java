@@ -7,12 +7,18 @@ import org.group5.swp391.DTO.EmployeeDTO.EmployeeCategoryDTO;
 import org.group5.swp391.DTO.EmployeeDTO.EmployeeProductDTO;
 import org.group5.swp391.DTO.EmployeeDTO.EmployeeZoneDTO;
 import org.group5.swp391.DTO.StoreOwnerDTO.StoreProductDTO;
+import org.group5.swp391.Entity.Account;
 import org.group5.swp391.Entity.Product;
+import org.group5.swp391.Entity.Store;
 import org.group5.swp391.Entity.Zone;
+import org.group5.swp391.Repository.AccountRepository;
 import org.group5.swp391.Repository.ProductRepository;
+import org.group5.swp391.Repository.StoreRepository;
 import org.group5.swp391.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,16 +29,25 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductConverter productConverter;
+    private final AccountRepository accountRepository;
+    private final StoreRepository storeRepository;
 
     // Chien
     @Override
     public Page<StoreProductDTO> getProducts(String productName, int page, int size, String sortBy, boolean descending) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+        String username = authentication.getName();
+        Account account = accountRepository.findByUsername(username).orElseThrow(null);
+        List<Store> stores = storeRepository.findByStoreAccount(account);
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         if(productName == null || productName.isEmpty()){
             productRepository.findAll(pageable).map(productConverter::toStoreProductDTO);
         }
-        return productRepository.findByNameContainingIgnoreCase(productName, pageable).map(productConverter::toStoreProductDTO);
+        return productRepository.findByStoreInAndNameContainingIgnoreCase(stores, productName, pageable).map(productConverter::toStoreProductDTO);
     }
 
 
@@ -70,6 +85,15 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> products = productRepository.searchProducts(query, pageable);
         List<CustomerProductDTO> productPages = products.stream().map(productConverter::toCustomerProductDTO).collect(Collectors.toList());
         return new PageImpl<>(productPages, pageable, products.getTotalElements());
+    }
+
+    @Override
+    public Page<CustomerProductDTO> searchProductsQuery(String querySearchName, Double minPrice, Double maxPrice, int page, int size, String sortBy, boolean descending) {
+        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        List<Product> products = productRepository.findByNameContainingAndPriceBetween(querySearchName, minPrice, maxPrice, pageable);
+        List<CustomerProductDTO> productPages = products.stream().map(productConverter::toCustomerProductDTO).collect(Collectors.toList());
+        return new PageImpl<>(productPages, pageable, (products.size() + 1));
     }
 
 

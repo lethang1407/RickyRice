@@ -136,14 +136,13 @@ const Invoice = () => {
         try {
             const queryParams = `?phoneNumber=${encodeURIComponent(searchValue)}&` + getInvoiceParam(tableParams);
             const response = await getDataWithToken(API.STORE_OWNER.GET_INVOICES + queryParams, token);
-            const result = response.json();
 
-            setData(result.content || []);
+            setData(response.content);
             setTableParams({
                 ...tableParams,
                 pagination: {
                     ...tableParams.pagination,
-                    total: result.totalElements,
+                    total: response.totalElements,
                 },
             });
         } catch (error) {
