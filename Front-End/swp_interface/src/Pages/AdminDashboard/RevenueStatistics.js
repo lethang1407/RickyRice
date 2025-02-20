@@ -77,12 +77,12 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
 
   return (
     <div>
-      <h3 className="mt-5">Revenue Statistics</h3>
+      <h3 className="mt-5">Thống kê giao dịch</h3>
 
       <div className="d-flex justify-content-between align-items-center mb-3">
         <Form.Control
           type="text"
-          placeholder="Search by Store Name, Plan, or Created By"
+          placeholder="Tìm kiếm theo tên cửa hàng, gói đăng kí, người tạo"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="me-2"
@@ -107,7 +107,7 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
       </div>
 
       {loading ? (
-        <p>Loading data...</p>
+        <p>Đang tải dữ liệu...</p>
       ) : error ? (
         <p className="text-danger">{error}</p>
       ) : (
@@ -116,26 +116,26 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
             <thead>
               <tr>
                 <th onClick={() => handleSort("storeName")}>
-                  Store Name{" "}
+                  Tên cửa hàng{" "}
                   {sortBy === "storeName"
                     ? sortOrder === "asc"
                       ? "▲"
                       : "▼"
                     : "⇅"}
                 </th>
-                <th>Subscription Plan</th>
-                <th>Price ($)</th>
-                <th>Description</th>
-                <th>Expiration (Days)</th>
+                <th>Gói đăng kí</th>
+                <th>Giá ($)</th>
+                <th>Mô tả</th>
+                <th>Thời hạn (Tháng)</th>
                 <th onClick={() => handleSort("createdBy")}>
-                  Created By{" "}
+                  Người tạo{" "}
                   {sortBy === "createdBy"
                     ? sortOrder === "asc"
                       ? "▲"
                       : "▼"
                     : "⇅"}
                 </th>
-                <th>Created At</th>
+                <th>Ngày tạo</th>
               </tr>
             </thead>
             <tbody>
@@ -145,11 +145,11 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
                     <td>{item.storeName}</td>
                     <td>{item.subcriptionPlanName}</td>
                     <td className="text-right">
-                      ${item.subcriptionPlanPrice.toLocaleString()}
+                      {item.subcriptionPlanPrice.toLocaleString()}
                     </td>
                     <td>{item.subcriptionDescription}</td>
                     <td className="text-center">
-                      {item.subcriptionTimeOfExpiration} days
+                      {item.subcriptionTimeOfExpiration}
                     </td>
                     <td>{item.createdBy}</td>
                     <td>{new Date(item.createdAt).toLocaleDateString()}</td>
@@ -158,7 +158,7 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
               ) : (
                 <tr>
                   <td colSpan="7" className="text-center text-muted">
-                    No records found
+                    Không có giao dịch được tìm thấy
                   </td>
                 </tr>
               )}

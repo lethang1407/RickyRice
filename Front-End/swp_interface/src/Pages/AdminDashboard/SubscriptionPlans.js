@@ -6,6 +6,7 @@ import "./style.css";
 import axios from "axios";
 import API from "../../Utils/API/API.js";
 import { getToken } from "../../Utils/UserInfoUtils";
+import SubscriptionPlanModal from "./components/SubscriptionPlanModal";
 
 const SubscriptionPlan = () => {
   const [formData, setFormData] = useState({
@@ -44,14 +45,14 @@ const SubscriptionPlan = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (
       !formData.name ||
       !formData.description ||
       !formData.price ||
       !formData.timeOfExpiration
     ) {
-      alert("All fields are required!");
+      alert("Tất cả các truờng là bắt buộc!");
       return;
     }
     try {
@@ -73,11 +74,11 @@ const SubscriptionPlan = () => {
       });
       setPlans((prevPlans) => [...prevPlans, response.data.data]);
       setShowModal(false);
-      setSuccessMessage("Subscription Plan created successfully!");
+      setSuccessMessage("Gói đăng kí mới được tạo thành công!");
       setTimeout(() => setSuccessMessage(""), 1000);
     } catch (error) {
-      console.error("Error creating subscription plan:", error);
-      alert("Failed to create subscription plan.");
+      console.error("Lỗi tạo mới gói đăng kí:", error);
+      alert("Tạo mới gói đăng kí thất bại.");
     }
   };
 
@@ -89,10 +90,10 @@ const SubscriptionPlan = () => {
   };
 
   const handleUpdate = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     try {
       await axios.put(
-       `API.ADMIN.UPDATE_ACCOUNT_STATUS/${editPlan.subscriptionPlanID}`,
+        API.ADMIN.UPDATE_SUBSCRIPTION_PLAN(editPlan.subscriptionPlanID),
         formData,
         {
           headers: {
@@ -111,11 +112,11 @@ const SubscriptionPlan = () => {
       setShowModal(false);
       setEditMode(false);
       setEditPlan(null);
-      setSuccessMessage("Subscription Plan updated successfully!");
+      setSuccessMessage("Cập nhật thành công!");
       setTimeout(() => setSuccessMessage(""), 1000);
     } catch (error) {
-      console.error("Error updating subscription plan:", error);
-      alert("Failed to update subscription plan.");
+      console.error("Lỗi cập nhật gói đăng kí:", error);
+      alert("Cập nhật thất bại.");
     }
   };
 
@@ -129,7 +130,7 @@ const SubscriptionPlan = () => {
       </div>
       <div className="content">
         <div className="container mt-5">
-          <h2 className="mb-4 text-center">Subscription Plans</h2>
+        <h2 className="mb-4 text-center">Dịch vụ đăng kí</h2>
           {successMessage && (
             <div className="alert alert-success">{successMessage}</div>
           )}
@@ -146,97 +147,26 @@ const SubscriptionPlan = () => {
               });
             }}
           >
-            Create New Subscription Plan
+            Tạo mới gói đăng kí
           </button>
-          {showModal && (
-            <div className="modal show d-block" tabIndex="-1">
-              <div className="modal-dialog">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h5 className="modal-title">
-                      {editMode
-                        ? "Edit Subscription Plan"
-                        : "Create Subscription Plan"}
-                    </h5>
-                    <button
-                      type="button"
-                      className="btn-close"
-                      onClick={() => setShowModal(false)}
-                    ></button>
-                  </div>
-                  <div className="modal-body">
-                    <form onSubmit={editMode ? handleUpdate : handleSubmit}>
-                      <div className="mb-3">
-                        <label className="form-label">Name</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">Description</label>
-                        <textarea
-                          className="form-control"
-                          name="description"
-                          value={formData.description}
-                          onChange={handleChange}
-                          required
-                        ></textarea>
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">Price ($)</label>
-                        <input
-                          type="number"
-                          className="form-control"
-                          name="price"
-                          value={formData.price}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Time of Expiration (month)
-                        </label>
-                        <input
-                          type="number"
-                          className="form-control"
-                          name="timeOfExpiration"
-                          value={formData.timeOfExpiration}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
-                      <button type="submit" className="btn btn-success">
-                        {editMode ? "Update" : "Create"}
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-secondary ms-2"
-                        onClick={() => setShowModal(false)}
-                      >
-                        Cancel
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          <SubscriptionPlanModal
+            show={showModal}
+            onClose={() => setShowModal(false)}
+            formData={formData}
+            handleChange={handleChange}
+            handleSubmit={(e) => (editMode ? handleUpdate(e) : handleSubmit(e))}
+            editMode={editMode}
+          />
           <div className="mt-4">
             <table className="table table-bordered">
               <thead className="table-dark">
                 <tr>
                   <th>#</th>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Price ($)</th>
-                  <th>Time of Expiration (month)</th>
-                  <th>Actions</th>
+                  <th>Tên</th>
+                  <th>Mô tả</th>
+                  <th>Giá ($)</th>
+                  <th>Thời hạn (Tháng)</th>
+                  <th>Hành động</th>
                 </tr>
               </thead>
               <tbody>
@@ -253,7 +183,7 @@ const SubscriptionPlan = () => {
                           className="btn btn-warning btn-sm"
                           onClick={() => handleEdit(plan)}
                         >
-                          Edit
+                          Chỉnh sửa
                         </button>
                       </td>
                     </tr>
@@ -261,7 +191,7 @@ const SubscriptionPlan = () => {
                 ) : (
                   <tr>
                     <td colSpan="6" className="text-center">
-                      No subscription plans available.
+                      Không có gói đăng kí.
                     </td>
                   </tr>
                 )}
