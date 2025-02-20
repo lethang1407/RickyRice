@@ -130,7 +130,7 @@ const CustomerIN4Edit = () => {
                     label="Customer Email"
                     name="email"
                     rules={[
-                        { required: true, type: 'email', message: 'Vui lòng nhập Email hợp lệ!' },
+                        { required: false, type: 'email', message: 'Vui lòng nhập Email hợp lệ!' },
                     ]}
                 >
                     <Input placeholder="Nhập Email của khách hàng" />

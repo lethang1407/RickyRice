@@ -19,7 +19,9 @@ export const getRole = () =>{
 
 export const logout = () => {
   const token = getToken();
-  introspect(API.AUTH.LOGOUT,{token})
-  sessionStorage.removeItem('token');
-  localStorage.removeItem('token');
+  if(token){
+    introspect(API.AUTH.LOGOUT,{token})
+    sessionStorage.removeItem('token');
+    localStorage.removeItem('token');
+  }
 }

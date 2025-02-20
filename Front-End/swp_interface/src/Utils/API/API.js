@@ -12,7 +12,7 @@ const API = {
     CREATE_SUBSCRIPTION_PLAN: `${API_BASE_URL}/admin/create-subscription-plan`,
     UPDATE_SUBSCRIPTION_PLAN: (id) => `${API_BASE_URL}/admin/update-subscription-plan/${id}`,
     GET_NOTIFICATIONS_BY_ID: (id) => `${API_BASE_URL}/admin/notifications/${id}`,
-    MARK_NOTI_AS_READ: `${API_BASE_URL}/notifications/mark-as-read`
+    MARK_NOTI_AS_READ: `${API_BASE_URL}/admin/notifications/mark-as-read`
   },
   CUSTOMER:{
     GET_ALL_PRODUCT: `${API_BASE_URL}/store/products`
@@ -33,7 +33,9 @@ const API = {
     GET_INVOICES: `${API_BASE_URL}/store-owner/invoices`,
     GET_INVOICE_DETAIL: `${API_BASE_URL}/store-owner/invoice-details`,
     GET_STORE: `${API_BASE_URL}/store-owner/stores`,
-    GET_STORE_PRODUCTS: `${API_BASE_URL}/store-owner/products`
+    GET_STORE_PRODUCTS: `${API_BASE_URL}/store-owner/products`,
+    GET_STORE_EMPLOYEES: `${API_BASE_URL}/store-owner/employees`,
+    GET_STORE_STATISTICs: `${API_BASE_URL}/store-owner/statistics`
   },
   AUTH:{
     LOGIN: `${API_BASE_URL}/auth/login`,

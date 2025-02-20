@@ -12,11 +12,11 @@ const CustomNavbar = () => {
   const token = getToken();
 
   useEffect(() => {
-    fetch(fetch(API.ADMIN.GET_NOTIFICATIONS_BY_ID(1), {
+    fetch(API.ADMIN.GET_NOTIFICATIONS_BY_ID(1), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }))
+    })
       .then((response) => response.json())
       .then((data) => {
         if (data.code === 200) {

@@ -12,6 +12,6 @@ import java.util.List;
 
 
 public interface InvoiceRepository extends JpaRepository<Invoice, String> {
-    Page<Invoice> findByStoreInAndCustomerIn(Collection<Store> stores, Collection<Customer> customers, Pageable pageable);
-    Page<Invoice> findAll(Pageable pageable);
+    Page<Invoice> findByStoreInAndCustomerInAndTypeAndStatus(Collection<Store> stores, Collection<Customer> customers, Boolean type, Boolean status, Pageable pageable);
+    Page<Invoice> findByStoreIn(Collection<Store> stores, Pageable pageable);
 }

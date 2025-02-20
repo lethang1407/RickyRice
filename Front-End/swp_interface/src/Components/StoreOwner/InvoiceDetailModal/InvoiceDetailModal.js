@@ -4,7 +4,7 @@ import API from "../../../Utils/API/API";
 import { getToken } from "../../../Utils/UserInfoUtils";
 import { getDataWithToken } from "../../../Utils/FetchUtils";
 
-const InvoiceDetailModal = ({ visible, invoiceID, totalMoney, onClose }) => {
+const InvoiceDetailModal = ({ visible, invoiceID, shipMoney, totalMoney, customerName, customerPhoneNumber, onClose }) => {
     const token = getToken();
     const [loading, setLoading] = useState(false);
     const [productDetails, setProductDetails] = useState([]);
@@ -58,7 +58,7 @@ const InvoiceDetailModal = ({ visible, invoiceID, totalMoney, onClose }) => {
 
     return (
         <Modal
-            title={`Chi tiết hóa đơn - Mã: ${invoiceID || "Không xác định"}`}
+            title={`Chi tiết hóa đơn`}
             visible={visible}
             onCancel={onClose}
             footer={[
@@ -78,7 +78,9 @@ const InvoiceDetailModal = ({ visible, invoiceID, totalMoney, onClose }) => {
                     {/* Invoice Header */}
                     <div className="header-detail" style={{ marginBottom: "20px" }}>
                         <p style={{ margin: "0", fontSize: "16px" }}>
-                            <strong>Mã hóa đơn:</strong> {invoiceID}
+                            <p>Mã hóa đơn: {invoiceID}</p>
+                            <p>Tên khách hàng: {customerName}</p>
+                            <p>SĐT khách hàng: {customerPhoneNumber}</p>
                         </p>
                     </div>
 
@@ -130,6 +132,10 @@ const InvoiceDetailModal = ({ visible, invoiceID, totalMoney, onClose }) => {
                         <p style={{ margin: "0", fontSize: "16px" }}>
                             <strong>Tổng tiền sản phẩm:</strong> {totalProductCost.toLocaleString()} ₫
                         </p>
+                        <p style={{ margin: "0", fontSize: "16px" }}>
+                            <strong>Tổng tiền vận chuyển:</strong> {shipMoney.toLocaleString()} ₫
+                        </p>
+                        <br></br>
                         <p style={{ margin: "0", fontSize: "16px" }}>
                             <strong>Tổng tiền hóa đơn:</strong> {totalMoney.toLocaleString()} ₫
                         </p>

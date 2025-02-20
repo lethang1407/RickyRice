@@ -5,6 +5,7 @@ import org.group5.swp391.Converter.InvoiceConverter;
 import org.group5.swp391.DTO.StoreOwnerDTO.StoreInvoiceDTO;
 import org.group5.swp391.Entity.Account;
 import org.group5.swp391.Entity.Customer;
+import org.group5.swp391.Entity.Invoice;
 import org.group5.swp391.Entity.Store;
 import org.group5.swp391.Repository.AccountRepository;
 import org.group5.swp391.Repository.CustomerRepository;
@@ -19,7 +20,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.server.ResponseStatusException;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -31,20 +36,29 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final StoreRepository storeRepository;
 
     @Override
-    public Page<StoreInvoiceDTO> getInvoices(String phoneNumber, int page, int size, String sortBy, boolean descending) {
+    public Page<StoreInvoiceDTO> getInvoices(
+            String phoneNumber,
+            int page,
+            int size,
+            String sortBy,
+            boolean descending,
+            String typeStr,
+            String statusStr) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            return null;
+            throw new AccessDeniedException("Bạn chưa đăng nhập!");
         }
         String username = authentication.getName();
-        Account account = accountRepository.findByUsername(username).orElseThrow(null);
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         List<Store> stores = storeRepository.findByStoreAccount(account);
-        List<Customer> customers = customerRepository.findByPhoneNumberContainingIgnoreCase(phoneNumber);
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        if (phoneNumber == null || phoneNumber.isEmpty()) {
-            return invoiceRepository.findAll(pageable).map(invoiceConverter::toStoreInvoiceDTO);
+        List<Customer> customers = customerRepository.findByPhoneNumberContainingIgnoreCase(phoneNumber);
+        if ((phoneNumber == null || phoneNumber.isEmpty()) && typeStr.equals("all") && statusStr.equals("all")) {
+            return invoiceRepository.findByStoreIn(stores, pageable).map(invoiceConverter::toStoreInvoiceDTO);
         }
-        return invoiceRepository.findByStoreInAndCustomerIn(stores, customers, pageable).map(invoiceConverter::toStoreInvoiceDTO);
-    }
+        boolean type = typeStr.equals("export");
+        boolean status = statusStr.equals("paid");
+        return invoiceRepository.findByStoreInAndCustomerInAndTypeAndStatus(stores, customers, type, status, pageable).map(invoiceConverter::toStoreInvoiceDTO);    }
 }
