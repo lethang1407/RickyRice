@@ -4,22 +4,22 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const location = useLocation(); 
+  const location = useLocation();
 
   const handleLinkClick = (path) => {
-    navigate(path); 
+    navigate(path);
   };
 
   const links = [
-    { name: "Dashboard", path: "/admin" },
-    { name: "Store owner", path: "/admin/account_owner" },
-    { name: "Store", path: "/admin/view_stores" },
-    { name: "Service", path: "/admin/subscription_plans" },
+    { name: "Trang chủ", path: "/admin" },
+    { name: "Quản lí tài khoản", path: "/admin/account_owner" },
+    { name: "Quản lí cửa hàng", path: "/admin/view_stores" },
+    { name: "Dịch vụ", path: "/admin/subscription_plans" },
   ];
 
   return (
     <div className="bg-dark text-white vh-100 p-3 sidebar">
-      <h4 className="mb-4">Admin Dashboard</h4>
+      <h4 className="mb-4">Bảng điều khiển</h4>
       <Nav className="flex-column">
         {links.map((link) => (
           <Nav.Link

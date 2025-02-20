@@ -170,12 +170,12 @@ const CustomNavbar = () => {
         >
           <li>
             <a className="dropdown-item" href="#">
-              Profile
+              Hồ sơ tài khoản
             </a>
           </li>
           <li>
             <a className="dropdown-item" href="#">
-              Settings
+              Cài đặt
             </a>
           </li>
           <li>
@@ -183,7 +183,7 @@ const CustomNavbar = () => {
           </li>
           <li>
             <a className="dropdown-item" href="/">
-              Logout
+              Đăng xuất
             </a>
           </li>
         </ul>

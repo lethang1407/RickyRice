@@ -12,7 +12,7 @@ import {
 import axios from "axios";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
-import StoreDetailModal from "./StoreDetailModal";
+import StoreDetailModal from "./components/StoreDetailModal.js";
 import API from "../../Utils/API/API.js";
 import { getToken } from "../../Utils/UserInfoUtils";
 import "./style.css";
@@ -125,13 +125,13 @@ const AdminViewStores = () => {
       </div>
       <div className="content">
         <Container className="mt-4">
-          <h2 className="mb-4 text-center">Stores List</h2>
+          <h2 className="mb-4 text-center">Danh sách cửa hàng</h2>
 
           <Row className="mb-3">
             <Col md={6}>
               <Form.Control
                 type="text"
-                placeholder="Search by Store Name or Account Name"
+                placeholder="Tìm kiếm theo tên cửa hàng, chủ cửa hàng"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -141,7 +141,7 @@ const AdminViewStores = () => {
                 value={subscriptionFilter}
                 onChange={(e) => setSubscriptionFilter(e.target.value)}
               >
-                <option value="All">All Subscription Plans</option>
+                <option value="All">Tất cả gói đăng kí</option>
                 {[
                   ...new Set(stores.map((store) => store.subscriptionPlanName)),
                 ].map((plan) => (
@@ -166,25 +166,25 @@ const AdminViewStores = () => {
                   <tr>
                     <th>#</th>
                     <th onClick={() => handleSort("storeName")}>
-                      Store Name {getSortIcon("storeName")}
+                      Tên cửa hàng {getSortIcon("storeName")}
                     </th>
                     <th onClick={() => handleSort("expireAt")}>
-                      Expire At {getSortIcon("expireAt")}
+                      Ngày hết hạn {getSortIcon("expireAt")}
                     </th>
                     <th onClick={() => handleSort("accountName")}>
-                      Account Name {getSortIcon("accountName")}
+                      Chủ cửa hàng {getSortIcon("accountName")}
                     </th>
                     <th onClick={() => handleSort("subscriptionPlanName")}>
-                      Subscription Plan {getSortIcon("subscriptionPlanName")}
+                      Gói đăng kí {getSortIcon("subscriptionPlanName")}
                     </th>
                     <th onClick={() => handleSort("createdAt")}>
-                      Created At {getSortIcon("createdAt")}
+                      Ngày tạo {getSortIcon("createdAt")}
                     </th>
                     <th onClick={() => handleSort("updateAt")}>
-                      Updated At {getSortIcon("updateAt")}
+                      Ngày cập nhật {getSortIcon("updateAt")}
                     </th>
-                    <th>Price ($)</th>
-                    <th>Subscription (Months)</th>
+                    <th>Giá ($)</th>
+                    <th>Thời hạn sử dụng (Tháng)</th>
                   </tr>
                 </thead>
                 <tbody>

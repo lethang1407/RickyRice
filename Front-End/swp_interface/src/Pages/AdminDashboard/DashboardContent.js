@@ -70,13 +70,13 @@ const DashboardContent = () => {
 
   return (
     <div className="p-4">
-      <h2>Welcome to Admin Dashboard</h2>
+      <h2>Chào mừng bạn đến với bảng điều khiển của quản trị viên!</h2>
       <br />
       <Row className="mt-4">
         <Col md={3}>
           <Card className="text-center bg-success text-white">
             <Card.Body>
-              <Card.Title>Total Revenue</Card.Title>
+              <Card.Title>Tổng doanh thu</Card.Title>
               <Card.Text>${totalRevenue.toLocaleString()}</Card.Text>
             </Card.Body>
           </Card>
@@ -89,7 +89,7 @@ const DashboardContent = () => {
             onClick={() => navigate("/admin/account_owner")}
           >
             <Card.Body>
-              <Card.Title>Total Store Owners</Card.Title>
+              <Card.Title>Tổng chủ cửa hàng</Card.Title>
               <Card.Text>{totalAccounts}</Card.Text>
             </Card.Body>
           </Card>
@@ -102,7 +102,7 @@ const DashboardContent = () => {
             onClick={() => navigate("/admin/view_stores")}
           >
             <Card.Body>
-              <Card.Title>Total Stores</Card.Title>
+              <Card.Title>Tổng cửa hàng</Card.Title>
               <Card.Text>{totalStores}</Card.Text>
             </Card.Body>
           </Card>
@@ -115,7 +115,7 @@ const DashboardContent = () => {
             onClick={() => navigate("/admin/subscription_plans")}
           >
             <Card.Body>
-              <Card.Title>Total Subscription Service</Card.Title>
+              <Card.Title>Tổng dịch vụ đăng kí</Card.Title>
               <Card.Text>{totalSubscriptions}</Card.Text>
             </Card.Body>
           </Card>

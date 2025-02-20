@@ -1,5 +1,6 @@
 package org.group5.swp391.Controller.AdminController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.DTO.Request.AdminRequest.MarkAsReadRequest;
 import org.group5.swp391.DTO.Request.AdminRequest.SubscriptionPlanRequest;
@@ -107,7 +108,8 @@ public class AdminAPI {
 
     // Thêm mới 1 gói dịch vụ của trang web
     @PostMapping("/create-subscription-plan")
-    public ApiResponse<SubscriptionPlanResponse> createSubscriptionPlan(@RequestBody SubscriptionPlanRequest request) {
+    public ApiResponse<SubscriptionPlanResponse> createSubscriptionPlan(
+            @RequestBody @Valid SubscriptionPlanRequest request) {
         SubscriptionPlanResponse plan = subscriptionPlanService.createSubscriptionPlan(request);
         return ApiResponse.<SubscriptionPlanResponse>builder()
                 .code(HttpStatus.CREATED.value())
@@ -119,7 +121,7 @@ public class AdminAPI {
     // Cập nhật gói dịch vụ của trang web
     @PutMapping("/update-subscription-plan/{id}")
     public ApiResponse<SubscriptionPlanResponse> updateSubscriptionPlan(
-            @PathVariable String id, @RequestBody SubscriptionPlanRequest request) {
+            @PathVariable String id, @RequestBody @Valid SubscriptionPlanRequest request) {
         SubscriptionPlanResponse updatedPlan = subscriptionPlanService.updateSubscriptionPlan(id, request);
         return ApiResponse.<SubscriptionPlanResponse>builder()
                 .code(HttpStatus.OK.value())
