@@ -67,7 +67,7 @@ public class SecurityConfig {
                 .withSecretKey(secretKeySpec)
                 .macAlgorithm(MacAlgorithm.HS512)
                 .build();
-    };
+    }
 
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {

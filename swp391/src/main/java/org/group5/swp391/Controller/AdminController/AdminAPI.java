@@ -1,5 +1,6 @@
 package org.group5.swp391.Controller.AdminController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.DTO.Request.AdminRequest.MarkAsReadRequest;
 import org.group5.swp391.DTO.Request.AdminRequest.SubscriptionPlanRequest;
@@ -7,10 +8,6 @@ import org.group5.swp391.DTO.Request.AdminRequest.UpdateAccountActiveRequest;
 import org.group5.swp391.DTO.Response.*;
 import org.group5.swp391.DTO.Response.AdminResponse.*;
 import org.group5.swp391.Service.*;
-import org.group5.swp391.Service.Impl.AccountServiceImpl;
-import org.group5.swp391.Service.Impl.AppStatisticsServiceServiceImpl;
-import org.group5.swp391.Service.Impl.NotificationServiceImpl;
-import org.group5.swp391.Service.Impl.SubscriptionPlanServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +18,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminAPI {
 
-    private final AccountServiceImpl accountService;
-    private final AppStatisticsServiceServiceImpl appStatisticsService;
+    private final AccountService accountService;
+    private final AppStatisticsService appStatisticsService;
     private final StoreService storeService;
-    private final SubscriptionPlanServiceImpl subscriptionPlanService;
-    private final NotificationServiceImpl notificationService;
+    private final SubscriptionPlanService subscriptionPlanService;
+    private final NotificationService notificationService;
 
 
     // Xem danh sách tài khoản có role STORE_OWNER
@@ -107,7 +104,7 @@ public class AdminAPI {
 
     // Thêm mới 1 gói dịch vụ của trang web
     @PostMapping("/create-subscription-plan")
-    public ApiResponse<SubscriptionPlanResponse> createSubscriptionPlan(@RequestBody SubscriptionPlanRequest request) {
+    public ApiResponse<SubscriptionPlanResponse> createSubscriptionPlan(@RequestBody @Valid SubscriptionPlanRequest request) {
         SubscriptionPlanResponse plan = subscriptionPlanService.createSubscriptionPlan(request);
         return ApiResponse.<SubscriptionPlanResponse>builder()
                 .code(HttpStatus.CREATED.value())
@@ -119,7 +116,7 @@ public class AdminAPI {
     // Cập nhật gói dịch vụ của trang web
     @PutMapping("/update-subscription-plan/{id}")
     public ApiResponse<SubscriptionPlanResponse> updateSubscriptionPlan(
-            @PathVariable String id, @RequestBody SubscriptionPlanRequest request) {
+            @PathVariable String id, @RequestBody @Valid SubscriptionPlanRequest request) {
         SubscriptionPlanResponse updatedPlan = subscriptionPlanService.updateSubscriptionPlan(id, request);
         return ApiResponse.<SubscriptionPlanResponse>builder()
                 .code(HttpStatus.OK.value())

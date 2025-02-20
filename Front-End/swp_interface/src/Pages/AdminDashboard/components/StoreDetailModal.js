@@ -10,7 +10,7 @@ const StoreDetailModal = ({ show, handleClose, store }) => {
   return (
     <Modal show={show} onHide={handleClose} size="lg" centered>
       <Modal.Header closeButton>
-        <Modal.Title>Store Details</Modal.Title>
+        <Modal.Title>Chi tiết cửa hàng</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Row>
@@ -29,11 +29,11 @@ const StoreDetailModal = ({ show, handleClose, store }) => {
               <Card.Body>
                 <Card.Title>{store.storeName}</Card.Title>
                 <Card.Text>
-                  <strong>Address:</strong> {store.address} <br />
-                  <strong>Hotline:</strong> {store.hotline} <br />
-                  <strong>Description:</strong> {store.description} <br />
-                  <strong>Operating Hours:</strong> {store.operatingHour} <br />
-                  <strong>Account Owner:</strong> {store.accountName} <br />
+                  <strong>Địa chỉ:</strong> {store.address} <br />
+                  <strong>Liên hệ:</strong> {store.hotline} <br />
+                  <strong>Mô tả:</strong> {store.description} <br />
+                  <strong>Giờ hoạt động:</strong> {store.operatingHour} <br />
+                  <strong>Chủ cửa hàng:</strong> {store.accountName} <br />
                 </Card.Text>
               </Card.Body>
             </Card>
