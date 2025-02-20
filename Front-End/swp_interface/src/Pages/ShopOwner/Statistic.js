@@ -44,6 +44,11 @@ const Statistic = () => {
             title: 'Description',
             dataIndex: 'description',
             key: 'description',
+            render: (type) => (
+                <span style={{ color: type === 'Export' ? 'green' : 'red' }}>
+                    {type === 'Export' ? 'Xuất Khẩu' : 'Nhập Khẩu'}
+                </span>
+            ),
             width: '10%',
         },
         {
@@ -56,7 +61,7 @@ const Statistic = () => {
             title: 'Total Money',
             dataIndex: 'totalMoney',
             key: 'totalMoney',
-            render: (totalMoney) => `${totalMoney.toFixed(3)} đ`, 
+            render: (totalMoney) => `${totalMoney.toFixed(3)} đ`,
             sorter: true,
             width: '15%',
         },
@@ -91,7 +96,7 @@ const Statistic = () => {
             const queryParams = `?storeName=${encodeURIComponent(searchValue)}&` + getStatisticParams(tableParams);
             const response = await getDataWithToken(API.STORE_OWNER.GET_STORE_STATISTICs + queryParams, token);
             console.log(response);
-            
+
             setData(response.content || []);
             setTableParams((prev) => ({
                 ...prev,

@@ -90,14 +90,14 @@ const Invoice = () => {
             dataIndex: 'type',
             key: 'type',
             filters: [
-                { text: 'Export', value: true },
-                { text: 'Import', value: false }
+                { text: 'Xuất Khẩu', value: true },
+                { text: 'Nhập Khẩu', value: false }
             ],
             filterMultiple: false, 
             onFilter: (value, record) => record.type === value, 
             render: (type) => (
                 <span style={{ color: type ? 'green' : 'red' }}>
-                    {type ? 'Export' : 'Import'}
+                    {type ? 'Xuất Khẩu' : 'Nhập Khẩu'}
                 </span>
             ),
             width: '8%',

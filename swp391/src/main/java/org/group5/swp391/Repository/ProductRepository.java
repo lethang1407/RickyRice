@@ -16,6 +16,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     Page<Product> findAll(Pageable pageable);
     Page<Product> findByStoreInAndNameContainingIgnoreCase(Collection<Store> stores, String name, Pageable pageable);
 
+
     @Query("Select s from Product  s where s.category.categoryID = ?1")
     List<Product> findAllByCategoryId(String categoryId);
     @Query("Select s from Product s where s.category.categoryID = :categoryId")
@@ -28,4 +29,6 @@ public interface ProductRepository extends JpaRepository<Product, String> {
             "p.name LIKE CONCAT('%',:query, '%') ")
 //            "OR p.information LIKE CONCAT('%',:query, '%')")
     Page<Product> searchProducts(String query, Pageable pageable);
+
+    List<Product> findByNameContainingAndPriceBetween(String name, Double minPrice, Double maxPrice, Pageable pageable);
 }
