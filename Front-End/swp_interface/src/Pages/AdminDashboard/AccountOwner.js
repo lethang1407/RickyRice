@@ -43,7 +43,7 @@ const AccountOwner = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [token]);
 
   const updateAccountStatus = async (accountID, isActive) => {
     try {
@@ -180,13 +180,13 @@ const AccountOwner = () => {
       </div>
       <div className="content">
         <Container className="mt-5">
-          <h2 className="mb-4 text-center">Store Owner Accounts</h2>
+          <h2 className="mb-4 text-center">Tài khoản của chủ cửa hàng</h2>
 
           {/* Bộ lọc */}
           <div className="d-flex gap-3 mb-3">
             <Form.Control
               type="text"
-              placeholder="Search by name, email, or phone..."
+              placeholder="Tìm kiếm theo tên, email, số điện thoại..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -195,18 +195,18 @@ const AccountOwner = () => {
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="all">Tất cả trạng thái</option>
+              <option value="active">Hoạt động</option>
+              <option value="inactive">Không hoạt động</option>
             </Form.Select>
 
             <Form.Select
               value={genderFilter}
               onChange={(e) => setGenderFilter(e.target.value)}
             >
-              <option value="all">All Genders</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
+              <option value="all">Tất cả giới tính</option>
+              <option value="male">Nam</option>
+              <option value="female">Nữ</option>
             </Form.Select>
           </div>
 
@@ -215,24 +215,24 @@ const AccountOwner = () => {
             <thead>
               <tr>
                 <th onClick={() => handleSort("username")}>
-                  Username {getSortIcon("username")}
+                  Tên {getSortIcon("username")}
                 </th>
                 <th>Email</th>
-                <th>Phone Number</th>
-                <th>Avatar</th>
+                <th>Số điện thoại</th>
+                <th>Ảnh đại diện</th>
                 <th onClick={() => handleSort("createdAt")}>
-                  Created At {getSortIcon("createdAt")}
+                  Ngày tạo {getSortIcon("createdAt")}
                 </th>
                 <th onClick={() => handleSort("isActive")}>
-                  Status {getSortIcon("isActive")}
+                  Trạng thái {getSortIcon("isActive")}
                 </th>
                 <th onClick={() => handleSort("gender")}>
-                  Gender {getSortIcon("gender")}
+                  Giới tính {getSortIcon("gender")}
                 </th>
                 <th onClick={() => handleSort("birthDate")}>
-                  Birth Date {getSortIcon("birthDate")}
+                  Ngày sinh {getSortIcon("birthDate")}
                 </th>
-                <th>Action</th>
+                <th>Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -249,8 +249,8 @@ const AccountOwner = () => {
                     )}
                   </td>
                   <td>{new Date(user.createdAt).toLocaleString()}</td>
-                  <td>{user.isActive ? "Active" : "Inactive"}</td>
-                  <td>{user.gender ? "Male" : "Female"}</td>
+                  <td>{user.isActive ? "Hoạt động" : "Không hoạt động"}</td>
+                  <td>{user.gender ? "Nam" : "Nữ"}</td>
                   <td>{user.birthDate}</td>
                   <td>
                     <label className="switch">

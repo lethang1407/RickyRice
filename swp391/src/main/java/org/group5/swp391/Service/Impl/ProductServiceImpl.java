@@ -87,5 +87,14 @@ public class ProductServiceImpl implements ProductService {
         return new PageImpl<>(productPages, pageable, products.getTotalElements());
     }
 
+    @Override
+    public Page<CustomerProductDTO> searchProductsQuery(String querySearchName, Double minPrice, Double maxPrice, int page, int size, String sortBy, boolean descending) {
+        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        List<Product> products = productRepository.findByNameContainingAndPriceBetween(querySearchName, minPrice, maxPrice, pageable);
+        List<CustomerProductDTO> productPages = products.stream().map(productConverter::toCustomerProductDTO).collect(Collectors.toList());
+        return new PageImpl<>(productPages, pageable, (products.size() + 1));
+    }
+
 
 }

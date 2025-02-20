@@ -16,12 +16,13 @@ public class CustomerViewProductController {
     private final ProductService productService;
 
     @GetMapping("/products")
-    public Page<CustomerProductDTO> getAllProducts(@Param("query") String query,
+    public Page<CustomerProductDTO> getAllProducts(@RequestParam( defaultValue = "") String query,
+                                                   @RequestParam(defaultValue = "0") Double minPrice,
+                                                   @RequestParam(defaultValue = "1000000") Double maxPrice,
                                                    @RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "10") int size) {
-        if(query == null) return productService.getAllProducts();
-        else {
-            return productService.searchProducts(query, page, size);
-        }
+                                                   @RequestParam(defaultValue = "5") int size,
+                                                   @RequestParam(defaultValue = "price") String sortBy,
+                                                   @RequestParam(defaultValue = "false") boolean descending) {
+        return productService.searchProductsQuery(query, minPrice, maxPrice, page, size, sortBy, descending);
     }
 }
