@@ -23,7 +23,7 @@ The Ricky Rice Management System (RRMS) is a comprehensive software solution des
 - **Admin**: Full system access, including inventory control, sales tracking, and user account management.
 - **Store Owner**: Oversees business operations, manages suppliers, and monitors stock availability.
 - **Employee**: Handles sales, updates inventory, and assists customers.
-- **Customer**: Browses products, places orders, and manages their account.
+- **Customer**: Browses products, filter products.
 
 ## Technology Stack
 - **Frontend**: React
