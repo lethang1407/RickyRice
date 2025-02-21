@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface InvoiceService {
-    public Page<StoreInvoiceDTO> getInvoices(String phoneNumber, int page, int size, String sortBy, boolean descending);
+    public Page<StoreInvoiceDTO> getInvoices(String phoneNumber, int page, int size, String sortBy, boolean descending, String typeStr, String statusStr);
 
 }

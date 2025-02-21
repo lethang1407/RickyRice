@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import {
+  AppstoreOutlined,
   FileDoneOutlined,
+  FileTextOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   ProductOutlined,
+  ShopOutlined,
+  TeamOutlined,
   UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
@@ -27,11 +31,15 @@ const StoreOwnerLayout = () => {
       ? '2'
       : location.pathname.startsWith('/store-owner/product')
         ? '3'
-        : '';
+        : location.pathname.startsWith('/store-owner/employee')
+          ? '4'
+          : location.pathname.startsWith('/store-owner/statistic')
+            ? '5'
+            : '';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column'}}>
-      <Layout style={{minHeight:'100vh'}}>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <Layout style={{ minHeight: '100vh' }}>
         <Sider
           style={{
             backgroundColor: 'white',
@@ -50,19 +58,29 @@ const StoreOwnerLayout = () => {
             items={[
               {
                 key: '1',
-                icon: <UserOutlined />,
+                icon: <ShopOutlined />,
                 label: <Link to="/store-owner/store" style={{ textDecoration: 'none' }}>Store</Link>,
               },
               {
                 key: '2',
-                icon: <FileDoneOutlined />,
+                icon: <FileTextOutlined />,
                 label: <Link to="/store-owner/invoice" style={{ textDecoration: 'none' }}>Invoice</Link>,
               },
               {
                 key: '3',
-                icon: <ProductOutlined />,
+                icon: <AppstoreOutlined />,
                 label: <Link to="/store-owner/product" style={{ textDecoration: 'none' }}>Product</Link>,
               },
+              {
+                key: '4',
+                icon: <TeamOutlined />,
+                label: <Link to="/store-owner/employee" style={{ textDecoration: 'none' }}>Employee</Link>,
+              },
+              {
+                key: '5',
+                icon: <TeamOutlined />,
+                label: <Link to="/store-owner/statistic" style={{ textDecoration: 'none' }}>Statistic</Link>,
+              }
             ]}
           />
         </Sider>

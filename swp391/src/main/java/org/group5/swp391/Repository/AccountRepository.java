@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.List;
 
 public interface AccountRepository extends JpaRepository<Account, String> {
+    List<Account> findByNameContainingIgnoreCaseAndGender(String name, Boolean gender);
     public Optional<Account> findByUsername(String username);
     public Optional<Account> findByEmail(String email);
     boolean existsByUsername(String username);

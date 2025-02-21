@@ -18,3 +18,76 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Hiệu ứng bóng khi hover */
   }
 }
+.pagination-container {
+  margin-top: 32px; /* Khoảng cách với danh sách sản phẩm */
+  display: flex; /* Tạo layout flexbox */
+  justify-content: center; /* Căn các thành phần ở giữa */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  
+  padding: 16px;
+  background-color: #ffffff; /* Màu nền cho phần pagination */
+  border-radius: 8px; /* Làm bo góc phần pagination */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng */
+}
+
+.ant-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.ant-pagination-item {
+  background-color: #f5f5f5; /* Tùy chỉnh màu nền của các nút */
+  border-color: #d9d9d9; /* Đường viền nhẹ */
+  border-radius: 4px; /* Làm bo góc cho từng nút */
+  transition: background-color 0.3s ease;
+}
+
+.ant-pagination-item a {
+  color: #5b5b5b; /* Màu chữ mặc định */
+}
+
+.ant-pagination-item-active {
+  background-color: #1890ff; /* Màu nền nút được chọn */
+  border-color: #1890ff;
+}
+
+.ant-pagination-item-active a {
+  color: #ffffff; /* Màu chữ của nút được chọn */
+}
+
+.ant-pagination-item:hover {
+  background-color: #e6f7ff; /* Màu nền khi hover */
+}
+
+.ant-pagination-next, 
+.ant-pagination-prev {
+  border-radius: 4px; /* Bo góc cho nút điều hướng */
+  transition: background-color 0.3s ease;
+}
+
+.ant-pagination-next:hover, 
+.ant-pagination-prev:hover {
+  background-color: #e6f7ff;
+}
+
+.ant-pagination-options {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* Khoảng cách giữa các phần tử */
+}
+
+.ant-select {
+  border-radius: 4px; /* Bo góc cho dropdown số lượng item */
+}
+
+.ant-select-selector {
+  background-color: #f5f5f5;
+}
+
+/* Tùy chỉnh màu nền cho dropdown khi mở */
+.ant-select-focused .ant-select-selector {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}

@@ -15,9 +15,11 @@ public class StoreInvoiceDTO {
     String description;
     Boolean type;
     Boolean status;
-
     String customerName;
     String customerPhoneNumber;
-
     String storeName;
+
+    public void calculateTotalMoney() {
+        this.totalMoney = (productMoney != null ? productMoney : 0) + (shipMoney != null ? shipMoney : 0);
+    }
 }
