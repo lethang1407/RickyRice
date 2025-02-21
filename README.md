@@ -42,8 +42,7 @@ The Ricky Rice Management System (RRMS) is a comprehensive software solution des
 ## Installation & Setup
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/RRMS.git
-   cd RRMS
+   git clone https://github.com/Regera24/SP25_SWP391_Group5_SE1889VJ.git
    ```
 2. Install dependencies:
    ```sh
@@ -76,5 +75,5 @@ Contributions are welcome! Please submit a pull request or report issues in the 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Contact
-For any inquiries or support, please contact **[Your Name/Team]** at **your.email@example.com**.
+For any inquiries or support, please contact **G5-SE1889VJ** at **rickyrice@gmail.com**.
 
