@@ -12,11 +12,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "SubscriptionPlan")
 public class SubscriptionPlan extends AbstractEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "SubscriptionPlanID")
-    String subscriptionPlanID;
-
     @Column(name = "Name", columnDefinition = "NVARCHAR(255)")
     String name;
 

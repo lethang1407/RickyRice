@@ -44,7 +44,7 @@ public class StoreServiceImpl implements StoreService {
     public List<ViewStoreResponse> getAllStores() {
         return storeRepository.findAll().stream().map(store ->
                 ViewStoreResponse.builder()
-                        .storeID(store.getStoreID())
+                        .storeID(store.getId())
                         .storeName(store.getStoreName())
                         .address(store.getAddress())
                         .hotline(store.getHotline())
@@ -53,7 +53,7 @@ public class StoreServiceImpl implements StoreService {
                         .expireAt(store.getExpireAt())
                         .image(store.getImage())
                         .accountName(store.getStoreAccount().getUsername())
-                        .subscriptionPlanID(store.getSubscriptionPlan().getSubscriptionPlanID())
+                        .subscriptionPlanID(store.getSubscriptionPlan().getId())
                         .createdAt(store.getCreatedAt())
                         .updateAt(store.getUpdatedAt())
                         .subscriptionPlanName(store.getSubscriptionPlan().getName())

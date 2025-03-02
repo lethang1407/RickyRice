@@ -12,7 +12,9 @@ public class ProductAttributeConverter {
     private final ModelMapper modelMapper;
 
     public CustomerProductAttributeDTO toProductAttributeDTO(ProductAttribute productAttribute) {
-        return modelMapper.map(productAttribute, CustomerProductAttributeDTO.class);
+        CustomerProductAttributeDTO dto = modelMapper.map(productAttribute, CustomerProductAttributeDTO.class);
+        dto.setProductAttributeID(productAttribute.getId());
+        return dto;
     }
 
 }

@@ -12,11 +12,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Debt")
 public class Debt extends AbstractEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "DebtID")
-    String debtID;
-
     @Column(name = "Amount", nullable = false)
     Double amount;
 

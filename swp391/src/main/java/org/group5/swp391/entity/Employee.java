@@ -11,12 +11,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Employee")
-public class Employee {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "EmployeeID", nullable = false)
-    String employeeID;
-
+public class Employee extends AbstractEntity{
     @OneToOne
     @JoinColumn(name = "AccountID")
     Account employeeAccount;

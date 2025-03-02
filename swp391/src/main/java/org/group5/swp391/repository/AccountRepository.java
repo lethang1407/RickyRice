@@ -20,7 +20,7 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     @Transactional
     @Modifying
-    @Query("UPDATE Account a SET a.otp = NULL WHERE a.accountID = :accountID")
+    @Query("UPDATE Account a SET a.otp = NULL WHERE a.id = :accountID")
     void clearOTP(String accountID);
 //    public Account findByUsername(String username);
 
@@ -28,6 +28,6 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     public List<Account> findByRole_Code(String roleCode);
 
     // Tìm tài khoản theo Account ID
-    Optional<Account> findByAccountID(String accountID);
+    Optional<Account> findById(String accountID);
 
 }

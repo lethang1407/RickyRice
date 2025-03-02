@@ -144,7 +144,7 @@ const Invoice = () => {
         return qs.stringify({
             page: pagination.current - 1,
             size: pagination.pageSize,
-            sortBy: sortField || "invoiceID",
+            sortBy: sortField ,
             descending: sortOrder === "descend",
             type: typeFilter,
             status: statusFilter,

@@ -21,7 +21,7 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
     public List<SubscriptionPlanResponse> getAllSubscriptionPlans() {
         return subscriptionPlanRepository.findAll().stream()
                 .map(plan -> SubscriptionPlanResponse.builder()
-                        .subscriptionPlanID(plan.getSubscriptionPlanID())
+                        .subscriptionPlanID(plan.getId())
                         .name(plan.getName())
                         .description(plan.getDescription())
                         .price(plan.getPrice())
@@ -35,7 +35,7 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
         SubscriptionPlan plan = subscriptionPlanRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Subscription Plan not found"));
         return SubscriptionPlanResponse.builder()
-                .subscriptionPlanID(plan.getSubscriptionPlanID())
+                .subscriptionPlanID(plan.getId())
                 .name(plan.getName())
                 .description(plan.getDescription())
                 .price(plan.getPrice())
@@ -53,7 +53,7 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
 
         SubscriptionPlan savedPlan = subscriptionPlanRepository.save(plan);
         return SubscriptionPlanResponse.builder()
-                .subscriptionPlanID(savedPlan.getSubscriptionPlanID())
+                .subscriptionPlanID(savedPlan.getId())
                 .name(savedPlan.getName())
                 .description(savedPlan.getDescription())
                 .price(savedPlan.getPrice())
@@ -73,7 +73,7 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
 
         SubscriptionPlan updatedPlan = subscriptionPlanRepository.save(plan);
         return SubscriptionPlanResponse.builder()
-                .subscriptionPlanID(updatedPlan.getSubscriptionPlanID())
+                .subscriptionPlanID(updatedPlan.getId())
                 .name(updatedPlan.getName())
                 .description(updatedPlan.getDescription())
                 .price(updatedPlan.getPrice())

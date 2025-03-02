@@ -22,7 +22,7 @@ public class EmployeeConverter {
         if (employee.getStore() != null) {
             storeInfo = new StoreInfoOfEmployeeDTO(
                     employee.getStore().getStoreName(),
-                    employee.getStore().getStoreID()
+                    employee.getStore().getId()
             );
         }
 
@@ -31,7 +31,7 @@ public class EmployeeConverter {
             storeAccount = modelMapper.map(employee.getEmployeeAccount(), StoreAccountOfEmployeeDTO.class);
         }
         return new StoreEmployeeDTO(
-                employee.getEmployeeID(),
+                employee.getId(),
                 storeAccount,
                 storeInfo
         );

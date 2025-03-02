@@ -10,7 +10,7 @@ import java.util.List;
 public interface AppStatisticsRepository extends JpaRepository<AppStatistics, String> {
 
     // Lấy danh sách thống kê theo storeId
-    List<AppStatistics> findByStore_StoreID(String storeID);
+    List<AppStatistics> findByStore_Id(String storeID);
 
     // Lấy danh sách thống kê theo gói đăng ký
     List<AppStatistics> findBySubcriptionPlanName(String planName);

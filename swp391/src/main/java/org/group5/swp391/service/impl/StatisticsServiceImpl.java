@@ -46,7 +46,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             throw new ResponseStatusException(NOT_FOUND, "Không có cửa hàng nào thuộc tài khoản này.");
         }
         List<String> storeIds = stores.stream()
-                .map(Store::getStoreID)
+                .map(Store::getId)
                 .toList();
         boolean isStoreFilterDisabled = storeIds.isEmpty();
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();

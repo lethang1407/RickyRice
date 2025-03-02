@@ -14,6 +14,8 @@ public class StoreConverter {
     private final InvoiceRepository invoiceRepository;
 
     public StoreInfoDTO toStoreDTO(Store store){
-        return modelMapper.map(store, StoreInfoDTO.class);
+        StoreInfoDTO dto = modelMapper.map(store, StoreInfoDTO.class);
+        dto.setStoreID(store.getId());
+        return dto;
     }
 }
