@@ -15,7 +15,7 @@ function Login(){
       password: values.password
     }
     const login = await checkLogin(API.AUTH.LOGIN, data);
-    if(login && login.code === 200){
+    if(login && login.code === 200 && login.data.success){
       if(values.remember){
         localStorage.setItem('token',login.data.token)
       }

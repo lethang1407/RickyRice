@@ -13,4 +13,5 @@ public interface ProductService {
     public Page<EmployeeProductDTO>getProductBySearch(String name, String categoryID, int page, int size, String sortBy, boolean descending);
     public Page<CustomerProductDTO> getAllProducts();
     public Page<CustomerProductDTO> searchProducts(String query, int page, int size);
+    public Page<CustomerProductDTO> searchProductsQuery(String querySearchName, Double minPrice, Double maxPrice, int page, int size, String sortBy, boolean descending);
 }

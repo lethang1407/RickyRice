@@ -71,15 +71,13 @@ const Product = () => {
         setLoading(true);
         try {
             const queryParams = `?productName=${encodeURIComponent(searchValue)}&` + getProductParam(tableParams);
-            const response = await getDataWithToken(API.STORE_OWNER.GET_STORE_PRODUCTS + queryParams, token);
-            const result = await response.json();
-
-            setData(result.content || []);
+            const response = await getDataWithToken(API.STORE_OWNER.GET_STORE_PRODUCTS + queryParams, token);            
+            setData(response.content || []);
             setTableParams({
                 ...tableParams,
                 pagination: {
                     ...tableParams.pagination,
-                    total: result.totalElements,
+                    total: response.totalElements,
                 },
             });
         } catch (error) {

@@ -1,18 +1,21 @@
 package org.group5.swp391.Repository;
 
 import org.group5.swp391.Entity.Product;
+import org.group5.swp391.Entity.Store;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository("storeOwnerProductRepository")
 public interface ProductRepository extends JpaRepository<Product, String> {
     Page<Product> findAll(Pageable pageable);
-    Page<Product> findByNameContainingIgnoreCase(String productName, Pageable pageable);
+    Page<Product> findByStoreInAndNameContainingIgnoreCase(Collection<Store> stores, String name, Pageable pageable);
+
 
     @Query("Select s from Product  s where s.category.categoryID = ?1")
     List<Product> findAllByCategoryId(String categoryId);
@@ -26,4 +29,6 @@ public interface ProductRepository extends JpaRepository<Product, String> {
             "p.name LIKE CONCAT('%',:query, '%') ")
 //            "OR p.information LIKE CONCAT('%',:query, '%')")
     Page<Product> searchProducts(String query, Pageable pageable);
+
+    List<Product> findByNameContainingAndPriceBetween(String name, Double minPrice, Double maxPrice, Pageable pageable);
 }
