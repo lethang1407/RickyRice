@@ -51,21 +51,21 @@ const Employee_Customer = () => {
               icon={<InsertRowBelowOutlined />}
               onClick={() => handleNavigation('/employee/products')}
             >
-              Grain Selection
+              Sản Phẩm Gạo
             </Menu.Item>
             <Menu.Item
               key="2"
               icon={<ShopOutlined />}
               onClick={() => handleNavigation('/employee/ricezone')}
             >
-              Rice Zone
+              Khu Vực Gạo
             </Menu.Item>
             <Menu.Item
               key="3"
               icon={<TeamOutlined />}
               onClick={() => handleNavigation('/employee/customers')}
             >
-              Customer
+              Khách Hàng
             </Menu.Item>
           </Menu>
         </Sider>

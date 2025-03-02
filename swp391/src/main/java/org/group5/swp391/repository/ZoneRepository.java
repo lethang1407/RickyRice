@@ -19,13 +19,17 @@ public interface ZoneRepository extends JpaRepository<Zone, Long> {
             "(:quantityMin IS NULL OR z.quantity >= :quantityMin) AND " +
             "(:quantityMax IS NULL OR z.quantity <= :quantityMax) AND " +
             "(:sizeMin IS NULL OR z.size >= :sizeMin) AND " +
-            "(:sizeMax IS NULL OR z.size <= :sizeMax)")
-    Page<Zone> findFilteredZones(@Param("quantityMin") Integer quantityMin,
-                                 @Param("quantityMax") Integer quantityMax,
-                                 @Param("sizeMin") Integer sizeMin,
-                                 @Param("sizeMax") Integer sizeMax,
-                                 @Param("search") String search,
-                                 Pageable pageable
+            "(:sizeMax IS NULL OR z.size <= :sizeMax) AND " +
+            "(z.store.storeID = :storeId) AND " +
+            "(:search IS NULL OR z.name LIKE CONCAT('%', :search, '%'))")
+    Page<Zone> findFilteredZones(
+                                  @Param("quantityMin") Integer quantityMin,
+                                  @Param("quantityMax") Integer quantityMax,
+                                  @Param("sizeMin") Integer sizeMin,
+                                  @Param("sizeMax") Integer sizeMax,
+                                  @Param("search") String search,
+                                  String storeId,
+                                  Pageable pageable
     );
 
     @Query("SELECT s FROM Zone s WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', :search, '%')) or LOWER(s.location) LIKE LOWER(CONCAT('%', :search, '%'))")

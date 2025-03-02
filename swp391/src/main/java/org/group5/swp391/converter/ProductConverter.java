@@ -14,6 +14,7 @@ import org.group5.swp391.entity.Zone;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,6 +64,9 @@ public class ProductConverter {
         employeeProductDTO.setPrice(product.getPrice());
         employeeProductDTO.setInformation(product.getInformation());
         employeeProductDTO.setProductImage(product.getProductImage());
+//        employeeProductDTO.setCreated_at(product.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+//        employeeProductDTO.setUpdated_at(product.getUpdatedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        employeeProductDTO.setCreated_by(product.getCreatedBy());
         employeeProductDTO.setQuantity(calculateTotalQuantityFromZones(product));
 
         if (product.getCategory() != null) {

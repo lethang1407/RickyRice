@@ -30,6 +30,7 @@ public class CustomerConverter {
         dto.setPhoneNumber(customer.getPhoneNumber());
         dto.setEmail(customer.getEmail());
         dto.setAddress(customer.getAddress());
+        dto.setCreated_by(customer.getCreatedBy());
         dto.setEmployeeStoreDTO((customer.getStore() != null) ? modelMapper.map(customer.getStore(), EmployeeStoreDTO.class) : null);
         if (customer.getCreatedAt() != null) {
             dto.setCreated_at(customer.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());

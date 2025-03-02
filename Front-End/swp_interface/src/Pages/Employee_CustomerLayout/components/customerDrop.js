@@ -2,6 +2,7 @@ import React from 'react';
 import { Dropdown, Space, Button } from 'antd';
 import { DownOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { Color } from 'antd/es/color-picker';
 
 const DropDown = () => {
     const navigate = useNavigate();
@@ -10,11 +11,11 @@ const DropDown = () => {
         {
             key: '1',
             label: (
-                <Button icon={<PlusCircleOutlined />}
+                <Button style={{ color: "#6B7012" }} icon={<PlusCircleOutlined />}
                     type="link"
                     onClick={() => navigate('/employee/customers/create')}
                 >
-                    Create New Customer
+                    Tạo Mới Customer
                 </Button>
             ),
         },
@@ -30,8 +31,8 @@ const DropDown = () => {
         >
             <a onClick={(e) => e.preventDefault()}>
                 <Space>
-                    Customer Options
-                    <DownOutlined />
+                    <span style={{ color: "#6B7012" }}>Chức Năng Nâng Cao
+                        <DownOutlined /></span>
                 </Space>
             </a>
         </Dropdown>

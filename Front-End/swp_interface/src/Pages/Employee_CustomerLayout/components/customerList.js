@@ -13,6 +13,7 @@ import DropDown from './customerDrop';
 import { useNavigate } from 'react-router-dom';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import API from '../../../Utils/API/API';
+import '../style.css'
 const CustomerList = () => {
     const [loading, setLoading] = useState(true);
     const [customers, setCustomers] = useState([]);
@@ -35,51 +36,52 @@ const CustomerList = () => {
             title: 'STT',
             key: 'stt',
             render: (text, record, index) => index + 1,
+            width: '2%',
         },
         {
-            title: 'Customer ID',
-            dataIndex: 'customerID',
-            key: 'zoneID',
-        },
-        {
-            title: 'Name',
+            title: 'Tên',
             dataIndex: 'name',
             key: 'name',
+
         },
         {
-            title: 'Phone Number',
+            title: 'SDT',
             dataIndex: 'phoneNumber',
             key: 'phoneNumber',
+            width: 70
         },
         {
-            title: 'Address',
+            title: 'Địa Chỉ',
             dataIndex: 'address',
             key: 'address',
+            width: 200
         },
         {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
+            width: 200
         },
         {
-            title: 'Created At',
+            title: 'Tạo Ra Lúc',
             dataIndex: 'created_at',
             key: 'created_at',
             render: (text) => text ? moment(Number(text)).format('DD/MM/YYYY HH:mm:ss') : 'N/A'
         },
         {
-            title: 'Updated At',
+            title: 'Chỉnh Sửa Lúc',
             dataIndex: 'updated_at',
             key: 'updated_at',
             render: (text) => text ? moment(Number(text)).format('DD/MM/YYYY HH:mm:ss') : 'N/A'
         },
         {
-            title: 'Created By',
+            title: 'Tạo Bởi ',
             dataIndex: 'created_by',
             key: 'created_by',
+            width: 150
         },
         {
-            title: "Actions",
+            title: "Cửa Hàng",
             key: "actions",
             render: (text, record) => (
                 <div style={{ display: "flex", gap: "10px" }}>
@@ -117,41 +119,48 @@ const CustomerList = () => {
             title: 'STT',
             key: 'stt',
             render: (text, record, index) => index + 1,
+            width: 30,
         },
         {
-            title: 'Store ID',
+            title: 'ID Cửa Hàng',
             dataIndex: 'storeID',
             key: 'storeID',
+            width: 100,
         },
 
         {
-            title: 'Store Image',
+            title: 'Hình Ảnh',
             dataIndex: 'image',
             key: 'image',
+            width: 100,
         },
         {
-            title: 'Store Name',
+            title: 'Tên ',
             dataIndex: 'storeName',
             key: 'name',
+            width: 150,
         },
 
         {
-            title: 'Address',
+            title: 'Địa Chỉ',
             dataIndex: 'address',
             key: 'address',
+            width: 200,
         },
         {
-            title: 'hotline',
+            title: 'Hotline',
             dataIndex: 'hotline',
             key: 'hotline',
+            width: 120,
         },
         {
-            title: 'Operating Hour',
+            title: 'Giờ Mở Cửa',
             dataIndex: 'operatingHour',
             key: 'operatingHour',
+            width: 170,
         },
         {
-            title: 'Status',
+            title: 'Trạng Thái',
             dataIndex: 'operatingHour',
             key: 'operatingHour',
             render: (text, record) => {
@@ -164,7 +173,7 @@ const CustomerList = () => {
 
                 return (
                     <span style={{ color: isOpen ? 'green' : 'red', fontWeight: 'bold' }}>
-                        {isOpen ? 'The store is OPEN' : 'The store is CLOSED'}
+                        {isOpen ? 'Cửa Hàng Đang Mở' : 'Cửa Hàng Đã Đóng'}
                     </span>
                 );
             },
@@ -250,12 +259,12 @@ const CustomerList = () => {
     return (
         <>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 15px" }}>
-                <h3><i style={{ marginLeft: 15 }}>Customer Preview </i></h3>
+                <h3><i style={{ marginLeft: 15, color: "#E3C584" }}>Danh Sách Khách Hàng  </i></h3>
                 <Space size="middle">
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
                         <Input
                             type="number"
-                            placeholder="Phone Number"
+                            placeholder="Tìm SDT"
                             maxLength={10}
                             style={{ width: 220 }}
                             allowClear onChange={(e) => handleFilterChange('phonesearch', e.target.value)}
@@ -263,7 +272,7 @@ const CustomerList = () => {
                         />
                     </div>
                     <Button type="primary" onClick={handleFilterSubmit} >
-                        Search
+                        Tìm Kiếm
                     </Button>
 
                 </Space>
@@ -291,16 +300,17 @@ const CustomerList = () => {
                         // },
                     }}
                     onChange={handleTableChange}
+                    className="custom-table"
                 />
             )}
             <Modal
-                title={<span style={{ fontWeight: 500, fontSize: '18px' }}>Store Create Account For : {selectedZoneName}</span>}
+                title={<span style={{ fontWeight: 500, fontSize: '18px', color: "#E3C584" }}> Cửa Hàng Đã Tạo Cho : {selectedZoneName}</span>}
                 open={isModalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}
                 footer={[
                     <Button key="back" onClick={handleCancel}>
-                        Close
+                        Đóng
                     </Button>,
                 ]}
                 style={{ top: 300, left: 40 }}

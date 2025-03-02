@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import logo from '../../assets/img/logoviet.png'
-import DropDown from '../ProductsEdit/ProductsEdit';
 import { Table, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { Pagination } from "antd";
 import debounce from "lodash.debounce";
 import moment from 'moment';
-
+import './ZoneIndex.css'
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -67,62 +66,53 @@ const ZoneList = () => {
             title: 'STT',
             key: 'stt',
             render: (text, record, index) => index + 1,
+            width: 50,
         },
         {
-            title: 'Zone ID',
+            title: 'ID Khu Vực',
             dataIndex: 'zoneID',
             key: 'zoneID',
+            width: 100,
         },
         {
-            title: 'Zone Name',
+            title: 'Tên',
             dataIndex: 'name',
             key: 'name',
+            width: 150,
         },
         {
-            title: 'Location',
+            title: 'Vị Trí',
             dataIndex: 'location',
             sorter: true,
             key: 'location',
+            width: 150,
         },
         {
-            title: 'Quantity',
+            title: 'Số Lượng Gạo',
             dataIndex: 'quantity',
             sorter: true,
             key: 'quantity',
+            width: 100,
         },
         {
-            title: 'size',
-            dataIndex: 'size',
-            sorter: true,
-            key: 'size',
-        },
-        {
-            title: 'Created At',
-            dataIndex: 'created_at',
-            sorter: true,
-            key: 'created_at',
-        },
-        {
-            title: 'Updated At',
+            title: 'Chỉnh Sửa Lúc',
             dataIndex: 'updated_at',
             key: 'updated_at',
+            render: (text) => text ? moment(Number(text)).format('DD/MM/YYYY HH:mm:ss') : 'N/A',
+            width: 150,
         },
         {
-            title: 'Created By',
-            dataIndex: 'created_by',
-            key: 'created_by',
-        },
-        {
-            title: "Actions",
+            title: "Cửa Hàng",
             key: "actions",
             render: (text, record) => (
                 <Button type="primary" onClick={() => {
                     showModal(record);
                 }}
                 >
-                    Store
+                    Thông tin
                 </Button>
             ),
+            width: 100,
         }
 
     ]; const ZoneIN4columns = [
@@ -132,39 +122,39 @@ const ZoneList = () => {
             render: (text, record, index) => index + 1,
         },
         {
-            title: 'Store ID',
+            title: 'ID Cửa Hàng',
             dataIndex: 'storeID',
             key: 'zoneID',
         },
 
         {
-            title: 'Store Image',
+            title: 'Hình Ảnh Cửa Hàng ',
             dataIndex: 'image',
             key: 'image',
         },
         {
-            title: 'Store Name',
+            title: 'Tên',
             dataIndex: 'storeName',
             key: 'name',
         },
 
         {
-            title: 'Address',
+            title: 'Địa Chỉ',
             dataIndex: 'address',
             key: 'address',
         },
         {
-            title: 'hotline',
+            title: 'Hotline',
             dataIndex: 'hotline',
             key: 'hotline',
         },
         {
-            title: 'Operating Hour',
+            title: 'Giờ Mở Cửa',
             dataIndex: 'operatingHour',
             key: 'operatingHour',
         },
         {
-            title: 'Status',
+            title: 'Trạng Thái ',
             dataIndex: 'operatingHour',
             key: 'operatingHour',
             render: (text, record) => {
@@ -177,7 +167,7 @@ const ZoneList = () => {
 
                 return (
                     <span style={{ color: isOpen ? 'green' : 'red', fontWeight: 'bold' }}>
-                        {isOpen ? 'The store is OPEN' : 'The store is CLOSED'}
+                        {isOpen ? 'Cửa Hàng Đang Mở ' : 'Cửa Hàng Đã Đóng'}
                     </span>
                 );
             },
@@ -302,22 +292,23 @@ const ZoneList = () => {
                             icon={<InsertRowBelowOutlined />}
                             onClick={() => handleNavigation('/employee/products')}
                         >
-                            Grain Selection
+                            Sản Phẩm Gạo
                         </Menu.Item>
                         <Menu.Item
                             key="2"
                             icon={<ShopOutlined />}
                             onClick={() => handleNavigation('/employee/ricezone')}
                         >
-                            Rice Zone
+                            Khu Vực Gạo
                         </Menu.Item>
                         <Menu.Item
                             key="3"
                             icon={<TeamOutlined />}
                             onClick={() => handleNavigation('/employee/customers')}
                         >
-                            Customer
+                            Khách Hàng
                         </Menu.Item>
+
                     </Menu>
                 </Sider>
                 <Layout>
@@ -351,7 +342,7 @@ const ZoneList = () => {
                                 placeholder="Tìm kiếm khu vực..."
                                 onChange={(e) => handleSearchChange(e.target.value)}
                             />
-                            <Button type="primary">Search</Button>
+                            <Button type="primary">Tìm Kiếm</Button>
                         </Space.Compact>
                     </Header>
                     <Content
@@ -364,10 +355,10 @@ const ZoneList = () => {
                         }}
                     >
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 15px" }}>
-                            <h3><i style={{ marginLeft: 15 }}>Zone Product Preview </i></h3>
+                            <h3><i style={{ marginLeft: 15, color: "#E3C584" }}>Khu Vực Chứa Gạo  </i></h3>
                             <Space size="middle">
-                                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
-                                    <span>Quantity Min:</span>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px", color: "#6B7012" }}>
+                                    <span>Số Lượng Tối Thiểu :</span>
                                     <Input
                                         type="number"
                                         placeholder="Min"
@@ -376,8 +367,8 @@ const ZoneList = () => {
                                         allowClear onChange={(e) => handleFilterChange('quantityMin', e.target.value)}
                                     />
                                 </div>
-                                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
-                                    <span>Quantity Max:</span>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px", color: "#6B7012" }}>
+                                    <span>Số Lượng Tối Đa :</span>
                                     <Input
                                         type="number"
                                         placeholder="Max"
@@ -386,8 +377,8 @@ const ZoneList = () => {
                                         allowClear onChange={(e) => handleFilterChange('quantityMax', e.target.value)}
                                     />
                                 </div>
-                                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
-                                    <span>Size Min:</span>
+                                {/* <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
+                                    <span>Size Tối Thiểu:</span>
                                     <Input
                                         type="number"
                                         placeholder="Min"
@@ -397,7 +388,7 @@ const ZoneList = () => {
                                     />
                                 </div>
                                 <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
-                                    <span>Size Max:</span>
+                                    <span>Size Tối Đa:</span>
                                     <Input
                                         type="number"
                                         placeholder="Max"
@@ -405,9 +396,9 @@ const ZoneList = () => {
                                         style={{ width: 120 }}
                                         allowClear onChange={(e) => handleFilterChange('sizeMax', e.target.value)}
                                     />
-                                </div>
+                                </div> */}
                                 <Button type="primary" onClick={handleFilterSubmit}>
-                                    Filter
+                                    Lọc Sản Phẩm
                                 </Button>
                             </Space>
 
@@ -437,6 +428,7 @@ const ZoneList = () => {
                                     },
                                 }}
                                 onChange={handleTableChange}
+                                className="custom-table"
                             />
                         )}
                     </Content>
@@ -444,13 +436,13 @@ const ZoneList = () => {
             </Layout>
 
             <Modal
-                title={<span style={{ fontWeight: 500, fontSize: '18px' }}>Store For : {selectedZoneName}</span>}
+                title={<span style={{ fontWeight: 500, fontSize: '18px', color: "#E3C584" }}> Cửa Hàng Của : {selectedZoneName}</span>}
                 open={isModalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}
                 footer={[
                     <Button key="back" onClick={handleCancel}>
-                        Close
+                        Đóng
                     </Button>,
                 ]}
                 style={{ top: 300, left: 40 }}

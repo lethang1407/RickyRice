@@ -1,0 +1,8 @@
+.custom-table .ant-table-thead>tr>th {
+    background-color: #6B7012;
+    /* Màu nền tiêu đề */
+    color: #fff;
+    /* Màu chữ (trắng để dễ đọc) */
+    text-align: center;
+    /* Căn giữa nội dung trong tiêu đề */
+}

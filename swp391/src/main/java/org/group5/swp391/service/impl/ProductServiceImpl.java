@@ -6,19 +6,25 @@ import org.group5.swp391.dto.customer_requirement.CustomerProductDTO;
 import org.group5.swp391.dto.employee.EmployeeProductDTO;
 import org.group5.swp391.dto.store_owner.StoreProductDTO;
 import org.group5.swp391.entity.Account;
+import org.group5.swp391.entity.Employee;
 import org.group5.swp391.entity.Product;
 import org.group5.swp391.entity.Store;
 import org.group5.swp391.repository.AccountRepository;
+import org.group5.swp391.repository.EmployeeRepository;
 import org.group5.swp391.repository.ProductRepository;
 import org.group5.swp391.repository.StoreRepository;
 import org.group5.swp391.service.ProductService;
 import org.springframework.data.domain.*;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +33,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductConverter productConverter;
     private final AccountRepository accountRepository;
     private final StoreRepository storeRepository;
+    private final EmployeeRepository employeeRepository;
 
     // Chien
     @Override
@@ -40,7 +47,7 @@ public class ProductServiceImpl implements ProductService {
         List<Store> stores = storeRepository.findByStoreAccount(account);
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        if(productName == null || productName.isEmpty()){
+        if (productName == null || productName.isEmpty()) {
             productRepository.findAll(pageable).map(productConverter::toStoreProductDTO);
         }
         return productRepository.findByStoreInAndNameContainingIgnoreCase(stores, productName, pageable).map(productConverter::toStoreProductDTO);
@@ -48,7 +55,6 @@ public class ProductServiceImpl implements ProductService {
 
 
     // Minh Tran
-
     @Override
     public Page<EmployeeProductDTO> getProductsByCateID(String CateID, int page, int size, String sortBy, boolean descending) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
@@ -58,10 +64,28 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<EmployeeProductDTO>getProductBySearch(String name, String categoryID, int page, int size, String sortBy, boolean descending){
+    public Page<EmployeeProductDTO> getProductBySearch(String name, int page, int size, String sortBy, boolean descending) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Bạn chưa đăng nhập!");
+        }
+        String username = authentication.getName();
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
+        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getAccountID());
+        System.out.println(a.getStore().getStoreID());
+        System.out.println(sortBy);
+        System.out.println(descending);
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Product> productPage = productRepository.findByNameIgnoreCase(name,categoryID, pageable);
+        if (name.equals("") || name.isEmpty()) {
+            name = null;
+        }else {
+            name = name.toLowerCase();
+            name = capitalizeFirstLetters(name);
+            System.out.println(name);
+        }
+        Page<Product> productPage = productRepository.findByNameAndStoreIdContainingIgnoreCase(name, a.getStore().getStoreID(), pageable);
         return productPage.map(productConverter::toEmployeeProductDTO);
     }
 
@@ -92,5 +116,20 @@ public class ProductServiceImpl implements ProductService {
         return new PageImpl<>(productPages, pageable, (products.size() + 1));
     }
 
-
+    //hàm cắt chuỗi in hoa chữ đầu cho mọi người
+    public String capitalizeFirstLetters(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+        String[] words = input.split("\\s+");
+        StringBuilder capitalizedString = new StringBuilder();
+        for (String word : words) {
+            if (word.length() > 0) {
+                capitalizedString.append(word.substring(0, 1).toUpperCase())
+                        .append(word.substring(1).toLowerCase())
+                        .append(" ");
+            }
+        }
+        return capitalizedString.toString().trim();
+    }
 }
