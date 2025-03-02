@@ -15,5 +15,4 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
     @Query("SELECT c FROM Customer c " +
             "WHERE (:phoneNumber IS NULL OR c.phoneNumber  LIKE %:phoneNumber%)")
     Page<Customer> findAllWithPhoneNumber(Pageable pageable, @Param("phoneNumber") String phoneNumber);
-    Customer findByCustomerID(String customerID);
 }

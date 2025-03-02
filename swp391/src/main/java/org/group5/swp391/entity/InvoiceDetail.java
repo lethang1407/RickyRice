@@ -14,8 +14,8 @@ import lombok.experimental.FieldDefaults;
 public class InvoiceDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "InvoiceDetailID")
-    String invoiceDetailID;
+    @Column(name = "Id")
+    String id;
 
     @Column(name = "Quantity", nullable = false)
     Long quantity;

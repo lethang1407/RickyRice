@@ -131,7 +131,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             acc.setOtp(token);
             accountRepository.save(acc);
 
-            scheduleTokenDeletion(acc.getAccountID());
+            scheduleTokenDeletion(acc.getId());
 
             return SendOTPResponse.builder()
                     .email(acc.getEmail())

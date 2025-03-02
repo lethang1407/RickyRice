@@ -25,14 +25,14 @@ public class EmployeeProductController {
     public Page<EmployeeCategoryDTO> getAllCategories(@RequestParam("page") int page,
                                                       @RequestParam("size") int size) {
 
-        return categoryService.getAllCategories(page,size,"categoryID",false);
+        return categoryService.getAllCategories(page,size,"createdAt",false);
     }
 
     @GetMapping("/category")
     public Page<EmployeeCategoryDTO> getCategoryByName(@RequestParam("name")String name, @RequestParam("page") int page,
                                                        @RequestParam("size") int size) {
 
-        return categoryService.getCategoryBySearch(name,page,size,"categoryID",false);
+        return categoryService.getCategoryBySearch(name,page,size,"createdAt",false);
     }
 
     @GetMapping("/categories")

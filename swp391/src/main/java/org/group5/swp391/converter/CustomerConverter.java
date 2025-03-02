@@ -25,7 +25,7 @@ public class CustomerConverter {
 //    }
     public EmployeeCustomerDTO toEmployeeCustomerDTO(Customer customer) {
         EmployeeCustomerDTO dto = new EmployeeCustomerDTO();
-        dto.setCustomerID(customer.getCustomerID());
+        dto.setCustomerID(customer.getId());
         dto.setName(customer.getName());
         dto.setPhoneNumber(customer.getPhoneNumber());
         dto.setEmail(customer.getEmail());

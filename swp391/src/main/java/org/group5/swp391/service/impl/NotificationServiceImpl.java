@@ -21,15 +21,15 @@ public class NotificationServiceImpl implements NotificationService {
 
     // lấy danh sách thông báo theo ID người nhận
     public List<NotificationResponse> getNotificationsByTargetAccountId(String targetAccountID) {
-        return notificationRepository.findByTargetAccount_AccountID(targetAccountID).stream()
+        return notificationRepository.findByTargetAccount_Id(targetAccountID).stream()
                 .map(notification -> NotificationResponse.builder()
-                        .notificationId(notification.getNotificationID())
+                        .notificationId(notification.getId())
                         .message(notification.getMessage())
                         .isRead(notification.getIsRead())
                         .createdAt(notification.getCreatedAt())
                         .createdBy(notification.getCreatedBy())
-                        .accountId(notification.getSendAccount().getAccountID())
-                        .targetAccountId(notification.getTargetAccount().getAccountID())
+                        .accountId(notification.getSendAccount().getId())
+                        .targetAccountId(notification.getTargetAccount().getId())
                         .build())
                 .collect(Collectors.toList());
     }

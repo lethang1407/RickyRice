@@ -12,11 +12,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Notification")
 public class Notification extends AbstractEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "NotificationID")
-    String notificationID;
-
     @Column(name = "Message", nullable = false, columnDefinition = "NVARCHAR(255)")
     String message;
 

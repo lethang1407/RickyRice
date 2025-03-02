@@ -17,12 +17,12 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     Page<Product> findByStoreInAndNameContainingIgnoreCase(Collection<Store> stores, String name, Pageable pageable);
 
 
-    @Query("Select s from Product  s where s.category.categoryID = ?1")
+    @Query("Select s from Product  s where s.category.id = ?1")
     List<Product> findAllByCategoryId(String categoryId);
-    @Query("Select s from Product s where s.category.categoryID = :categoryId")
+    @Query("Select s from Product s where s.category.id = :categoryId")
     Page<Product> findAllByCategoryId(Pageable pageable,String categoryId);
 
-    @Query("SELECT s FROM Product s WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%')) and s.category.categoryID = :categoryId")
+    @Query("SELECT s FROM Product s WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%')) and s.category.id = :categoryId")
     Page<Product> findByNameIgnoreCase(String name,String categoryId,Pageable pageable);
 
     @Query("SELECT p FROM Product p WHERE "  +

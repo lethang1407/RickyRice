@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ZoneRepository extends JpaRepository<Zone, Long> {
-    @Query("SELECT SUM(z.quantity) FROM Zone z WHERE z.product.category.categoryID = :categoryId")
+    @Query("SELECT SUM(z.quantity) FROM Zone z WHERE z.product.category.id = :categoryId")
     Long findTotalQuantityByCategoryId(String categoryId);
 
     Page<Zone> findAll(Pageable pageable);

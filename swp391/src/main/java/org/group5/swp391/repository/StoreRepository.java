@@ -14,5 +14,4 @@ public interface StoreRepository extends JpaRepository<Store, String> {
     Page<Store> findByStoreAccount(Account storeAccount, Pageable pageable);
     Page<Store> findByStoreAccountAndStoreNameContainingIgnoreCase(Account account, String storeName, Pageable pageable);
     List<Store> findByStoreAccount(Account storeAccount);
-    Store findByStoreID(String storeID);
 }

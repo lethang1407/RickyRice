@@ -21,8 +21,8 @@ public class AppStatisticsServiceServiceImpl implements AppStatisticsService {
         List<AppStatistics> statistics = appStatisticsRepository.findAll();
         return statistics.stream()
                 .map(stat -> AppStatisticsResponse.builder()
-                        .appStatisticsID(stat.getAppStatisticsID())
-                        .storeID(stat.getStore().getStoreID())
+                        .appStatisticsID(stat.getId())
+                        .storeID(stat.getStore().getId())
                         .storeName(stat.getStore().getStoreName())
                         .subcriptionPlanName(stat.getSubcriptionPlanName())
                         .subcriptionPlanPrice(stat.getSubcriptionPlanPrice())

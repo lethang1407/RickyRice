@@ -41,7 +41,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer updateCustomer(String customerId, Customer updatedCustomer) {
-        Customer existingCustomer = customerRepository.findByCustomerID(customerId);
+        Customer existingCustomer = customerRepository.findById(customerId).orElseThrow();
         existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
         existingCustomer.setEmail(updatedCustomer.getEmail());
@@ -60,7 +60,7 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setPhoneNumber(customerDTO.getPhoneNumber());
             customer.setEmail(customerDTO.getEmail());
             customer.setAddress(customerDTO.getAddress());
-            Store store = storeRepository.findByStoreID(customerDTO.getEmployeeStoreDTO().getStoreID());
+            Store store = storeRepository.findById(customerDTO.getEmployeeStoreDTO().getStoreID()).orElseThrow();
             customer.setStore(store);
             log.info("Saving customer thanh cong : {}", customer);
             return customerRepository.save(customer);

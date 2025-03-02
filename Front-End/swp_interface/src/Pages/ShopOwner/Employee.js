@@ -100,7 +100,7 @@ const Employee = () => {
         return qs.stringify({
             page: pagination.current - 1,
             size: pagination.pageSize,
-            sortBy: sortField || "employeeID",
+            sortBy: sortField || 'createdAt',
             descending: sortOrder === "descend",
             gender: filters?.gender?.[0] || "all",
         });

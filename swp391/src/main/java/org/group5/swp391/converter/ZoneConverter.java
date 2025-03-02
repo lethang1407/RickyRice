@@ -20,7 +20,7 @@ public class ZoneConverter {
     public EmployeeZoneDTO toEmployeeZoneDTO(Zone zone) {
         EmployeeZoneDTO EmployeeZoneDTO = new EmployeeZoneDTO();
 
-        EmployeeZoneDTO.setZoneID(zone.getZoneID());
+        EmployeeZoneDTO.setZoneID(zone.getId());
         EmployeeZoneDTO.setName(zone.getName());
         EmployeeZoneDTO.setQuantity(zone.getQuantity());
         EmployeeZoneDTO.setSize(zone.getSize());
@@ -31,7 +31,7 @@ public class ZoneConverter {
 
         if (zone.getStore() != null) {
             EmployeeStoreDTO employeeStoreDTO = new EmployeeStoreDTO();
-            employeeStoreDTO.setStoreID(zone.getStore().getStoreID());
+            employeeStoreDTO.setStoreID(zone.getStore().getId());
             employeeStoreDTO.setStoreName(zone.getStore().getStoreName());
             employeeStoreDTO.setAddress(zone.getStore().getAddress());
             employeeStoreDTO.setHotline(zone.getStore().getHotline());
