@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Table, message, Input } from 'antd';
 import qs from 'qs';
-import Loading from '../Loading/Loading';
-import API from '../../Utils/API/API';
-import { getToken } from '../../Utils/UserInfoUtils';
-import { getDataWithToken } from '../../Utils/FetchUtils';
+import Loading from '../../Loading/Loading';
+import API from '../../../Utils/API/API';
+import { getToken } from '../../../Utils/UserInfoUtils';
+import { getDataWithToken } from '../../../Utils/FetchUtils';
+import ProductDetailModal from '../../../Components/StoreOwner/ProductDetailModal/ProductDetailModal'; // Đảm bảo đường dẫn đúng
+import './style.scss';
 
 const { Search } = Input;
 
@@ -21,6 +23,8 @@ const Product = () => {
         },
         filters: {},
     });
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedProductID, setSelectedProductID] = useState(null);
 
     const columns = [
         {
@@ -50,8 +54,8 @@ const Product = () => {
             title: 'Price',
             dataIndex: 'price',
             key: 'price',
-            sorter: true, 
-            render: (price) => `${price.toFixed(3)} đ`, 
+            sorter: true,
+            render: (price) => `${price.toFixed(3)} đ`,
             width: '10%',
         },
         {
@@ -83,7 +87,7 @@ const Product = () => {
         setLoading(true);
         try {
             const queryParams = `?productName=${encodeURIComponent(searchValue)}&` + getProductParam(tableParams);
-            const response = await getDataWithToken(API.STORE_OWNER.GET_STORE_PRODUCTS + queryParams, token);            
+            const response = await getDataWithToken(API.STORE_OWNER.GET_STORE_PRODUCTS + queryParams, token);
             setData(response.content || []);
             setTableParams({
                 ...tableParams,
@@ -156,7 +160,21 @@ const Product = () => {
                 }}
                 loading={loading}
                 onChange={handleTableChange}
+                onRow={(record) => ({
+                    onClick: () => {
+                        setSelectedProductID(record.productID);
+                        setIsModalOpen(true);
+                    },
+                    style: { cursor: 'pointer' },
+                })}
             />
+            {isModalOpen && (
+                <ProductDetailModal
+                    visible={isModalOpen}
+                    productID={selectedProductID}
+                    onClose={() => setIsModalOpen(false)}
+                />
+            )}
         </div>
     );
 };

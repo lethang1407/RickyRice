@@ -14,8 +14,8 @@ import ZoneList from './Pages/ZoneLayout/Zone';
 import CreateProduct from './Pages/CreateProduct/CreateProduct';
 import Store from "./Pages/ShopOwner/Store/Store";
 import StoreOwnerLayout from "./Components/StoreOwner/Layout";
-import Invoice from "./Pages/ShopOwner/Invoice";
-import Product from "./Pages/ShopOwner/Product";
+import Invoice from "./Pages/ShopOwner/Invoice/Invoice";
+import Product from "./Pages/ShopOwner/Product/Product";
 import CommonProtected from "./Pages/Protected/CommonProtected";
 import Unauthorized from "./Pages/ErrorPage/Unauthorized";
 import AdminProtected from "./Pages/Protected/AdminProtected";
@@ -25,8 +25,8 @@ import Employee_CustomerLayout from "./Pages/Employee_CustomerLayout";
 import Employee_Customer from "./Pages/Employee_CustomerLayout";
 import CustomerIN4Edit from "./Pages/Employee_CustomerLayout/components/customeEdit";
 import CustomerIN4Create from "./Pages/Employee_CustomerLayout/components/customerCreate";
-import Employee from "./Pages/ShopOwner/Employee";
-import Statistic from "./Pages/ShopOwner/Statistic";
+import Employee from "./Pages/ShopOwner/Employee/Employee";
+import Statistic from "./Pages/ShopOwner/Statistic/Statistic";
 function App() {
   return (
     <>

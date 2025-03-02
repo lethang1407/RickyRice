@@ -1,9 +1,9 @@
 package org.group5.swp391.converter;
 
 import lombok.RequiredArgsConstructor;
-import org.group5.swp391.dto.store_owner.StoreAccountOfEmployeeDTO;
-import org.group5.swp391.dto.store_owner.StoreEmployeeDTO;
-import org.group5.swp391.dto.store_owner.StoreInfoOfEmployeeDTO;
+import org.group5.swp391.dto.store_owner.all_employee.StoreAccountOfEmployeeDTO;
+import org.group5.swp391.dto.store_owner.all_employee.StoreEmployeeDTO;
+import org.group5.swp391.dto.store_owner.all_employee.StoreInfoOfEmployeeDTO;
 import org.group5.swp391.entity.Employee;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

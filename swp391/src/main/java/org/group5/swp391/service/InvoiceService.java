@@ -1,6 +1,6 @@
 package org.group5.swp391.service;
 
-import org.group5.swp391.dto.store_owner.StoreInvoiceDTO;
+import org.group5.swp391.dto.store_owner.all_invoice.StoreInvoiceDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 

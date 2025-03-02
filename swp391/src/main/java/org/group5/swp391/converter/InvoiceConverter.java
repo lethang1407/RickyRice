@@ -1,7 +1,7 @@
 package org.group5.swp391.converter;
 
 import lombok.RequiredArgsConstructor;
-import org.group5.swp391.dto.store_owner.StoreInvoiceDTO;
+import org.group5.swp391.dto.store_owner.all_invoice.StoreInvoiceDTO;
 import org.group5.swp391.entity.Invoice;
 import org.springframework.stereotype.Component;
 
