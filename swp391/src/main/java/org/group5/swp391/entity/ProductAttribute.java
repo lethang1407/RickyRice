@@ -17,8 +17,8 @@ import java.util.Set;
 public class ProductAttribute {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "ProductAttributeID")
-    String productAttributeID;
+    @Column(name = "id")
+    String id;
 
     @Column(name = "value", columnDefinition = "NVARCHAR(255)")
     String value;

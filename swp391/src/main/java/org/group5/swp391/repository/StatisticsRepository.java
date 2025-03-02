@@ -15,7 +15,7 @@ public interface StatisticsRepository extends JpaRepository<Statistics, String> 
         SELECT s
         FROM Statistics s
         WHERE (:storeName IS NULL OR LOWER(s.store.storeName) LIKE LOWER(CONCAT('%', :storeName, '%')))
-        AND (:isStoreFilterDisabled = true OR s.store.storeID IN :stores)
+        AND (:isStoreFilterDisabled = true OR s.store.id IN :stores)
     """)
     Page<Statistics> findStatisticsByStores(
             @Param("stores") List<String> stores,

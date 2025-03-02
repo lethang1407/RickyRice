@@ -12,11 +12,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Zone")
 public class Zone extends AbstractEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "ZoneID")
-    String zoneID;
-
     @Column(name = "Name", nullable = false, columnDefinition = "NVARCHAR(255)")
     String name;
 

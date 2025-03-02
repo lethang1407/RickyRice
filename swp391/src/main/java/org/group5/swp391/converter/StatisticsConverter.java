@@ -19,7 +19,7 @@ public class StatisticsConverter {
             return null;
         }
         StoreStatisticDTO dto = modelMapper.map(statistics, StoreStatisticDTO.class);
-        dto.setStoreID(statistics.getStore().getStoreID());
+        dto.setStoreID(statistics.getStore().getId());
         dto.setStoreName(statistics.getStore().getStoreName());
         String createdById = statistics.getCreatedBy();
         accountRepository.findById(createdById)

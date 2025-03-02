@@ -73,8 +73,10 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getAccountID());
         System.out.println(a.getEmployeeAccount().getName());
-        Customer existingCustomer = customerRepository.findByCustomerID(customerId);
+        //Customer existingCustomer = customerRepository.findByCustomerID(customerId);
+        Customer existingCustomer = customerRepository.findById(customerId).orElseThrow();
         existingCustomer.setCreatedBy(a.getEmployeeAccount().getName());
+//        Customer existingCustomer = customerRepository.findById(customerId).orElseThrow();
         existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
         existingCustomer.setEmail(updatedCustomer.getEmail());
@@ -100,7 +102,7 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setEmail(customerDTO.getEmail());
             customer.setAddress(customerDTO.getAddress());
             customer.setCreatedBy(a.getEmployeeAccount().getName());
-            Store store = storeRepository.findByStoreID(a.getStore().getStoreID());
+            Store store = storeRepository.findById(customerDTO.getEmployeeStoreDTO().getStoreID()).orElseThrow();
             customer.setStore(store);
             log.info("Saving customer thanh cong : {}", customer);
             return customerRepository.save(customer);

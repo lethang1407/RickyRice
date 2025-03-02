@@ -15,11 +15,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Customer")
 public class Customer extends AbstractEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "CustomerID")
-    String customerID;
-
     @Column(name = "Name", nullable = false, columnDefinition = "NVARCHAR(255)")
     String name;
 

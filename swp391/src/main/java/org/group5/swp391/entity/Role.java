@@ -14,11 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Role")
-public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "RoleID")
-    String roleID;
+public class Role extends AbstractEntity{
 
     @Column(name = "Code" , nullable = false, unique = true)
     String code;

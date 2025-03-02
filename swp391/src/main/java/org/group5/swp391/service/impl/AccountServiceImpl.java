@@ -23,7 +23,7 @@ public class AccountServiceImpl implements AccountService {
     public List<AccountResponse> getAccountsByRole(String roleCode) {
         return accountRepository.findByRole_Code(roleCode).stream()
                 .map(account -> AccountResponse.builder()
-                        .accountID(account.getAccountID())
+                        .accountID(account.getId())
                         .username(account.getUsername())
                         .name(account.getName())
                         .email(account.getEmail())
@@ -57,9 +57,9 @@ public class AccountServiceImpl implements AccountService {
 
     // lấy tài khoản theo ID
     public AccountResponse getAccountsByID(String accountID) {
-        return accountRepository.findByAccountID(accountID)
+        return accountRepository.findById(accountID)
                 .map(account -> AccountResponse.builder()
-                        .accountID(account.getAccountID())
+                        .accountID(account.getId())
                         .username(account.getUsername())
                         .name(account.getName())
                         .email(account.getEmail())

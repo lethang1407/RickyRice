@@ -12,11 +12,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "AppStatistics")
 public class AppStatistics extends AbstractEntity{
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "AppStatisticsID")
-    String appStatisticsID;
-
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "StoreID")
     Store store;

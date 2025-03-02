@@ -10,7 +10,7 @@ import java.util.List;
 public interface NotificationRepository extends JpaRepository<Notification, String> {
 
     // Lấy danh sách thông báo theo tài khoản nhận được
-    List<Notification> findByTargetAccount_AccountID(String targetAccountID);
+    List<Notification> findByTargetAccount_Id(String targetAccountID);
 
 
 }

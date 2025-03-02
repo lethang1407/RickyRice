@@ -28,6 +28,7 @@ public class ProductConverter {
 
     public CustomerProductDTO toCustomerProductDTO(Product product) {
         CustomerProductDTO customerProductDTO = modelMapper.map(product, CustomerProductDTO.class);
+        customerProductDTO.setProductID(product.getId());
         List<CustomerProductAttributeDTO> pads = product.getProductAttributes().stream().map(productAttributeConverter::toProductAttributeDTO).collect(Collectors.toList());
         customerProductDTO.setProductAttributes(pads);
 
@@ -42,6 +43,7 @@ public class ProductConverter {
     public StoreProductDTO toStoreProductDTO(Product product){
         StoreProductDTO storeProductDTO = modelMapper.map(product, StoreProductDTO.class);
         storeProductDTO.setCategoryName(product.getCategory().getName());
+        storeProductDTO.setProductID(product.getId());
         return storeProductDTO;
     }
 
@@ -59,7 +61,7 @@ public class ProductConverter {
 
         EmployeeProductDTO employeeProductDTO = new EmployeeProductDTO();
 
-        employeeProductDTO.setProductID(product.getProductID());
+        employeeProductDTO.setProductID(product.getId());
         employeeProductDTO.setName(product.getName());
         employeeProductDTO.setPrice(product.getPrice());
         employeeProductDTO.setInformation(product.getInformation());
@@ -71,7 +73,7 @@ public class ProductConverter {
 
         if (product.getCategory() != null) {
             EmployeeCategoryDTO employeeCategoryDTO = new EmployeeCategoryDTO();
-            employeeCategoryDTO.setCategoryID(product.getCategory().getCategoryID());
+            employeeCategoryDTO.setCategoryID(product.getCategory().getId());
             employeeCategoryDTO.setName(product.getCategory().getName());
             employeeCategoryDTO.setDescription(product.getCategory().getDescription());
             employeeProductDTO.setEmployeeCategoryDTO(employeeCategoryDTO);
@@ -81,7 +83,7 @@ public class ProductConverter {
             List<EmployeeZoneDTO> employeeZoneDTOList =  product.getZones().stream()
                     .map(zone -> {
                         EmployeeZoneDTO EmployeeZoneDTO =new EmployeeZoneDTO();
-                        EmployeeZoneDTO.setZoneID(zone.getZoneID());
+                        EmployeeZoneDTO.setZoneID(zone.getId());
                         EmployeeZoneDTO.setName(zone.getName());
                         EmployeeZoneDTO.setName(zone.getName());
                         EmployeeZoneDTO.setQuantity(zone.getQuantity());

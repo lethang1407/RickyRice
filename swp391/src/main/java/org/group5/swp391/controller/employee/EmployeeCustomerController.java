@@ -19,7 +19,7 @@ public class EmployeeCustomerController {
     @GetMapping("/customers")
     public Page<EmployeeCustomerDTO> getAllCustomers(@RequestParam("page") int page,
                                                      @RequestParam("size") int size,
-                                                     @RequestParam(value = "sortBy", required = false, defaultValue = "customerID")String sortBy,
+                                                     @RequestParam(value = "sortBy", required = false, defaultValue = "createdAt")String sortBy,
                                                      @RequestParam(value = "sortOrder", required = false, defaultValue = "false")boolean sortOrder,
                                                      @RequestParam(value = "phonesearch", required = false, defaultValue = "") String phonesearch )
     {

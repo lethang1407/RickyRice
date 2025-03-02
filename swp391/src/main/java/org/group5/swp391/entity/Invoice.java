@@ -15,11 +15,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "Invoice")
 public class Invoice extends AbstractEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "InvoiceID")
-    String invoiceID;
-
     @Column(name = "ProductMoney", nullable = false)
     Double productMoney;
 

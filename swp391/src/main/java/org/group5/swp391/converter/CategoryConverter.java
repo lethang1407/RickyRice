@@ -12,6 +12,8 @@ public class CategoryConverter {
     private final ModelMapper modelMapper;
 
     public CustomerCategoryDTO toCategoryDTO(Category category) {
-        return modelMapper.map(category, CustomerCategoryDTO.class);
+        CustomerCategoryDTO dto =  modelMapper.map(category, CustomerCategoryDTO.class);
+        dto.setCategoryID(category.getId());
+        return dto;
     }
 }

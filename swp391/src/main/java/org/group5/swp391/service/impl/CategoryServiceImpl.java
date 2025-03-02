@@ -42,10 +42,10 @@ public class CategoryServiceImpl implements CategoryService {
         long quantity = 0;
         EmployeeCategoryDTO employeeCategoryDTO = new EmployeeCategoryDTO();
 
-        employeeCategoryDTO.setCategoryID(category.getCategoryID());
+        employeeCategoryDTO.setCategoryID(category.getId());
         employeeCategoryDTO.setName(category.getName());
         employeeCategoryDTO.setDescription(category.getDescription());
-        employeeCategoryDTO.setQuantity(getTotalQuantityByCategoryId(category.getCategoryID()));
+        employeeCategoryDTO.setQuantity(getTotalQuantityByCategoryId(category.getId()));
 
 
         return employeeCategoryDTO;
