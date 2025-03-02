@@ -102,7 +102,7 @@ const DashboardContent = () => {
             onClick={() => navigate("/admin/view_stores")}
           >
             <Card.Body>
-              <Card.Title>Tổng cửa hàng</Card.Title>
+            <Card.Title>Tổng cửa hàng</Card.Title>
               <Card.Text>{totalStores}</Card.Text>
             </Card.Body>
           </Card>

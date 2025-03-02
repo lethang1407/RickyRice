@@ -19,14 +19,26 @@ const Product = () => {
             current: 1,
             pageSize: 5,
         },
+        filters: {},
     });
 
     const columns = [
         {
             title: 'ID',
+            key: 'id',
+            render: (_, __, index) => {
+                const id =
+                    (tableParams.pagination.current - 1) * tableParams.pagination.pageSize +
+                    index + 1;
+                return id;
+            },
+            width: '5%',
+        },
+        {
+            title: 'ProductID',
             dataIndex: 'productID',
             key: 'productID',
-            width: '10%',
+            width: '8%',
         },
         {
             title: 'Name',
@@ -38,15 +50,15 @@ const Product = () => {
             title: 'Price',
             dataIndex: 'price',
             key: 'price',
-            sorter: true, // Bật tính năng sắp xếp
-            render: (price) => `$${price.toFixed(2)}`, // Định dạng giá tiền
-            width: '15%',
+            sorter: true, 
+            render: (price) => `${price.toFixed(3)} đ`, 
+            width: '10%',
         },
         {
             title: 'Information',
             dataIndex: 'information',
             key: 'information',
-            ellipsis: true, // Hiển thị chuỗi ngắn gọn với dấu "..."
+            ellipsis: true,
             width: '30%',
         },
         {

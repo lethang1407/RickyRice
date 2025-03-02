@@ -185,7 +185,7 @@ const AccountOwner = () => {
           <div className="d-flex gap-3 mb-3">
             <Form.Control
               type="text"
-              placeholder="Tìm kiếm theo tên, email, số điện thoại"
+              placeholder="Tìm kiếm theo tên, email, số điện thoại..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />

@@ -131,7 +131,7 @@ const AdminViewStores = () => {
             <Col md={6}>
               <Form.Control
                 type="text"
-                placeholder="Tìm kiếm theo tên cửa hàng, chủ cửa hàng"
+                 placeholder="Tìm kiếm theo tên cửa hàng, chủ cửa hàng"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />

@@ -6,10 +6,6 @@ export  function getToken() {
   return sessionStorage.getItem('token') || localStorage.getItem('token');
 }
 
-export function getUsername() {
-  return sessionStorage.getItem('username') || localStorage.getItem('username');
-}
-
 export const getRole = () =>{
   const token = getToken();
   if (!token) return null;

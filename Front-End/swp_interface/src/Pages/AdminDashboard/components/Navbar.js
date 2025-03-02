@@ -25,7 +25,7 @@ const CustomNavbar = () => {
         }
       })
       .catch((error) => console.error("Error fetching notifications:", error));
-  }, [token]);
+  },[token]);
 
   const markAllAsRead = async () => {
     const unreadIds = notifications
