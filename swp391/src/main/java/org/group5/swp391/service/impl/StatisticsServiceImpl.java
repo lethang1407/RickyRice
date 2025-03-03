@@ -2,7 +2,7 @@ package org.group5.swp391.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.converter.StatisticsConverter;
-import org.group5.swp391.dto.store_owner.StoreStatisticDTO;
+import org.group5.swp391.dto.store_owner.all_statistic.StoreStatisticDTO;
 import org.group5.swp391.entity.Account;
 import org.group5.swp391.entity.Statistics;
 import org.group5.swp391.entity.Store;
@@ -54,7 +54,6 @@ public class StatisticsServiceImpl implements StatisticsService {
         Page<Statistics> statisticsPage = statisticsRepository.findStatisticsByStores(
                 storeIds,
                 storeName,
-                isStoreFilterDisabled,
                 pageable
         );
         return statisticsPage.map(statisticsConverter::toStoreStatisticDTO);

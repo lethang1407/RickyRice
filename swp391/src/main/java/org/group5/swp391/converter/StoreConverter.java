@@ -1,7 +1,7 @@
 package org.group5.swp391.converter;
 
 import lombok.RequiredArgsConstructor;
-import org.group5.swp391.dto.store_owner.StoreInfoDTO;
+import org.group5.swp391.dto.store_owner.all_store.StoreInfoDTO;
 import org.group5.swp391.entity.Store;
 import org.group5.swp391.repository.InvoiceRepository;
 import org.modelmapper.ModelMapper;

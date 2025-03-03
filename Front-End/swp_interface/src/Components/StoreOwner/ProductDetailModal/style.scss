@@ -1,0 +1,29 @@
+.product-detail-container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+
+    .product-image {
+        flex: 1;
+        max-width: 300px;
+    }
+
+    .product-info {
+        flex: 2;
+
+        .product-attributes {
+            margin-top: 15px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .product-description {
+            margin-top: 15px;
+        }
+
+        .store-info {
+            margin-top: 15px;
+        }
+    }
+}

@@ -47,14 +47,44 @@ const InvoiceDetailModal = ({ visible, invoiceID, shipMoney, totalMoney, custome
     }, 0);
 
     const handlePrint = () => {
-        const originalContents = document.body.innerHTML;
         const printContents = printRef.current.innerHTML;
-
-        document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
-        window.location.reload();
+    
+        // Tạo iframe ẩn
+        const iframe = document.createElement("iframe");
+        iframe.style.position = "absolute";
+        iframe.style.width = "0";
+        iframe.style.height = "0";
+        iframe.style.border = "none";
+        document.body.appendChild(iframe);
+    
+        // Ghi nội dung vào iframe
+        const doc = iframe.contentWindow.document;
+        doc.open();
+        doc.write(`
+            <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        @media print {
+                            @page { margin: 0; } /* Loại bỏ margin của trang in */
+                            body { margin: 10mm; } /* Định dạng lề */
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${printContents}
+                </body>
+            </html>
+        `);
+        doc.close();
+        iframe.contentWindow.print();
+        setTimeout(() => document.body.removeChild(iframe), 1000);
     };
+    
+    
 
     return (
         <Modal
@@ -65,9 +95,7 @@ const InvoiceDetailModal = ({ visible, invoiceID, shipMoney, totalMoney, custome
                 <Button key="print" onClick={handlePrint}>
                     In hóa đơn
                 </Button>,
-                <Button key="close" onClick={onClose}>
-                    Đóng
-                </Button>,
+                
             ]}
             width={800}
         >

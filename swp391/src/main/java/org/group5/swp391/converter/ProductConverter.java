@@ -8,7 +8,7 @@ import org.group5.swp391.dto.customer_requirement.CustomerZoneDTO;
 import org.group5.swp391.dto.employee.EmployeeCategoryDTO;
 import org.group5.swp391.dto.employee.EmployeeProductDTO;
 import org.group5.swp391.dto.employee.EmployeeZoneDTO;
-import org.group5.swp391.dto.store_owner.StoreProductDTO;
+import org.group5.swp391.dto.store_owner.all_product.StoreProductDTO;
 import org.group5.swp391.entity.Product;
 import org.group5.swp391.entity.Zone;
 import org.modelmapper.ModelMapper;

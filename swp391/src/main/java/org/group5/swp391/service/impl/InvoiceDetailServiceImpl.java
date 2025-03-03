@@ -2,7 +2,7 @@ package org.group5.swp391.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.converter.InvoiceDetailConverter;
-import org.group5.swp391.dto.store_owner.StoreInvoiceDetailDTO;
+import org.group5.swp391.dto.store_owner.all_invoice.StoreInvoiceDetailDTO;
 import org.group5.swp391.entity.Invoice;
 import org.group5.swp391.repository.InvoiceDetailRepository;
 import org.group5.swp391.repository.InvoiceRepository;
