@@ -91,7 +91,7 @@ body {
   color: white;
 }
 .section-one__text__h2 {
-  max-width: 540px;
+  max-width: 700px;
   text-align: center;
   line-height: 50px;
   font-size: 38px;
@@ -245,6 +245,7 @@ body {
 
 .section-four {
   padding: 100px;
+  background-color: white;
 }
 .section-four__inner {
   margin-top: 30px;
@@ -291,6 +292,8 @@ body {
 }
 .section-four__inner__box__item__author__img {
   border-radius: 50%;
+  width: 70px;
+  height: 70px;
 }
 .section-four__inner__box__item__author__des {
   transition: all ease 0.5s;

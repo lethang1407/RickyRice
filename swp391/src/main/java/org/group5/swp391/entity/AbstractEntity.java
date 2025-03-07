@@ -17,7 +17,7 @@ public abstract class AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
-    String id;
+    private String id;
 
     @CreatedBy
     @Column(name = "created_by")
