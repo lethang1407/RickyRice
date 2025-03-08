@@ -10,7 +10,6 @@ import java.util.List;
 
 @Service
 public interface CategoryService {
-    public Long getTotalQuantityByCategoryId(String categoryId);
     public EmployeeCategoryDTO convertToCategoryDTO(Category category);
     public List<EmployeeCategoryDTO> getAllCategories();
     public Page<EmployeeCategoryDTO> getAllCategories(int page, int size, String sortBy, boolean descending);

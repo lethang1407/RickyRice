@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Table, message, Input } from 'antd';
+import { Table, message, Input, Button } from 'antd';
 import qs from 'qs';
-import InvoiceDetailModal from '../../Components/StoreOwner/InvoiceDetailModal/InvoiceDetailModal';
-import { getToken } from '../../Utils/UserInfoUtils';
-import { getDataWithToken } from '../../Utils/FetchUtils';
-import API from '../../Utils/API/API';
+import InvoiceDetailModal from '../../../Components/StoreOwner/InvoiceDetailModal/InvoiceDetailModal';
+import { getToken } from '../../../Utils/UserInfoUtils';
+import { getDataWithToken } from '../../../Utils/FetchUtils';
+import API from '../../../Utils/API/API';
+import './style.scss'
 
 const { Search } = Input;
 
@@ -93,31 +94,31 @@ const Invoice = () => {
                 { text: 'Xuất Khẩu', value: true },
                 { text: 'Nhập Khẩu', value: false }
             ],
-            filterMultiple: false, 
-            onFilter: (value, record) => record.type === value, 
+            filterMultiple: false,
+            onFilter: (value, record) => record.type === value,
             render: (type) => (
                 <span style={{ color: type ? 'green' : 'red' }}>
                     {type ? 'Xuất Khẩu' : 'Nhập Khẩu'}
                 </span>
             ),
-            width: '8%',
+            width: '9%',
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
             filters: [
-                { text: 'Paid', value: true },
-                { text: 'Unpaid', value: false }
+                { text: 'Thanh toán', value: true },
+                { text: 'Nợ', value: false }
             ],
-            filterMultiple: false, 
-            onFilter: (value, record) => record.type === value, 
+            filterMultiple: false,
+            onFilter: (value, record) => record.status === value,
             render: (status) => (
                 <span style={{ color: status ? 'green' : 'red' }}>
-                    {status ? 'Paid' : 'Unpaid'}
+                    {status ? 'Thanh toán' : 'Nợ'}
                 </span>
             ),
-            width: '8%',
+            width: '9%',
         },
         {
             title: 'Description',
@@ -129,22 +130,14 @@ const Invoice = () => {
 
     const getInvoiceParam = (params) => {
         const { pagination, sortField, sortOrder, filters } = params;
-        const typeFilter =
-            filters?.type?.[0] === true
-                ? "export"
-                : filters?.type?.[0] === false
-                    ? "import"
-                    : "all";
-        const statusFilter =
-            filters?.status?.[0] === true
-                ? "paid"
-                : filters?.status?.[0] === false
-                    ? "unpaid"
-                    : "all";
+        const typeFilter = filters?.type?.[0] === true ? "export" : filters?.type?.[0] === false ? "import" : "all";
+        console.log(typeFilter)
+        const statusFilter = filters?.status?.[0] === true ? "paid" : filters?.status?.[0] === false ? "unpaid" : "all";
+        console.log(statusFilter)
         return qs.stringify({
             page: pagination.current - 1,
             size: pagination.pageSize,
-            sortBy: sortField ,
+            sortBy: sortField,
             descending: sortOrder === "descend",
             type: typeFilter,
             status: statusFilter,
@@ -156,6 +149,7 @@ const Invoice = () => {
         try {
             const queryParams = `?phoneNumber=${encodeURIComponent(searchValue)}&` + getInvoiceParam(tableParams);
             const response = await getDataWithToken(API.STORE_OWNER.GET_INVOICES + queryParams, token);
+            console.log(response)
             setData(response.content);
             setTableParams((prev) => ({
                 ...prev,
@@ -219,15 +213,28 @@ const Invoice = () => {
         setSelectedInvoiceID(null);
     };
 
+    const handleCreate = () => {
+
+        message.info('Create button clicked');
+    };
     return (
         <div>
-            <Search
-                placeholder="Enter Phone Number"
-                onChange={handleSearch}
-                enterButton
-                style={{ marginBottom: 16 }}
-                loading={loading}
-            />
+            {/* Container for search and button */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+                <Search
+                    placeholder="Enter Phone Number"
+                    onChange={handleSearch}
+                    enterButton
+                    loading={loading}
+                    style={{ maxWidth: '90%' }}
+                />
+                <Button type="primary" onClick={handleCreate}
+                    style={{ marginRight: '30px' }}
+                >
+                    Create
+                </Button>
+            </div>
+
             <Table
                 columns={columns}
                 rowKey="invoiceID"

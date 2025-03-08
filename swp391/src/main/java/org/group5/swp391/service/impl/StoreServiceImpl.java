@@ -3,7 +3,7 @@ package org.group5.swp391.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.converter.StoreConverter;
 import org.group5.swp391.dto.response.AdminResponse.ViewStoreResponse;
-import org.group5.swp391.dto.store_owner.StoreInfoDTO;
+import org.group5.swp391.dto.store_owner.all_store.StoreInfoDTO;
 import org.group5.swp391.entity.Account;
 import org.group5.swp391.repository.AccountRepository;
 import org.group5.swp391.repository.StoreRepository;

@@ -2,7 +2,7 @@ package org.group5.swp391.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.converter.InvoiceConverter;
-import org.group5.swp391.dto.store_owner.StoreInvoiceDTO;
+import org.group5.swp391.dto.store_owner.all_invoice.StoreInvoiceDTO;
 import org.group5.swp391.entity.Account;
 import org.group5.swp391.entity.Customer;
 import org.group5.swp391.entity.Store;
@@ -52,11 +52,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         List<Store> stores = storeRepository.findByStoreAccount(account);
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        List<Customer> customers = customerRepository.findByPhoneNumberContainingIgnoreCase(phoneNumber);
         if ((phoneNumber == null || phoneNumber.isEmpty()) && typeStr.equals("all") && statusStr.equals("all")) {
             return invoiceRepository.findByStoreIn(stores, pageable).map(invoiceConverter::toStoreInvoiceDTO);
         }
-        boolean type = typeStr.equals("export");
-        boolean status = statusStr.equals("paid");
-        return invoiceRepository.findByStoreInAndCustomerInAndTypeAndStatus(stores, customers, type, status, pageable).map(invoiceConverter::toStoreInvoiceDTO);    }
+        List<Customer> customers = customerRepository.findByPhoneNumberContainingIgnoreCase(phoneNumber);
+        Boolean type = typeStr.equals("all") ? null : typeStr.equals("export");
+        Boolean status = statusStr.equals("all") ? null : statusStr.equals("paid");
+        return invoiceRepository.findInvoices(stores, customers, type, status, pageable).map(invoiceConverter::toStoreInvoiceDTO);    }
 }

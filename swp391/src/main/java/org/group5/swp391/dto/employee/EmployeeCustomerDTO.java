@@ -16,10 +16,8 @@ public class EmployeeCustomerDTO {
     String phoneNumber;
     String address;
     String email;
-    Long   created_at;
-    Long  updated_at;
+    Long created_at;
+    Long updated_at;
     String created_by;
     EmployeeStoreDTO employeeStoreDTO;
-
-
 }

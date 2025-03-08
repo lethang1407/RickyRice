@@ -22,8 +22,6 @@ public class ZoneConverter {
 
         EmployeeZoneDTO.setZoneID(zone.getId());
         EmployeeZoneDTO.setName(zone.getName());
-        EmployeeZoneDTO.setQuantity(zone.getQuantity());
-        EmployeeZoneDTO.setSize(zone.getSize());
         EmployeeZoneDTO.setCreated_by(zone.getCreatedBy());
         EmployeeZoneDTO.setCreated_at(zone.getCreatedAt());
         EmployeeZoneDTO.setLocation(zone.getLocation());

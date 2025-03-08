@@ -7,6 +7,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.entity.Account;
+import org.group5.swp391.entity.Store;
 import org.group5.swp391.exception.AppException;
 import org.group5.swp391.exception.ErrorCode;
 import org.group5.swp391.repository.InvalidatedTokenRepository;
@@ -17,6 +18,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.StringJoiner;
 import java.util.UUID;
 
 @Component
@@ -33,12 +35,21 @@ public class Jwt {
 
     public String generateToken(Account account) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
+        StringBuilder storeList = new StringBuilder("");
+        if(account.getEmployee()!=null){
+            storeList.append(account.getEmployee().getStore().getId());
+        }else{
+            for(Store store : account.getStores()){
+                storeList.append(store.getId()).append(" ");
+            }
+        }
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(account.getUsername())
                 .issuer("vietfarmer.com")
                 .issueTime(new Date())
                 .claim("scope", account.getRole().getCode())
+                .claim("store", storeList)
                 .expirationTime(new Date(
                         Instant.now().plus(jwtExpirations, ChronoUnit.SECONDS).toEpochMilli()
                 ))

@@ -33,10 +33,6 @@ public class CategoryServiceImpl implements CategoryService {
     private final ProductRepository productRepository;
     private final ProductConverter productConverter;
 
-    public Long getTotalQuantityByCategoryId(String categoryId) {
-        return zoneRepository.findTotalQuantityByCategoryId(categoryId);
-
-    }
 
     public EmployeeCategoryDTO convertToCategoryDTO(Category category) {
         long quantity = 0;
@@ -45,7 +41,6 @@ public class CategoryServiceImpl implements CategoryService {
         employeeCategoryDTO.setCategoryID(category.getId());
         employeeCategoryDTO.setName(category.getName());
         employeeCategoryDTO.setDescription(category.getDescription());
-        employeeCategoryDTO.setQuantity(getTotalQuantityByCategoryId(category.getId()));
 
 
         return employeeCategoryDTO;

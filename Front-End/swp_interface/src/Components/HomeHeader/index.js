@@ -65,23 +65,23 @@ function HomeHeader(){
 								<div class="header__navbar">
 									<img style={{width:'90px', marginRight:'100px'}} src={logo} alt="logo" class="header__navbar__img"/>
 									<div class="header__navbar__menu">
-										<div class="header__navbar__menu__item">Home</div>
-										<div class="header__navbar__menu__item">About</div>
-										<div class="header__navbar__menu__item">Work Process</div>
-										<div class="header__navbar__menu__item">Pricing Tables</div>
-										<div class="header__navbar__menu__item">Blog Entries</div>
-										<div class="header__navbar__menu__item">Contact Us</div>
+										<div class="header__navbar__menu__item">Trang chủ</div>
+										<div class="header__navbar__menu__item">Giới thiệu</div>
+										<div class="header__navbar__menu__item">Quy trình</div>
+										<div class="header__navbar__menu__item">Gói đăng ký</div>
+										<div class="header__navbar__menu__item">Blog</div>
+										<div class="header__navbar__menu__item">Liên hệ</div>
 										{
 											token 
 											? 
 											<>
 												<div onClick={naviDashboard} class="header__navbar__menu__item">Dashboard</div>
-												<div onClick={handleLogout} class="header__navbar__menu__item">Logout</div>
+												<div onClick={handleLogout} class="header__navbar__menu__item">Đăng xuất</div>
 											</>
 											: 
 											<>
-												<div onClick={naviLogin} class="header__navbar__menu__item">Login</div>
-												<div onClick={naviRegister} class="header__navbar__menu__item">Register</div>
+												<div onClick={naviLogin} class="header__navbar__menu__item">Đăng nhập</div>
+												<div onClick={naviRegister} class="header__navbar__menu__item">Đăng ký</div>
 											</>
 										}
 									</div>

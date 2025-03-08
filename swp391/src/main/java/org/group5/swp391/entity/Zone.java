@@ -18,12 +18,6 @@ public class Zone extends AbstractEntity {
     @Column(name = "Location", nullable = false, columnDefinition = "NVARCHAR(255)")
     String location;
 
-    @Column(name = "Quantity", nullable = false)
-    Long quantity;
-
-    @Column(name = "Size", nullable = false)
-    Long size;
-
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, fetch = FetchType.LAZY)
     @JoinColumn(name = "ProductID")
     Product product;

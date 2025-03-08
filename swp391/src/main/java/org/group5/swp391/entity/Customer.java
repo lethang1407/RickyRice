@@ -27,6 +27,9 @@ public class Customer extends AbstractEntity {
     @Column(name = "Email", unique = true)
     String email;
 
+    @Column(name = "Balance")
+    Double balance;
+
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinColumn(name = "StoreID")
     Store store;
