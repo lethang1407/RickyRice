@@ -124,7 +124,7 @@ const ZoneList = () => {
         {
             title: 'ID Cửa Hàng',
             dataIndex: 'storeID',
-            key: 'zoneID',
+            key: 'storeID',
         },
 
         {
@@ -307,6 +307,13 @@ const ZoneList = () => {
                             onClick={() => handleNavigation('/employee/customers')}
                         >
                             Khách Hàng
+                        </Menu.Item>
+                        <Menu.Item
+                            key="4"
+                            icon={<TeamOutlined />}
+                            onClick={() => handleNavigation('/employee/invoices')}
+                        >
+                            Hóa Đơn
                         </Menu.Item>
 
                     </Menu>

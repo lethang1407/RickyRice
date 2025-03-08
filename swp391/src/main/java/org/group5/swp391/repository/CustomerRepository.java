@@ -13,10 +13,15 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
     List<Customer> findByPhoneNumberContainingIgnoreCase(String customerPhoneNumber);
 
     @Query("SELECT c FROM Customer c " +
-            "WHERE c.store.storeID= :storeId AND " +
+            "WHERE c.store.id= :id AND " +
             "(:phoneNumber IS NULL OR c.phoneNumber  LIKE %:phoneNumber%)")
     Page<Customer> findAllWithPhoneNumber(Pageable pageable,
                                           @Param("phoneNumber") String phoneNumber,
-                                          @Param("storeId")String storeId);
-    Customer findByCustomerID(String customerID);
+                                          @Param("id")String storeId);
+    @Query("SELECT c FROM Customer c " +
+            "WHERE c.store.id= :id AND " +
+            "(:phoneNumber IS NULL OR c.phoneNumber  LIKE %:phoneNumber%)")
+    List<Customer> findAllWithPhoneNumberInList( @Param("phoneNumber") String phoneNumber,
+                                                 @Param("id")String storeId);
+    Customer findByPhoneNumber(String phoneNumber);
 }

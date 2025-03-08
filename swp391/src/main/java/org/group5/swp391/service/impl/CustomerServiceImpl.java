@@ -1,5 +1,6 @@
 package org.group5.swp391.service.impl;
 
+import org.group5.swp391.dto.employee.CustomerUpdateRequest;
 import org.group5.swp391.entity.Account;
 import org.group5.swp391.entity.Employee;
 import org.group5.swp391.repository.AccountRepository;
@@ -25,6 +26,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -49,7 +52,8 @@ public class CustomerServiceImpl implements CustomerService {
         String username = authentication.getName();
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
-        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getAccountID());
+        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
+
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         if (phonesearch.equals("")) {
@@ -58,8 +62,30 @@ public class CustomerServiceImpl implements CustomerService {
             phonesearch = phonesearch.toLowerCase();
             phonesearch = capitalizeFirstLetters(phonesearch);
         }
-        Page<Customer> customerPage = customerRepository.findAllWithPhoneNumber(pageable, phonesearch,a.getStore().getStoreID());
+
+        Page<Customer> customerPage = customerRepository.findAllWithPhoneNumber(pageable, phonesearch,a.getStore().getId());
+        log.info("heeh"+ customerPage.getContent().get(0).getStore().getId());
         return customerPage.map(CustomerConverter::toEmployeeCustomerDTO);
+    }
+
+    @Override
+    public List<EmployeeCustomerDTO> EmployeeGetAllCustomerInList(String phonesearch) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Bạn chưa đăng nhập!");
+        }
+        String username = authentication.getName();
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
+        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
+        if (phonesearch.equals("")) {
+            phonesearch = null;
+        }else{
+            phonesearch = phonesearch.toLowerCase();
+            phonesearch = capitalizeFirstLetters(phonesearch);
+        }
+        List<Customer> customerList=customerRepository.findAllWithPhoneNumberInList(phonesearch,a.getStore().getId());
+        return customerList.stream().map(CustomerConverter::toEmployeeCustomerDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -71,12 +97,10 @@ public class CustomerServiceImpl implements CustomerService {
         String username = authentication.getName();
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
-        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getAccountID());
+        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
         System.out.println(a.getEmployeeAccount().getName());
-        //Customer existingCustomer = customerRepository.findByCustomerID(customerId);
         Customer existingCustomer = customerRepository.findById(customerId).orElseThrow();
         existingCustomer.setCreatedBy(a.getEmployeeAccount().getName());
-//        Customer existingCustomer = customerRepository.findById(customerId).orElseThrow();
         existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
         existingCustomer.setEmail(updatedCustomer.getEmail());
@@ -84,6 +108,19 @@ public class CustomerServiceImpl implements CustomerService {
         existingCustomer.setUpdatedAt(LocalDateTime.now());
         return customerRepository.save(existingCustomer);
     }
+
+    @Override
+    public Customer InvoiceUpdateCustomer(String phoneNumber, CustomerUpdateRequest updatedCustomer) {
+        Customer existingCustomer = customerRepository.findByPhoneNumber(phoneNumber);
+        existingCustomer.setCreatedBy(existingCustomer.getCreatedBy());
+        existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));
+        existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumberNew());
+        existingCustomer.setEmail(existingCustomer.getEmail());
+        existingCustomer.setAddress(existingCustomer.getAddress());
+        existingCustomer.setUpdatedAt(LocalDateTime.now());
+        return customerRepository.save(existingCustomer);
+    }
+
 
     @Override
     public Customer createCustomer(EmployeeCustomerDTO customerDTO) {
@@ -94,7 +131,8 @@ public class CustomerServiceImpl implements CustomerService {
         String username = authentication.getName();
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
-        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getAccountID());
+        log.info(account.getId());
+        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
         try {
             Customer customer = new Customer();
             customer.setName(capitalizeFirstLetters(customerDTO.getName()));
@@ -102,7 +140,9 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setEmail(customerDTO.getEmail());
             customer.setAddress(customerDTO.getAddress());
             customer.setCreatedBy(a.getEmployeeAccount().getName());
-            Store store = storeRepository.findById(customerDTO.getEmployeeStoreDTO().getStoreID()).orElseThrow();
+            log.info("haha "+a.getStore().getId());
+            Store store = storeRepository.findById(a.getStore().getId()).orElseThrow();
+            System.out.println(store.getStoreName());
             customer.setStore(store);
             log.info("Saving customer thanh cong : {}", customer);
             return customerRepository.save(customer);

@@ -72,8 +72,8 @@ public class ProductServiceImpl implements ProductService {
         String username = authentication.getName();
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
-        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getAccountID());
-        System.out.println(a.getStore().getStoreID());
+        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
+        System.out.println(a.getStore().getId());
         System.out.println(sortBy);
         System.out.println(descending);
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
@@ -85,8 +85,29 @@ public class ProductServiceImpl implements ProductService {
             name = capitalizeFirstLetters(name);
             System.out.println(name);
         }
-        Page<Product> productPage = productRepository.findByNameAndStoreIdContainingIgnoreCase(name, a.getStore().getStoreID(), pageable);
+        Page<Product> productPage = productRepository.findByNameAndStoreIdContainingIgnoreCase(name, a.getStore().getId(), pageable);
         return productPage.map(productConverter::toEmployeeProductDTO);
+    }
+
+    @Override
+    public List<EmployeeProductDTO> getProductBySearchInList(String name) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Bạn chưa đăng nhập!");
+        }
+        String username = authentication.getName();
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
+        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
+        if (name.equals("") || name.isEmpty()) {
+            name = null;
+        }else {
+            name = name.toLowerCase();
+            name = capitalizeFirstLetters(name);
+        }
+        List<Product> productPage = productRepository.findByNameAndStoreIdContainingIgnoreCaseInList(name, a.getStore().getId());
+        return productPage.stream().map(productConverter::toEmployeeProductDTO).collect(Collectors.toList());
+
     }
 
 

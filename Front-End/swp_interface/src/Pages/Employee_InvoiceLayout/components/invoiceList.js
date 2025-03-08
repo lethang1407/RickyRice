@@ -9,12 +9,11 @@ import {
 } from 'antd';
 import debounce from "lodash.debounce";
 import moment from 'moment';
-import DropDown from './customerDrop';
 import { useNavigate } from 'react-router-dom';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import API from '../../../Utils/API/API';
-import '../style.css'
-const CustomerList = () => {
+import '../styleInvoices.css';
+const InvoiceList = () => {
     const [loading, setLoading] = useState(true);
     const [customers, setCustomers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -31,7 +30,7 @@ const CustomerList = () => {
 
     const token = getToken();
 
-    const CustomerColumns = [
+    const InvoiceColumns = [
         {
             title: 'STT',
             key: 'stt',
@@ -80,109 +79,78 @@ const CustomerList = () => {
             key: 'created_by',
             width: 150
         },
-        {
-            title: "Cửa Hàng",
-            key: "actions",
-            render: (text, record) => (
-                <div style={{ display: "flex", gap: "10px" }}>
-                    <Button
-                        type="primary"
-                        icon={<ShopOutlined />}
-                        style={{ backgroundColor: "#1890ff", borderColor: "#1890ff" }}
-                        title="View Store created"
-
-                        onClick={() => {
-                            console.log(record)
-                            showModal(record)
-                        }}
-                    />
-                    <Button
-                        type="default"
-                        icon={<SettingOutlined />}
-                        style={{ backgroundColor: "#52c41a", borderColor: "#52c41a", color: "white" }}
-                        title="Customer Settings"
-                        onClick={() => navigate('/employee/customers/edit', { state: record })}
-                    />
-                    <Button
-                        type="danger"
-                        icon={<DisconnectOutlined />}
-                        style={{ backgroundColor: "#ff4d4f", borderColor: "#ff4d4f" }}
-                        title="Customer Disconnect"
-                    />
-                </div>
-            ),
-        }
-
-    ];
-    const StoreIN4columns = [
-        {
-            title: 'STT',
-            key: 'stt',
-            render: (text, record, index) => index + 1,
-            width: 30,
-        },
-        {
-            title: 'ID Cửa Hàng',
-            dataIndex: 'storeID',
-            key: 'storeID',
-            width: 130,
-        },
-
-        {
-            title: 'Hình Ảnh',
-            dataIndex: 'image',
-            key: 'image',
-            width: 100,
-        },
-        {
-            title: 'Tên ',
-            dataIndex: 'storeName',
-            key: 'name',
-            width: 150,
-        },
-
-        {
-            title: 'Địa Chỉ',
-            dataIndex: 'address',
-            key: 'address',
-            width: 200,
-        },
-        {
-            title: 'Hotline',
-            dataIndex: 'hotline',
-            key: 'hotline',
-            width: 120,
-        },
-        {
-            title: 'Giờ Mở Cửa',
-            dataIndex: 'operatingHour',
-            key: 'operatingHour',
-            width: 170,
-        },
-        {
-            title: 'Trạng Thái',
-            dataIndex: 'operatingHour',
-            key: 'operatingHour',
-            render: (text, record) => {
-                const currentTime = moment();
-                const [start, end] = text.split('-');
-                const startTime = moment(start, 'h A');
-                const endTime = moment(end, 'h A');
-                const isOpen = currentTime.isBetween(startTime, endTime);
-
-
-                return (
-                    <span style={{ color: isOpen ? 'green' : 'red', fontWeight: 'bold' }}>
-                        {isOpen ? 'Cửa Hàng Đang Mở' : 'Cửa Hàng Đã Đóng'}
-                    </span>
-                );
-            },
-        },
-
-
 
 
     ];
+    // const StoreIN4columns = [
+    //     {
+    //         title: 'STT',
+    //         key: 'stt',
+    //         render: (text, record, index) => index + 1,
+    //         width: 30,
+    //     },
+    //     {
+    //         title: 'ID Cửa Hàng',
+    //         dataIndex: 'storeID',
+    //         key: 'storeID',
+    //         width: 130,
+    //     },
+
+    //     {
+    //         title: 'Hình Ảnh',
+    //         dataIndex: 'image',
+    //         key: 'image',
+    //         width: 100,
+    //     },
+    //     {
+    //         title: 'Tên ',
+    //         dataIndex: 'storeName',
+    //         key: 'name',
+    //         width: 150,
+    //     },
+
+    //     {
+    //         title: 'Địa Chỉ',
+    //         dataIndex: 'address',
+    //         key: 'address',
+    //         width: 200,
+    //     },
+    //     {
+    //         title: 'Hotline',
+    //         dataIndex: 'hotline',
+    //         key: 'hotline',
+    //         width: 120,
+    //     },
+    //     {
+    //         title: 'Giờ Mở Cửa',
+    //         dataIndex: 'operatingHour',
+    //         key: 'operatingHour',
+    //         width: 170,
+    //     },
+    //     {
+    //         title: 'Trạng Thái',
+    //         dataIndex: 'operatingHour',
+    //         key: 'operatingHour',
+    //         render: (text, record) => {
+    //             const currentTime = moment();
+    //             const [start, end] = text.split('-');
+    //             const startTime = moment(start, 'h A');
+    //             const endTime = moment(end, 'h A');
+    //             const isOpen = currentTime.isBetween(startTime, endTime);
+
+
+    //             return (
+    //                 <span style={{ color: isOpen ? 'green' : 'red', fontWeight: 'bold' }}>
+    //                     {isOpen ? 'Cửa Hàng Đang Mở' : 'Cửa Hàng Đã Đóng'}
+    //                 </span>
+    //             );
+    //         },
+    //     },
+
+
+
+
+    // ];
     const handleTableChange = (pagination) => {
         const { current, pageSize } = pagination;
 
@@ -209,7 +177,7 @@ const CustomerList = () => {
         // const { field, order } = sorter || sorterState || {};
 
         try {
-            const response = await axios.get(API.EMPLOYEE.GET_ALL_CUSTOMER, {
+            const response = await axios.get(API.EMPLOYEE.GET_eINVOICES, {
 
                 params: {
                     page: page - 1,
@@ -224,7 +192,7 @@ const CustomerList = () => {
 
                 },
                 headers: {
-                    Authorization: `Bearer ${token}`, // Chèn token vào header
+                    Authorization: `Bearer ${token}`,
                 },
             });
             console.log("Dữ liệu liên quan22:", response.data);
@@ -259,7 +227,7 @@ const CustomerList = () => {
     return (
         <>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 15px" }}>
-                <h3><i style={{ marginLeft: 15, color: "#E3C584" }}>Danh Sách Khách Hàng  </i></h3>
+                <h3><i style={{ marginLeft: 15, color: "#E3C584" }}>Danh Sách Hóa Đơn Khách Hàng </i></h3>
                 <Space size="middle">
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
                         <Input
@@ -278,11 +246,11 @@ const CustomerList = () => {
                 </Space>
 
             </div>
-            <div style={{ marginLeft: 1250, marginTop: 15 }}> <DropDown /></div>
+            {/* <div style={{ marginLeft: 1250, marginTop: 15 }}> <DropDown /></div> */}
             {loading ? (<Spin size="large" />) : (
                 <Table style={{ marginTop: 25 }}
                     dataSource={customers}
-                    columns={CustomerColumns}
+                    columns={InvoiceColumns}
                     // rowClassName={(record) =>
                     //     record.quantity === 0 ? "row-red" : ""
                     // }
@@ -303,7 +271,7 @@ const CustomerList = () => {
                     className="custom-table"
                 />
             )}
-            <Modal
+            {/* <Modal
                 title={<span style={{ fontWeight: 500, fontSize: '18px', color: "#E3C584" }}> Cửa Hàng Đã Tạo Cho : {selectedZoneName}</span>}
                 open={isModalVisible}
                 onOk={handleOk}
@@ -323,9 +291,9 @@ const CustomerList = () => {
                     rowKey={(record) => record.storeID}
                     pagination={false}
                 />
-            </Modal>
+            </Modal> */}
         </>
     )
 }
 
-export default CustomerList;
+export default InvoiceList;

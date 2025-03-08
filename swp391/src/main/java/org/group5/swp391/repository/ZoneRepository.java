@@ -20,7 +20,7 @@ public interface ZoneRepository extends JpaRepository<Zone, Long> {
             "(:quantityMax IS NULL OR z.quantity <= :quantityMax) AND " +
             "(:sizeMin IS NULL OR z.size >= :sizeMin) AND " +
             "(:sizeMax IS NULL OR z.size <= :sizeMax) AND " +
-            "(z.store.storeID = :storeId) AND " +
+            "(z.store.id = :storeId) AND " +
             "(:search IS NULL OR z.name LIKE CONCAT('%', :search, '%'))")
     Page<Zone> findFilteredZones(
                                   @Param("quantityMin") Integer quantityMin,

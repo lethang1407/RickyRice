@@ -13,6 +13,7 @@ import java.time.ZoneId;
 @RequiredArgsConstructor
 public class CustomerConverter {
     private final ModelMapper modelMapper;
+
     //minh_snuppi
 //    public EmployeeCustomerDTO toEmployeeCustomerDTO(Customer customer) {
 //        EmployeeCustomerDTO dto = modelMapper.map(customer, EmployeeCustomerDTO.class);
@@ -32,6 +33,9 @@ public class CustomerConverter {
         dto.setAddress(customer.getAddress());
         dto.setCreated_by(customer.getCreatedBy());
         dto.setEmployeeStoreDTO((customer.getStore() != null) ? modelMapper.map(customer.getStore(), EmployeeStoreDTO.class) : null);
+        if (customer.getStore() != null) {
+        dto.getEmployeeStoreDTO().setStoreID(customer.getStore().getId());
+        }
         if (customer.getCreatedAt() != null) {
             dto.setCreated_at(customer.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
         }

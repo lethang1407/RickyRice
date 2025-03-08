@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/employee")
@@ -26,5 +28,10 @@ public class EmployeeProductController {
             @RequestParam(value = "descending", defaultValue = "false") boolean descending
     ) {
         return productService.getProductBySearch(name, page, size, sortBy, descending);
+    }
+    @GetMapping("/productsList")
+    public List<EmployeeProductDTO>getAllProductByNameInList(@RequestParam(value = "name", required = false) String name){
+        name=name.trim();
+        return productService.getProductBySearchInList(name);
     }
 }

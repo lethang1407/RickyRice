@@ -71,12 +71,12 @@ public class CategoryServiceImpl implements CategoryService {
         String username = authentication.getName();
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
-        Employee a=employeeRepository.findStoreIdByAccountEmpId(account.getAccountID());
-        System.out.println(a.getStore().getStoreID());
+        Employee a=employeeRepository.findStoreIdByAccountEmpId(account.getId());
+        System.out.println(a.getStore().getId());
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Category> categoryPage = CategoryRepository.findByNameIgnoreCase(name, pageable);
-        Page<Product> productPage= productRepository.findByNameAndStoreIdContainingIgnoreCase(name,a.getStore().getStoreID(),pageable);
+        Page<Product> productPage= productRepository.findByNameAndStoreIdContainingIgnoreCase(name,a.getStore().getId(),pageable);
         return productPage.map(productConverter::toEmployeeProductDTO);
     }
 

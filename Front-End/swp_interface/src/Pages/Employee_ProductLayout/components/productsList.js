@@ -47,44 +47,44 @@ const Employee_Products = () => {
             title: 'STT',
             key: 'stt',
             render: (text, record, index) => index + 1,
-            width: '2%',
+            width: 5,
         },
         {
             title: 'Ảnh Sản Phẩm',
             dataIndex: 'productImage',
             key: 'productImage',
-            width: '14%',
+            width: 10,
         },
         {
             title: 'Gạo',
             dataIndex: 'name',
             key: 'name',
-            width: '15%',
+            width: 15,
         },
         {
             title: 'Số Lượng ',
             dataIndex: 'quantity',
             key: 'quantity',
-            width: '8%',
+            width: 5,
         },
         {
             title: 'Mô Tả',
             dataIndex: 'information',
             key: 'information',
-            width: '25%',
+            width: '30%',
         },
         {
             title: 'Giá Gạo',
             dataIndex: 'price',
             sorter: true,
             key: 'price',
-            width: '10%',
+            width: 10,
             render: (price) => `${price} đ`,
         },
         {
             title: 'Loại Gạo',
             key: 'categoryname',
-            width: '13%',
+            width: 20,
             render: (text, record) => (
                 <span>{record.employeeCategoryDTO?.name || 'N/A'}</span>
             ),
@@ -103,7 +103,7 @@ const Employee_Products = () => {
             dataIndex: 'N/A',
             key: 'N/A',
             render: (text) => text ? moment(Number(text)).format('DD/MM/YYYY HH:mm:ss') : 'N/A',
-            width: '13%',
+            width: 15,
         }
     ];
     const handleSearch = async (page, size) => {
@@ -180,6 +180,13 @@ const Employee_Products = () => {
                             onClick={() => handleNavigation('/employee/customers')}
                         >
                             Khách Hàng
+                        </Menu.Item>
+                        <Menu.Item
+                            key="4"
+                            icon={<TeamOutlined />}
+                            onClick={() => handleNavigation('/employee/invoices')}
+                        >
+                            Hóa Đơn
                         </Menu.Item>
                     </Menu>
                 </Sider>

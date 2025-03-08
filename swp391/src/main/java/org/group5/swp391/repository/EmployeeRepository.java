@@ -18,9 +18,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
 
     @Query("SELECT s " +
             "FROM Employee s " +
-            "WHERE s.employeeAccount.accountID= :accountId")
+            "WHERE s.employeeAccount.id= :accountId")
     Employee findStoreIdByAccountEmpId(@Param("accountId") String accountId);
-
     @Query("""
     SELECT e 
     FROM Employee e 

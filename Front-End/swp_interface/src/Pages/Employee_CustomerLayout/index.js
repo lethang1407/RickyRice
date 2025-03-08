@@ -67,6 +67,13 @@ const Employee_Customer = () => {
             >
               Khách Hàng
             </Menu.Item>
+            <Menu.Item
+              key="4"
+              icon={<TeamOutlined />}
+              onClick={() => handleNavigation('/employee/invoices')}
+            >
+              Hoá Đơn
+            </Menu.Item>
           </Menu>
         </Sider>
         <Layout>

@@ -25,6 +25,7 @@ import CustomerIN4Create from "./Pages/Employee_CustomerLayout/components/custom
 import Employee from "./Pages/ShopOwner/Employee";
 import Employee_Products from "./Pages/Employee_ProductLayout/components/productsList";
 import Statistic from "./Pages/ShopOwner/Statistic";
+import Employee_Invoices from "./Pages/Employee_InvoiceLayout";
 function App() {
   return (
     <>
@@ -48,6 +49,7 @@ function App() {
             <Route path='/employee/customers/edit' element={<CustomerIN4Edit />}></Route>
             <Route path='/employee/customers' element={<Employee_Customer />}></Route>
             <Route path='/employee/customers/create' element={<CustomerIN4Create />}></Route>
+            <Route path='/employee/invoices' element={<Employee_Invoices />}></Route>
           </Route>
           <Route element={<StoreOwnerProtected />}>
             <Route path="/store-owner" element={<StoreOwnerLayout />}>
