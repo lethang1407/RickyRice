@@ -10,23 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ZoneRepository extends JpaRepository<Zone, Long> {
-    @Query("SELECT SUM(z.quantity) FROM Zone z WHERE z.product.category.id = :categoryId")
-    Long findTotalQuantityByCategoryId(String categoryId);
-
     Page<Zone> findAll(Pageable pageable);
-
-    @Query("SELECT z FROM Zone z WHERE " +
-            "(:quantityMin IS NULL OR z.quantity >= :quantityMin) AND " +
-            "(:quantityMax IS NULL OR z.quantity <= :quantityMax) AND " +
-            "(:sizeMin IS NULL OR z.size >= :sizeMin) AND " +
-            "(:sizeMax IS NULL OR z.size <= :sizeMax)")
-    Page<Zone> findFilteredZones(@Param("quantityMin") Integer quantityMin,
-                                 @Param("quantityMax") Integer quantityMax,
-                                 @Param("sizeMin") Integer sizeMin,
-                                 @Param("sizeMax") Integer sizeMax,
-                                 @Param("search") String search,
-                                 Pageable pageable
-    );
 
     @Query("SELECT s FROM Zone s WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', :search, '%')) or LOWER(s.location) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<Zone> findByNameAndLocationIgnoreCase(String search, Pageable pageable);

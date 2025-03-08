@@ -27,6 +27,7 @@ import CustomerIN4Edit from "./Pages/Employee_CustomerLayout/components/customeE
 import CustomerIN4Create from "./Pages/Employee_CustomerLayout/components/customerCreate";
 import Employee from "./Pages/ShopOwner/Employee/Employee";
 import Statistic from "./Pages/ShopOwner/Statistic/Statistic";
+import Debt from "./Pages/Debt";
 function App() {
   return (
     <>
@@ -59,6 +60,7 @@ function App() {
               <Route path="product" element={<Product />}></Route>
               <Route path="employee" element={<Employee />}></Route>
               <Route path="statistic" element={<Statistic />}></Route>
+              <Route path="debt" element={<Debt/>}></Route>
             </Route>
           </Route>
         </Route>

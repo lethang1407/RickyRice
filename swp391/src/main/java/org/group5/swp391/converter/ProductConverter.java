@@ -51,9 +51,7 @@ public class ProductConverter {
             return 0;
         }
 
-        return product.getZones().stream()
-                .mapToLong(Zone::getQuantity)
-                .sum();
+        return 0;
     }
 
     public EmployeeProductDTO toEmployeeProductDTO(Product product) {
@@ -82,8 +80,6 @@ public class ProductConverter {
                         EmployeeZoneDTO.setZoneID(zone.getId());
                         EmployeeZoneDTO.setName(zone.getName());
                         EmployeeZoneDTO.setName(zone.getName());
-                        EmployeeZoneDTO.setQuantity(zone.getQuantity());
-                        EmployeeZoneDTO.setSize(zone.getSize());
                         return EmployeeZoneDTO;
                     }).collect(Collectors.toList());
 

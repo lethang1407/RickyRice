@@ -12,14 +12,12 @@ import java.util.List;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EmployeeProductDTO {
-
-    private  String productID;
-    private  String name;
-    private double price;
-    private String information;
-    private String productImage;
-     EmployeeCategoryDTO employeeCategoryDTO;
-   List<EmployeeZoneDTO> zonesetDTOList= new ArrayList<>();
-   long quantity;
-
+    String productID;
+    String name;
+    double price;
+    String information;
+    String productImage;
+    EmployeeCategoryDTO employeeCategoryDTO;
+    List<EmployeeZoneDTO> zonesetDTOList= new ArrayList<>();
+    long quantity;
 }

@@ -18,4 +18,8 @@ public class DebtDTO {
     LocalDateTime createdAt;
     Double amount;
     String image;
+    String customerId;
+    String customerName;
+    String storeId;
+    String storeName;
 }

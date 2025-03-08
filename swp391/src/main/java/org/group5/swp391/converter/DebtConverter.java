@@ -27,6 +27,11 @@ public class DebtConverter {
     }
 
     public DebtDTO toDto(Debt debt){
-        return modelMapper.map(debt, DebtDTO.class);
+        DebtDTO dtos = modelMapper.map(debt, DebtDTO.class);
+        dtos.setCustomerId(debt.getCustomer().getId());
+        dtos.setCustomerName(debt.getCustomer().getName());
+        dtos.setStoreId(debt.getStore().getId());
+        dtos.setStoreName(debt.getStore().getStoreName());
+        return dtos;
     }
 }

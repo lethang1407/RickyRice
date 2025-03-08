@@ -54,6 +54,7 @@ public class DebtController {
         List<String> storeList;
         if(!StringUtils.hasLength(storeId)){
             storeList = CurrentUserDetails.getCurrentStores();
+            storeList.stream().forEach((item) -> System.out.println(item));
         }else{
             String[] list = storeId.split(" ");
             storeList = Arrays.stream(list).toList();

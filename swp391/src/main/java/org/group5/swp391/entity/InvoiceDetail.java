@@ -27,6 +27,10 @@ public class InvoiceDetail {
     @JoinColumn(name = "InvoiceID")
     Invoice invoice;
 
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @JoinColumn(name = "packageId")
+    Package packageType;
+
     @Column(name = "ProductName")
     String productName;
 

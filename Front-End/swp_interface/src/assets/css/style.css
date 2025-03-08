@@ -245,7 +245,7 @@ body {
 
 .section-four {
   padding: 100px;
-  background-color: white;
+  background-color: #f4f4fa;
 }
 .section-four__inner {
   margin-top: 30px;
@@ -271,6 +271,7 @@ body {
   margin-top: 30px;
 }
 .section-four__inner__box__item {
+  background-color: white;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   border-radius: 20px;
   display: flex;
@@ -311,7 +312,7 @@ body {
 
 .section-five {
   padding: 100px 0px;
-  background-color: #f2f2fe;
+  background-color: white;
 }
 .section-five__inner {
   display: flex;
