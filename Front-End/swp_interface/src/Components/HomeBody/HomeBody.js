@@ -5,10 +5,12 @@ import leftimage from '../../assets/img/pngegg.png';
 import rightimage from '../../assets/img/pngegg.png';
 import LeftLeft from '../../Utils/Animation/LeftLeft';
 import RightRight from '../../Utils/Animation/RightRight';
-import feeback from '../../assets/img/testimonial-icon.png';
-import workprocess from '../../assets/img/work-process-item-01.png'
 import Down from '../../Utils/Animation/Down';
-import avatar from '../../assets/img/60x60.png';
+import Upper from '../../Utils/Animation/Upper';
+import avt1 from '../../assets/img/avt1.jpg';
+import avt2 from '../../assets/img/avt2.jpg';
+import avt3 from '../../assets/img/avt3.jpg';
+import {MessageOutlined, RocketOutlined} from '@ant-design/icons';
 
 function HomeBody(){
 
@@ -19,10 +21,10 @@ function HomeBody(){
           <div class="row">
             <div class="col-xl-12">
               <div class="section-one__text">
-                <h2 class="section-one__text__h2">We provide the best <b>strategy</b> to grow up your <b>business</b></h2>
-                <h4 class="section-one__text__h4">Ricky Rice is the ultimate platform for renting professional websites to sell rice and agricultural products online!</h4>
+                <h2 class="section-one__text__h2">Chúng tôi cung cấp chiến lược <b>tốt nhất</b> để phát triển <b>doanh nghiệp</b></h2>
+                <h4 class="section-one__text__h4">Ricky Rice là nền tảng cuối cùng để thuê các trang web chuyên nghiệp bán gạo và quản lý các sản phẩm nông nghiệp</h4>
                 <div class="section-one__text__button">
-                  DISCOVER MORE
+                  KHÁM PHÁ NGAY
                 </div>
               </div>
             </div>
@@ -37,10 +39,10 @@ function HomeBody(){
                       <div class="section-one__block__item__inner">
                         <img src={image1} alt="" class="section-one__block__item__inner__img"/>
                         <div class="section-one__block__item__inner__h3">
-                          Modern Strategy
+                          Giải Pháp Bán Gạo Hiệu Quả
                         </div>
                         <div class="section-one__block__item__inner__text">
-                          Customize anything in this template to fit your website needs
+                          Nâng cao doanh số và theo dõi số lượng hàng hiệu quả
                         </div>
                       </div>
                     </LeftLeft>
@@ -50,10 +52,10 @@ function HomeBody(){
                     <div class="section-one__block__item__inner">
                       <img src={image1} alt="" class="section-one__block__item__inner__img"/>
                       <div class="section-one__block__item__inner__h3">
-                        Modern Strategy
+                      Quản Lý Cửa Hàng Gạo Thông Minh
                       </div>
                       <div class="section-one__block__item__inner__text">
-                        Customize anything in this template to fit your website needs
+                      Tối ưu hóa quy trình bán hàng và quản lý khách hàng dễ dàng
                       </div>
                     </div>
                   </Down>
@@ -63,10 +65,10 @@ function HomeBody(){
                     <div class="section-one__block__item__inner">
                       <img src={image1} alt="" class="section-one__block__item__inner__img"/>
                       <div class="section-one__block__item__inner__h3">
-                        Modern Strategy
+                        Quản lý nợ và doanh số bán hàng
                       </div>
                       <div class="section-one__block__item__inner__text">
-                        Customize anything in this template to fit your website needs
+                        Minh bạch trong quản lý nợ và quản lý doanh số bán hàng 
                       </div>
                     </div>
                   </RightRight>
@@ -89,10 +91,9 @@ function HomeBody(){
                   <div class="col-xl-1"></div>
                   <div class="section-two__upper__text col-xl-6">
                     <RightRight>
-                      <h3 class="section-two__upper__text__h3">Let's discuss about your project</h3>
+                      <h3 class="section-two__upper__text__h3">Khám phá giải pháp tối ưu cho bạn</h3>
                       <h5 class="section-two__upper__text__h5">
-                        Nullam sit amet purus libero. Etiam ullamcorper nisl ut augue blandit, at finibus leo efficitur. Nam
-                        gravida purus non sapien auctor, ut aliquam magna ullamcorper.
+                        Hãy khám phá giải pháp quản lý bán gạo hiệu quả. Hệ thống giúp bạn theo dõi doanh số, quản lý đơn đặt hàng và tối ưu hóa quy trình kinh doanh dễ dàng.
                       </h5>
                     </RightRight>
                   </div>
@@ -111,10 +112,9 @@ function HomeBody(){
                 <div class="row">
                   <div class="section-two__upper__text col-xl-6">
                     <LeftLeft>
-                      <h3 class="section-two__upper__text__h3">Let's discuss about your project</h3>
+                      <h3 class="section-two__upper__text__h3">Hãy thảo luận về dự án của bạn</h3>
                       <h5 class="section-two__upper__text__h5">
-                        Nullam sit amet purus libero. Etiam ullamcorper nisl ut augue blandit, at finibus leo efficitur. Nam
-                        gravida purus non sapien auctor, ut aliquam magna ullamcorper.
+                        Hãy thảo luận về dự án của bạn! Nền tảng của chúng tôi giúp bạn tối ưu quy trình làm việc, nâng cao hiệu quả và quản lý hoạt động một cách dễ dàng.
                       </h5>
                     </LeftLeft>
                   </div>
@@ -129,125 +129,67 @@ function HomeBody(){
         </div>
       </div>
       
-      <div class="section-three">
-        <div class="container">
-          <div class="row">
-            <div class="col-xl-12">
-              <div class="section-three__inner">
-                <h2 class="section-three__inner__title">Work Process</h2>
-                <p class="section-three__inner__text">Aenean nec tempor metus. Maecenas ligula dolor, commodo in imperdiet
-                  interdum, vehicula ut ex. Donec ante diam.</p>
-                <div class="section-three__process">
-                  <div class="row">
-                    <div class="col-xl-2">
-                      <div class="section-three__process__item">
-                        <img class="section-three__process__item__img" src={workprocess}
-                          alt="Process"/>
-                        <h3 class="section-three__process__item__title">Get Ideas</h3>
-                        <h5 class="section-three__process__item__text">Godard pabst prism fam cliche</h5>
-                      </div>
-                    </div>
-                    <div class="col-xl-2">
-                      <div class="section-three__process__item">
-                        <img class="section-three__process__item__img" src={workprocess}
-                          alt="Process"/>
-                        <h3 class="section-three__process__item__title">Get Ideas</h3>
-                        <h5 class="section-three__process__item__text">Godard pabst prism fam cliche</h5>
-                      </div>
-                    </div>
-                    <div class="col-xl-2">
-                      <div class="section-three__process__item">
-                        <img class="section-three__process__item__img" src={workprocess}
-                          alt="Process"/>
-                        <h3 class="section-three__process__item__title">Get Ideas</h3>
-                        <h5 class="section-three__process__item__text">Godard pabst prism fam cliche</h5>
-                      </div>
-                    </div>
-                    <div class="col-xl-2">
-                      <div class="section-three__process__item">
-                        <img class="section-three__process__item__img" src={workprocess}
-                          alt="Process"/>
-                        <h3 class="section-three__process__item__title">Get Ideas</h3>
-                        <h5 class="section-three__process__item__text">Godard pabst prism fam cliche</h5>
-                      </div>
-                    </div>
-                    <div class="col-xl-2">
-                      <div class="section-three__process__item">
-                        <img class="section-three__process__item__img" src={workprocess}
-                          alt="Process"/>
-                        <h3 class="section-three__process__item__title">Get Ideas</h3>
-                        <h5 class="section-three__process__item__text">Godard pabst prism fam cliche</h5>
-                      </div>
-                    </div>
-                    <div class="col-xl-2">
-                      <div class="section-three__process__item">
-                        <img class="section-three__process__item__img" src={workprocess}
-                          alt="Process"/>
-                        <h3 class="section-three__process__item__title">Get Ideas</h3>
-                        <h5 class="section-three__process__item__text">Godard pabst prism fam cliche</h5>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
       <div class="section-four">
         <div class="container">
           <div class="row">
             <div class="col-xl-12">
               <div class="section-four__inner">
-                <h2 class="section-four__inner__title">
-                  What do they say?
-                </h2>
-                <h4 class="section-four__inner__text">Donec tempus, sem non rutrum imperdiet, lectus orci fringilla nulla,
-                  at accumsan elit eros a turpis. Ut sagittis lectus libero.</h4>
+                <Down>
+                  <h2 class="section-four__inner__title">
+                    Chia sẻ từ khách hàng
+                  </h2>
+                  <h4 class="section-four__inner__text">Những phản hồi chân thực từ khách hàng giúp chúng tôi không ngừng cải thiện dịch vụ. Chúng tôi 
+                    luôn lắng nghe và đổi mới để mang đến trải nghiệm tốt nhất cho bạn.</h4>
+                </Down>
                 <div class="section-four__inner__box">
                   <div class="row">
                     <div class="col-xl-4">
-                      <div class="section-four__inner__box__item">
-                        <img class="section-four__inner__box__item__img" src={feeback} alt="Test"/>
-                        <div class="section-four__inner__box__item__text">Proin a neque nisi. Nam ipsum nisi, venenatis ut
-                          nulla quis, egestas scelerisque orci. Maecenas a finibus odio.</div>
-                        <div class="section-four__inner__box__item__author">
-                          <img class="section-four__inner__box__item__author__img" src={avatar} alt="IMG"/>
-                          <div class="section-four__inner__box__item__author__des">
-                            <div class="section-four__inner__box__item__author__des__name">Catherine Soft</div>
-                            <div class="section-four__inner__box__item__author__des__pos">Managing Director</div>
+                      <LeftLeft>
+                        <div class="section-four__inner__box__item">
+                        <div className='section-four__inner__box__item__img'><MessageOutlined style={{fontSize:'32px'}}/></div>
+                          <div class="section-four__inner__box__item__text">Giao diện thân thiện, dễ sử dụng! Tôi có thể quản lý kho gạo và đơn hàng
+                            một cách nhanh chóng mà không gặp khó khăn nào.</div>
+                          <div class="section-four__inner__box__item__author">
+                            <img class="section-four__inner__box__item__author__img" src={avt1} alt="IMG"/>
+                            <div class="section-four__inner__box__item__author__des">
+                              <div class="section-four__inner__box__item__author__des__name">Nguyễn Tiến Linh</div>
+                              <div class="section-four__inner__box__item__author__des__pos">Quả bóng vàng VN 2025</div>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </LeftLeft>
                     </div>
                     <div class="col-xl-4">
-                      <div class="section-four__inner__box__item">
-                        <img class="section-four__inner__box__item__img" src={feeback} alt="Test"/>
-                        <div class="section-four__inner__box__item__text">Proin a neque nisi. Nam ipsum nisi, venenatis ut
-                          nulla quis, egestas scelerisque orci. Maecenas a finibus odio.</div>
-                        <div class="section-four__inner__box__item__author">
-                          <img class="section-four__inner__box__item__author__img" src={avatar} alt="IMG"/>
-                          <div class="section-four__inner__box__item__author__des">
-                            <div class="section-four__inner__box__item__author__des__name">Catherine Soft</div>
-                            <div class="section-four__inner__box__item__author__des__pos">Managing Director</div>
+                      <Upper>
+                        <div class="section-four__inner__box__item">
+                        <div className='section-four__inner__box__item__img'><MessageOutlined style={{fontSize:'32px'}}/></div> 
+                          <div class="section-four__inner__box__item__text">Hệ thống rất tiện lợi, giúp tôi tiết kiệm thời gian trong 
+                            việc theo dõi doanh số và tồn kho. Đồng thời dễ dàng quản lý nhân viên.</div>
+                          <div class="section-four__inner__box__item__author">
+                            <img class="section-four__inner__box__item__author__img" src={avt2} alt="IMG"/>
+                            <div class="section-four__inner__box__item__author__des">
+                              <div class="section-four__inner__box__item__author__des__name">Nguyễn Văn Trung</div>
+                              <div class="section-four__inner__box__item__author__des__pos">Quản lý chuỗi cửa hàng gạo HN</div>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </Upper>
                     </div>
                     <div class="col-xl-4">
-                      <div class="section-four__inner__box__item">
-                        <img class="section-four__inner__box__item__img" src={feeback} alt="Test"/>
-                        <div class="section-four__inner__box__item__text">Proin a neque nisi. Nam ipsum nisi, venenatis ut
-                          nulla quis, egestas scelerisque orci. Maecenas a finibus odio.</div>
-                        <div class="section-four__inner__box__item__author">
-                          <img class="section-four__inner__box__item__author__img" src={avatar} alt="IMG"/>
-                          <div class="section-four__inner__box__item__author__des">
-                            <div class="section-four__inner__box__item__author__des__name">Catherine Soft</div>
-                            <div class="section-four__inner__box__item__author__des__pos">Managing Director</div>
+                      <RightRight>
+                        <div class="section-four__inner__box__item">
+                          <div className='section-four__inner__box__item__img'><MessageOutlined style={{fontSize:'32px'}}/></div> 
+                          <div class="section-four__inner__box__item__text">Dịch vụ hỗ trợ tuyệt vời! Mọi thắc mắc đều được giải đáp nhanh chóng, 
+                            giúp tôi vận hành cửa hàng hiệu quả hơn.</div>
+                          <div class="section-four__inner__box__item__author">
+                            <img class="section-four__inner__box__item__author__img" src={avt3} alt="IMG"/>
+                            <div class="section-four__inner__box__item__author__des">
+                              <div class="section-four__inner__box__item__author__des__name">Jonny Khang </div>
+                              <div class="section-four__inner__box__item__author__des__pos">Chủ cửa hàng gạo Xanh</div>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </RightRight>
                     </div>
                   </div>
                 </div>
@@ -262,9 +204,9 @@ function HomeBody(){
           <div class="row">
             <div class="col-xl-12">
               <div class="section-five__inner">
-                <h2 class="section-five__inner__title">Pricing Plans</h2>
-                <p class="section-five__inner__text">Donec vulputate urna sed rutrum venenatis. Cras consequat magna quis
-                  arcu elementum, quis congue risus volutpat.</p>
+                <h2 class="section-five__inner__title">Dịch vụ gói đăng ký</h2>
+                <p class="section-five__inner__text">Các gói đăng ký linh hoạt giúp bạn quản lý cửa hàng dễ dàng hơn. Chọn gói phù hợp để tận hưởng 
+                  các tính năng nâng cao và tối ưu hóa hoạt động kinh doanh.</p>
                 <div class="section-five__inner__box">
                   <div class="row">
                     <div class="col-xl-4">
@@ -356,8 +298,6 @@ function HomeBody(){
           </div>
         </div>
       </div>
-
-     
     </>
   )
 }

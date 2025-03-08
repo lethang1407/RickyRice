@@ -24,6 +24,6 @@ public class SubscriptionPlan extends AbstractEntity {
     @Column(name = "TimeOfExpiration")
     Integer timeOfExpiration;
 
-    @Column(name = "Status")
-    Boolean status;
+    @Column(name = "isActive")
+    Boolean isActive;
 }

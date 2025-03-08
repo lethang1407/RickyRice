@@ -2,7 +2,7 @@ package org.group5.swp391.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.converter.EmployeeConverter;
-import org.group5.swp391.dto.store_owner.StoreEmployeeDTO;
+import org.group5.swp391.dto.store_owner.all_employee.StoreEmployeeDTO;
 import org.group5.swp391.entity.Account;
 import org.group5.swp391.entity.Employee;
 import org.group5.swp391.entity.Store;

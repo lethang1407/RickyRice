@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EmployeeStoreDTO {
-
     String storeID;
     String StoreName;
     String address;
@@ -19,8 +18,4 @@ public class EmployeeStoreDTO {
     String operatingHour;
     LocalDateTime expireAt;
     String image;
-
-
-
-
 }

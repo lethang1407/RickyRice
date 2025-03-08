@@ -16,7 +16,7 @@ public class EmployeeZoneDTO {
     String location;
     long quantity;
     long size;
-      LocalDateTime created_at;
+    LocalDateTime created_at;
       LocalDateTime updated_at;
       String created_by;
       EmployeeStoreDTO EmployeeStoreDTO;

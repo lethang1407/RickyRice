@@ -26,16 +26,6 @@ public class ZoneServiceImpl implements ZoneService {
         return zonePage.map(zoneConverter::toEmployeeZoneDTO);
     }
 
-    public Page<EmployeeZoneDTO>getFilterZones(int page, int size, String sortBy, boolean descending,
-                                               Integer quantityMin, Integer quantityMax, Integer sizeMin, Integer sizeMax, String search){
-        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        if (search.equals("")) {
-            search = null;
-        }
-        Page<Zone> zonePage = zoneRepository.findFilteredZones(quantityMin, quantityMax, sizeMin, sizeMax, search, pageable);
-    return zonePage.map(zoneConverter::toEmployeeZoneDTO);
-    }
 
     public Page<EmployeeZoneDTO>getSearchNameAndLocationZone(int page, int size, String sortBy, boolean descending, String search){
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();

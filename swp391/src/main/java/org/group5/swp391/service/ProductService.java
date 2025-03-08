@@ -2,7 +2,7 @@ package org.group5.swp391.service;
 
 import org.group5.swp391.dto.customer_requirement.CustomerProductDTO;
 import org.group5.swp391.dto.employee.EmployeeProductDTO;
-import org.group5.swp391.dto.store_owner.StoreProductDTO;
+import org.group5.swp391.dto.store_owner.all_product.StoreProductDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 

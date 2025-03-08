@@ -56,4 +56,7 @@ public class Store extends AbstractEntity{
 
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "store")
     List<Product> products = new ArrayList<>();
+
+    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "store")
+    List<Package> packages = new ArrayList<>();
 }
