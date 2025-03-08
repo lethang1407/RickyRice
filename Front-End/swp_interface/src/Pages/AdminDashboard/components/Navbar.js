@@ -3,7 +3,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Bell } from "react-bootstrap-icons";
 import API from "../../../Utils/API/API.js";
-import { getToken } from "../../../Utils/UserInfoUtils";
+import { getToken, logout } from "../../../Utils/UserInfoUtils";
+import { message } from "antd";
+import { successWSmile } from "../../../Utils/AntdNotification";
+import { useNavigate } from "react-router-dom";
 
 const CustomNavbar = () => {
   const avatarUrl =
@@ -11,6 +14,19 @@ const CustomNavbar = () => {
 
   const [notifications, setNotifications] = useState([]);
   const token = getToken();
+  const [messageApi, contextHolder] = message.useMessage();
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    setLoading(true);
+    successWSmile("See you later!", messageApi);
+    logout();
+    setTimeout(() => {
+      setLoading(false);
+      navigate("/");
+    }, 1000);
+  };
 
   useEffect(() => {
     fetch(API.ADMIN.GET_NOTIFICATIONS_BY_ID(1), {
@@ -25,26 +41,26 @@ const CustomNavbar = () => {
         }
       })
       .catch((error) => console.error("Error fetching notifications:", error));
-  },[token]);
+  }, [token]);
 
   const markAllAsRead = async () => {
     const unreadIds = notifications
       .filter((notif) => !notif.isRead)
       .map((notif) => notif.notificationId);
-      try {
-        const response = await fetch(API.ADMIN.MARK_NOTI_AS_READ, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ notificationIDs: unreadIds, isRead: true }),
-        });
-  
-        if (!response.ok) throw new Error("Failed to mark notifications as read");
-  
-        setNotifications((prevNotifications) =>
-          prevNotifications.map((notif) => ({ ...notif, isRead: true }))
+    try {
+      const response = await fetch(API.ADMIN.MARK_NOTI_AS_READ, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ notificationIDs: unreadIds, isRead: true }),
+      });
+
+      if (!response.ok) throw new Error("Failed to mark notifications as read");
+
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notif) => ({ ...notif, isRead: true }))
       );
     } catch (error) {
       console.error("Error marking notifications as read:", error);
@@ -169,22 +185,22 @@ const CustomNavbar = () => {
           style={{ zIndex: 1050 }}
         >
           <li>
-            <a className="dropdown-item" href="#">
+            <button className="dropdown-item" href="#">
               Hồ sơ tài khoản
-            </a>
+            </button>
           </li>
           <li>
-            <a className="dropdown-item" href="#">
+            <button className="dropdown-item" href="#">
               Cài đặt
-            </a>
+            </button>
           </li>
           <li>
             <hr className="dropdown-divider" />
           </li>
           <li>
-            <a className="dropdown-item" href="/">
+            <button className="dropdown-item" onClick={handleLogout}>
               Đăng xuất
-            </a>
+            </button>
           </li>
         </ul>
       </div>

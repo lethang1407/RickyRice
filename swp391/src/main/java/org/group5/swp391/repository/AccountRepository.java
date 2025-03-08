@@ -29,5 +29,4 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     // Tìm tài khoản theo Account ID
     Optional<Account> findById(String accountID);
-
 }

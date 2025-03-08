@@ -1,6 +1,7 @@
 package org.group5.swp391.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.group5.swp391.dto.request.account.UpdateAccountRequest;
 import org.group5.swp391.dto.request.admin_request.UpdateAccountActiveRequest;
 import org.group5.swp391.dto.response.AdminResponse.AccountResponse;
 import org.group5.swp391.entity.Account;
@@ -76,5 +77,49 @@ public class AccountServiceImpl implements AccountService {
 
     public Optional<Account> getAccount(Account a) {
         return accountRepository.findByUsername(a.getUsername());
+    }
+
+    public AccountResponse getAccountByUsername(String username) {
+        return accountRepository.findByUsername(username)
+                .map(account -> AccountResponse.builder()
+                        .accountID(account.getId())
+                        .username(account.getUsername())
+                        .name(account.getName())
+                        .email(account.getEmail())
+                        .phoneNumber(account.getPhoneNumber())
+                        .avatar(account.getAvatar())
+                        .createdAt(account.getCreatedAt())
+                        .updatedAt(account.getUpdatedAt())
+                        .isActive(account.getIsActive())
+                        .gender(account.getGender())
+                        .birthDate(account.getBirthDate())
+                        .build())
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+    }
+
+    public AccountResponse updateAccountInfor(String username, UpdateAccountRequest request) {
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Not found username: " + username));
+        account.setName(request.getName());
+        account.setEmail(request.getEmail());
+        account.setPhoneNumber(request.getPhoneNumber());
+        account.setAvatar(request.getAvatar());
+        account.setGender(request.getGender());
+        account.setBirthDate(request.getBirthDate());
+
+        Account updatedAccount = accountRepository.save(account);
+        return AccountResponse.builder()
+                .accountID(account.getId())
+                .username(account.getUsername())
+                .name(updatedAccount.getName())
+                .email(updatedAccount.getEmail())
+                .phoneNumber(updatedAccount.getPhoneNumber())
+                .avatar(updatedAccount.getAvatar())
+                .createdAt(account.getCreatedAt())
+                .updatedAt(account.getUpdatedAt())
+                .isActive(account.getIsActive())
+                .gender(updatedAccount.getGender())
+                .birthDate(account.getBirthDate())
+                .build();
     }
 }
