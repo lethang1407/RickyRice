@@ -69,4 +69,17 @@ export const introspect = async (url, token)=>{
   }
 }
 
+export const addNewResource = async (url, data, token) =>{
+  try {
+    const response = await axios.post(url, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data; 
+  } catch (error) {
+    console.error('Lỗi khi lấy dữ liệu:', error);
+  }
+}
+
 

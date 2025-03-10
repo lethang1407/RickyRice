@@ -5,10 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.dto.request.authentication_request.*;
 import org.group5.swp391.dto.response.ApiResponse;
-import org.group5.swp391.dto.response.AuthenticationResponse.AuthenticationResponse;
-import org.group5.swp391.dto.response.AuthenticationResponse.EmailAndPhoneCheckResponse;
-import org.group5.swp391.dto.response.AuthenticationResponse.IntrospectResponse;
-import org.group5.swp391.dto.response.AuthenticationResponse.SendOTPResponse;
+import org.group5.swp391.dto.response.AuthenticationResponse.*;
 import org.group5.swp391.service.AuthenticationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -91,7 +88,7 @@ public class AuthenticationAPI {
 
     @PostMapping(value = "/check-otp")
     public ApiResponse<?> checkOTP(@RequestBody @Valid OTPCheckRequest request) {
-        boolean res = authenticationService.checkOTP(request);
+        CheckOTPResponse res = authenticationService.checkOTP(request);
         return ApiResponse.builder()
                 .code(HttpStatus.OK.value())
                 .message("check successfully")
