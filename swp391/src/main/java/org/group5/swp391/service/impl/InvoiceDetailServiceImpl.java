@@ -22,6 +22,7 @@ public class InvoiceDetailServiceImpl implements InvoiceDetailService {
     @Override
     public List<StoreInvoiceDetailDTO> getInvoiceDetailsByInvoice(String invoiceId) {
         Invoice invoice = invoiceRepository.findById(invoiceId).orElse(null);
+        System.out.println(invoiceDetailRepository.findByInvoice(invoice).size());
         return invoiceDetailRepository.findByInvoice(invoice)
                 .stream()
                 .map(invoiceDetailConverter::toStoreInvoiceDetailDTO)

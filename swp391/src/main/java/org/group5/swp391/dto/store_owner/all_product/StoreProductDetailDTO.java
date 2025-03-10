@@ -1,14 +1,24 @@
 package org.group5.swp391.dto.store_owner.all_product;
 
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
 import java.util.List;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class StoreProductDetailDTO {
     String productID;
     String name;
     double price;
     String information;
-    String categoryName;
+    StoreCategoryIdAndNameDTO category;
     String productImage;
-    List<String> storeProductAttribute;
-    List<String> storeZone;
+    StoreInfoIdAndNameDTO store;
+    List<StoreProductAttributeDTO> attributes;
+    Long quantity;
+    List<StoreZoneIdAndNameDTO> zones;
 }

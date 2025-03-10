@@ -1,18 +1,22 @@
 package org.group5.swp391.controller.store_owner;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.group5.swp391.converter.ZoneConverter;
 import org.group5.swp391.dto.store_owner.all_employee.StoreEmployeeDTO;
 import org.group5.swp391.dto.store_owner.all_invoice.StoreInvoiceDTO;
 import org.group5.swp391.dto.store_owner.all_invoice.StoreInvoiceDetailDTO;
-import org.group5.swp391.dto.store_owner.all_product.StoreProductDTO;
+import org.group5.swp391.dto.store_owner.all_product.*;
 import org.group5.swp391.dto.store_owner.all_statistic.StoreStatisticDTO;
 import org.group5.swp391.dto.store_owner.all_store.StoreInfoDTO;
 import org.group5.swp391.service.*;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -26,6 +30,9 @@ public class StoreOwnerController {
     private final InvoiceDetailService invoiceDetailService;
     private final EmployeeService employeeService;
     private final StatisticsService statisticsService;
+    private final CategoryService categoryService;
+    private final ProductAttributeService productAttributeService;
+    private final ZoneService zoneService;
 
     @GetMapping("/invoices")
     public Page<StoreInvoiceDTO> getInvoices(
@@ -67,6 +74,62 @@ public class StoreOwnerController {
         return productService.getProducts(productName, page, size, sortBy, descending);
     }
 
+    @GetMapping("/product-detail")
+    public StoreProductDetailDTO getProduct(@RequestParam String id) {
+        return productService.getProduct(id);
+    }
+
+    @GetMapping("/all/category")
+    public List<StoreCategoryIdAndNameDTO> getCategory() {
+        return categoryService.getAllStoreCategories();
+    }
+
+    @GetMapping("/all/attribute")
+    public List<StoreProductAttributeDTO> getAttribute() {
+        return productAttributeService.getProductAttributes();
+    }
+
+    @PreAuthorize("@securityService.hasAccessToStore(#storeId)")
+    @GetMapping("/store/zone")
+    public List<StoreZoneIdAndNameDTO> getZonesForStore(@RequestParam String storeId) {
+        return zoneService.getZoneIdAndNameForStore(storeId);
+    }
+
+    @PutMapping(value = "/product/update/{id}")
+    public ResponseEntity<String> updateProduct(
+            @PathVariable String id,
+            @RequestBody StoreProductDetailDTO product) {
+        try {
+            if (!id.equals(product.getProductID())) {
+                return ResponseEntity.badRequest().body("Cập nhật sản phẩm thất bại");
+            }
+            productService.updateStoreProduct(id, product);
+            return ResponseEntity.ok("Cập nhật sản phẩm thành công");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cập nhật sản phẩm thất bại");
+        }
+    }
+
+    @PutMapping(value = "/product/upload-image/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadProductImage(
+            @PathVariable String productId,
+            @RequestPart("file") MultipartFile file
+    ) {
+        String url = productService.updateStoreProductImage(productId, file);
+        return ResponseEntity.ok(url);
+    }
+
+    @DeleteMapping("/product/delete/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable("id") String productId) {
+        try {
+            productService.deleteProduct(productId);
+            return ResponseEntity.ok("Xóa sản phẩm thành công");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Xóa sản phẩm thất bại");
+        }
+    }
+
     @GetMapping("/employees")
     public Page<StoreEmployeeDTO> getEmployees(
             @RequestParam(defaultValue = "") String employeeName,
@@ -78,6 +141,48 @@ public class StoreOwnerController {
     ) {
         return employeeService.getEmployees(employeeName, page, size, sortBy, descending, gender);
     }
+
+    @GetMapping("/employee-detail")
+    public StoreEmployeeDTO getEmployee(@RequestParam String id) {
+        return employeeService.getEmployee(id);
+    }
+
+    @PutMapping(value = "/employee/upload-image/{employeeId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadEmployeeImage(
+            @PathVariable String employeeId,
+            @RequestPart("file") MultipartFile file
+    ) {
+        String url = employeeService.updateStoreEmployeeImage(employeeId, file);
+        return ResponseEntity.ok(url);
+    }
+
+    @DeleteMapping("/employee/delete/{id}")
+    public ResponseEntity<String> deleteEmployee(@PathVariable("id") String employeeId) {
+        try {
+            System.out.println(employeeId);
+            employeeService.deleteEmployee(employeeId);
+            return ResponseEntity.ok("Xóa sản phẩm thành công");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Xóa sản phẩm thất bại");
+        }
+    }
+
+    @PutMapping(value = "/employee/update/{id}")
+    public ResponseEntity<String> updateEmployee(
+            @PathVariable String id,
+            @RequestBody StoreEmployeeDTO employee) {
+        try {
+            if (!id.equals(employee.getEmployeeID())) {
+                return ResponseEntity.badRequest().body("Cập nhật sản phẩm thất bại");
+            }
+            employeeService.updateStoreEmployee(id, employee);
+            return ResponseEntity.ok("Cập nhật sản phẩm thành công");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cập nhật sản phẩm thất bại");
+        }
+    }
+
     @GetMapping("/statistics")
     public Page<StoreStatisticDTO> getStatistics(
             @RequestParam String storeName,

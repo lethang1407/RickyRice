@@ -4,6 +4,7 @@ package org.group5.swp391.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.converter.ZoneConverter;
 import org.group5.swp391.dto.employee.EmployeeZoneDTO;
+import org.group5.swp391.dto.store_owner.all_product.StoreZoneIdAndNameDTO;
 import org.group5.swp391.entity.Zone;
 import org.group5.swp391.repository.ZoneRepository;
 import org.group5.swp391.service.ZoneService;
@@ -12,6 +13,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,4 +38,8 @@ public class ZoneServiceImpl implements ZoneService {
         return zonePage.map(zoneConverter::toEmployeeZoneDTO);
     }
 
+    @Override
+    public List<StoreZoneIdAndNameDTO> getZoneIdAndNameForStore(String storeId) {
+        return zoneRepository.findByStoreId(storeId).stream().map(zoneConverter::toStoreZoneIdAndNameDTO).collect(Collectors.toList());
+    }
 }

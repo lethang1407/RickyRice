@@ -20,6 +20,7 @@ public enum ErrorCode {
     USERNAME_EXISTED(400,"Username already existed",HttpStatus.CONFLICT),
     PHONENUMBER_EXISTED(400,"Phone number already existed",HttpStatus.CONFLICT),
     OTP_INVALID(400,"OTP invalid",HttpStatus.CONFLICT),
+    PRODUCT_NOT_FOUND(400,"Product not found",HttpStatus.CONFLICT),
     ;
     private int code;
     private String message;
