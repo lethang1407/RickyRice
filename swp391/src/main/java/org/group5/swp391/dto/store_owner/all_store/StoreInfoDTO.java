@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class StoreInfoDTO {
     private String storeID;
     private String storeName;

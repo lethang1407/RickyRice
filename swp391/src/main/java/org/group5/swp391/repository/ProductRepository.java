@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -15,10 +14,12 @@ import java.util.List;
 @Repository("storeOwnerProductRepository")
 public interface ProductRepository extends JpaRepository<Product, String> {
     Page<Product> findAll(Pageable pageable);
+
     Page<Product> findByStoreInAndNameContainingIgnoreCase(Collection<Store> stores, String name, Pageable pageable);
 
     @Query("Select s from Product  s where s.category.id = ?1")
     List<Product> findAllByCategoryId(String categoryId);
+
     @Query("Select s from Product s where s.category.id = :categoryId")
     Page<Product> findAllByCategoryId(Pageable pageable,String categoryId);
 

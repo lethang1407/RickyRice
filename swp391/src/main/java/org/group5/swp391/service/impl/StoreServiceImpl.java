@@ -5,6 +5,9 @@ import org.group5.swp391.converter.StoreConverter;
 import org.group5.swp391.dto.response.AdminResponse.ViewStoreResponse;
 import org.group5.swp391.dto.store_owner.all_store.StoreInfoDTO;
 import org.group5.swp391.entity.Account;
+import org.group5.swp391.entity.Store;
+import org.group5.swp391.exception.AppException;
+import org.group5.swp391.exception.ErrorCode;
 import org.group5.swp391.repository.AccountRepository;
 import org.group5.swp391.repository.StoreRepository;
 import org.group5.swp391.service.StoreService;
@@ -61,6 +64,19 @@ public class StoreServiceImpl implements StoreService {
                         .subscriptionTimeOfExpiration(store.getSubscriptionPlan().getTimeOfExpiration())
                         .build()
         ).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<StoreInfoDTO> getStoresForDebt() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account account = accountRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        List<Store> storeList = account.getStores();
+        return storeList.stream().map(
+                item -> StoreInfoDTO.builder()
+                        .storeID(item.getId())
+                        .storeName(item.getStoreName())
+                        .build())
+                .toList();
     }
 
 }

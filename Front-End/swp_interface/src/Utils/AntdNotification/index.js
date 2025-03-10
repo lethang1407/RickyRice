@@ -23,3 +23,18 @@ export const success = (str, messageApi) => {
       className: 'success-message'
     });
   };
+
+ export const openNotification = (api, message) => {
+    api.open({
+      message: 'New Notification',
+      description:
+        message,
+      icon: (
+        <SmileOutlined
+          style={{
+            color: '#108ee9',
+          }}
+        />
+      ),
+    });
+  };
