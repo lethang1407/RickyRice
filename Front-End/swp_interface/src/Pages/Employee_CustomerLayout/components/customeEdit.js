@@ -102,12 +102,6 @@ const CustomerIN4Edit = () => {
                 layout="horizontal"
                 onFinish={handleSubmit}
             >
-                <Form.Item label="Store Name" name="storeName">
-                    <Input disabled />
-                </Form.Item>
-                <Form.Item label="Customer ID" name="customerID">
-                    <Input disabled />
-                </Form.Item>
                 <Form.Item
                     label="Customer Name"
                     name="name"
@@ -124,7 +118,7 @@ const CustomerIN4Edit = () => {
                         { required: true, message: 'Vui lòng nhập số điện thoại!' },
                         {
                             pattern: /^0\d{9}$/,
-                            message: 'Vui lòng nhập 10 số và bắt đầu từ 0 nha onichan',
+                            message: 'Vui lòng nhập 10 số và bắt đầu từ 0',
                         }
                     ]}
                 >
@@ -142,10 +136,6 @@ const CustomerIN4Edit = () => {
                 <Form.Item label="Customer Address" name="address">
                     <TextArea rows={3} placeholder="Nhập địa chỉ" />
                 </Form.Item>
-                <Form.Item label="Created At" name="createdAt">
-                    <DatePicker style={{ width: '100%' }} disabled />
-                </Form.Item>
-
                 <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
                     <Button
                         type="default"

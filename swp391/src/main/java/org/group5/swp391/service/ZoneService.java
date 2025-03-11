@@ -2,6 +2,7 @@ package org.group5.swp391.service;
 
 import org.group5.swp391.dto.employee.EmployeeZoneDTO;
 import org.group5.swp391.dto.store_owner.all_product.StoreZoneIdAndNameDTO;
+import org.group5.swp391.dto.store_owner.store_detail.StoreDetailZoneDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -12,4 +13,10 @@ public interface ZoneService {
     public Page<EmployeeZoneDTO> getAllZone(int page, int size, String sortBy, boolean descending);
     public Page<EmployeeZoneDTO>getSearchNameAndLocationZone(int page, int size, String sortBy, boolean descending, String search);
     public List<StoreZoneIdAndNameDTO> getZoneIdAndNameForStore(String storeId);
+    //Hieu
+    public Page<StoreDetailZoneDTO> getStoreZones(String search, String storeID, int page, int size, String sortBy, boolean descending) throws Exception;
+    public StoreDetailZoneDTO getZone(String zoneID);
+    public void addZone(StoreDetailZoneDTO storeZoneDTO) throws Exception;
+    public void updateZone(String zoneID, StoreDetailZoneDTO storeZoneDTO) throws Exception;
+    public void deleteZone(String zoneID);
 }

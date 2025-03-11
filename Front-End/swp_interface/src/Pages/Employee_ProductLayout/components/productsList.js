@@ -54,6 +54,9 @@ const Employee_Products = () => {
             dataIndex: 'productImage',
             key: 'productImage',
             width: 10,
+            render: (productImage) => (
+                <img style={{ width: '100%' }} src={productImage} alt="" />
+            ),
         },
         {
             title: 'Gạo',

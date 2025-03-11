@@ -4,13 +4,10 @@ package org.group5.swp391.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.converter.ZoneConverter;
 import org.group5.swp391.dto.employee.EmployeeZoneDTO;
-import org.group5.swp391.entity.Account;
-import org.group5.swp391.entity.Employee;
+import org.group5.swp391.dto.store_owner.store_detail.StoreDetailZoneDTO;
+import org.group5.swp391.entity.*;
 import org.group5.swp391.dto.store_owner.all_product.StoreZoneIdAndNameDTO;
-import org.group5.swp391.entity.Zone;
-import org.group5.swp391.repository.AccountRepository;
-import org.group5.swp391.repository.EmployeeRepository;
-import org.group5.swp391.repository.ZoneRepository;
+import org.group5.swp391.repository.*;
 import org.group5.swp391.service.ZoneService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +32,8 @@ public class ZoneServiceImpl implements ZoneService {
     private final ZoneConverter zoneConverter;
     private final AccountRepository accountRepository;
     private final EmployeeRepository employeeRepository;
+    private final StoreRepository storeRepository;
+    private final ProductRepository productRepository;
 
     public Page<EmployeeZoneDTO> getAllZone(int page, int size, String sortBy, boolean descending) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
@@ -96,6 +96,63 @@ public class ZoneServiceImpl implements ZoneService {
             }
         }
         return capitalizedString.toString().trim();
+    }
+
+    //Hieu
+    @Override
+    public Page<StoreDetailZoneDTO> getStoreZones(String search, String storeID, int page, int size, String sortBy, boolean descending) throws Exception {
+
+        Sort sort = descending
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Zone> zones;
+        if (search != null) {
+            zones = zoneRepository.findZoneByNameAndInformationContainsIgnoreCase(storeID, search, pageable);
+        } else {
+            zones = zoneRepository.findZonesByStore_StoreID(storeID, pageable);
+        }
+        return zones.map(zoneConverter::toStoreZoneDTO);
+    }
+
+    @Override
+    public StoreDetailZoneDTO getZone(String zoneID) {
+        Zone zone = zoneRepository.findZoneById(zoneID);
+        return zoneConverter.toStoreZoneDTO(zone);
+    }
+
+    @Override
+    public void addZone(StoreDetailZoneDTO storeZoneDTO) throws Exception {
+
+        Zone newZone = new Zone();
+        Store existingStore = storeRepository
+                .findById(storeZoneDTO.getStoreID())
+                .orElseThrow(() -> new Exception("Store not found"));
+        Product existingProduct = productRepository
+                .findById(storeZoneDTO.getProductID())
+                .orElseThrow(() -> new Exception("Product not found"));
+        newZone.setName(storeZoneDTO.getName());
+        newZone.setStore(existingStore);
+        newZone.setProduct(existingProduct);
+
+        newZone.setLocation(storeZoneDTO.getLocation());
+        zoneRepository.save(newZone);
+    }
+
+    @Override
+    public void updateZone(String zoneID, StoreDetailZoneDTO updatedZone) throws Exception {
+        Zone updatingZone = zoneRepository.findZoneById(zoneID);
+        updatingZone.setName(updatedZone.getName());
+        updatingZone.setUpdatedAt(LocalDateTime.now());
+        updatingZone.setLocation(updatedZone.getLocation());
+        Product foundProductByID = productRepository.findById(updatedZone.getProductID()).orElseThrow(() -> new Exception());
+        updatingZone.setProduct(foundProductByID);
+        zoneRepository.save(updatingZone);
+    }
+
+    @Override
+    public void deleteZone(String zoneID) {
+
     }
 
 }

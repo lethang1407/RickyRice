@@ -164,7 +164,7 @@ const SubscriptionPlan = () => {
                   <th>#</th>
                   <th>Tên</th>
                   <th>Mô tả</th>
-                  <th>Giá ($)</th>
+                  <th>Giá (VNĐ)</th>
                   <th>Thời hạn (Tháng)</th>
                   <th>Hành động</th>
                 </tr>

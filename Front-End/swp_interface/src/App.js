@@ -35,6 +35,9 @@ import SubscriptionPlan from "./Pages/SubscriptionPlan/SubscriptionPlans";
 import PaymentReturn from "./Pages/SubscriptionPlan/PaymentReturn";
 import AccountInfo from "./Pages/Account/AccountInfo";
 import ChangePassword from "./Pages/Account/ChangePasswordAcc";
+import Zone from "./Pages/StoreManagement/Zone/Zone.js";
+import StoreLayout from "./Components/StoreLayout/storelayout.js";
+import StoreProduct from "./Pages/StoreManagement/Product/Product.js";
 
 function App() {
   return (
@@ -91,6 +94,12 @@ function App() {
               <Route path="debt" element={<Debt />}></Route>
             </Route>
             <Route path="/vnpay/payment-return" element={<PaymentReturn />} />
+          </Route>
+          <Route element={<StoreOwnerProtected/>}>
+            <Route path="/store/:id" element={<StoreLayout />}>  
+              <Route path="zone" element={<Zone />}></Route>
+              <Route path="product" element={<StoreProduct />}></Route>
+            </Route>
           </Route>
           <Route path="/account-info" element={<AccountInfo />} />
           <Route path="/account-change-password" element={<ChangePassword />} />

@@ -175,6 +175,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoiceRequest.getInvoice().getCustomerName() == null || invoiceRequest.getInvoice().getCustomerName().isEmpty()) {
             throw new IllegalArgumentException("Tên khách hàng không được để trống!");
         }
+        Customer customer = customerRepository.findByPhoneNumber(invoiceRequest.getInvoice().getCustomerPhone());
+        if (!customer.getName().equals(invoiceRequest.getInvoice().getCustomerName())) {
+            throw new IllegalArgumentException("Số điện thoại này là của khách hàng khác");
+        }
         if (invoiceRequest.getInvoice().getTotalAmount() < 0 || invoiceRequest.getInvoice().getTotalShipping() < 0) {
             throw new IllegalArgumentException("Tổng tiền hoặc phí vận chuyển không được < 0!");
         }

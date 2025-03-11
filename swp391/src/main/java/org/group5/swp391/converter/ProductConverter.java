@@ -11,8 +11,8 @@ import org.group5.swp391.dto.employee.EmployeeZoneDTO;
 import org.group5.swp391.dto.store_owner.all_product.StoreProductAttributeDTO;
 import org.group5.swp391.dto.store_owner.all_product.StoreProductDTO;
 import org.group5.swp391.dto.store_owner.all_product.StoreProductDetailDTO;
+import org.group5.swp391.dto.store_owner.store_detail.StoreDetailProductDTO;
 import org.group5.swp391.entity.Product;
-import org.group5.swp391.entity.Zone;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -101,4 +101,13 @@ public class ProductConverter {
 
         return employeeProductDTO;
     }
+
+    public StoreDetailProductDTO toStoreDetailProductDTO(Product product){
+        StoreDetailProductDTO storeDetailProductDTO = modelMapper.map(product, StoreDetailProductDTO.class);
+        storeDetailProductDTO.setQuantity(product.getQuantity());
+        storeDetailProductDTO.setStoreDetailCategoryDTO(categoryConverter.toStoreDetailCategoryDTO(product.getCategory()));
+        storeDetailProductDTO.setProductImage(product.getProductImage());
+        return storeDetailProductDTO;
+    }
+
 }
