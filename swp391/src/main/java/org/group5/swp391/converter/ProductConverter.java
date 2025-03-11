@@ -16,6 +16,7 @@ import org.group5.swp391.entity.Zone;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,14 +64,6 @@ public class ProductConverter {
         return dto;
     }
 
-    private long calculateTotalQuantityFromZones(Product product) {
-        if (product.getZones() == null || product.getZones().isEmpty()) {
-            return 0;
-        }
-
-        return 0;
-    }
-
     public EmployeeProductDTO toEmployeeProductDTO(Product product) {
 
         EmployeeProductDTO employeeProductDTO = new EmployeeProductDTO();
@@ -78,9 +71,12 @@ public class ProductConverter {
         employeeProductDTO.setProductID(product.getId());
         employeeProductDTO.setName(product.getName());
         employeeProductDTO.setPrice(product.getPrice());
+        employeeProductDTO.setQuantity(product.getQuantity());
         employeeProductDTO.setInformation(product.getInformation());
         employeeProductDTO.setProductImage(product.getProductImage());
-        employeeProductDTO.setQuantity(calculateTotalQuantityFromZones(product));
+//        employeeProductDTO.setCreated_at(product.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+//        employeeProductDTO.setUpdated_at(product.getUpdatedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        employeeProductDTO.setCreated_by(product.getCreatedBy());
 
         if (product.getCategory() != null) {
             EmployeeCategoryDTO employeeCategoryDTO = new EmployeeCategoryDTO();

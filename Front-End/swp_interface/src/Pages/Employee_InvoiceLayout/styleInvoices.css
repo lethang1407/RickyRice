@@ -1,0 +1,276 @@
+.custom-table .ant-table-thead>tr>th {
+    background-color: #6B7012;
+    /* Màu nền tiêu đề */
+    color: #fff;
+    /* Màu chữ (trắng để dễ đọc) */
+    text-align: center;
+    /* Căn giữa nội dung trong tiêu đề */
+}
+
+.site-form-in-drawer-wrapper {
+    /* danh cho invoiceCustomerCreate*/
+    position: absolute;
+    inset-inline-end: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 10px 16px;
+    text-align: right;
+    background: #fff;
+    border-top: 1px solid #e9e9e9;
+}
+
+
+.content_upper {
+    height: 61.5vh;
+    padding: 0 !important;
+
+}
+
+.content_lower {
+    height: 40vh;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.invoice-content {
+    padding: 10px;
+    border-right: 3px solid black;
+    border-bottom: 1px solid black;
+    width: 70%;
+    height: 61.5vh;
+
+}
+
+.invoice-title {
+    font-size: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.control-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.product-selection {
+    display: flex;
+    flex-direction: column;
+}
+
+.select-wrapper {
+    display: flex;
+    gap: 8px;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+}
+
+.invoice-tabs.large {
+    font-size: 23px;
+}
+
+.invoice-tabs.small {
+    font-size: 14px;
+}
+
+.customer-content {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    border-bottom: 1px solid black;
+}
+
+.customer-title {
+    margin-top: 15px;
+    font-size: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.customer-info {
+    padding: 7px;
+    max-width: 500px;
+    margin: 0 auto;
+    height: 55vh;
+}
+
+.customer-form {
+    margin-top: 35px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+}
+
+.form-label {
+    width: 200px;
+    text-align: left;
+    padding-right: 12px;
+}
+
+.payment-details {
+    margin-top: 24px;
+    height: 40vh;
+    /* padding: 12px 0; */
+}
+
+.payment-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.payment-label {
+    width: 200px;
+    text-align: left;
+    padding-right: 12px;
+    font-weight: bold;
+}
+
+.total-product-label h5,
+.final-amount-label h5 {
+    margin: 0;
+}
+
+.discount-label h6,
+.customer-payment-label h6,
+.change-label h6 {
+    margin: 0;
+}
+
+.payment-value {
+    flex: 1;
+    padding: 4px 0;
+    font-weight: bold;
+}
+
+.total-product-value {
+    border-bottom: 2px solid #000;
+}
+
+.final-amount-value {
+    border-bottom: 2px solid blue;
+    color: blue;
+}
+
+.change-value {
+    border-bottom: 2px solid red;
+    color: red;
+}
+
+.discount-input {
+    flex: 1;
+    border: none;
+    border-bottom: 3px solid black;
+    padding: 4px 0;
+}
+
+.customer-payment-input {
+    flex: 1;
+    border: none;
+    border-bottom: 2px solid green;
+    padding: 4px 0;
+    text-align: right;
+}
+
+.invoice-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #f8f9fa;
+    height: 25vh;
+    position: relative;
+    border-right: 1px solid;
+    border-left: 1px solid;
+    border-bottom: 1px solid;
+}
+
+.total-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    margin-left: 20px;
+    width: 71%;
+    /* border-right: 3px solid; */
+    height: 25vh;
+}
+
+.detail-line {
+    display: flex;
+    gap: 10px;
+    color: #666;
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+.detail-label {
+    min-width: 100px;
+}
+
+.total-line {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.total-label {
+    margin: 0;
+    font-size: 20px;
+    color: #333;
+}
+
+.total-amount {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1890ff;
+}
+
+.payment-button {
+    background: #52c41a !important;
+    border-color: #52c41a !important;
+    border-radius: 4px;
+    padding: 0 30px !important;
+    height: 45px !important;
+    font-size: 16px !important;
+    font-weight: 500;
+    margin-right: 20px;
+}
+
+.debt-button {
+    background: #ff0000 !important;
+    border-color: #ff0000 !important;
+    border-radius: 4px;
+    padding: 0 30px !important;
+    height: 45px !important;
+    font-size: 16px !important;
+    font-weight: 500;
+    margin-right: 20px;
+}
+
+.description_content .ant-input {
+    height: 85px !important;
+}
+
+.customer-row {
+    display: flex;
+    align-items: end;
+    justify-content: end;
+}

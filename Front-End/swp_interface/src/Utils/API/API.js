@@ -14,6 +14,9 @@ const API = {
     UPDATE_SUBSCRIPTION_PLAN: (id) =>
       `${API_BASE_URL}/admin/update-subscription-plan/${id}`,
   },
+  CUSTOMER: {
+    GET_ALL_PRODUCT: `${API_BASE_URL}/store/products`
+  },
   ACCOUNT: {
     GET_ALL_NOTIFICATIONS: `${API_BASE_URL}/account/notifications`,
     MARK_NOTI_AS_READ: `${API_BASE_URL}/account/notifications/mark-as-read`,
@@ -26,15 +29,22 @@ const API = {
   },
   EMPLOYEE: {
     GET_ALL_CUSTOMER: `${API_BASE_URL}/employee/customers`,
+    GET_ALL_CUSTOMERlist: `${API_BASE_URL}/employee/customersList`,
     UPDATE_USER: (id) => `${API_BASE_URL}/employee/customers/edit/${id}`,
+    INVOICE_UPDATE_USER: (phoneNumber) => `${API_BASE_URL}/employee/customers/editInvoice/${phoneNumber}`,
     CREATE_CUSTOMER: `${API_BASE_URL}/employee/customers/create`,
-    GET_CATEGORY_PAGINATION: `${API_BASE_URL}/employee/categories/pagination`,
-    GET_ALL_CATEGORY: `${API_BASE_URL}/employee/categories`,
-    GET_CATEGORY_BY_NAME: `${API_BASE_URL}/employee/category`,
-    GET_PRODUCTS_BY_CATEGORY: `${API_BASE_URL}/employee/products-by-category`,
-    GET_PRODUCTS_BY_NAME: `${API_BASE_URL}/employee/products-by-name`,
+    // GET_CATEGORY_PAGINATION: `${API_BASE_URL}/employee/categories/pagination`,
+    // GET_ALL_CATEGORY: `${API_BASE_URL}/employee/categories`,
+    // GET_CATEGORY_BY_NAME: `${API_BASE_URL}/employee/category`,
+    // GET_PRODUCTS_BY_CATEGORY: `${API_BASE_URL}/employee/products-by-category`,
+    GET_PRODUCTS_BY_NAMElist: `${API_BASE_URL}/employee/productsList`,
+    GET_PRODUCTS_BY_NAME: `${API_BASE_URL}/employee/products`,
     GET_RICEZONE: `${API_BASE_URL}/employee/ricezone`,
     SEARCH_RICEZONE: `${API_BASE_URL}/employee/ricezone/searchzone`,
+    GET_eINVOICES: `${API_BASE_URL}/employee/invoices`,
+    INVOICE_PACKAGElist: `${API_BASE_URL}/employee/packageList`,
+    INVOICE_CREATE: `${API_BASE_URL}/employee/invoice/invoice-create`,
+    GET_eINVOICES_DETAILS: `${API_BASE_URL}/employee/invoice-detail`,
   },
   STORE_OWNER: {
     GET_INVOICES: `${API_BASE_URL}/store-owner/invoices`,
@@ -50,10 +60,10 @@ const API = {
     GET_ZONES: `${API_BASE_URL}/store-owner/store/zone`,
     UPLOAD_PRODUCT_IMAGE: `${API_BASE_URL}/store-owner/product/upload-image`,
     DELETE_STORE_PRODUCT: `${API_BASE_URL}/store-owner/product/delete`,
-    GET_STORE_EMPLOYEE_DETAIL: `${API_BASE_URL}/store-owner/employee-detail`, 
+    GET_STORE_EMPLOYEE_DETAIL: `${API_BASE_URL}/store-owner/employee-detail`,
     UPLOAD_EMPLOYEE_AVATAR: `${API_BASE_URL}/store-owner/employee/upload-image`,
-    UPDATE_STORE_EMPLOYEE:  `${API_BASE_URL}/store-owner/employee/update`,
-    DELETE_STORE_EMPLOYEE:  `${API_BASE_URL}/store-owner/employee/delete`
+    UPDATE_STORE_EMPLOYEE: `${API_BASE_URL}/store-owner/employee/update`,
+    DELETE_STORE_EMPLOYEE: `${API_BASE_URL}/store-owner/employee/delete`
   },
   AUTH: {
     LOGIN: `${API_BASE_URL}/auth/login`,
@@ -62,12 +72,15 @@ const API = {
     LOGOUT: `${API_BASE_URL}/auth/logout`,
     INTROSPECT: `${API_BASE_URL}/auth/introspect`,
     CHECK_EMAIL_PHONE: `${API_BASE_URL}/auth/check-email-phone`,
+    CHECK_USERNAME: (username) => `${API_BASE_URL}/auth/check-username/${username}`,
     CHECK_USERNAME: (username) =>
       `${API_BASE_URL}/auth/check-username/${username}`,
     SEND_OTP: (key) => `${API_BASE_URL}/auth/send-otp/${key}`,
     CHECK_OTP: `${API_BASE_URL}/auth/check-otp`,
   },
   PUBLIC: {
+    // UPLOAD_IMG: `${API_BASE_URL}/image`
+
     UPLOAD_IMG: `${API_BASE_URL}/image`,
     SUBSCRIPTION_PLAN: `${API_BASE_URL}/service-web`,
   },

@@ -18,6 +18,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
     Page<Employee> findByEmployeeAccountIn(Collection<Account> employeeAccount,Pageable pageable);
     Page<Employee> findByStoreIn(Collection<Store> stores, Pageable pageable);
 
+    @Query("SELECT s " +
+            "FROM Employee s " +
+            "WHERE s.employeeAccount.id= :accountId")
+    Employee findStoreIdByAccountEmpId(@Param("accountId") String accountId);
     @Query("""
     SELECT e 
     FROM Employee e 

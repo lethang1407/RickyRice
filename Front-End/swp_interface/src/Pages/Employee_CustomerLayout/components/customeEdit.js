@@ -122,9 +122,13 @@ const CustomerIN4Edit = () => {
                     name="phoneNumber"
                     rules={[
                         { required: true, message: 'Vui lòng nhập số điện thoại!' },
+                        {
+                            pattern: /^0\d{9}$/,
+                            message: 'Vui lòng nhập 10 số và bắt đầu từ 0 nha onichan',
+                        }
                     ]}
                 >
-                    <Input placeholder="Nhập số điện thoại" />
+                    <Input type='number' placeholder="Nhập số điện thoại" />
                 </Form.Item>
                 <Form.Item
                     label="Customer Email"

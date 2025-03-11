@@ -14,6 +14,16 @@ import java.util.List;
 public interface ZoneRepository extends JpaRepository<Zone, String> {
     Page<Zone> findAll(Pageable pageable);
 
+    @Query(value = "SELECT * FROM zone WHERE storeid = :storeId " +
+            "AND (:search IS NULL OR LOWER(name) LIKE LOWER(N'%' + :search + '%')) "+
+            "OR ( LOWER(location) LIKE LOWER(N'%' + :search + '%'))",
+            nativeQuery = true)
+    Page<Zone> findFilteredZones(
+            @Param("search") String search,
+            @Param("storeId") String storeId,
+            Pageable pageable
+    );
+
     @Query("SELECT s FROM Zone s WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', :search, '%')) or LOWER(s.location) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<Zone> findByNameAndLocationIgnoreCase(String search, Pageable pageable);
 

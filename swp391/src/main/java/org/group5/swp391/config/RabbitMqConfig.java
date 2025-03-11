@@ -14,6 +14,11 @@ public class RabbitMqConfig {
     public static final String QUEUE_NAME = "debtQueue";
     public static final String EXCHANGE_NAME = "debtExchange";
 
+    //mtran vua code
+    public static final String QUEUE_NAME2 = "invoice-create-queue";
+    public static final String EXCHANGE_NAME2 = "invoice-exchange";
+    public static final String ROUTING_KEY2 = "invoiceCreate";
+
     @Bean
     public Queue queue() {
         return new Queue(QUEUE_NAME, true);
@@ -28,6 +33,21 @@ public class RabbitMqConfig {
     public Binding binding(Queue queue, DirectExchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with("debtKey");
     }
+
+    //mtran
+    @Bean
+    public Queue queue2() {
+        return new Queue(QUEUE_NAME2, true);
+    }
+    @Bean
+    public DirectExchange exchange2() {
+        return new DirectExchange(EXCHANGE_NAME2);
+    }
+    @Bean
+    public Binding binding2 (Queue queue2, DirectExchange exchange2) {
+        return BindingBuilder.bind(queue2).to(exchange2).with(ROUTING_KEY2);
+    }
+    //
 
     @Bean
     public MessageConverter jsonMessageConverter() {

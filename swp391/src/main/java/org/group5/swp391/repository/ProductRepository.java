@@ -19,17 +19,18 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     Page<Product> findAll(Pageable pageable);
 
     Page<Product> findByStoreInAndNameContainingIgnoreCase(Collection<Store> stores, String name, Pageable pageable);
-    Optional<Product> findById(String id);
-    @Query("""
-    SELECT p 
-    FROM Product p 
-    JOIN p.store s 
-    JOIN s.storeAccount a 
-    WHERE a.username = :username 
-    AND p.id = :productId
-""")
-    Optional<Product> findProductForUser(@Param("username") String username, @Param("productId") String productId);
-
+   //minh
+   @Query("SELECT s FROM Product s WHERE s.store.id = :id " +
+           "AND (:name IS NULL OR :name = '' " +
+           "OR LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%')))")
+   Page<Product> findByNameAndStoreIdContainingIgnoreCase(@Param("name") String name,
+                                                          @Param("id") String storeid,
+                                                          Pageable pageable);
+    @Query("SELECT s FROM Product s WHERE s.store.id = :id " +
+            "AND (:name IS NULL OR :name = '' " +
+            "OR LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%')))")
+    List<Product> findByNameAndStoreIdContainingIgnoreCaseInList(@Param("name") String name,
+                                                           @Param("id") String storeid);
     @Query("Select s from Product  s where s.category.id = ?1")
     List<Product> findAllByCategoryId(String categoryId);
 
@@ -45,4 +46,19 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     Page<Product> searchProducts(String query, Pageable pageable);
 
     List<Product> findByNameContainingAndPriceBetween(String name, Double minPrice, Double maxPrice, Pageable pageable);
+
+    @Query("select  p from Product p where p.id = :stringId")
+    Product findByStringId(String stringId);
+    Optional<Product> findById(String id);
+    @Query("""
+    SELECT p 
+    FROM Product p 
+    JOIN p.store s 
+    JOIN s.storeAccount a 
+    WHERE a.username = :username 
+    AND p.id = :productId
+""")
+    Optional<Product> findProductForUser(@Param("username") String username, @Param("productId") String productId);
+
+
 }

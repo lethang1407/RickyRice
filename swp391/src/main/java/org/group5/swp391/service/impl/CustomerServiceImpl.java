@@ -1,5 +1,10 @@
 package org.group5.swp391.service.impl;
 
+import org.group5.swp391.dto.employee.CustomerUpdateRequest;
+import org.group5.swp391.entity.Account;
+import org.group5.swp391.entity.Employee;
+import org.group5.swp391.repository.AccountRepository;
+import org.group5.swp391.repository.EmployeeRepository;
 import org.group5.swp391.service.CustomerService;
 
 import lombok.RequiredArgsConstructor;
@@ -15,9 +20,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 import java.util.List;
 
 @Slf4j
@@ -27,42 +41,130 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final CustomerConverter CustomerConverter;
     private final StoreRepository storeRepository;
+    private final EmployeeRepository employeeRepository;
+    private final AccountRepository accountRepository;
 
 
     @Override
     public Page<EmployeeCustomerDTO> EmployeeGetAllCustomer(int page, int size, String sortBy,
                                                             boolean descending, String phonesearch) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Bạn chưa đăng nhập!");
+        }
+        String username = authentication.getName();
+        System.out.println(username);
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
+        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
+
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         if (phonesearch.equals("")) {
             phonesearch = null;
+        } else {
+            phonesearch = phonesearch.toLowerCase();
+            phonesearch = capitalizeFirstLetters(phonesearch);
         }
-        Page<Customer> customerPage = customerRepository.findAllWithPhoneNumber(pageable, phonesearch);
+
+        Page<Customer> customerPage = customerRepository.findAllWithPhoneNumber(pageable, phonesearch, a.getStore().getId());
+        log.info("heeh" + customerPage.getContent().get(0).getStore().getId());
         return customerPage.map(CustomerConverter::toEmployeeCustomerDTO);
     }
 
     @Override
+    public List<EmployeeCustomerDTO> EmployeeGetAllCustomerInList(String phonesearch) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Bạn chưa đăng nhập!");
+        }
+        String username = authentication.getName();
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
+        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
+        if (phonesearch.equals("")) {
+            phonesearch = null;
+        } else {
+            phonesearch = phonesearch.toLowerCase();
+            phonesearch = capitalizeFirstLetters(phonesearch);
+        }
+        List<Customer> customerList = customerRepository.findAllWithPhoneNumberInList(phonesearch, a.getStore().getId());
+        return customerList.stream().map(CustomerConverter::toEmployeeCustomerDTO).collect(Collectors.toList());
+    }
+
+    @Override
     public Customer updateCustomer(String customerId, Customer updatedCustomer) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Bạn chưa đăng nhập!");
+        }
+        String username = authentication.getName();
+        System.out.println(username);
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
+        validatePhoneNumber(updatedCustomer.getPhoneNumber());
+        if (updatedCustomer.getEmail() != null) {
+            validateEmail(updatedCustomer.getEmail());
+        }
+        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
+        System.out.println("tai sao nhi" + a.getEmployeeAccount().getName());
         Customer existingCustomer = customerRepository.findById(customerId).orElseThrow();
+        existingCustomer.setCreatedBy(username);
         existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
         existingCustomer.setEmail(updatedCustomer.getEmail());
         existingCustomer.setAddress(updatedCustomer.getAddress());
-        // Cập nhật updatedAt
         existingCustomer.setUpdatedAt(LocalDateTime.now());
-        // Giữ nguyên giá trị createdAt nếu nó đã tồn tại
         return customerRepository.save(existingCustomer);
     }
 
     @Override
+    public Customer InvoiceUpdateCustomer(String phoneNumber, CustomerUpdateRequest updatedCustomer) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Bạn chưa đăng nhập!");
+        }
+        String username = authentication.getName();
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
+        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
+        Customer existingCustomer = customerRepository.findByPhoneNumber(phoneNumber);
+        validatePhoneNumber(updatedCustomer.getPhoneNumberNew());
+        existingCustomer.setCreatedBy(username);
+        existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));
+        existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumberNew());
+        existingCustomer.setEmail(existingCustomer.getEmail());
+        existingCustomer.setAddress(existingCustomer.getAddress());
+        existingCustomer.setUpdatedAt(LocalDateTime.now());
+        return customerRepository.save(existingCustomer);
+    }
+
+
+    @Override
     public Customer createCustomer(EmployeeCustomerDTO customerDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Bạn chưa đăng nhập!");
+        }
+        String username = authentication.getName();
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
+        log.info(account.getId());
+        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
         try {
+            validatePhoneNumber(customerDTO.getPhoneNumber());
+            if (customerDTO.getEmail() != null) {
+                validateEmail(customerDTO.getEmail());
+            }
             Customer customer = new Customer();
             customer.setName(capitalizeFirstLetters(customerDTO.getName()));
             customer.setPhoneNumber(customerDTO.getPhoneNumber());
             customer.setEmail(customerDTO.getEmail());
             customer.setAddress(customerDTO.getAddress());
-            Store store = storeRepository.findById(customerDTO.getEmployeeStoreDTO().getStoreID()).orElseThrow();
+            customer.setCreatedBy(username);
+            log.info("haha " + a.getStore().getId());
+            Store store = storeRepository.findById(a.getStore().getId()).orElseThrow();
+            System.out.println(store.getStoreName());
             customer.setStore(store);
             log.info("Saving customer thanh cong : {}", customer);
             return customerRepository.save(customer);
@@ -92,5 +194,17 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
         return capitalizedString.toString().trim();
+    }
+
+    private void validatePhoneNumber(String phoneNumber) {
+        if (phoneNumber == null || !phoneNumber.matches("^0\\d{9}$")) {
+            throw new IllegalArgumentException("SDT phải gồm 10 chữ số và bắt đầu bằng 0.");
+        }
+    }
+
+    private void validateEmail(String email) {
+        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")) {
+            throw new IllegalArgumentException("Email không đúng định dạng.");
+        }
     }
 }
