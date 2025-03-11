@@ -15,10 +15,10 @@ public class AppStatisticsResponse {
     String storeID;
     String storeName;
     String subcriptionPlanName;
-    double subcriptionPlanPrice;
-    String subcriptionDescription;
+    double subcriptionPlanPrice; // vnp_Amount
+    String subcriptionDescription; // vnp_OrderInfo
     Integer subcriptionTimeOfExpiration;
-    private LocalDateTime createdAt;
-    private String createdBy;
-
+    LocalDateTime createdAt;
+    String createdBy; // Owner store
+    String transactionNo; // Mã giao dịch ghi nhận tại hệ thống VNPAY
 }

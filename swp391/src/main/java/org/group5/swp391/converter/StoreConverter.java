@@ -1,6 +1,7 @@
 package org.group5.swp391.converter;
 
 import lombok.RequiredArgsConstructor;
+import org.group5.swp391.dto.store_owner.all_product.StoreInfoIdAndNameDTO;
 import org.group5.swp391.dto.store_owner.all_store.StoreInfoDTO;
 import org.group5.swp391.entity.Store;
 import org.group5.swp391.repository.InvoiceRepository;
@@ -17,5 +18,9 @@ public class StoreConverter {
         StoreInfoDTO dto = modelMapper.map(store, StoreInfoDTO.class);
         dto.setStoreID(store.getId());
         return dto;
+    }
+
+    public StoreInfoIdAndNameDTO toStoreInfoIdAndNameDTO(Store store){
+        return modelMapper.map(store, StoreInfoIdAndNameDTO.class);
     }
 }

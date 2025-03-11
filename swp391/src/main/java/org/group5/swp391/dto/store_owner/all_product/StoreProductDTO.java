@@ -13,5 +13,7 @@ public class StoreProductDTO {
     String name;
     double price;
     String information;
-    String categoryName;
+    StoreCategoryIdAndNameDTO category;
+    StoreInfoIdAndNameDTO store;
+    Long quantity;
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository("storeOwnerProductRepository")
 public interface ProductRepository extends JpaRepository<Product, String> {
@@ -49,4 +50,16 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     @Query("select  p from Product p where p.id = :stringId")
     Product findByStringId(String stringId);
+    Optional<Product> findById(String id);
+    @Query("""
+    SELECT p 
+    FROM Product p 
+    JOIN p.store s 
+    JOIN s.storeAccount a 
+    WHERE a.username = :username 
+    AND p.id = :productId
+""")
+    Optional<Product> findProductForUser(@Param("username") String username, @Param("productId") String productId);
+
+
 }

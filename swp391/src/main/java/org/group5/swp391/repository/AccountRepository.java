@@ -12,10 +12,15 @@ import java.util.List;
 
 public interface AccountRepository extends JpaRepository<Account, String> {
     List<Account> findByNameContainingIgnoreCaseAndGender(String name, Boolean gender);
+
     public Optional<Account> findByUsername(String username);
+
     public Optional<Account> findByEmail(String email);
+
     boolean existsByUsername(String username);
+
     boolean existsByEmail(String email);
+
     boolean existsByPhoneNumber(String phoneNumber);
 
     @Transactional
@@ -29,5 +34,4 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     // Tìm tài khoản theo Account ID
     Optional<Account> findById(String accountID);
-
 }

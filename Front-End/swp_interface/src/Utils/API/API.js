@@ -8,15 +8,28 @@ const API = {
     VIEW_REVENUE: `${API_BASE_URL}/admin/view-revenue`,
     VIEW_ALL_STORE: `${API_BASE_URL}/admin/view-store`,
     VIEW_ALL_SUBSCRIPTION_PLAN: `${API_BASE_URL}/admin/subscription-plans`,
-    VIEW_SUBSCRIPTION_PLAN_BY_ID: (id) => `${API_BASE_URL}/admin/subscription-plan/${id}`,
+    VIEW_SUBSCRIPTION_PLAN_BY_ID: (id) =>
+      `${API_BASE_URL}/admin/subscription-plan/${id}`,
     CREATE_SUBSCRIPTION_PLAN: `${API_BASE_URL}/admin/create-subscription-plan`,
-    UPDATE_SUBSCRIPTION_PLAN: (id) => `${API_BASE_URL}/admin/update-subscription-plan/${id}`,
-    GET_NOTIFICATIONS_BY_ID: (id) => `${API_BASE_URL}/admin/notifications/${id}`,
-    MARK_NOTI_AS_READ: `${API_BASE_URL}/admin/notifications/mark-as-read`
+    UPDATE_SUBSCRIPTION_PLAN: (id) =>
+      `${API_BASE_URL}/admin/update-subscription-plan/${id}`,
   },
+<<<<<<< HEAD
   CUSTOMER: {
     GET_ALL_PRODUCT: `${API_BASE_URL}/store/products`
   },
+=======
+  ACCOUNT: {
+    GET_ALL_NOTIFICATIONS: `${API_BASE_URL}/account/notifications`,
+    MARK_NOTI_AS_READ: `${API_BASE_URL}/account/notifications/mark-as-read`,
+    GET_INFOR_ACCOUNT: `${API_BASE_URL}/account/infor`,
+    UPDATE_ACCOUNT: `${API_BASE_URL}/account/update`,
+    CHANGE_PASSWORD: `${API_BASE_URL}/account/change-password`,
+  },
+  CUSTOMER: {
+    GET_ALL_PRODUCT: `${API_BASE_URL}/store/products`,
+  },
+>>>>>>> cbcaaac81f0c7ca6b48ec00d94894f310c8158f2
   EMPLOYEE: {
     GET_ALL_CUSTOMER: `${API_BASE_URL}/employee/customers`,
     GET_ALL_CUSTOMERlist: `${API_BASE_URL}/employee/customersList`,
@@ -42,7 +55,18 @@ const API = {
     GET_STORE: `${API_BASE_URL}/store-owner/stores`,
     GET_STORE_PRODUCTS: `${API_BASE_URL}/store-owner/products`,
     GET_STORE_EMPLOYEES: `${API_BASE_URL}/store-owner/employees`,
-    GET_STORE_STATISTICs: `${API_BASE_URL}/store-owner/statistics`
+    GET_STORE_STATISTICs: `${API_BASE_URL}/store-owner/statistics`,
+    GET_STORE_PRODUCT_DETAIL: `${API_BASE_URL}/store-owner/product-detail`,
+    GET_CATEGORIES: `${API_BASE_URL}/store-owner/all/category`,
+    UPDATE_STORE_PRODUCT: `${API_BASE_URL}/store-owner/product/update`,
+    GET_ATTRIBUTES: `${API_BASE_URL}/store-owner/all/attribute`,
+    GET_ZONES: `${API_BASE_URL}/store-owner/store/zone`,
+    UPLOAD_PRODUCT_IMAGE: `${API_BASE_URL}/store-owner/product/upload-image`,
+    DELETE_STORE_PRODUCT: `${API_BASE_URL}/store-owner/product/delete`,
+    GET_STORE_EMPLOYEE_DETAIL: `${API_BASE_URL}/store-owner/employee-detail`, 
+    UPLOAD_EMPLOYEE_AVATAR: `${API_BASE_URL}/store-owner/employee/upload-image`,
+    UPDATE_STORE_EMPLOYEE:  `${API_BASE_URL}/store-owner/employee/update`,
+    DELETE_STORE_EMPLOYEE:  `${API_BASE_URL}/store-owner/employee/delete`
   },
   AUTH: {
     LOGIN: `${API_BASE_URL}/auth/login`,
@@ -51,13 +75,29 @@ const API = {
     LOGOUT: `${API_BASE_URL}/auth/logout`,
     INTROSPECT: `${API_BASE_URL}/auth/introspect`,
     CHECK_EMAIL_PHONE: `${API_BASE_URL}/auth/check-email-phone`,
+<<<<<<< HEAD
     CHECK_USERNAME: (username) => `${API_BASE_URL}/auth/check-username/${username}`,
+=======
+    CHECK_USERNAME: (username) =>
+      `${API_BASE_URL}/auth/check-username/${username}`,
+>>>>>>> cbcaaac81f0c7ca6b48ec00d94894f310c8158f2
     SEND_OTP: (key) => `${API_BASE_URL}/auth/send-otp/${key}`,
     CHECK_OTP: `${API_BASE_URL}/auth/check-otp`,
   },
   PUBLIC: {
+<<<<<<< HEAD
     UPLOAD_IMG: `${API_BASE_URL}/image`
   }
+=======
+    UPLOAD_IMG: `${API_BASE_URL}/image`,
+    SUBSCRIPTION_PLAN: `${API_BASE_URL}/service-web`,
+  },
+  VNPAY: {
+    CREATE_PAYMENT: (amount, subscriptionPlanId) =>
+      `${API_BASE_URL}/vnpay/create-payment?amount=${amount}&subscriptionPlanId=${subscriptionPlanId}`,
+    PAYMENT_TRANSACTION: `${API_BASE_URL}/vnpay/payment-history`,
+  },
+>>>>>>> cbcaaac81f0c7ca6b48ec00d94894f310c8158f2
 };
 
 export default API;

@@ -4,10 +4,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const location = useLocation(); 
+  const location = useLocation();
 
   const handleLinkClick = (path) => {
-    navigate(path); 
+    navigate(path);
   };
 
   const links = [

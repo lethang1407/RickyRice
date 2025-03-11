@@ -142,9 +142,9 @@ const AccountOwner = () => {
     if (sortConfig.key === key) {
       return sortConfig.direction === "asc" ? "▲" : "▼";
     }
-    return "⇅"; 
+    return "⇅";
   };
-  
+
   const totalPages = Math.ceil(filteredData.length / recordsPerPage);
   const currentRecords = filteredData.slice(
     (currentPage - 1) * recordsPerPage,
@@ -182,7 +182,6 @@ const AccountOwner = () => {
         <Container className="mt-5">
           <h2 className="mb-4 text-center">Tài khoản của chủ cửa hàng</h2>
 
-          {/* Bộ lọc */}
           <div className="d-flex gap-3 mb-3">
             <Form.Control
               type="text"
@@ -229,9 +228,7 @@ const AccountOwner = () => {
                 <th onClick={() => handleSort("gender")}>
                   Giới tính {getSortIcon("gender")}
                 </th>
-                <th onClick={() => handleSort("birthDate")}>
-                  Ngày sinh {getSortIcon("birthDate")}
-                </th>
+                <th>Ngày sinh</th>
                 <th>Hành động</th>
               </tr>
             </thead>

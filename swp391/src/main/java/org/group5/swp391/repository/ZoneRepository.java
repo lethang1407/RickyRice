@@ -8,11 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface ZoneRepository extends JpaRepository<Zone, Long> {
-//    @Query("SELECT SUM(z.quantity) FROM Zone z WHERE z.product.category.id = :categoryId")
-//    Long findTotalQuantityByCategoryId(String categoryId);
+import java.util.List;
 
+@Repository
+public interface ZoneRepository extends JpaRepository<Zone, String> {
     Page<Zone> findAll(Pageable pageable);
 
     @Query("SELECT z FROM Zone z WHERE " +
@@ -31,4 +30,5 @@ public interface ZoneRepository extends JpaRepository<Zone, Long> {
     @Query("SELECT s FROM Zone s WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', :search, '%')) or LOWER(s.location) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<Zone> findByNameAndLocationIgnoreCase(String search, Pageable pageable);
 
+    List<Zone> findByStoreId(String storeId);
 }

@@ -6,6 +6,7 @@ import org.group5.swp391.converter.ZoneConverter;
 import org.group5.swp391.dto.employee.EmployeeZoneDTO;
 import org.group5.swp391.entity.Account;
 import org.group5.swp391.entity.Employee;
+import org.group5.swp391.dto.store_owner.all_product.StoreZoneIdAndNameDTO;
 import org.group5.swp391.entity.Zone;
 import org.group5.swp391.repository.AccountRepository;
 import org.group5.swp391.repository.EmployeeRepository;
@@ -22,6 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -69,6 +73,12 @@ public class ZoneServiceImpl implements ZoneService {
         System.out.println(zonePage.getTotalElements());
         zonePage.forEach(zone -> System.out.println(zone.getName()));
         return zonePage.map(zoneConverter::toEmployeeZoneDTO);
+    }
+
+
+    @Override
+    public List<StoreZoneIdAndNameDTO> getZoneIdAndNameForStore(String storeId) {
+        return zoneRepository.findByStoreId(storeId).stream().map(zoneConverter::toStoreZoneIdAndNameDTO).collect(Collectors.toList());
     }
 
     //hàm cắt chuỗi in hoa chữ đầu cho mọi người

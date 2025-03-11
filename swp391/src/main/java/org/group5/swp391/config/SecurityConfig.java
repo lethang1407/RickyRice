@@ -24,7 +24,7 @@ public class SecurityConfig {
     private String jwtSecret;
 
     private final String[] PUBLIC_ENDPOINTS = {
-        "/auth/**", "/store/**", "/image", "/ws/**"
+            "/auth/**", "/store/**", "/image", "/ws/**", "/service-web"
     };
 
     @Bean
@@ -34,6 +34,8 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/store-owner/**", "/debt/**").hasAuthority("STORE_OWNER")
                         .requestMatchers("/employee/**").hasAuthority("EMPLOYEE")
+                        .requestMatchers("/account/**").hasAnyAuthority("ADMIN", "STORE_OWNER", "EMPLOYEE")
+                        .requestMatchers("/vnpay/**").hasAuthority("STORE_OWNER")
                         .anyRequest().authenticated()
         );
 
@@ -43,7 +45,7 @@ public class SecurityConfig {
 
         http.oauth2ResourceServer(oath2 ->
                 oath2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
         );
         return http.build();
     }

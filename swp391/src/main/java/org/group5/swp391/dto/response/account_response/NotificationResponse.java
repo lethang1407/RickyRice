@@ -1,4 +1,4 @@
-package org.group5.swp391.dto.response.AdminResponse;
+package org.group5.swp391.dto.response.account_response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

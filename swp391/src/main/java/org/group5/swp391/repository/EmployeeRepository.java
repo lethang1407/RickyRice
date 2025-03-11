@@ -2,6 +2,7 @@ package org.group5.swp391.repository;
 
 import org.group5.swp391.entity.Account;
 import org.group5.swp391.entity.Employee;
+import org.group5.swp391.entity.Product;
 import org.group5.swp391.entity.Store;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, String> {
     Page<Employee> findByEmployeeAccountIn(Collection<Account> employeeAccount,Pageable pageable);
@@ -34,4 +36,14 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
             @Param("gender") Boolean gender,
             Pageable pageable
     );
+
+    @Query("""
+    SELECT e 
+    FROM Employee e
+    JOIN e.store s 
+    JOIN s.storeAccount a 
+    WHERE a.username = :username 
+    AND e.id = :employeeId
+""")
+    Optional<Employee> findEmployeeForUser(@Param("username") String username, @Param("employeeId") String employeeId);
 }

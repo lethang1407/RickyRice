@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
+import SubscriptionPlanModal from "./components/SubscriptionPlanModal";
 import "./style.css";
 import axios from "axios";
 import API from "../../Utils/API/API.js";
 import { getToken } from "../../Utils/UserInfoUtils";
-import SubscriptionPlanModal from "./components/SubscriptionPlanModal";
 
 const SubscriptionPlan = () => {
   const [formData, setFormData] = useState({
@@ -130,7 +130,7 @@ const SubscriptionPlan = () => {
       </div>
       <div className="content">
         <div className="container mt-5">
-        <h2 className="mb-4 text-center">Dịch vụ đăng kí</h2>
+          <h2 className="mb-4 text-center">Dịch vụ đăng kí</h2>
           {successMessage && (
             <div className="alert alert-success">{successMessage}</div>
           )}

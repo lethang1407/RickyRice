@@ -107,7 +107,7 @@ const AdminViewStores = () => {
       </Pagination.Item>
     ));
   };
-  // Hàm hiển thị biểu tượng sắp xếp
+
   const getSortIcon = (key) => {
     if (sortConfig.key === key) {
       return sortConfig.direction === "asc" ? "▲" : "▼";

@@ -5,7 +5,7 @@ import org.group5.swp391.converter.NotificationConverter;
 import org.group5.swp391.dto.notification.NotificationDTO;
 import org.group5.swp391.dto.notification.SendNotificationRequest;
 import org.group5.swp391.dto.request.admin_request.MarkAsReadRequest;
-import org.group5.swp391.dto.response.AdminResponse.NotificationResponse;
+import org.group5.swp391.dto.response.account_response.NotificationResponse;
 import org.group5.swp391.entity.Account;
 import org.group5.swp391.entity.Notification;
 import org.group5.swp391.exception.AppException;
@@ -14,7 +14,6 @@ import org.group5.swp391.repository.AccountRepository;
 import org.group5.swp391.repository.NotificationRepository;
 import org.group5.swp391.service.NotificationService;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

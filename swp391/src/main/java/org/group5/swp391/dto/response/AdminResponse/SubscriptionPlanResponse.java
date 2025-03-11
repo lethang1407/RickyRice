@@ -3,6 +3,8 @@ package org.group5.swp391.dto.response.AdminResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,4 +16,5 @@ public class SubscriptionPlanResponse {
     String description;
     double price;
     Integer timeOfExpiration;
+    Boolean isActive;
 }

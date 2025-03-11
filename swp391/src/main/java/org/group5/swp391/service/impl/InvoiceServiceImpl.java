@@ -69,12 +69,12 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     @Transactional
     public void CreateInvoice(InvoiceRequest invoiceRequest) {
+        validateInvoiceRequest(invoiceRequest);
         String username = invoiceRequest.getEmployeeUsername();
         System.out.println(invoiceRequest.getEmployeeUsername());
         if (username == null) {
             throw new IllegalArgumentException("Không có thông tin nhân viên trong yêu cầu!");
         }
-
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
