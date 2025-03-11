@@ -45,4 +45,6 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     List<Product> findByNameContainingAndPriceBetween(String name, Double minPrice, Double maxPrice, Pageable pageable);
 
+    @Query("select  p from Product p where p.id = :stringId")
+    Product findByStringId(String stringId);
 }

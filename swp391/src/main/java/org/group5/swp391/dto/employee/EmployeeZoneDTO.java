@@ -14,8 +14,6 @@ public class EmployeeZoneDTO {
     String zoneID;
     String name;
     String location;
-    long quantity;
-    long size;
     LocalDateTime created_at;
       LocalDateTime updated_at;
       String created_by;

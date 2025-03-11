@@ -30,6 +30,12 @@ public interface InvoiceRepository extends JpaRepository<Invoice, String> {
     );
 
     Page<Invoice> findByStoreIn(Collection<Store> stores, Pageable pageable);
+    @Query("SELECT c FROM Invoice c " +
+            "WHERE c.store.id= :storeId AND " +
+            "(:customerPhone IS NULL OR c.customer.phoneNumber  LIKE %:customerPhone% ) ")
+    Page<Invoice> findInvoiceByCustomerPhone(String customerPhone,
+                                             String storeId,
+                                             Pageable pageable);
 
 
 

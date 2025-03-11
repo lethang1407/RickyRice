@@ -72,7 +72,7 @@ const Employee_Customer = () => {
               icon={<TeamOutlined />}
               onClick={() => handleNavigation('/employee/invoices')}
             >
-              Hoá Đơn
+              Hóa Đơn
             </Menu.Item>
           </Menu>
         </Sider>

@@ -74,10 +74,10 @@ const Employee_Invoices = () => {
                                 Danh Sách Hóa Đơn
                             </Menu.Item>
                             <Menu.Item key="4-2" onClick={() => setSelectedMenu('createInvoice')}>
-                                Tạo Hóa Đơn
+                                Tạo Hóa Đơn Xuất
                             </Menu.Item>
                             <Menu.Item key="4-3" onClick={() => setSelectedMenu('canceledInvoices')}>
-                                Hóa Đơn Đã Hủy
+                                Tạo Hóa Đơn Nhập
                             </Menu.Item>
                         </SubMenu>
 
@@ -113,7 +113,7 @@ const Employee_Invoices = () => {
 
                         {selectedMenu === 'invoicesList' && <InvoiceList />}
                         {selectedMenu === 'createInvoice' && <InvoiceCreate />}
-                        {selectedMenu === 'canceledInvoices' && <h2>Danh sách hóa đơn đã hủy</h2>}
+                        {selectedMenu === 'canceledInvoices' && <h2>Tạo Hóa Đơn Xuất</h2>}
 
                     </Content>
 

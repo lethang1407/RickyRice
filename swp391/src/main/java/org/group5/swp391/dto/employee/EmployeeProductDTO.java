@@ -20,8 +20,9 @@ public class EmployeeProductDTO {
     private long created_at;
     private long updated_at;
     private String created_by;
+    long quantity;
      EmployeeCategoryDTO employeeCategoryDTO;
    List<EmployeeZoneDTO> zonesetDTOList= new ArrayList<>();
-   long quantity;
+
 
 }

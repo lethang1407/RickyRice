@@ -22,16 +22,12 @@ import StoreOwnerProtected from "./Pages/Protected/StoreOwnerProtected";
 import Employee_Customer from "./Pages/Employee_CustomerLayout";
 import CustomerIN4Edit from "./Pages/Employee_CustomerLayout/components/customeEdit";
 import CustomerIN4Create from "./Pages/Employee_CustomerLayout/components/customerCreate";
-<<<<<<< HEAD
-import Employee from "./Pages/ShopOwner/Employee";
-import Employee_Products from "./Pages/Employee_ProductLayout/components/productsList";
-import Statistic from "./Pages/ShopOwner/Statistic";
-import Employee_Invoices from "./Pages/Employee_InvoiceLayout";
-=======
 import Employee from "./Pages/ShopOwner/Employee/Employee";
+import Employee_Products from "./Pages/Employee_ProductLayout/components/productsList";
 import Statistic from "./Pages/ShopOwner/Statistic/Statistic";
 import Debt from "./Pages/Debt";
->>>>>>> b11ae8317e2dbb52504e4aba1b6785c65b9fcd32
+import Employee_Invoices from "./Pages/Employee_InvoiceLayout";
+
 function App() {
   return (
     <>
@@ -64,7 +60,7 @@ function App() {
               <Route path="product" element={<Product />}></Route>
               <Route path="employee" element={<Employee />}></Route>
               <Route path="statistic" element={<Statistic />}></Route>
-              <Route path="debt" element={<Debt/>}></Route>
+              <Route path="debt" element={<Debt />}></Route>
             </Route>
           </Route>
         </Route>

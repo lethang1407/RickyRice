@@ -2,14 +2,17 @@ package org.group5.swp391.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.converter.InvoiceDetailConverter;
+import org.group5.swp391.dto.employee.InvoiceRequest.InvoiceDetailDTO;
 import org.group5.swp391.dto.store_owner.all_invoice.StoreInvoiceDetailDTO;
 import org.group5.swp391.entity.Invoice;
+import org.group5.swp391.entity.InvoiceDetail;
 import org.group5.swp391.repository.InvoiceDetailRepository;
 import org.group5.swp391.repository.InvoiceRepository;
 import org.group5.swp391.service.InvoiceDetailService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +28,14 @@ public class InvoiceDetailServiceImpl implements InvoiceDetailService {
         return invoiceDetailRepository.findByInvoice(invoice)
                 .stream()
                 .map(invoiceDetailConverter::toStoreInvoiceDetailDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<InvoiceDetailDTO> getInvoiceDetailsByInvoiceId(String invoiceId) {
+        List<InvoiceDetail> invoiceDetail = invoiceDetailRepository.findByInvoiceId(invoiceId);
+        return invoiceDetail.stream()
+                .map(invoiceDetailConverter::toEmployeeInvoiceDetailDTO)
                 .collect(Collectors.toList());
     }
 }

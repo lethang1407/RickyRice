@@ -144,7 +144,7 @@ const InvoiceCustomerCreate = ({ onCustomerCreated }) => {
                                     }
                                 ]}
                             >
-                                <Input max={10}
+                                <Input type='number' max={10}
                                     style={{
                                         width: '100%',
                                     }}

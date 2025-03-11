@@ -1,17 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { Button, Input, Space, Spin, Table, Tag, Modal, Descriptions } from 'antd';
 import axios from 'axios';
-import { Button, Layout, Menu, theme, SearchOutlined, Select, Space, Modal, Dropdown } from 'antd';
-import { ShopOutlined, EditOutlined, DeleteOutlined, SettingOutlined, DisconnectOutlined } from "@ant-design/icons";
-import {
-    Table,
-    Input,
-    Spin
-} from 'antd';
 import debounce from "lodash.debounce";
 import moment from 'moment';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getToken } from '../../../Utils/UserInfoUtils';
 import API from '../../../Utils/API/API';
+import { getToken } from '../../../Utils/UserInfoUtils';
 import '../styleInvoices.css';
 const InvoiceList = () => {
     const [loading, setLoading] = useState(true);
@@ -19,52 +13,72 @@ const InvoiceList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [totalItems, setTotalItems] = useState(0);
-    const [sorterState, setSorterState] = useState(null);
-    const [modalData, setModalData] = useState([]);
-    const [selectedZoneName, setSelectedZoneName] = useState(null);
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [sorterState, setSorterState] = useState({ field: null, order: null });
     const [filters, setFilters] = useState({
         phonesearch: null,
     });
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedInvoice, setSelectedInvoice] = useState(null);
+    const [selectedInvoice2, setSelectedInvoice2] = useState(null);
+    const [modalLoading, setModalLoading] = useState(false);
     const navigate = useNavigate();
-
     const token = getToken();
 
     const InvoiceColumns = [
         {
             title: 'STT',
             key: 'stt',
-            render: (text, record, index) => index + 1,
-            width: '2%',
-        },
-        {
-            title: 'Tên',
-            dataIndex: 'name',
-            key: 'name',
+            render: (text, record, index) => (currentPage - 1) * pageSize + index + 1,
 
         },
         {
-            title: 'SDT',
-            dataIndex: 'phoneNumber',
-            key: 'phoneNumber',
-            width: 70
+            title: 'Customer Details',
+            key: 'customerDetails',
+            render: (_, record) => (
+                <>
+                    <div><strong>Name:</strong> {record.customerName}</div>
+                    <div><strong>Phone:</strong> {record.customerPhone}</div>
+                </>
+            ),
+            width: '15%',
         },
         {
-            title: 'Địa Chỉ',
-            dataIndex: 'address',
-            key: 'address',
-            width: 200
+            title: 'Trạng Thái',
+            dataIndex: 'type',
+            key: 'type',
+            render: (type) => (
+                <Tag color={type ? 'green' : 'red'}>
+                    {type ? 'Nhập gạo' : 'Xuất gạo'}
+                </Tag>
+            ),
+            filters: [
+                { text: 'Nhập gạo', value: true },
+                { text: 'Xuất gạo', value: false },
+            ],
+            onFilter: (value, record) => record.type === value,
         },
         {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
-            width: 200
+            title: 'Tổng Tiền',
+            dataIndex: 'totalAmount',
+            render: (totalAmount) => `${(totalAmount || 0).toLocaleString()} đ`,
+            key: 'totalAmount',
+            sorter: true,
+
+
+        },
+        {
+            title: 'MoneyShipping',
+            dataIndex: 'totalShipping',
+            render: (totalShipping) => `${(totalShipping || 0).toLocaleString()} đ`,
+            key: 'totalShipping',
+            sorter: true,
+
         },
         {
             title: 'Tạo Ra Lúc',
             dataIndex: 'created_at',
             key: 'created_at',
+            sorter: true,
             render: (text) => text ? moment(Number(text)).format('DD/MM/YYYY HH:mm:ss') : 'N/A'
         },
         {
@@ -74,155 +88,153 @@ const InvoiceList = () => {
             render: (text) => text ? moment(Number(text)).format('DD/MM/YYYY HH:mm:ss') : 'N/A'
         },
         {
-            title: 'Tạo Bởi ',
-            dataIndex: 'created_by',
-            key: 'created_by',
-            width: 150
+            title: 'Mô Tả ',
+            dataIndex: 'description',
+            key: 'description',
+
         },
 
 
     ];
-    // const StoreIN4columns = [
-    //     {
-    //         title: 'STT',
-    //         key: 'stt',
-    //         render: (text, record, index) => index + 1,
-    //         width: 30,
-    //     },
-    //     {
-    //         title: 'ID Cửa Hàng',
-    //         dataIndex: 'storeID',
-    //         key: 'storeID',
-    //         width: 130,
-    //     },
+    const detailColumns = [
+        {
+            title: 'STT',
+            key: 'stt',
+            render: (text, record, index) => index + 1,
+            width: '10%',
+        },
+        {
+            title: 'Tên sản phẩm',
+            dataIndex: 'productName',
+            key: 'productName',
+            width: '25%',
+        },
+        {
+            title: 'Số lượng',
+            dataIndex: 'quantity',
+            key: 'quantity',
+            width: '15%',
+        },
+        {
+            title: 'Đơn giá',
+            dataIndex: 'price',
+            key: 'price',
+            render: (price) => `${(price || 0).toLocaleString()} đ`,
+            width: '20%',
+        },
+        {
+            title: 'Giảm Giá',
+            dataIndex: 'discount',
+            key: 'discount',
+            render: (_, record) => `${(record.discount).toLocaleString()} đ`,
+            width: '20%',
+        },
+    ];
 
-    //     {
-    //         title: 'Hình Ảnh',
-    //         dataIndex: 'image',
-    //         key: 'image',
-    //         width: 100,
-    //     },
-    //     {
-    //         title: 'Tên ',
-    //         dataIndex: 'storeName',
-    //         key: 'name',
-    //         width: 150,
-    //     },
-
-    //     {
-    //         title: 'Địa Chỉ',
-    //         dataIndex: 'address',
-    //         key: 'address',
-    //         width: 200,
-    //     },
-    //     {
-    //         title: 'Hotline',
-    //         dataIndex: 'hotline',
-    //         key: 'hotline',
-    //         width: 120,
-    //     },
-    //     {
-    //         title: 'Giờ Mở Cửa',
-    //         dataIndex: 'operatingHour',
-    //         key: 'operatingHour',
-    //         width: 170,
-    //     },
-    //     {
-    //         title: 'Trạng Thái',
-    //         dataIndex: 'operatingHour',
-    //         key: 'operatingHour',
-    //         render: (text, record) => {
-    //             const currentTime = moment();
-    //             const [start, end] = text.split('-');
-    //             const startTime = moment(start, 'h A');
-    //             const endTime = moment(end, 'h A');
-    //             const isOpen = currentTime.isBetween(startTime, endTime);
-
-
-    //             return (
-    //                 <span style={{ color: isOpen ? 'green' : 'red', fontWeight: 'bold' }}>
-    //                     {isOpen ? 'Cửa Hàng Đang Mở' : 'Cửa Hàng Đã Đóng'}
-    //                 </span>
-    //             );
-    //         },
-    //     },
-
-
-
-
-    // ];
-    const handleTableChange = (pagination) => {
+    const handleTableChange = (pagination, filters, sorter) => {
         const { current, pageSize } = pagination;
-
+        const { field, order } = sorter || {};
         setCurrentPage(current);
         setPageSize(pageSize);
-        //handleSearch(current, pageSize);
+        setSorterState({ field, order });
+        fetchZone(current, pageSize, filters, { field, order });
     };
     const handleFilterSubmit = () => {
-        fetchZone(currentPage, pageSize, filters
+        fetchZone(currentPage, pageSize, filters, sorterState
             //null, searchTerm
         );
     };
 
 
     useEffect(() => {
-        fetchZone(currentPage, pageSize, filters
+        fetchZone(currentPage, pageSize, filters, sorterState
             // null, searchTerm
         );
-    }, [currentPage, pageSize, filters]);
-    const fetchZone = async (page, size,
-        filters,
-        // sorter, search
-    ) => {
-        // const { field, order } = sorter || sorterState || {};
+    }, [currentPage, pageSize, filters, sorterState]);
 
+    const fetchZone = async (page, size,
+        filters, sorter
+        //search
+    ) => {
+        const { field, order } = sorter || {};
+        const sortByMapping = {
+            totalAmount: 'productMoney',
+            totalShipping: 'shipMoney',
+            created_at: 'createdAt',
+        };
+        const sortBy = field ? sortByMapping[field] || field : 'createdAt';
         try {
             const response = await axios.get(API.EMPLOYEE.GET_eINVOICES, {
-
                 params: {
                     page: page - 1,
                     size: size,
                     phonesearch: filters ? filters.phonesearch : null,
-                    // quantityMax: filters ? filters.quantityMax : null,
-                    // sizeMin: filters ? filters.sizeMin : null,
-                    // sizeMax: filters ? filters.sizeMax : null,
-                    // sortBy: field,
-                    // sortOrder: order || false,
-                    // search: search || "",
-
+                    sortBy: sortBy,
+                    sortOrder: order === 'ascend' ? true : false
                 },
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
             console.log("Dữ liệu liên quan22:", response.data);
-            console.log(response.data.content)
-            setCustomers(response.data.content);
-            setTotalItems(response.data.totalElements);
-            setLoading(false); //false la trang thai  loading data xong
-
+            const data = Array.isArray(response.data.content) ? response.data.content : [];
+            setCustomers(data);
+            setTotalItems(response.data.totalElements || 0);
+            setLoading(false);
         } catch (error) {
             console.error('nổ rồi các cháu ơi, lỗi lỗi lỗi', error)
             setLoading(false);
         }
 
     }
-    const showModal = (zone) => {
-        console.log("zone : " + zone)
-        console.log("check zone :" + zone.employeeStoreDTO)
-        setModalData(zone.employeeStoreDTO ? [zone.employeeStoreDTO] : []);
-        setSelectedZoneName(zone.name);
-        setIsModalVisible(true);
-    };
-    const handleOk = () => {
-        setIsModalVisible(false);
-    };
-    const handleCancel = () => {
-        setIsModalVisible(false);
+    const fetchInvoiceDetails = async (invoiceId) => {
+        setModalLoading(true);
+
+        try {
+            const response = await axios.get(API.EMPLOYEE.GET_eINVOICES_DETAILS, {
+                params: {
+                    invoiceId: invoiceId
+                },
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            console.log('Dữ liệu chi tiết hóa đơn:', response.data);
+            setSelectedInvoice2(response.data);
+            const details = Array.isArray(response.data) ? response.data : [];
+            setSelectedInvoice((prev) => ({
+                ...prev,
+                ...response.data,
+                details: details,
+            }));
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error('Lỗi khi lấy chi tiết hóa đơn:', error);
+        } finally {
+            setModalLoading(false);
+        }
     };
     const handleFilterChange = debounce((type, value) => {
         setFilters({ ...filters, [type]: value });
     }, 1000)
+    const handleRowClick = (record) => {
+        setSelectedInvoice({
+            id: record.id,
+            customerName: record.customerName,
+            customerPhone: record.customerPhone,
+            type: record.type,
+            totalAmount: record.totalAmount,
+            totalShipping: record.totalShipping,
+            created_at: record.created_at,
+            details: [],
+        });
+        setIsModalOpen(true);
+        fetchInvoiceDetails(record.id);
+    };
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedInvoice(null);
+    };
 
     return (
         <>
@@ -246,52 +258,85 @@ const InvoiceList = () => {
                 </Space>
 
             </div>
-            {/* <div style={{ marginLeft: 1250, marginTop: 15 }}> <DropDown /></div> */}
             {loading ? (<Spin size="large" />) : (
                 <Table style={{ marginTop: 25 }}
                     dataSource={customers}
                     columns={InvoiceColumns}
-                    // rowClassName={(record) =>
-                    //     record.quantity === 0 ? "row-red" : ""
-                    // }
-
                     pagination={{
                         current: currentPage,
                         pageSize: pageSize,
                         total: totalItems,
                         showSizeChanger: true,
                         pageSizeOptions: ['1', '5', '10'],
-                        // onChange: (page, size) => {
-                        //     setCurrentPage(page);
-                        //     setPageSize(size);
-                        //     fetchZone(page, size, filters, null, searchTerm);
-                        // },
                     }}
                     onChange={handleTableChange}
                     className="custom-table"
+                    onRow={(record) => ({
+                        onClick: () => handleRowClick(record),
+                        style: { cursor: 'pointer' },
+                    })}
+                    rowKey="id"
                 />
             )}
-            {/* <Modal
-                title={<span style={{ fontWeight: 500, fontSize: '18px', color: "#E3C584" }}> Cửa Hàng Đã Tạo Cho : {selectedZoneName}</span>}
-                open={isModalVisible}
-                onOk={handleOk}
-                onCancel={handleCancel}
+            <Modal
+                title={`Chi tiết hóa đơn #${selectedInvoice?.id || ''}`}
+                visible={isModalOpen}
+                onCancel={closeModal}
                 footer={[
-                    <Button key="back" onClick={handleCancel}>
+                    <Button key="close" onClick={closeModal}>
                         Đóng
                     </Button>,
                 ]}
-                style={{ top: 300, left: 40 }}
-                width="75%"
-                bodyStyle={{ height: '10vh' }}
+                width={800}
             >
-                <Table
-                    dataSource={modalData}
-                    columns={StoreIN4columns}
-                    rowKey={(record) => record.storeID}
-                    pagination={false}
-                />
-            </Modal> */}
+                {modalLoading ? (
+                    <Spin tip="Đang tải chi tiết..." />
+                ) : selectedInvoice ? (
+                    <>
+                        <Descriptions bordered column={2} style={{ marginBottom: 16 }}>
+                            <Descriptions.Item label="Tên khách hàng">
+                                {selectedInvoice.customerName || 'N/A'}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Số điện thoại">
+                                {selectedInvoice.customerPhone || 'N/A'}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Trạng thái">
+                                <Tag color={selectedInvoice.type ? 'green' : 'red'}>
+                                    {selectedInvoice.type ? 'Nhập gạo' : 'Xuất gạo'}
+                                </Tag>
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Thời gian tạo">
+                                {selectedInvoice.created_at
+                                    ? moment(Number(selectedInvoice.created_at)).format('DD/MM/YYYY HH:mm:ss')
+                                    : 'N/A'}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Tổng tiền sản phẩm">
+                                {(selectedInvoice.totalAmount || 0).toLocaleString()} đ
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Tiền vận chuyển">
+                                {(selectedInvoice.totalShipping || 0).toLocaleString()} đ
+                            </Descriptions.Item>
+                        </Descriptions>
+
+                        <h4>Danh sách sản phẩm</h4>
+                        <Table
+                            columns={detailColumns}
+                            dataSource={selectedInvoice2 || []}
+                            rowKey={(record, index) => index}
+                            pagination={false}
+                            scroll={{ y: 240 }}
+                        />
+                        <div style={{ marginTop: 16, textAlign: 'right' }}>
+                            <p><strong>Tổng tiền sản phẩm:</strong> {(selectedInvoice.totalAmount || 0).toLocaleString()} đ</p>
+                            <p><strong>Tiền vận chuyển:</strong> {(selectedInvoice.totalShipping || 0).toLocaleString()} đ</p>
+                            <p><strong>Tổng cộng:</strong> {((selectedInvoice.totalAmount + selectedInvoice.totalShipping) || 0).toLocaleString()} đ</p>
+                        </div>
+                    </>
+                ) : (
+                    <p>Không có dữ liệu chi tiết.</p>
+                )}
+            </Modal>
+
         </>
     )
 }

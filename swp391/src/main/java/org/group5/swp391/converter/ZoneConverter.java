@@ -19,7 +19,6 @@ public class ZoneConverter {
 
     public EmployeeZoneDTO toEmployeeZoneDTO(Zone zone) {
         EmployeeZoneDTO EmployeeZoneDTO = new EmployeeZoneDTO();
-
         EmployeeZoneDTO.setZoneID(zone.getId());
         EmployeeZoneDTO.setName(zone.getName());
         EmployeeZoneDTO.setCreated_by(zone.getCreatedBy());
@@ -38,7 +37,6 @@ public class ZoneConverter {
             employeeStoreDTO.setExpireAt(zone.getStore().getExpireAt());
             employeeStoreDTO.setOperatingHour(zone.getStore().getOperatingHour());
             EmployeeZoneDTO.setEmployeeStoreDTO(employeeStoreDTO);
-
         }
         return EmployeeZoneDTO;
     }

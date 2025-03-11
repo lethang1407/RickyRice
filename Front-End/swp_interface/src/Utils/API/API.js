@@ -32,6 +32,9 @@ const API = {
     GET_RICEZONE: `${API_BASE_URL}/employee/ricezone`,
     SEARCH_RICEZONE: `${API_BASE_URL}/employee/ricezone/searchzone`,
     GET_eINVOICES: `${API_BASE_URL}/employee/invoices`,
+    INVOICE_PACKAGElist: `${API_BASE_URL}/employee/packageList`,
+    INVOICE_CREATE: `${API_BASE_URL}/employee/invoice/invoice-create`,
+    GET_eINVOICES_DETAILS: `${API_BASE_URL}/employee/invoice-detail`,
   },
   STORE_OWNER: {
     GET_INVOICES: `${API_BASE_URL}/store-owner/invoices`,

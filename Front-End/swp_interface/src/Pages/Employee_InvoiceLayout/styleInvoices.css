@@ -87,6 +87,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    border-bottom: 1px solid black;
 }
 
 .customer-title {
@@ -208,7 +209,7 @@
     gap: 10px;
     margin-left: 20px;
     width: 71%;
-    border-right: 3px solid;
+    /* border-right: 3px solid; */
     height: 25vh;
 }
 
@@ -250,7 +251,18 @@
     height: 45px !important;
     font-size: 16px !important;
     font-weight: 500;
-    margin-right: 50px;
+    margin-right: 20px;
+}
+
+.debt-button {
+    background: #ff0000 !important;
+    border-color: #ff0000 !important;
+    border-radius: 4px;
+    padding: 0 30px !important;
+    height: 45px !important;
+    font-size: 16px !important;
+    font-weight: 500;
+    margin-right: 20px;
 }
 
 .description_content .ant-input {

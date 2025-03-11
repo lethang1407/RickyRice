@@ -39,7 +39,7 @@ public class ZoneServiceImpl implements ZoneService {
     }
 
     public Page<EmployeeZoneDTO>getFilterZones(int page, int size, String sortBy, boolean descending,
-                                               Integer quantityMin, Integer quantityMax, Integer sizeMin, Integer sizeMax, String search){
+                                               String search){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AccessDeniedException("Bạn chưa đăng nhập!");
@@ -57,7 +57,8 @@ public class ZoneServiceImpl implements ZoneService {
             search = search.toLowerCase();
             search = capitalizeFirstLetters(search);
         }
-        Page<Zone> zonePage = zoneRepository.findFilteredZones(quantityMin, quantityMax, sizeMin, sizeMax, search,a.getStore().getId(), pageable);
+        System.out.println(search);
+        Page<Zone> zonePage = zoneRepository.findFilteredZones( search,a.getStore().getId(), pageable);
     return zonePage.map(zoneConverter::toEmployeeZoneDTO);
     }
 
@@ -65,6 +66,8 @@ public class ZoneServiceImpl implements ZoneService {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Zone> zonePage=zoneRepository.findByNameAndLocationIgnoreCase(search,pageable);
+        System.out.println(zonePage.getTotalElements());
+        zonePage.forEach(zone -> System.out.println(zone.getName()));
         return zonePage.map(zoneConverter::toEmployeeZoneDTO);
     }
 

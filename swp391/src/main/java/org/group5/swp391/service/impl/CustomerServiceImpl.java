@@ -50,6 +50,7 @@ public class CustomerServiceImpl implements CustomerService {
             throw new AccessDeniedException("Bạn chưa đăng nhập!");
         }
         String username = authentication.getName();
+        System.out.println(username);
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
@@ -95,12 +96,15 @@ public class CustomerServiceImpl implements CustomerService {
             throw new AccessDeniedException("Bạn chưa đăng nhập!");
         }
         String username = authentication.getName();
+        System.out.println(username);
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
+        validatePhoneNumber(updatedCustomer.getPhoneNumber());
+        validateEmail(updatedCustomer.getEmail());
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
-        System.out.println(a.getEmployeeAccount().getName());
+        System.out.println("tai sao nhi"+a.getEmployeeAccount().getName());
         Customer existingCustomer = customerRepository.findById(customerId).orElseThrow();
-        existingCustomer.setCreatedBy(a.getEmployeeAccount().getName());
+        existingCustomer.setCreatedBy(username);
         existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
         existingCustomer.setEmail(updatedCustomer.getEmail());
@@ -111,8 +115,17 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer InvoiceUpdateCustomer(String phoneNumber, CustomerUpdateRequest updatedCustomer) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Bạn chưa đăng nhập!");
+        }
+        String username = authentication.getName();
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
+        Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
         Customer existingCustomer = customerRepository.findByPhoneNumber(phoneNumber);
-        existingCustomer.setCreatedBy(existingCustomer.getCreatedBy());
+        validatePhoneNumber(updatedCustomer.getPhoneNumberNew());
+        existingCustomer.setCreatedBy(username);
         existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumberNew());
         existingCustomer.setEmail(existingCustomer.getEmail());
@@ -134,12 +147,14 @@ public class CustomerServiceImpl implements CustomerService {
         log.info(account.getId());
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
         try {
+            validatePhoneNumber(customerDTO.getPhoneNumber());
+            validateEmail(customerDTO.getEmail());
             Customer customer = new Customer();
             customer.setName(capitalizeFirstLetters(customerDTO.getName()));
             customer.setPhoneNumber(customerDTO.getPhoneNumber());
             customer.setEmail(customerDTO.getEmail());
             customer.setAddress(customerDTO.getAddress());
-            customer.setCreatedBy(a.getEmployeeAccount().getName());
+            customer.setCreatedBy(username);
             log.info("haha "+a.getStore().getId());
             Store store = storeRepository.findById(a.getStore().getId()).orElseThrow();
             System.out.println(store.getStoreName());
@@ -166,5 +181,16 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
         return capitalizedString.toString().trim();
+    }
+    private void validatePhoneNumber(String phoneNumber) {
+        if (phoneNumber == null || !phoneNumber.matches("^0\\d{9}$")) {
+            throw new IllegalArgumentException("SDT phải gồm 10 chữ số và bắt đầu bằng 0.");
+        }
+    }
+
+    private void validateEmail(String email) {
+        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new IllegalArgumentException("Email không đúng định dạng.");
+        }
     }
 }

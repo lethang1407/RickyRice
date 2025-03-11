@@ -21,6 +21,8 @@ const InvoiceDetail = () => {
     const [discount, setDiscount] = useState(0);
     const [customerPayment, setCustomerPayment] = useState(0);
     const [totalwithoutdiscount, setTotalWithoutDiscount] = useState(0);
+    const [moneyShipping, setMoneyShipping] = useState(0);
+    const [packageOptions, setPackageOptions] = useState([]);
 
 
 
@@ -86,7 +88,7 @@ const InvoiceDetail = () => {
                 form.resetFields();
                 openNotificationWithIcon('success', 'Thành công', 'Cập Nhật khách hàng thành công!');
             }).catch(() => {
-                openNotificationWithIcon('error', 'Thất Bại', 'Số điện thoại đang bị trùng , không gửi dữ liệu được đến backend nha onichan');
+                openNotificationWithIcon('error', 'Thất Bại', 'Số điện thoại đang bị trùng , không gửi dữ liệu được đến backend nha ');
             });
         }).catch(() => {
             openNotificationWithIcon('error', 'Thất Bại', 'Validation Form diii onichan');
@@ -113,10 +115,14 @@ const InvoiceDetail = () => {
             return sum + (item.quantity * item.price);
         }, 0);
     };
+    const calculateTotalDiscount = (dataSource) => {
+        return dataSource.reduce((sum, item) => sum + (item.discount * item.quantity || 0), 0);
+    };
 
     const calculateTotalAmount = (dataSource) => {
         return dataSource.reduce((sum, item) => {
-            const itemTotal = (item.quantity * item.price) - (item.discount * item.quantity || 0);
+            const itemTotal =
+                item.quantity * item.price - (item.discount * item.quantity || 0) + (item.moneyShip * item.quantity || 0);
             return sum + itemTotal;
         }, 0);
     };
@@ -142,11 +148,22 @@ const InvoiceDetail = () => {
             title: 'Mã Sản Phẩm',
             dataIndex: 'productID',
             key: 'productID',
+
         },
         {
-            title: 'Ảnh Sản Phẩm',
-            dataIndex: 'image',
-            key: 'image',
+            title: 'Đóng Gói',
+            dataIndex: 'packageId',
+            key: 'packageId',
+            render: (text, record) => (
+                <Select
+                    style={{ width: 120 }}
+                    value={record.packageId}
+                    onChange={(value) => handlePackageChange(value, record.key)}
+                    options={packageOptions}
+                    placeholder="Chọn đơn vị"
+                    loading={loading}
+                />
+            ),
         },
         {
             title: 'Tên sản phẩm',
@@ -154,7 +171,7 @@ const InvoiceDetail = () => {
             key: 'name',
         },
         {
-            title: 'Discount(VND)',
+            title: 'Discount/Kg ',
             key: 'discount',
             render: (text, record) => (
                 <InputNumber
@@ -166,7 +183,7 @@ const InvoiceDetail = () => {
             ),
         },
         {
-            title: 'Số lượng /Bao',
+            title: 'Số lượng',
             dataIndex: 'quantity',
             key: 'quantity',
             render: (text, record) => (
@@ -179,10 +196,24 @@ const InvoiceDetail = () => {
             ),
         },
         {
-            title: 'Đơn giá /kg',
+            title: 'Đơn giá/Kg',
             dataIndex: 'price',
             key: 'price',
         },
+        {
+            title: 'Ship/Kg',
+            dataIndex: 'moneyShip',
+            key: 'moneyShip',
+            render: (text, record) => (
+                <InputNumber
+                    defaultValue={0}
+                    min={0}
+                    value={record.moneyShip}
+                    onChange={(value) => handleInputChange2(value, record.key, 'moneyShip')} // Sử dụng handleInputChange2
+                />
+            ),
+        },
+
         {
             title: 'Thành tiền(VND)',
             dataIndex: 'total',
@@ -200,7 +231,10 @@ const InvoiceDetail = () => {
                             ? {
                                 ...row,
                                 [field]: finalValue,
-                                total: finalValue * row.price - (row.discount * row.quantity || 0),
+                                total:
+                                    finalValue * row.price -
+                                    (row.discount * finalValue || 0) +
+                                    (row.moneyShip * finalValue || 0),
                             }
                             : row
                     );
@@ -234,8 +268,10 @@ const InvoiceDetail = () => {
                             ? {
                                 ...row,
                                 [field]: finalValue,
-                                total: (row.quantity * row.price) - finalValue * row.quantity,
-
+                                total:
+                                    row.quantity * row.price -
+                                    (field === 'discount' ? finalValue * row.quantity : row.discount * row.quantity || 0) +
+                                    (field === 'moneyShip' ? finalValue * row.quantity : row.moneyShip * row.quantity || 0),
                             }
                             : row
                     );
@@ -258,6 +294,31 @@ const InvoiceDetail = () => {
             })
         );
     };
+    const handlePackageChange = (value, key) => {
+        setItems(prevItems =>
+            prevItems.map(item => {
+                if (item.key === activeKey) {
+                    const updatedDataSource = item.children.props.dataSource.map(row =>
+                        row.key === key
+                            ? { ...row, packageId: value }
+                            : row
+                    );
+                    return {
+                        ...item,
+                        children: (
+                            <Table
+                                columns={columns}
+                                pagination={false}
+                                dataSource={updatedDataSource}
+                                size={size}
+                            />
+                        ),
+                    };
+                }
+                return item;
+            })
+        );
+    };
 
     const addProductToTab = () => {
         if (!selectedProduct || selectedProduct.length === 0) {
@@ -266,6 +327,10 @@ const InvoiceDetail = () => {
         }
         if (!activeKey || items.length === 0) {
             setErrorMessage("Chưa có tab nào để thêm sản phẩm nha bro");
+            return;
+        }
+        if (!selectedProduct.productID || !selectedProduct.label || !selectedProduct.price) {
+            setErrorMessage("Thông tin sản phẩm không đầy đủ");
             return;
         }
         setErrorMessage("");
@@ -282,7 +347,10 @@ const InvoiceDetail = () => {
                             ? {
                                 ...product,
                                 quantity: product.quantity + 1,
-                                total: (product.quantity + 1) * product.price - (product.discount || 0),
+                                total:
+                                    (product.quantity + 1) * product.price -
+                                    (product.discount * (product.quantity + 1) || 0) +
+                                    (product.moneyShip * (product.quantity + 1) || 0),
                             }
                             : product
                     );
@@ -297,7 +365,9 @@ const InvoiceDetail = () => {
                             image: selectedProduct.image,
                             productID: selectedProduct.productID,
                             discount: 0,
+                            moneyShip: 0,
                             total: 1 * selectedProduct.price,
+                            packageId: packageOptions.length > 0 ? packageOptions[0].value : undefined
                         },
                     ];
                 }
@@ -359,6 +429,8 @@ const InvoiceDetail = () => {
                 key: newKey,
                 customerPhone: '',
                 customerName: '',
+                description: '',
+                customerPayment: 0,
                 children: (
                     <Table
                         columns={columns}
@@ -393,7 +465,6 @@ const InvoiceDetail = () => {
         } else if (newItems.length === 0) {
             setTotalAmount(0);
             setTotalWithoutDiscount(0);
-
             setDiscount(0);
             setCustomerPayment(0);
         }
@@ -405,10 +476,19 @@ const InvoiceDetail = () => {
         if (activeTab) {
             setTotalAmount(calculateTotalAmount(activeTab.children.props.dataSource));
             setTotalWithoutDiscount(calculateTotalWithoutDiscount(activeTab.children.props.dataSource));
-
+            setCustomerPayment(activeTab.customerPayment || 0);
         }
     };
-
+    const handleDescriptionChange = (e) => {
+        const newDescription = e.target.value;
+        setItems(prevItems =>
+            prevItems.map(item =>
+                item.key === activeKey
+                    ? { ...item, description: newDescription }
+                    : item
+            )
+        );
+    };
 
     const handleCustomerChange = (phone, option) => {
         const customerName = option ? option.name : '';
@@ -498,11 +578,33 @@ const InvoiceDetail = () => {
                 setLoading(false);
             });
     };
+    const fetchPackageData = () => {
+        setLoading(true);
+        axios.get(API.EMPLOYEE.INVOICE_PACKAGElist, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then(response => {
+                const formattedOptions = response.data.map(item => ({
+                    value: item.id,
+                    label: item.description
+                }));
+                setPackageOptions(formattedOptions);
+            })
+            .catch(error => {
+                console.error("Lỗi khi lấy dữ liệu package:", error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
 
     //render Effect 
     useEffect(() => {
         fetchData();
         fetchData2();
+        fetchPackageData();
         if (items.length > 0) {
             const activeTab = items.find(item => item.key === activeKey);
             if (activeTab) {
@@ -520,6 +622,16 @@ const InvoiceDetail = () => {
             });
         }
     }, [currentTab, form]);
+    useEffect(() => {
+        const activeTab = items.find(item => item.key === activeKey);
+        if (activeTab) {
+            const totalShipping = activeTab.children.props.dataSource.reduce(
+                (sum, item) => sum + (item.moneyShip * item.quantity || 0),
+                0
+            );
+            setMoneyShipping(totalShipping);
+        }
+    }, [items, activeKey]);
 
 
     const onSearch2 = (value) => {
@@ -540,6 +652,80 @@ const InvoiceDetail = () => {
         border: 'none',
         borderBottom: '1px solid #ddd',
         padding: '4px 0'
+    };
+    const handlePayment = () => {
+        const invoiceData = {
+            invoice: {
+                customerPhone: currentTab.customerPhone,
+                customerName: currentTab.customerName,
+                totalAmount: calculateFinalAmount(),
+                totalShipping: moneyShipping,
+                description: currentTab.description || '',
+            },
+            invoiceDetails: items
+                .find(item => item.key === activeKey)
+                ?.children.props.dataSource.map(product => ({
+                    productID: product.productID,
+                    packageId: product.packageId,
+                    quantity: product.quantity,
+                    price: product.price,
+                    discount: product.discount,
+                })) || [],
+        };
+
+        if (!invoiceData.invoice.customerPhone || invoiceData.invoiceDetails.length === 0) {
+            openNotificationWithIcon('error', 'Lỗi', 'Vui lòng điền đầy đủ thông tin khách hàng và sản phẩm!');
+            return;
+        }
+        if (!/^[0-9]{10}$/.test(currentTab.customerPhone)) {
+            openNotificationWithIcon('error', 'Lỗi', 'Số điện thoại phải là 10 chữ số!');
+            return;
+        }
+
+        axios.post(
+            API.EMPLOYEE.INVOICE_CREATE,
+            invoiceData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        )
+            .then(response => {
+                openNotificationWithIcon('success', 'Thành công', 'Hóa đơn đã được tạo thành công!');
+                remove(activeKey);
+                if (items.length > 1) {
+                    const remainingItems = items.filter(item => item.key !== activeKey);
+                    const newActiveKey = remainingItems[0].key;
+                    setActiveKey(newActiveKey);
+                    const activeTabDataSource = remainingItems.find(item => item.key === newActiveKey)?.children.props.dataSource || [];
+                    setTotalAmount(calculateTotalAmount(activeTabDataSource));
+                    setTotalWithoutDiscount(calculateTotalWithoutDiscount(activeTabDataSource));
+                    setCustomerPayment(remainingItems.find(item => item.key === newActiveKey)?.customerPayment || 0);
+                } else {
+                    setActiveKey(null);
+                    setTotalAmount(0);
+                    setMoneyShipping(0);
+                    setCustomerPayment(0);
+                    setDiscount(0);
+                    setCustomerPayment(0);
+                }
+            })
+            .catch(error => {
+                openNotificationWithIcon('error', 'Thất bại', 'Có lỗi xảy ra khi tạo hóa đơn!');
+            });
+        console.log('Dữ liệu sẽ gửi về backend:', JSON.stringify(invoiceData, null, 2));
+    };
+    const handleCustomerPaymentChange = (value) => {
+        const finalValue = value || 0;
+        setItems(prevItems =>
+            prevItems.map(item =>
+                item.key === activeKey
+                    ? { ...item, customerPayment: finalValue }
+                    : item
+            )
+        );
+        setCustomerPayment(finalValue);
     };
 
     return (
@@ -590,7 +776,7 @@ const InvoiceDetail = () => {
                         font-size: 14px !important;
                     }
                     .ant-table-thead th {
-                        font-size: ${size === 'large' ? '20px' : '16px'} !important;
+                        font-size: ${size === 'large' ? '16px' : '13px'} !important;
                     }
                  `}</style>
                 </Content>
@@ -622,10 +808,10 @@ const InvoiceDetail = () => {
                             <div className="form-row">
                                 <label className="form-label">Tên khách hàng: </label>
                                 <Input
-                                    placeholder="Nhập tên khách hàng"
                                     style={inputStyle}
                                     value={currentTab.customerName}
                                     onChange={handleCustomerNameChange}
+                                    readOnly
                                 />
                             </div>
                         </div>
@@ -661,17 +847,17 @@ const InvoiceDetail = () => {
                                     rules={[
 
                                         { required: true, message: 'Vui lòng nhập số điện thoại!' },
-                                        { pattern: /^[0-9]{10}$/, message: 'Số điện thoại phải là 10 chữ số!' },
+                                        { pattern: /^0\d{9}$/, message: 'Số điện thoại phải là 10 chữ số và bắt đầu từ 0!' },
                                     ]}
                                 >
-                                    <Input placeholder="Nhập số điện thoại" readOnly />
+                                    <Input type='number' placeholder="Nhập số điện thoại" readOnly />
                                 </Form.Item>
                                 <Form.Item
                                     name="phoneNumberNew"
                                     label="Số điện thoại mới"
                                     rules={[
                                         { required: true, message: 'Vui lòng nhập số điện thoại!' },
-                                        { pattern: /^[0-9]{10}$/, message: 'Số điện thoại phải là 10 chữ số!' },
+                                        { pattern: /^0\d{9}$/, message: 'Số điện thoại phải là 10 chữ số và bắt đầu từ 0!' },
                                     ]}
                                 >
                                     <Input placeholder="Nhập số điện thoại" />
@@ -695,7 +881,8 @@ const InvoiceDetail = () => {
                                     placeholder="Nhập số tiền"
                                     min={0}
                                     value={customerPayment}
-                                    onChange={(value) => setCustomerPayment(value || 0)}
+                                    onChange={handleCustomerPaymentChange}
+                                    // onChange={(value) => setCustomerPayment(value || 0)}
                                     className="customer-payment-input"
                                 />
                             </div>
@@ -706,7 +893,11 @@ const InvoiceDetail = () => {
                             <div className="customer-row"><InvoiceCustomerCreate onCustomerCreated={handleCustomerCreated} /></div>
                             <div className="description_content">
                                 <label><h6><i>Ghi chú :</i></h6></label>
-                                <TextArea row={10}></TextArea>
+                                <TextArea
+                                    rows={10}
+                                    value={currentTab.description || ''}
+                                    onChange={handleDescriptionChange}
+                                />
                             </div>
                         </div>
                     </div>
@@ -720,25 +911,37 @@ const InvoiceDetail = () => {
                         <span>{totalwithoutdiscount.toLocaleString()} VND</span>
                     </div>
                     <div className="detail-line">
+                        <span className="detail-label">Tiền ship sản phẩm :</span>
+                        <span>{moneyShipping.toLocaleString()} VND</span>
+                    </div>
+                    <div className="detail-line">
                         <span className="detail-label">Voucher  của shop  : </span>
-                        <span>  -{(totalwithoutdiscount - totalAmount).toLocaleString()} VND</span>
+                        <span> -{calculateTotalDiscount(items.find(item => item.key === activeKey)?.children.props.dataSource || []).toLocaleString()} VND</span>
                     </div>
                     <div className="total-line">
                         <h2 className="total-label">Tổng tiền:</h2>
                         <span className="total-amount">{calculateFinalAmount().toLocaleString()} VND</span>
                     </div>
                 </div>
+                <div>
+                    <Button
+                        type="primary"
+                        size="large"
+                        className="debt-button"
 
-                <Button
-                    type="primary"
-                    size="large"
-                    className="payment-button"
-                    onClick={() => {
-                        alert('Processing payment...');
-                    }}
-                >
-                    Thanh Toán
-                </Button>
+                    >
+                        Ghi Nợ
+                    </Button>
+                    <Button
+                        type="primary"
+                        size="large"
+                        className="payment-button"
+                        onClick={handlePayment}
+                    >
+                        Thanh Toán
+                    </Button>
+                </div>
+
             </div>
 
         </>

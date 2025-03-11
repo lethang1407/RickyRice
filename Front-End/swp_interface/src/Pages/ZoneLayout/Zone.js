@@ -88,13 +88,6 @@ const ZoneList = () => {
             width: 150,
         },
         {
-            title: 'Số Lượng Gạo',
-            dataIndex: 'quantity',
-            sorter: true,
-            key: 'quantity',
-            width: 100,
-        },
-        {
             title: 'Chỉnh Sửa Lúc',
             dataIndex: 'updated_at',
             key: 'updated_at',
@@ -195,7 +188,7 @@ const ZoneList = () => {
         setSearchTerm(value);
         setLoading(true);
         fetchZone(currentPage, pageSize, filters, null, searchTerm);
-    }, 1000);
+    }, 1500);
 
     const handleTableChange = (pagination, _, sorter) => {
 
@@ -225,10 +218,6 @@ const ZoneList = () => {
                 params: {
                     page: page - 1,
                     size: size,
-                    quantityMin: filters ? filters.quantityMin : null,
-                    quantityMax: filters ? filters.quantityMax : null,
-                    sizeMin: filters ? filters.sizeMin : null,
-                    sizeMax: filters ? filters.sizeMax : null,
                     sortBy: field,
                     sortOrder: order || false,
                     search: search || "",
