@@ -29,7 +29,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 import java.util.List;
 
 @Slf4j
@@ -60,13 +62,13 @@ public class CustomerServiceImpl implements CustomerService {
         Pageable pageable = PageRequest.of(page, size, sort);
         if (phonesearch.equals("")) {
             phonesearch = null;
-        }else{
+        } else {
             phonesearch = phonesearch.toLowerCase();
             phonesearch = capitalizeFirstLetters(phonesearch);
         }
 
-        Page<Customer> customerPage = customerRepository.findAllWithPhoneNumber(pageable, phonesearch,a.getStore().getId());
-        log.info("heeh"+ customerPage.getContent().get(0).getStore().getId());
+        Page<Customer> customerPage = customerRepository.findAllWithPhoneNumber(pageable, phonesearch, a.getStore().getId());
+        log.info("heeh" + customerPage.getContent().get(0).getStore().getId());
         return customerPage.map(CustomerConverter::toEmployeeCustomerDTO);
     }
 
@@ -82,11 +84,11 @@ public class CustomerServiceImpl implements CustomerService {
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
         if (phonesearch.equals("")) {
             phonesearch = null;
-        }else{
+        } else {
             phonesearch = phonesearch.toLowerCase();
             phonesearch = capitalizeFirstLetters(phonesearch);
         }
-        List<Customer> customerList=customerRepository.findAllWithPhoneNumberInList(phonesearch,a.getStore().getId());
+        List<Customer> customerList = customerRepository.findAllWithPhoneNumberInList(phonesearch, a.getStore().getId());
         return customerList.stream().map(CustomerConverter::toEmployeeCustomerDTO).collect(Collectors.toList());
     }
 
@@ -101,9 +103,11 @@ public class CustomerServiceImpl implements CustomerService {
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         validatePhoneNumber(updatedCustomer.getPhoneNumber());
-        validateEmail(updatedCustomer.getEmail());
+        if (updatedCustomer.getEmail() != null) {
+            validateEmail(updatedCustomer.getEmail());
+        }
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
-        System.out.println("tai sao nhi"+a.getEmployeeAccount().getName());
+        System.out.println("tai sao nhi" + a.getEmployeeAccount().getName());
         Customer existingCustomer = customerRepository.findById(customerId).orElseThrow();
         existingCustomer.setCreatedBy(username);
         existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));
@@ -149,14 +153,16 @@ public class CustomerServiceImpl implements CustomerService {
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
         try {
             validatePhoneNumber(customerDTO.getPhoneNumber());
-            validateEmail(customerDTO.getEmail());
+            if (customerDTO.getEmail() != null) {
+                validateEmail(customerDTO.getEmail());
+            }
             Customer customer = new Customer();
             customer.setName(capitalizeFirstLetters(customerDTO.getName()));
             customer.setPhoneNumber(customerDTO.getPhoneNumber());
             customer.setEmail(customerDTO.getEmail());
             customer.setAddress(customerDTO.getAddress());
             customer.setCreatedBy(username);
-            log.info("haha "+a.getStore().getId());
+            log.info("haha " + a.getStore().getId());
             Store store = storeRepository.findById(a.getStore().getId()).orElseThrow();
             System.out.println(store.getStoreName());
             customer.setStore(store);
@@ -189,6 +195,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
         return capitalizedString.toString().trim();
     }
+
     private void validatePhoneNumber(String phoneNumber) {
         if (phoneNumber == null || !phoneNumber.matches("^0\\d{9}$")) {
             throw new IllegalArgumentException("SDT phải gồm 10 chữ số và bắt đầu bằng 0.");
@@ -196,7 +203,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private void validateEmail(String email) {
-        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")) {
             throw new IllegalArgumentException("Email không đúng định dạng.");
         }
     }
