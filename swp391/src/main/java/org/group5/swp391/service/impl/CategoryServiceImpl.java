@@ -65,6 +65,11 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryPage.map(this::convertToCategoryDTO);
     }
 
+    @Override
+    public Page<EmployeeCategoryDTO> getCategoryBySearch(String name, int page, int size, String sortBy, boolean descending) {
+        return null;
+    }
+
     public Page<EmployeeProductDTO> getProductBySearch(String name, int page, int size, String sortBy, boolean descending){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {

@@ -31,7 +31,6 @@ public interface ProductRepository extends JpaRepository<Product, String> {
             "OR LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%')))")
     List<Product> findByNameAndStoreIdContainingIgnoreCaseInList(@Param("name") String name,
                                                            @Param("id") String storeid);
-
     @Query("Select s from Product  s where s.category.id = ?1")
     List<Product> findAllByCategoryId(String categoryId);
 
