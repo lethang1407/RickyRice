@@ -11,7 +11,6 @@ const DashboardContent = () => {
   const [totalAccounts, setTotalAccounts] = useState(0);
   const [totalStores, setTotalStores] = useState(0);
   const [totalSubscriptions, setTotalSubscriptions] = useState(0);
-
   const navigate = useNavigate();
   const token = getToken();
 

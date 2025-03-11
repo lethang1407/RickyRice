@@ -11,7 +11,7 @@ function Login(){
 
   const handleLogin = async (values) =>{
     const data = {
-      username: values.username,
+      username: values.username.trim().toLowerCase(),
       password: values.password
     }
     const login = await checkLogin(API.AUTH.LOGIN, data);

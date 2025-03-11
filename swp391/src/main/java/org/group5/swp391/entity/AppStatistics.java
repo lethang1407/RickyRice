@@ -28,4 +28,6 @@ public class AppStatistics extends AbstractEntity{
     @Column(name = "SubcriptionTimeOfExpiration")
     Integer subcriptionTimeOfExpiration;
 
+    @Column(name = "TransactionNo")
+    String transactionNo;
 }

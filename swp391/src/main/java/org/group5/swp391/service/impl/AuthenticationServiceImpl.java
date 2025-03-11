@@ -122,10 +122,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             if(checkEmail) {
                 acc = accountRepository.findByEmail(key)
                         .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                if(acc.getOtp()!=null){
+                    return SendOTPResponse.builder()
+                            .otpNotExpired(true)
+                            .build();
+                }
                 mail.sendEmail(key, token);
             }else {
                 acc = accountRepository.findByUsername(key)
                         .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                if(acc.getOtp()!=null){
+                    return SendOTPResponse.builder()
+                            .otpNotExpired(true)
+                            .build();
+                }
                 mail.sendEmail(acc.getEmail(), token);
             }
             acc.setOtp(token);
@@ -146,11 +156,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public boolean checkOTP(OTPCheckRequest request) {
+    public CheckOTPResponse checkOTP(OTPCheckRequest request) {
         Account account = accountRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-
-        return account.getOtp().equals(request.getOTP());
+        String otpReal = account.getOtp().substring(0,6);
+        String number = account.getOtp().substring(6,7);
+        int num = Integer.parseInt(number);
+        if(otpReal.equals(request.getOTP())){
+            return CheckOTPResponse.builder()
+                    .isValid(true)
+                    .build();
+        }else{
+            num = num + 1;
+            if(num>=3){
+                account.setOtp(null);
+            }else{
+                account.setOtp(otpReal + num);
+            }
+            accountRepository.save(account);
+            return CheckOTPResponse.builder()
+                    .isValid(false)
+                    .times(num)
+                    .build();
+        }
     }
 
     @Override
@@ -172,6 +200,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private String generate6DigitCode() {
         SecureRandom random = new SecureRandom();
-        return String.format("%06d", random.nextInt(1000000));
+        return String.format("%06d0", random.nextInt(1000000));
     }
 }

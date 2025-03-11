@@ -3,16 +3,47 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Bell } from "react-bootstrap-icons";
 import API from "../../../Utils/API/API.js";
-import { getToken } from "../../../Utils/UserInfoUtils";
-const CustomNavbar = () => {
-  const avatarUrl =
-    "https://sm.ign.com/ign_nordic/cover/a/avatar-gen/avatar-generations_prsz.jpg";
+import { getToken, logout } from "../../../Utils/UserInfoUtils";
+import { message } from "antd";
+import { successWSmile } from "../../../Utils/AntdNotification";
+import { useNavigate } from "react-router-dom";
+import avt_default from "../../../assets/img/avt_default.jpg";
 
+const CustomNavbar = () => {
   const [notifications, setNotifications] = useState([]);
   const token = getToken();
+  const [messageApi] = message.useMessage();
+  const [, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [avatarUrl, setAvatarUrl] = useState(avt_default);
 
   useEffect(() => {
-    fetch(API.ADMIN.GET_NOTIFICATIONS_BY_ID(1), {
+    fetch(API.ACCOUNT.GET_INFOR_ACCOUNT, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code === 200 && data.data.avatar) {
+          setAvatarUrl(data.data.avatar);
+        }
+      })
+      .catch((error) => console.error("Error fetching avatar:", error));
+  }, [token]);
+
+  const handleLogout = () => {
+    setLoading(true);
+    successWSmile("See you later!", messageApi);
+    logout();
+    setTimeout(() => {
+      setLoading(false);
+      navigate("/");
+    }, 1000);
+  };
+
+  useEffect(() => {
+    fetch(API.ACCOUNT.GET_ALL_NOTIFICATIONS, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -24,26 +55,26 @@ const CustomNavbar = () => {
         }
       })
       .catch((error) => console.error("Error fetching notifications:", error));
-  },[token]);
+  }, [token]);
 
   const markAllAsRead = async () => {
     const unreadIds = notifications
       .filter((notif) => !notif.isRead)
       .map((notif) => notif.notificationId);
-      try {
-        const response = await fetch(API.ADMIN.MARK_NOTI_AS_READ, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ notificationIDs: unreadIds, isRead: true }),
-        });
-  
-        if (!response.ok) throw new Error("Failed to mark notifications as read");
-  
-        setNotifications((prevNotifications) =>
-          prevNotifications.map((notif) => ({ ...notif, isRead: true }))
+    try {
+      const response = await fetch(API.ACCOUNT.MARK_NOTI_AS_READ, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ notificationIDs: unreadIds, isRead: true }),
+      });
+
+      if (!response.ok) throw new Error("Failed to mark notifications as read");
+
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notif) => ({ ...notif, isRead: true }))
       );
     } catch (error) {
       console.error("Error marking notifications as read:", error);
@@ -52,7 +83,7 @@ const CustomNavbar = () => {
 
   const markAsRead = async (notificationId) => {
     try {
-      const response = await fetch(API.ADMIN.MARK_NOTI_AS_READ, {
+      const response = await fetch(API.ACCOUNT.MARK_NOTI_AS_READ, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -83,7 +114,7 @@ const CustomNavbar = () => {
       <div className="dropdown me-3">
         <button
           type="button"
-          className="btn position-relative text-white"
+          className="btn position-relative text-white border border-light"
           id="notificationDropdown"
           data-bs-toggle="dropdown"
           aria-expanded="false"
@@ -168,22 +199,25 @@ const CustomNavbar = () => {
           style={{ zIndex: 1050 }}
         >
           <li>
-            <a className="dropdown-item" href="#">
+            <button
+              className="dropdown-item"
+              onClick={() => navigate("/account-info")}
+            >
               Hồ sơ tài khoản
-            </a>
+            </button>
           </li>
           <li>
-            <a className="dropdown-item" href="#">
+            <button className="dropdown-item" href="#">
               Cài đặt
-            </a>
+            </button>
           </li>
           <li>
             <hr className="dropdown-divider" />
           </li>
           <li>
-            <a className="dropdown-item" href="/">
+            <button className="dropdown-item" onClick={handleLogout}>
               Đăng xuất
-            </a>
+            </button>
           </li>
         </ul>
       </div>

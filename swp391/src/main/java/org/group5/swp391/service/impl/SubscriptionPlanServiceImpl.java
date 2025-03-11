@@ -80,4 +80,18 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
                 .timeOfExpiration(updatedPlan.getTimeOfExpiration())
                 .build();
     }
+
+    // lấy danh sách các gói đăng kí được hiển thị
+    public List<SubscriptionPlanResponse> getSubscriptionPlansIsActive() {
+        return subscriptionPlanRepository.findSubscriptionPlanByIsActive(true).stream()
+                .map(plan -> SubscriptionPlanResponse.builder()
+                        .subscriptionPlanID(plan.getId())
+                        .name(plan.getName())
+                        .description(plan.getDescription())
+                        .price(plan.getPrice())
+                        .timeOfExpiration(plan.getTimeOfExpiration())
+                        .isActive(plan.getIsActive())
+                        .build())
+                .collect(Collectors.toList());
+    }
 }

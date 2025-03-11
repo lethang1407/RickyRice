@@ -38,7 +38,7 @@ function Register(){
 
   const handleRegister = async (values) =>{
     const data = {
-      email: values.email,
+      email: values.email.trim().toLowerCase(),
       phone: values.phone,
     }
     const res = await checkValid(API.AUTH.CHECK_EMAIL_PHONE,data);
@@ -101,7 +101,7 @@ function Register(){
       gender: allValues.gender,
       birthDate: allValues.date,
       name: allValues.name,
-      email: allValues.email,
+      email: allValues.email.trim().toLowerCase(),
       phoneNumber: allValues.phone,
       role: allValues.role
     })
@@ -114,7 +114,7 @@ function Register(){
     if(!res.data){
       setAcc({
         ...acc,
-        username: values.username,
+        username: values.username.trim().toLowerCase(),
         password: values.password
       });
       setNext(true);

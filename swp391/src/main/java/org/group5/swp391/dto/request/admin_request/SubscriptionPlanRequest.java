@@ -20,6 +20,6 @@ public class SubscriptionPlanRequest {
     @Positive(message = "Price must be greater than 0")
     double price;
 
-    @Min(value = 1, message = "The expiry date must be at least 1 day")
+    @Min(value = 1, message = "The expiry date must be at least 1 month")
     Integer timeOfExpiration;
 }

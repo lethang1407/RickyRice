@@ -11,4 +11,6 @@ import java.util.List;
 public interface StoreService {
     public Page<StoreInfoDTO> getStores(String storeName, int page, int size, String sortBy, boolean descending);
     public List<ViewStoreResponse> getAllStores();
+    public List<StoreInfoDTO> getStoresForDebt();
+
 }

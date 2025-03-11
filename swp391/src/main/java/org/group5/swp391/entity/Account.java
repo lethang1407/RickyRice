@@ -43,7 +43,7 @@ public class Account extends AbstractEntity {
     @Column(name = "BirthDate")
     LocalDate birthDate;
 
-    @Column(name = "OTP", length = 6)
+    @Column(name = "OTP", length = 7)
     String otp;
 
     @OneToMany(mappedBy = "targetAccount",cascade = { CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY)
