@@ -1,5 +1,5 @@
 import React from "react";
-import './style.css'
+import "./style.css";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import DashboardContent from "./DashboardContent";
@@ -19,6 +19,5 @@ function AdminDashboard() {
     </div>
   );
 }
-
 
 export default AdminDashboard;

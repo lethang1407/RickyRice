@@ -8,16 +8,23 @@ const API = {
     VIEW_REVENUE: `${API_BASE_URL}/admin/view-revenue`,
     VIEW_ALL_STORE: `${API_BASE_URL}/admin/view-store`,
     VIEW_ALL_SUBSCRIPTION_PLAN: `${API_BASE_URL}/admin/subscription-plans`,
-    VIEW_SUBSCRIPTION_PLAN_BY_ID: (id) => `${API_BASE_URL}/admin/subscription-plan/${id}`,
+    VIEW_SUBSCRIPTION_PLAN_BY_ID: (id) =>
+      `${API_BASE_URL}/admin/subscription-plan/${id}`,
     CREATE_SUBSCRIPTION_PLAN: `${API_BASE_URL}/admin/create-subscription-plan`,
-    UPDATE_SUBSCRIPTION_PLAN: (id) => `${API_BASE_URL}/admin/update-subscription-plan/${id}`,
-    GET_NOTIFICATIONS_BY_ID: (id) => `${API_BASE_URL}/admin/notifications/${id}`,
-    MARK_NOTI_AS_READ: `${API_BASE_URL}/admin/notifications/mark-as-read`
+    UPDATE_SUBSCRIPTION_PLAN: (id) =>
+      `${API_BASE_URL}/admin/update-subscription-plan/${id}`,
   },
-  CUSTOMER:{
-    GET_ALL_PRODUCT: `${API_BASE_URL}/store/products`
+  ACCOUNT: {
+    GET_ALL_NOTIFICATIONS: `${API_BASE_URL}/account/notifications`,
+    MARK_NOTI_AS_READ: `${API_BASE_URL}/account/notifications/mark-as-read`,
+    GET_INFOR_ACCOUNT: `${API_BASE_URL}/account/infor`,
+    UPDATE_ACCOUNT: `${API_BASE_URL}/account/update`,
+    CHANGE_PASSWORD: `${API_BASE_URL}/account/change-password`,
   },
-  EMPLOYEE:{
+  CUSTOMER: {
+    GET_ALL_PRODUCT: `${API_BASE_URL}/store/products`,
+  },
+  EMPLOYEE: {
     GET_ALL_CUSTOMER: `${API_BASE_URL}/employee/customers`,
     UPDATE_USER: (id) => `${API_BASE_URL}/employee/customers/edit/${id}`,
     CREATE_CUSTOMER: `${API_BASE_URL}/employee/customers/create`,
@@ -29,28 +36,35 @@ const API = {
     GET_RICEZONE: `${API_BASE_URL}/employee/ricezone`,
     SEARCH_RICEZONE: `${API_BASE_URL}/employee/ricezone/searchzone`,
   },
-  STORE_OWNER:{
+  STORE_OWNER: {
     GET_INVOICES: `${API_BASE_URL}/store-owner/invoices`,
     GET_INVOICE_DETAIL: `${API_BASE_URL}/store-owner/invoice-details`,
     GET_STORE: `${API_BASE_URL}/store-owner/stores`,
     GET_STORE_PRODUCTS: `${API_BASE_URL}/store-owner/products`,
     GET_STORE_EMPLOYEES: `${API_BASE_URL}/store-owner/employees`,
-    GET_STORE_STATISTICs: `${API_BASE_URL}/store-owner/statistics`
+    GET_STORE_STATISTICs: `${API_BASE_URL}/store-owner/statistics`,
   },
-  AUTH:{
+  AUTH: {
     LOGIN: `${API_BASE_URL}/auth/login`,
     REGISTER: `${API_BASE_URL}/auth/register`,
     CHANGE_PASSWORD: `${API_BASE_URL}/auth/change-password`,
-    LOGOUT:`${API_BASE_URL}/auth/logout`, 
+    LOGOUT: `${API_BASE_URL}/auth/logout`,
     INTROSPECT: `${API_BASE_URL}/auth/introspect`,
-    CHECK_EMAIL_PHONE: `${API_BASE_URL}/auth/check-email-phone`, 
-    CHECK_USERNAME: (username) => `${API_BASE_URL}/auth/check-username/${username}`,
-    SEND_OTP:(key) => `${API_BASE_URL}/auth/send-otp/${key}`,
+    CHECK_EMAIL_PHONE: `${API_BASE_URL}/auth/check-email-phone`,
+    CHECK_USERNAME: (username) =>
+      `${API_BASE_URL}/auth/check-username/${username}`,
+    SEND_OTP: (key) => `${API_BASE_URL}/auth/send-otp/${key}`,
     CHECK_OTP: `${API_BASE_URL}/auth/check-otp`,
   },
-  PUBLIC:{
-    UPLOAD_IMG: `${API_BASE_URL}/image`
-  }
+  PUBLIC: {
+    UPLOAD_IMG: `${API_BASE_URL}/image`,
+    SUBSCRIPTION_PLAN: `${API_BASE_URL}/service-web`,
+  },
+  VNPAY: {
+    CREATE_PAYMENT: (amount, subscriptionPlanId) =>
+      `${API_BASE_URL}/vnpay/create-payment?amount=${amount}&subscriptionPlanId=${subscriptionPlanId}`,
+    PAYMENT_TRANSACTION: `${API_BASE_URL}/vnpay/payment-history`,
+  },
 };
 
 export default API;

@@ -136,6 +136,7 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
                     : "⇅"}
                 </th>
                 <th>Ngày tạo</th>
+                <th>Mã giao dịch</th>
               </tr>
             </thead>
             <tbody>
@@ -153,6 +154,7 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
                     </td>
                     <td>{item.createdBy}</td>
                     <td>{new Date(item.createdAt).toLocaleDateString()}</td>
+                    <td>{item.transactionNo}</td>
                   </tr>
                 ))
               ) : (

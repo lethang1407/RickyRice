@@ -1,4 +1,4 @@
-package org.group5.swp391.dto.response.AdminResponse;
+package org.group5.swp391.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -10,15 +10,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class AppStatisticsResponse {
-    String appStatisticsID;
+public class AppStatisticsRequest {
     String storeID;
     String storeName;
     String subcriptionPlanName;
     double subcriptionPlanPrice; // vnp_Amount
     String subcriptionDescription; // vnp_OrderInfo
     Integer subcriptionTimeOfExpiration;
-    LocalDateTime createdAt;
-    String createdBy; // Owner store
     String transactionNo; // Mã giao dịch ghi nhận tại hệ thống VNPAY
 }

@@ -1,0 +1,89 @@
+/* Định dạng container tổng thể */
+.subscription-plans-container {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh; /* Đảm bảo chiều cao tối thiểu để căn giữa */
+}
+
+/* Định dạng hàng chứa các gói dịch vụ */
+.subscription-plans-container .row {
+  display: flex;
+  justify-content: center; /* Căn giữa các card */
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+/* Định dạng card để có cùng kích thước */
+.subscription-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+  padding: 20px;
+}
+
+/* Đảm bảo các card có chiều cao đồng đều */
+.subscription-card .card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+/* Tăng kích thước nút thanh toán */
+.subscription-card button {
+  font-size: 18px;
+  padding: 10px;
+  width: 100%;
+}
+
+/* Hover hiệu ứng */
+.subscription-card:hover {
+  transform: scale(1.05);
+}
+
+/* Đảm bảo Header cố định nhưng không che nội dung */
+.subscription-plans-header {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background-color: white;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Tăng khoảng cách giữa Header và nội dung */
+.subscription-plans-container {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 230px; /* Tăng khoảng cách xuống nhiều hơn */
+}
+
+/* Định dạng card */
+.subscription-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+  padding: 20px;
+}
+
+/* Căn giữa layout */
+.subscription-plans-container .row {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  flex-wrap: wrap;
+}

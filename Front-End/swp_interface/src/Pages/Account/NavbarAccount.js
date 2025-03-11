@@ -2,14 +2,15 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Bell } from "react-bootstrap-icons";
-import API from "../../../Utils/API/API.js";
-import { getToken, logout } from "../../../Utils/UserInfoUtils";
+import API from "../../Utils/API/API";
+import { getToken, logout } from "../../Utils/UserInfoUtils";
 import { message } from "antd";
-import { successWSmile } from "../../../Utils/AntdNotification";
+import { successWSmile } from "../../Utils/AntdNotification";
 import { useNavigate } from "react-router-dom";
-import avt_default from "../../../assets/img/avt_default.jpg";
+import avt_default from "../../assets/img/avt_default.jpg";
+import "./style.css";
 
-const CustomNavbar = () => {
+const NavbarAccount = () => {
   const [notifications, setNotifications] = useState([]);
   const token = getToken();
   const [messageApi] = message.useMessage();
@@ -110,16 +111,16 @@ const CustomNavbar = () => {
   };
 
   return (
-    <nav className="navbar navbar-dark bg-dark px-3 d-flex justify-content-end">
-      <div className="dropdown me-3">
+    <nav className="navbar navbar-light bg-light px-3 d-flex justify-content-end">
+      <div className="dropdown me-4">
         <button
           type="button"
-          className="btn position-relative text-white border border-light"
+          className="btn position-relative text-white border border-dark"
           id="notificationDropdown"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-          <Bell size={24} />
+          <Bell size={24} color="black" />
           {notifications.some((notif) => !notif.isRead) && (
             <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
               {notifications.filter((notif) => !notif.isRead).length}
@@ -225,4 +226,4 @@ const CustomNavbar = () => {
   );
 };
 
-export default CustomNavbar;
+export default NavbarAccount;
