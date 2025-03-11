@@ -28,15 +28,12 @@ import CustomerIN4Create from "./Pages/Employee_CustomerLayout/components/custom
 import Employee from "./Pages/ShopOwner/Employee/Employee";
 import Statistic from "./Pages/ShopOwner/Statistic/Statistic";
 import Debt from "./Pages/Debt";
-<<<<<<< HEAD
 import ProductUpdate from "./Pages/ShopOwner/ProductUpdate/ProductUpdate";
 import EmployeeUpdate from "./Pages/ShopOwner/EmployeeUpdate/EmployeeUpdate";
-=======
 import SubscriptionPlan from "./Pages/SubscriptionPlan/SubscriptionPlans";
 import PaymentReturn from "./Pages/SubscriptionPlan/PaymentReturn";
 import AccountInfo from "./Pages/Account/AccountInfo";
 import ChangePassword from "./Pages/Account/ChangePasswordAcc";
->>>>>>> origin/main
 
 function App() {
   return (
@@ -95,13 +92,10 @@ function App() {
               <Route path="product" element={<Product />}></Route>
               <Route path="employee" element={<Employee />}></Route>
               <Route path="statistic" element={<Statistic />}></Route>
-<<<<<<< HEAD
               <Route path="debt" element={<Debt/>}></Route>
               <Route path="product/update" element={<ProductUpdate />} />
               <Route path="employee/update" element={<EmployeeUpdate />} />
-=======
               <Route path="debt" element={<Debt />}></Route>
->>>>>>> origin/main
             </Route>
             <Route path="/vnpay/payment-return" element={<PaymentReturn />} />
           </Route>
