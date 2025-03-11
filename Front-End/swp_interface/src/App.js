@@ -28,6 +28,9 @@ import CustomerIN4Create from "./Pages/Employee_CustomerLayout/components/custom
 import Employee from "./Pages/ShopOwner/Employee/Employee";
 import Statistic from "./Pages/ShopOwner/Statistic/Statistic";
 import Debt from "./Pages/Debt";
+import ProductUpdate from "./Pages/ShopOwner/ProductUpdate/ProductUpdate";
+import EmployeeUpdate from "./Pages/ShopOwner/EmployeeUpdate/EmployeeUpdate";
+
 function App() {
   return (
     <>
@@ -61,6 +64,8 @@ function App() {
               <Route path="employee" element={<Employee />}></Route>
               <Route path="statistic" element={<Statistic />}></Route>
               <Route path="debt" element={<Debt/>}></Route>
+              <Route path="product/update" element={<ProductUpdate />} />
+              <Route path="employee/update" element={<EmployeeUpdate />} />
             </Route>
           </Route>
         </Route>

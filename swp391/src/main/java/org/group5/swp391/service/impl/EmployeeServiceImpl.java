@@ -83,7 +83,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public String updateStoreEmployeeImage(String employeeId, MultipartFile file) {
         checkEmployeeOfUser(employeeId);
         try {
-           return cloudinaryService.uploadFile(file);
+            return cloudinaryService.uploadFile(file);
         } catch (IOException e) {
             throw new RuntimeException("Không thể tải ảnh lên!");
         }
@@ -106,7 +106,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional
     public void deleteEmployee(String employeeId) {
         Employee employee = checkEmployeeOfUser(employeeId);
-        System.out.println(employee.getId());
         employeeRepository.delete(employee);
     }
 }

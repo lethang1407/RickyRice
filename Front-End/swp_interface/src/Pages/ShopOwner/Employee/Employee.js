@@ -6,6 +6,7 @@ import { getToken } from '../../../Utils/UserInfoUtils';
 import { getDataWithToken } from '../../../Utils/FetchUtils';
 import API from '../../../Utils/API/API';
 import './style.scss'
+import EmployeeDetailModal from '../../../Components/StoreOwner/EmployeeDetailModal/EmployeeDetailModal';
 
 const { Search } = Input;
 
@@ -26,6 +27,7 @@ const Employee = () => {
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEmployeeID, setSelectedEmployeeID] = useState(null);
+    const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null); 
 
     const columns = [
         {
@@ -112,8 +114,6 @@ const Employee = () => {
         try {
             const queryParams = `?employeeName=${encodeURIComponent(searchValue)}&` + getEmployeeParams(tableParams);
             const response = await getDataWithToken(API.STORE_OWNER.GET_STORE_EMPLOYEES + queryParams, token);
-            console.log(response);
-            
             setData(response.content || []);
             setTableParams((prev) => ({
                 ...prev,
@@ -166,13 +166,19 @@ const Employee = () => {
 
     const onRowClick = (record) => {
         setSelectedEmployeeID(record.employeeID);
+        setSelectedEmployeeDetails(record); 
         setIsModalOpen(true);
     };
 
-    // const closeModal = () => {
-    //     setIsModalOpen(false);
-    //     setSelectedEmployeeID(null);
-    // };
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedEmployeeID(null);
+        setSelectedEmployeeDetails(null); 
+    };
+
+    const handleEmployeeDeleted = () => {
+        fetchEmployees();
+    }
 
     return (
         <div>
@@ -200,14 +206,15 @@ const Employee = () => {
                 })}
             />
 
-            {/* {isModalOpen && (
+            {isModalOpen && (
                 <EmployeeDetailModal
                     visible={isModalOpen}
                     employeeID={selectedEmployeeID}
-                    employeeDetails={data.find(employee => employee.employeeID === selectedEmployeeID) || {}}
+                    employeeDetails={selectedEmployeeDetails} 
                     onClose={closeModal}
+                    onEmployeeDeleted={handleEmployeeDeleted}
                 />
-            )} */}
+            )}
         </div>
     );
 };

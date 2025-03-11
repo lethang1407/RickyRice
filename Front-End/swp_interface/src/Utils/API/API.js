@@ -35,7 +35,18 @@ const API = {
     GET_STORE: `${API_BASE_URL}/store-owner/stores`,
     GET_STORE_PRODUCTS: `${API_BASE_URL}/store-owner/products`,
     GET_STORE_EMPLOYEES: `${API_BASE_URL}/store-owner/employees`,
-    GET_STORE_STATISTICs: `${API_BASE_URL}/store-owner/statistics`
+    GET_STORE_STATISTICs: `${API_BASE_URL}/store-owner/statistics`,
+    GET_STORE_PRODUCT_DETAIL: `${API_BASE_URL}/store-owner/product-detail`,
+    GET_CATEGORIES: `${API_BASE_URL}/store-owner/all/category`,
+    UPDATE_STORE_PRODUCT: `${API_BASE_URL}/store-owner/product/update`,
+    GET_ATTRIBUTES: `${API_BASE_URL}/store-owner/all/attribute`,
+    GET_ZONES: `${API_BASE_URL}/store-owner/store/zone`,
+    UPLOAD_PRODUCT_IMAGE: `${API_BASE_URL}/store-owner/product/upload-image`,
+    DELETE_STORE_PRODUCT: `${API_BASE_URL}/store-owner/product/delete`,
+    GET_STORE_EMPLOYEE_DETAIL: `${API_BASE_URL}/store-owner/employee-detail`, 
+    UPLOAD_EMPLOYEE_AVATAR: `${API_BASE_URL}/store-owner/employee/upload-image`,
+    UPDATE_STORE_EMPLOYEE:  `${API_BASE_URL}/store-owner/employee/update`,
+    DELETE_STORE_EMPLOYEE:  `${API_BASE_URL}/store-owner/employee/delete`
   },
   AUTH:{
     LOGIN: `${API_BASE_URL}/auth/login`,

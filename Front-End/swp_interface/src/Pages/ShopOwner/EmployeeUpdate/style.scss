@@ -1,0 +1,102 @@
+.update-employee-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+
+    .ant-spin-nested-loading {
+        width: 100%;
+    }
+    .update-employee-card {
+        width: 100%;
+        max-width: 800px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+        .ant-card-head {
+            background-color: #1890ff;
+            color: white;
+            border-bottom: 1px solid #f0f0f0;
+
+            .ant-card-head-title {
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: inherit;
+                display: inline-block;
+                padding: 12px 0;
+            }
+        }
+
+        .ant-card-body {
+            padding: 24px;
+        }
+    }
+
+    .update-employee-form {
+        .form-columns {
+            display: flex;
+            gap: 24px;
+
+            .form-column {
+                flex: 1;
+            }
+        }
+
+        .avatar-uploader-item {
+            .ant-form-item-label {
+                padding: 0 0 8px;
+            }
+            .ant-upload.ant-upload-select-picture-card {
+                width: 100px;
+                height: 100px;
+            }
+            .upload-button-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                height: 100%;
+                .ant-upload-text {
+                    margin-top: 8px;
+                }
+            }
+
+            .uploaded-avatar {
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                border-radius: 4px;
+            }
+        }
+        .full-width-datepicker {
+            width: 100%;
+        }
+
+        .ant-input-prefix {
+            margin-right: 8px;
+            color: rgba(0, 0, 0, 0.45);
+        }
+
+        .gender-radio-group {
+            display: flex;
+            .ant-radio-wrapper {
+                margin-right: 16px;
+            }
+        }
+    }
+
+    .update-employee-actions {
+        margin-top: 24px;
+        text-align: right;
+
+        .ant-btn {
+            margin-left: 8px;
+        }
+    }
+
+    .preview-modal {
+        .ant-modal-body {
+            padding: 0;
+        }
+    }
+}
