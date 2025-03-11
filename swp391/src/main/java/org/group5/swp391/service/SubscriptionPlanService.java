@@ -12,4 +12,5 @@ public interface SubscriptionPlanService {
     public SubscriptionPlanResponse getSubscriptionPlanById(String id);
     public SubscriptionPlanResponse createSubscriptionPlan(SubscriptionPlanRequest request);
     public SubscriptionPlanResponse updateSubscriptionPlan(String id, SubscriptionPlanRequest request);
+    public List<SubscriptionPlanResponse> getSubscriptionPlansIsActive();
 }

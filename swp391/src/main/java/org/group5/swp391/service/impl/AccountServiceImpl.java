@@ -1,14 +1,17 @@
 package org.group5.swp391.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.group5.swp391.dto.request.account.UpdateAccountRequest;
+import org.group5.swp391.dto.request.account_request.ChangePasswordAccountRequest;
+import org.group5.swp391.dto.request.account_request.UpdateAccountRequest;
 import org.group5.swp391.dto.request.admin_request.UpdateAccountActiveRequest;
-import org.group5.swp391.dto.response.AdminResponse.AccountResponse;
+import org.group5.swp391.dto.response.account_response.AccountResponse;
 import org.group5.swp391.entity.Account;
 import org.group5.swp391.exception.AppException;
 import org.group5.swp391.exception.ErrorCode;
 import org.group5.swp391.repository.AccountRepository;
 import org.group5.swp391.service.AccountService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // lấy danh sách tài khoản theo role
     public List<AccountResponse> getAccountsByRole(String roleCode) {
@@ -79,6 +83,7 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findByUsername(a.getUsername());
     }
 
+    // lấy thông tin tài khoản theo tên đăng nhập
     public AccountResponse getAccountByUsername(String username) {
         return accountRepository.findByUsername(username)
                 .map(account -> AccountResponse.builder()
@@ -97,29 +102,55 @@ public class AccountServiceImpl implements AccountService {
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
     }
 
+    // cập nhật thông tin tài khoản
     public AccountResponse updateAccountInfor(String username, UpdateAccountRequest request) {
         Account account = accountRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Not found username: " + username));
-        account.setName(request.getName());
-        account.setEmail(request.getEmail());
-        account.setPhoneNumber(request.getPhoneNumber());
-        account.setAvatar(request.getAvatar());
-        account.setGender(request.getGender());
-        account.setBirthDate(request.getBirthDate());
+                .orElseThrow(() -> new EntityNotFoundException("Not found username: " + username));
+
+        if (request.getName() != null) account.setName(request.getName());
+        if (request.getPhoneNumber() != null) account.setPhoneNumber(request.getPhoneNumber());
+        if (request.getGender() != null) account.setGender(request.getGender());
+        if (request.getBirthDate() != null) account.setBirthDate(request.getBirthDate());
+        if (request.getAvatar() != null) account.setAvatar(request.getAvatar());
 
         Account updatedAccount = accountRepository.save(account);
+
         return AccountResponse.builder()
-                .accountID(account.getId())
-                .username(account.getUsername())
+                .accountID(updatedAccount.getId())
+                .username(updatedAccount.getUsername())
                 .name(updatedAccount.getName())
                 .email(updatedAccount.getEmail())
                 .phoneNumber(updatedAccount.getPhoneNumber())
                 .avatar(updatedAccount.getAvatar())
-                .createdAt(account.getCreatedAt())
-                .updatedAt(account.getUpdatedAt())
-                .isActive(account.getIsActive())
+                .createdAt(updatedAccount.getCreatedAt())
+                .updatedAt(updatedAccount.getUpdatedAt())
+                .isActive(updatedAccount.getIsActive())
                 .gender(updatedAccount.getGender())
-                .birthDate(account.getBirthDate())
+                .birthDate(updatedAccount.getBirthDate())
                 .build();
+    }
+
+    // lấy ID tài khoản theo tên đăng nhập
+    public String getIDByUsername(String username) {
+        Optional<Account> account = accountRepository.findByUsername(username);
+        if (account.isPresent()) {
+            return account.get().getId();
+        }
+        throw new AppException(ErrorCode.NOT_FOUND);
+    }
+
+    // thay đôi mật khẩu tài khoản
+    public boolean changePassword(String username, ChangePasswordAccountRequest request) {
+        Optional<Account> optionalAccount = accountRepository.findByUsername(username);
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            if (!request.getOldPassword().equals(account.getPassword())) {
+                return false;
+            }
+            account.setPassword(request.getNewPassword());
+            accountRepository.save(account);
+            return true;
+        }
+        return false;
     }
 }

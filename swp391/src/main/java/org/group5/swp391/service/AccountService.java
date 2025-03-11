@@ -1,8 +1,9 @@
 package org.group5.swp391.service;
 
-import org.group5.swp391.dto.request.account.UpdateAccountRequest;
+import org.group5.swp391.dto.request.account_request.ChangePasswordAccountRequest;
+import org.group5.swp391.dto.request.account_request.UpdateAccountRequest;
 import org.group5.swp391.dto.request.admin_request.UpdateAccountActiveRequest;
-import org.group5.swp391.dto.response.AdminResponse.AccountResponse;
+import org.group5.swp391.dto.response.account_response.AccountResponse;
 import org.group5.swp391.entity.Account;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,11 @@ public interface AccountService {
 
     public Optional<Account> getAccount(Account a);
 
-    public AccountResponse getAccountByUsername(String username);
+    AccountResponse getAccountByUsername(String username);
 
-    public AccountResponse updateAccountInfor(String username, UpdateAccountRequest request);
+    AccountResponse updateAccountInfor(String username, UpdateAccountRequest request);
+
+    String getIDByUsername(String username);
+
+    boolean changePassword(String username, ChangePasswordAccountRequest request);
 }

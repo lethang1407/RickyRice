@@ -2,7 +2,7 @@ package org.group5.swp391.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.dto.request.admin_request.MarkAsReadRequest;
-import org.group5.swp391.dto.response.AdminResponse.NotificationResponse;
+import org.group5.swp391.dto.response.account_response.NotificationResponse;
 import org.group5.swp391.entity.Notification;
 import org.group5.swp391.exception.AppException;
 import org.group5.swp391.exception.ErrorCode;

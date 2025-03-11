@@ -8,6 +8,7 @@ import org.group5.swp391.service.AppStatisticsService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +31,7 @@ public class AppStatisticsServiceServiceImpl implements AppStatisticsService {
                         .subcriptionTimeOfExpiration(stat.getSubcriptionTimeOfExpiration())
                         .createdAt(stat.getCreatedAt())
                         .createdBy(stat.getCreatedBy())
+                        .transactionNo(stat.getTransactionNo())
                         .build())
                 .collect(Collectors.toList());
     }

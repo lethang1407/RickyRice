@@ -1,4 +1,4 @@
-package org.group5.swp391.dto.request.account;
+package org.group5.swp391.dto.response.account_response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -7,16 +7,23 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class UpdateAccountRequest {
+public class AccountResponse {
+    String accountID;
+    String username;
     String name;
     String email;
     String phoneNumber;
     String avatar;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
+    Boolean isActive;
     Boolean gender;
     LocalDate birthDate;
+
 }

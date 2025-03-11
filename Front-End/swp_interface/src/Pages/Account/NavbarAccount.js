@@ -2,14 +2,15 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Bell } from "react-bootstrap-icons";
-import API from "../../../Utils/API/API.js";
-import { getToken, logout } from "../../../Utils/UserInfoUtils";
+import API from "../../Utils/API/API";
+import { getToken, logout } from "../../Utils/UserInfoUtils";
 import { message } from "antd";
-import { successWSmile } from "../../../Utils/AntdNotification";
+import { successWSmile } from "../../Utils/AntdNotification";
 import { useNavigate } from "react-router-dom";
-import avt_default from "../../../assets/img/avt_default.jpg";
+import avt_default from "../../assets/img/avt_default.jpg";
+import "./style.css";
 
-const CustomNavbar = () => {
+const NavbarAccount = () => {
   const [notifications, setNotifications] = useState([]);
   const token = getToken();
   const [messageApi] = message.useMessage();
@@ -199,10 +200,7 @@ const CustomNavbar = () => {
           style={{ zIndex: 1050 }}
         >
           <li>
-            <button
-              className="dropdown-item"
-              onClick={() => navigate("/account-info")}
-            >
+            <button className="dropdown-item" href="#">
               Hồ sơ tài khoản
             </button>
           </li>
@@ -225,4 +223,4 @@ const CustomNavbar = () => {
   );
 };
 
-export default CustomNavbar;
+export default NavbarAccount;

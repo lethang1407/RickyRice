@@ -228,9 +228,7 @@ const AccountOwner = () => {
                 <th onClick={() => handleSort("gender")}>
                   Giới tính {getSortIcon("gender")}
                 </th>
-                <th onClick={() => handleSort("birthDate")}>
-                  Ngày sinh {getSortIcon("birthDate")}
-                </th>
+                <th>Ngày sinh</th>
                 <th>Hành động</th>
               </tr>
             </thead>

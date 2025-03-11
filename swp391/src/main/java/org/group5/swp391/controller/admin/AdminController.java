@@ -2,11 +2,11 @@ package org.group5.swp391.controller.admin;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.group5.swp391.dto.request.admin_request.MarkAsReadRequest;
 import org.group5.swp391.dto.request.admin_request.SubscriptionPlanRequest;
 import org.group5.swp391.dto.request.admin_request.UpdateAccountActiveRequest;
 import org.group5.swp391.dto.response.*;
 import org.group5.swp391.dto.response.AdminResponse.*;
+import org.group5.swp391.dto.response.account_response.AccountResponse;
 import org.group5.swp391.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,14 +16,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin")
 @RequiredArgsConstructor
-public class AdminAPI {
+public class AdminController {
 
     private final AccountService accountService;
     private final AppStatisticsService appStatisticsService;
     private final StoreService storeService;
     private final SubscriptionPlanService subscriptionPlanService;
-    private final NotificationService notificationService;
-
 
     // Xem danh sách tài khoản có role STORE_OWNER
     @GetMapping("/account-owner")
@@ -122,28 +120,6 @@ public class AdminAPI {
                 .code(HttpStatus.OK.value())
                 .message("Updated subscription plan successfully")
                 .data(updatedPlan)
-                .build();
-    }
-
-    // Lấy thông báo của tài khoản
-    @GetMapping("/notifications/{targetAccountId}")
-    public ApiResponse<List<NotificationResponse>> getNotifications(@PathVariable String targetAccountId) {
-        List<NotificationResponse> notificationResponse = notificationService.getNotificationsByTargetAccountId(targetAccountId);
-        return ApiResponse.<List<NotificationResponse>>builder()
-                .code(notificationResponse.isEmpty() ? HttpStatus.NO_CONTENT.value() : HttpStatus.OK.value())
-                .message(notificationResponse.isEmpty() ? "No store owners found" : "Fetched notifications successfully")
-                .data(notificationResponse.isEmpty() ? null : notificationResponse)
-                .build();
-    }
-
-    // Cập nhật trạng thái đã xem thông báo
-    @PatchMapping("/notifications/mark-as-read")
-    public ApiResponse<Void> markMultipleNotificationsAsRead(
-            @RequestBody MarkAsReadRequest request) {
-        notificationService.markMultipleAsRead(request);
-        return ApiResponse.<Void>builder()
-                .code(HttpStatus.OK.value())
-                .message("Notifications marked as read successfully")
                 .build();
     }
 }
