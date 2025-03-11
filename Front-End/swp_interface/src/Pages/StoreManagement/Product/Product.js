@@ -4,7 +4,7 @@ import { InfoOutlined, EditOutlined } from '@ant-design/icons';
 import API from '../../../Utils/API/API';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import { getDataWithToken } from '../../../Utils/FetchUtils';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './style.css';
 import moment from 'moment';
 import { title } from 'framer-motion/client';
@@ -19,6 +19,7 @@ const Product = () => {
     const [loading, setLoading] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const storeID = useParams();
+    const navigate = useNavigate();
 
     const [tableParams, setTableParams] = useState({
         pagination: {
@@ -48,7 +49,7 @@ const Product = () => {
         { title: 'Tên Sản Phẩm', dataIndex: 'name', key: 'name', width: '15%' },
         { title: 'Giá', dataIndex: 'price', key: 'price', width: '5%', sorter: true },
         { title: 'Số Lượng', dataIndex: 'quantity', key: 'quantity', width: '5%', sorter: true },
-        { title: 'Thông Tin Sản Phẩm', dataIndex: 'information', key: 'information', width: '15%' },
+        { title: 'Thông Tin Sản Phẩm', dataIndex: 'information', key: 'information', width: '25%' },
         {
             title: 'Tạo Lúc',
             dataIndex: 'createdAt',
@@ -120,8 +121,7 @@ const Product = () => {
                 pagination: { ...prev.pagination, total: response.totalElements },
             }));
         } catch (error) {
-            console.error('Lỗi khi fetch dữ liệu:', error);
-            message.error('Không thể tải dữ liệu danh sách sản phẩm');
+            navigate('/unauthorized');
         } finally {
             setLoading(false);
         }

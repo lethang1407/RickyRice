@@ -19,4 +19,6 @@ public interface ZoneService {
     public void addZone(StoreDetailZoneDTO storeZoneDTO) throws Exception;
     public void updateZone(String zoneID, StoreDetailZoneDTO storeZoneDTO) throws Exception;
     public void deleteZone(String zoneID);
+    public List<StoreZoneIdAndNameDTO> getEmptyZoneIdAndNameForStore(String storeId);
+
 }

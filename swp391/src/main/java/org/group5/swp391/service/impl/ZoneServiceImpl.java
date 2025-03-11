@@ -155,4 +155,9 @@ public class ZoneServiceImpl implements ZoneService {
 
     }
 
+    @Override
+    public List<StoreZoneIdAndNameDTO> getEmptyZoneIdAndNameForStore(String storeId) {
+        return zoneRepository.findByStoreIdAndProductIsNull(storeId).stream().map(zoneConverter::toStoreZoneIdAndNameDTO).collect(Collectors.toList());
+    }
+
 }

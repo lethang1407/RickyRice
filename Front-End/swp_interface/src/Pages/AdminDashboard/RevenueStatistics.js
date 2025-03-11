@@ -124,7 +124,7 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
                     : "⇅"}
                 </th>
                 <th>Gói đăng kí</th>
-                <th>Giá ($)</th>
+                <th>Giá (VND)</th>
                 <th>Mô tả</th>
                 <th>Thời hạn (Tháng)</th>
                 <th onClick={() => handleSort("createdBy")}>

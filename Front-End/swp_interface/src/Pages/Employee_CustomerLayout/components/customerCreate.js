@@ -125,7 +125,7 @@ const CustomerIN4Create = () => {
                         }
                     ]}
                 >
-                    <Input type='number' placeholder="Nhập số điện thoại" />
+                    <Input placeholder="Nhập số điện thoại" />
                 </Form.Item>
                 <Form.Item
                     label="Customer Email"

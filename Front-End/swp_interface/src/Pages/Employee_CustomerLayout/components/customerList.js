@@ -263,7 +263,6 @@ const CustomerList = () => {
                 <Space size="middle">
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
                         <Input
-                            type="number"
                             placeholder="Tìm SDT"
                             maxLength={10}
                             style={{ width: 220 }}

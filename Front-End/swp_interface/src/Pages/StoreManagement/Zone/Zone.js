@@ -4,7 +4,7 @@ import { InfoOutlined, EditOutlined } from '@ant-design/icons';
 import API from '../../../Utils/API/API';
 import { getRole, getToken } from '../../../Utils/UserInfoUtils';
 import { getDataWithToken } from '../../../Utils/FetchUtils';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './style.css';
 import moment from 'moment';
 import CreateZone from './CreateZone';
@@ -14,6 +14,7 @@ const { Search } = Input;
 
 const Zone = () => {
     const token = getToken();
+    const navigate = useNavigate();
     
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -35,11 +36,10 @@ const Zone = () => {
     const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
     const columns = [
-        { title: 'Mã Khu', dataIndex: 'id', key: 'id', width: '10%', sorter: true },
         { title: 'Tên Khu', dataIndex: 'name', key: 'name', width: '15%' },
         { title: 'Phân Khu', dataIndex: 'location', key: 'location', width: '10%', sorter: true },
         { title: 'Tên Sản Phẩm', dataIndex: 'productName', key: 'productName', width: '15%' },
-        { title: 'Thông Tin Sản Phẩm', dataIndex: 'productInformation', key: 'productInformation', width: '15%' },
+        { title: 'Thông Tin Sản Phẩm', dataIndex: 'productInformation', key: 'productInformation', width: '30%' },
         {
             title: 'Tạo Lúc',
             dataIndex: 'createdAt',
@@ -106,8 +106,7 @@ const Zone = () => {
                 pagination: { ...prev.pagination, total: response.totalElements },
             }));
         } catch (error) {
-            console.error('Lỗi khi fetch dữ liệu:', error);
-            message.error('Không thể tải dữ liệu danh sách zones');
+            navigate('/unauthorized');
         } finally {
             setLoading(false);
         }
@@ -147,7 +146,7 @@ const Zone = () => {
                 columns={columns}
                 rowKey="id"
                 dataSource={data}
-                pagination={{ ...tableParams.pagination, showSizeChanger: true }}
+                pagination={{ ...tableParams.pagination, showSizeChanger: true ,pageSizeOptions: ['5', '10', '20']}}
                 loading={loading}
                 onChange={handleTableChange}
             />

@@ -10,6 +10,7 @@ import "./style.scss";
 import { success, error } from '../../../Utils/AntdNotification';
 import moment from 'moment';
 
+
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -18,17 +19,23 @@ const getBase64 = (file) =>
         reader.onerror = reject;
     });
 
+
 const uploadAvatarAPI = async (url, token, file) => {
     try {
         const formData = new FormData();
         formData.append("file", file);
+
+
         const response = await axios.put(url, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
             },
         });
+
+
         if (response.data) {
-            return response.data; 
+            return response.data;
         } else {
             throw new Error("Tải ảnh đại diện lên thất bại: Không có URL trả về.");
         }
@@ -37,6 +44,7 @@ const uploadAvatarAPI = async (url, token, file) => {
         throw new Error(err.response?.data?.message || "Tải ảnh đại diện lên thất bại.");
     }
 };
+
 
 const updateEmployeeAPI = async (url, token, employee) => {
     try {
@@ -56,10 +64,10 @@ const updateEmployeeAPI = async (url, token, employee) => {
     }
 };
 
+
 const EmployeeUpdate = () => {
     const location = useLocation();
     const { employeeID } = location.state || {};
-    const { storeId } = location.state || {}; 
     const navigate = useNavigate();
     const token = getToken();
     const [loading, setLoading] = useState(false);
@@ -68,11 +76,13 @@ const EmployeeUpdate = () => {
     const [previewVisible, setPreviewVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false); 
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
+
 
     const UPLOAD_AVATAR_URL = `${API.STORE_OWNER.UPLOAD_EMPLOYEE_AVATAR}/${employeeID}`;
     const UPDATE_EMPLOYEE_URL = `${API.STORE_OWNER.UPDATE_STORE_EMPLOYEE}/${employeeID}`;
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -87,6 +97,7 @@ const EmployeeUpdate = () => {
                     : [];
                 setFileList(initialFileList);
 
+
                 form.setFieldsValue({
                     name: response.storeAccount.name,
                     email: response.storeAccount.email,
@@ -97,6 +108,7 @@ const EmployeeUpdate = () => {
                     storeID: response.storeInfo.storeID,
                 });
 
+
             } catch (err) {
                 error(err.message || "Không thể tải chi tiết nhân viên", messageApi);
                 navigate("/store-owner/employee");
@@ -105,28 +117,32 @@ const EmployeeUpdate = () => {
             }
         };
 
+
         if (employeeID) {
             fetchData();
         }
     }, [employeeID, token, navigate, form, messageApi]);
 
+
     const handleUpdate = async (values) => {
         setIsSubmitting(true);
         let avatarUrl = null;
+
 
         try {
             if (fileList.length > 0 && fileList[0].originFileObj) {
                 avatarUrl = await uploadAvatarAPI(UPLOAD_AVATAR_URL, token, fileList[0].originFileObj);
                 if (!avatarUrl) return;
             } else if (fileList.length > 0 && fileList[0].url) {
-                avatarUrl = fileList[0].url; 
+                avatarUrl = fileList[0].url;
             } else {
                 avatarUrl = "";
             }
 
+
             const employee = {
-                employeeID: employeeID, 
-                storeAccount: {         
+                employeeID: employeeID,
+                storeAccount: {
                     name: values.name,
                     email: values.email,
                     phoneNumber: values.phoneNumber,
@@ -137,14 +153,18 @@ const EmployeeUpdate = () => {
             };
             await updateEmployeeAPI(UPDATE_EMPLOYEE_URL, token, employee);
             success('Cập nhật nhân viên thành công!', messageApi);
-            navigate("/store-owner/employee");
-
+            setTimeout(() =>
+                navigate("/store-owner/employee"),
+                1000
+            )
         } catch (err) {
+            console.log(err);
             error(err.message || "Cập nhật nhân viên thất bại", messageApi);
         } finally {
             setIsSubmitting(false);
         }
     };
+
 
     const handlePreview = async (file) => {
         if (!file.url && !file.preview) {
@@ -154,6 +174,7 @@ const EmployeeUpdate = () => {
         setPreviewVisible(true);
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
+
 
     const uploadButton = (
         <div>
@@ -189,10 +210,29 @@ const EmployeeUpdate = () => {
                                         messageApi.error('Ảnh phải nhỏ hơn 2MB!');
                                         return Upload.LIST_IGNORE;
                                     }
-                                    return true;
+                                    return false;
                                 }}
                                 onPreview={handlePreview}
-                                onChange={({ fileList: newFileList }) => setFileList(newFileList)}
+                                onChange={async ({ file, fileList }) => {
+                                    if (file.status === 'removed') {
+                                        setFileList([]);
+                                        return;
+                                    }
+
+
+                                    try {
+                                        const preview = await getBase64(file);
+                                        setFileList([{
+                                            uid: file.uid,
+                                            name: file.name,
+                                            status: 'done',
+                                            originFileObj: file,
+                                            url: preview
+                                        }]);
+                                    } catch (error) {
+                                        messageApi.error('Không thể tải ảnh lên');
+                                    }
+                                }}
                                 maxCount={1}
                             >
                                 {fileList.length > 0 ? (
@@ -208,6 +248,7 @@ const EmployeeUpdate = () => {
                             </Upload>
                         </Form.Item>
 
+
                         <div className="form-columns">
                             <div className="form-column">
                                 <Form.Item
@@ -217,6 +258,7 @@ const EmployeeUpdate = () => {
                                 >
                                     <Input prefix={<UserOutlined />} />
                                 </Form.Item>
+
 
                                 <Form.Item
                                     name="email"
@@ -234,19 +276,20 @@ const EmployeeUpdate = () => {
                                     <Input />
                                 </Form.Item>
 
+
                                 <Form.Item
                                     name="phoneNumber"
                                     label="Số điện thoại"
                                     rules={[
                                         {
-                                          required: true,
-                                          message: 'Please input your Phone Number!',
+                                            required: true,
+                                            message: 'Please input your Phone Number!',
                                         },
-                                        { 
-                                          pattern: /^(0[3|5|7|8|9])(\d{8})$/,
-                                          message: 'Phone Number is not Valid!'
+                                        {
+                                            pattern: /^(0[3|5|7|8|9])(\d{8})$/,
+                                            message: 'Phone Number is not Valid!'
                                         }
-                                      ]}
+                                    ]}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -263,6 +306,7 @@ const EmployeeUpdate = () => {
                                     </Radio.Group>
                                 </Form.Item>
 
+
                                 <Form.Item
                                     name="birthDate"
                                     label="Ngày sinh"
@@ -276,9 +320,11 @@ const EmployeeUpdate = () => {
                             </div>
                         </div>
 
+
                         <Form.Item name="storeID" hidden>
                             <Input />
                         </Form.Item>
+
 
                         <div className="update-employee-actions">
                             <Button type="primary" htmlType="submit" loading={isSubmitting}>
@@ -289,6 +335,7 @@ const EmployeeUpdate = () => {
                             </Button>
                         </div>
                     </Form>
+
 
                     <Modal
                         visible={previewVisible}
@@ -305,4 +352,6 @@ const EmployeeUpdate = () => {
     );
 };
 
+
 export default EmployeeUpdate;
+

@@ -8,6 +8,8 @@ import org.group5.swp391.entity.Account;
 import org.group5.swp391.entity.Employee;
 import org.group5.swp391.entity.Product;
 import org.group5.swp391.entity.Store;
+import org.group5.swp391.exception.AppException;
+import org.group5.swp391.exception.ErrorCode;
 import org.group5.swp391.repository.*;
 import org.group5.swp391.service.EmployeeService;
 import org.group5.swp391.utils.CloudinaryService;
@@ -93,6 +95,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     public StoreEmployeeDTO updateStoreEmployee(String employeeId, StoreEmployeeDTO storeEmployeeDTO) {
         Employee employee = checkEmployeeOfUser(employeeId);
         Account account = employee.getEmployeeAccount();
+        boolean a = account.getEmail().equals(storeEmployeeDTO.getStoreAccount().getEmail());
+        if(accountRepository.existsByEmail(storeEmployeeDTO.getStoreAccount().getEmail())&&!a) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
+        boolean b = account.getPhoneNumber().equals(storeEmployeeDTO.getStoreAccount().getPhoneNumber());
+        if(accountRepository.existsByPhoneNumber(storeEmployeeDTO.getStoreAccount().getPhoneNumber()) && !b) {
+            throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
+        }
         account.setName(storeEmployeeDTO.getStoreAccount().getName());
         account.setGender(storeEmployeeDTO.getStoreAccount().getGender());
         account.setEmail(storeEmployeeDTO.getStoreAccount().getEmail());
@@ -103,9 +113,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeConverter.toStoreEmployeeDTO(employee);
     }
 
+
     @Transactional
     public void deleteEmployee(String employeeId) {
         Employee employee = checkEmployeeOfUser(employeeId);
         employeeRepository.delete(employee);
     }
+
+
+
+
+
 }

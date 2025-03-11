@@ -165,13 +165,13 @@
 }
 
 .final-amount-value {
-    border-bottom: 2px solid blue;
-    color: blue;
+    border-bottom: 2px solid black;
+    color: black;
 }
 
 .change-value {
-    border-bottom: 2px solid red;
-    color: red;
+    border-bottom: 2px solid black;
+    color: black;
 }
 
 .discount-input {
@@ -184,7 +184,7 @@
 .customer-payment-input {
     flex: 1;
     border: none;
-    border-bottom: 2px solid green;
+    border: 2px solid black;
     padding: 4px 0;
     text-align: right;
 }

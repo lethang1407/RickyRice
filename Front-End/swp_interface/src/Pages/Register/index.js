@@ -101,7 +101,7 @@ function Register(){
       gender: allValues.gender,
       birthDate: allValues.date,
       name: allValues.name,
-      email: allValues.email.trim().toLowerCase(),
+      email: allValues.email ? allValues.email.trim().toLowerCase() : null,
       phoneNumber: allValues.phone,
       role: allValues.role
     })

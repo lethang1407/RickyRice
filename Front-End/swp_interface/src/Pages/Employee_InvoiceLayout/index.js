@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import InvoiceList from './components/invoiceList';
 import InvoiceCreate from './components/invoiceCreate';
 import {
@@ -13,16 +13,20 @@ import {
 } from '@ant-design/icons';
 import logo from '../../assets/img/logoviet.png';
 import { useNavigate } from 'react-router-dom';
-import { Button, Layout, Menu, theme, Dropdown } from 'antd';
+import { Button, Layout, Menu, theme, Dropdown, notification, message  } from 'antd';
 import './styleInvoices.css';
 import CustomFooter from "../../Components/Footer";
+import { useWebSocket } from '../../Utils/Websocket/WebsocketContextProvider';
+import { openNotification } from '../../Utils/AntdNotification';
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
 const Employee_Invoices = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [selectedMenu, setSelectedMenu] = useState('invoicesList');
+    const { messages } = useWebSocket();
     const navigate = useNavigate();
+    const [api, contextHolder] = notification.useNotification();
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
@@ -30,8 +34,16 @@ const Employee_Invoices = () => {
     const handleNavigation = (path) => {
         navigate(path);
     };
+
+    useEffect(()=>{
+        if(messages){
+            openNotification(api,messages.message)
+        }
+    },[messages])
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {contextHolder}
             <Layout style={{ minHeight: '100vh' }}>
                 <Sider
                     style={{

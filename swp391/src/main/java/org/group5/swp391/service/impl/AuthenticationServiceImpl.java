@@ -127,7 +127,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                             .otpNotExpired(true)
                             .build();
                 }
-                mail.sendEmail(key, token);
+                mail.sendEmail(key, token.substring(0,6));
             }else {
                 acc = accountRepository.findByUsername(key)
                         .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -136,7 +136,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                             .otpNotExpired(true)
                             .build();
                 }
-                mail.sendEmail(acc.getEmail(), token);
+                mail.sendEmail(acc.getEmail(), token.substring(0,6));
             }
             acc.setOtp(token);
             accountRepository.save(acc);
@@ -185,7 +185,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public void changePassword(ChangePasswordRequest request) {
         Account account = accountRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        if(account.getOtp().equals(request.getOTP())) {
+        if(account.getOtp().substring(0,6).equals(request.getOTP())) {
             account.setPassword(request.getNewPassword());
         }else{
             throw new AppException(ErrorCode.OTP_INVALID);

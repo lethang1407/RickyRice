@@ -5,11 +5,13 @@ import org.group5.swp391.converter.InvoiceConverter;
 import org.group5.swp391.dto.employee.InvoiceRequest.InvoiceDTO;
 import org.group5.swp391.dto.employee.InvoiceRequest.InvoiceDetailDTO;
 import org.group5.swp391.dto.employee.InvoiceRequest.InvoiceRequest;
+import org.group5.swp391.dto.notification.SendNotificationRequest;
 import org.group5.swp391.dto.store_owner.all_invoice.StoreInvoiceDTO;
 import org.group5.swp391.entity.*;
 import org.group5.swp391.entity.Package;
 import org.group5.swp391.repository.*;
 import org.group5.swp391.service.InvoiceService;
+import org.group5.swp391.service.NotificationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +40,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final PackageRepository packageRepository;
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final NotificationService notificationService;
 
     @Override
     public Page<StoreInvoiceDTO> getInvoices(
@@ -78,7 +81,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
-        System.out.println(a.getEmployeeAccount().getName());
+
         Customer customer=customerRepository.findByPhoneNumber(invoiceRequest.getInvoice().getCustomerPhone());
         Invoice invoice=new Invoice();
         invoice.setProductMoney(invoiceRequest.getInvoice().getTotalAmount());
@@ -102,6 +105,11 @@ public class InvoiceServiceImpl implements InvoiceService {
                  Category categoryProduct=categoryRepository.findByStringId(product.getCategory().getId());
                  long lastQuantity = product.getQuantity() - detail.getQuantity();
                  if (lastQuantity < 0) {
+                     notificationService.sendNotification(SendNotificationRequest.builder()
+                                     .message("Xử lý hóa đơn thất bại. Số lượng sản phẩm " + product.getName() + " không đủ trong kho!")
+                                     .targetUsername(username)
+                                     .type("Error")
+                             .build());
                      throw new IllegalArgumentException("Số lượng sản phẩm " + product.getName() + " không đủ trong kho!");
                  }
                  product.setQuantity(lastQuantity);
@@ -120,6 +128,11 @@ public class InvoiceServiceImpl implements InvoiceService {
              }).collect(Collectors.toList());
             invoice.setInvoiceDetails(details);
             invoiceRepository.save(invoice);
+            notificationService.sendNotification(SendNotificationRequest.builder()
+                .message("Xử lý hóa đơn của khách hàng "+ invoiceRequest.getInvoice().getCustomerName()+" thành công! Vui lòng check lại thông tin")
+                .targetUsername(username)
+                .type("Success")
+                .build());
     }
 
     @Override

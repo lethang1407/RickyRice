@@ -24,6 +24,7 @@ public class StoreController {
     private final ProductService productService;
     private final CategoryService categoryService;
 
+    @PreAuthorize("@securityService.hasAccessToStore(#storeID)")
     @GetMapping("/zones")
     public Page<StoreDetailZoneDTO> getStoreZones(@RequestParam(value = "zoneName", required = false) String zoneName,
                                                   @RequestParam(value = "storeID") String storeID,
@@ -37,6 +38,7 @@ public class StoreController {
         return zoneService.getStoreZones(zoneName.trim(), storeID, page, size, sortBy, descending);
     }
 
+    @PreAuthorize("@securityService.hasAccessToStore(#storeID)")
     @GetMapping("/products")
     public Page<StoreDetailProductDTO> getProducts(@RequestParam(value = "search", required = false) String search,
                                                    @RequestParam(value = "storeID") String storeID,
@@ -50,6 +52,7 @@ public class StoreController {
         return productService.getAllProductsByStoreID(search.trim(), storeID, page, size, sortBy, descending);
     }
 
+    @PreAuthorize("@securityService.hasAccessToStore(#storeID)")
     @PostMapping("/products")
     public void createProduct(@RequestParam String storeID, @RequestBody StoreDetailProductDTO productDTO) throws Exception {
         try {

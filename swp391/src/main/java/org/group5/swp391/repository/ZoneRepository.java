@@ -38,4 +38,7 @@ public interface ZoneRepository extends JpaRepository<Zone, String> {
     Zone findZoneById(String id);
 
     Zone getZoneById(String id);
+
+    List<Zone> findByStoreIdAndProductIsNull(String storeId);
+
 }

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Table, message, Input } from 'antd';
 import qs from 'qs';
-import Loading from '../../Loading/Loading';
 import API from '../../../Utils/API/API';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import { getDataWithToken } from '../../../Utils/FetchUtils';
-import ProductDetailModal from '../../../Components/StoreOwner/ProductDetailModal/ProductDetailModal'; // Đảm bảo đường dẫn đúng
+import ProductDetailModal from '../../../Components/StoreOwner/ProductDetailModal/ProductDetailModal';
 import './style.scss';
 
+
 const { Search } = Input;
+
 
 const Product = () => {
     const token = getToken();
@@ -25,7 +26,6 @@ const Product = () => {
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProductID, setSelectedProductID] = useState(null);
-
     const columns = [
         {
             title: 'ID',
@@ -87,6 +87,7 @@ const Product = () => {
         },
     ];
 
+
     const getProductParam = (params) => {
         const { pagination, sortField, sortOrder } = params;
         return qs.stringify({
@@ -97,14 +98,14 @@ const Product = () => {
         });
     };
 
+
     const fetchInvoice = async () => {
         setLoading(true);
         try {
             const queryParams = `?productName=${encodeURIComponent(searchValue)}&` + getProductParam(tableParams);
             const response = await getDataWithToken(API.STORE_OWNER.GET_STORE_PRODUCTS + queryParams, token);
             setData(response.content || []);
-            console.log(response);
-
+           
             setTableParams({
                 ...tableParams,
                 pagination: {
@@ -119,6 +120,7 @@ const Product = () => {
         }
     };
 
+
     useEffect(() => {
         fetchInvoice();
     }, [
@@ -129,9 +131,11 @@ const Product = () => {
         searchValue,
     ]);
 
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
+
 
     const handleTableChange = (pagination, filters, sorter) => {
         setTableParams({
@@ -142,12 +146,15 @@ const Product = () => {
         });
     };
 
+
     const handleSearch = (e) => {
         const value = e.target.value;
+
 
         if (timeoutId) {
             clearTimeout(timeoutId);
         }
+
 
         const newTimeoutId = setTimeout(() => {
             setSearchValue(value);
@@ -157,12 +164,16 @@ const Product = () => {
             });
         }, 1000);
 
+
         setTimeoutId(newTimeoutId);
     };
+
 
     const handleProductDeleted = () => {
         fetchInvoice();
     }
+
+
 
 
     return (
@@ -205,4 +216,8 @@ const Product = () => {
     );
 };
 
+
 export default Product;
+
+
+

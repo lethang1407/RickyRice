@@ -1,5 +1,6 @@
 package org.group5.swp391.controller.store_owner;
 
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.converter.ZoneConverter;
@@ -18,7 +19,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/store-owner")
@@ -34,6 +37,7 @@ public class StoreOwnerController {
     private final ProductAttributeService productAttributeService;
     private final ZoneService zoneService;
 
+
     @GetMapping("/invoices")
     public Page<StoreInvoiceDTO> getInvoices(
             @RequestParam String phoneNumber,
@@ -47,10 +51,12 @@ public class StoreOwnerController {
         return invoiceService.getInvoices(phoneNumber, page, size, sortBy, descending, type, status);
     }
 
+
     @GetMapping("/invoice-details")
     public List<StoreInvoiceDetailDTO> getInvoiceDetails(@RequestParam String invoiceId) {
         return invoiceDetailService.getInvoiceDetailsByInvoice(invoiceId);
     }
+
 
     @GetMapping("/stores")
     public Page<StoreInfoDTO> getStores(
@@ -63,6 +69,7 @@ public class StoreOwnerController {
         return storeService.getStores(storeName, page, size, sortBy, descending);
     }
 
+
     @GetMapping("/products")
     public Page<StoreProductDTO> getProducts(
             @RequestParam String productName,
@@ -74,26 +81,39 @@ public class StoreOwnerController {
         return productService.getProducts(productName, page, size, sortBy, descending);
     }
 
+
     @GetMapping("/product-detail")
     public StoreProductDetailDTO getProduct(@RequestParam String id) {
         return productService.getProduct(id);
     }
+
 
     @GetMapping("/all/category")
     public List<StoreCategoryIdAndNameDTO> getCategory() {
         return categoryService.getAllStoreCategories();
     }
 
+
     @GetMapping("/all/attribute")
     public List<StoreProductAttributeDTO> getAttribute() {
         return productAttributeService.getProductAttributes();
     }
+
 
     @PreAuthorize("@securityService.hasAccessToStore(#storeId)")
     @GetMapping("/store/zone")
     public List<StoreZoneIdAndNameDTO> getZonesForStore(@RequestParam String storeId) {
         return zoneService.getZoneIdAndNameForStore(storeId);
     }
+
+
+    @PreAuthorize("@securityService.hasAccessToStore(#storeId)")
+    @GetMapping("/store/empty-zone")
+    public List<StoreZoneIdAndNameDTO> getEmptyZonesForStore(@RequestParam String storeId) {
+        return zoneService.getEmptyZoneIdAndNameForStore(storeId);
+    }
+
+
 
     @PutMapping(value = "/product/update/{id}")
     public ResponseEntity<String> updateProduct(
@@ -106,10 +126,12 @@ public class StoreOwnerController {
             productService.updateStoreProduct(id, product);
             return ResponseEntity.ok("Cập nhật sản phẩm thành công");
 
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cập nhật sản phẩm thất bại");
         }
     }
+
 
     @PutMapping(value = "/product/upload-image/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadProductImage(
@@ -120,6 +142,7 @@ public class StoreOwnerController {
         return ResponseEntity.ok(url);
     }
 
+
     @DeleteMapping("/product/delete/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable("id") String productId) {
         try {
@@ -129,6 +152,7 @@ public class StoreOwnerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Xóa sản phẩm thất bại");
         }
     }
+
 
     @GetMapping("/employees")
     public Page<StoreEmployeeDTO> getEmployees(
@@ -142,10 +166,12 @@ public class StoreOwnerController {
         return employeeService.getEmployees(employeeName, page, size, sortBy, descending, gender);
     }
 
+
     @GetMapping("/employee-detail")
     public StoreEmployeeDTO getEmployee(@RequestParam String id) {
         return employeeService.getEmployee(id);
     }
+
 
     @PutMapping(value = "/employee/upload-image/{employeeId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadEmployeeImage(
@@ -156,10 +182,10 @@ public class StoreOwnerController {
         return ResponseEntity.ok(url);
     }
 
+
     @DeleteMapping("/employee/delete/{id}")
     public ResponseEntity<String> deleteEmployee(@PathVariable("id") String employeeId) {
         try {
-            System.out.println(employeeId);
             employeeService.deleteEmployee(employeeId);
             return ResponseEntity.ok("Xóa sản phẩm thành công");
         } catch (Exception e) {
@@ -167,21 +193,15 @@ public class StoreOwnerController {
         }
     }
 
+
     @PutMapping(value = "/employee/update/{id}")
     public ResponseEntity<String> updateEmployee(
             @PathVariable String id,
             @RequestBody StoreEmployeeDTO employee) {
-        try {
-            if (!id.equals(employee.getEmployeeID())) {
-                return ResponseEntity.badRequest().body("Cập nhật sản phẩm thất bại");
-            }
-            employeeService.updateStoreEmployee(id, employee);
-            return ResponseEntity.ok("Cập nhật sản phẩm thành công");
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cập nhật sản phẩm thất bại");
-        }
+        employeeService.updateStoreEmployee(id, employee);
+        return ResponseEntity.ok("Cập nhật sản phẩm thành công");
     }
+
 
     @GetMapping("/statistics")
     public Page<StoreStatisticDTO> getStatistics(
@@ -194,3 +214,4 @@ public class StoreOwnerController {
         return statisticsService.getStatistics(storeName, page, size, sortBy, descending);
     }
 }
+

@@ -35,7 +35,8 @@ function ForgetPassword(){
     if(OTP){
       const res = await checkValid(API.AUTH.CHECK_OTP,{username: acc.username.trim().toLowerCase(), OTP: OTP});
       if(res && res.code===200){
-        if(res.data.isValid===true){
+        console.log(res);
+        if(res.data.valid===true){
           setNext(true);
         }else{
           if(res.data.times < 3){

@@ -64,7 +64,8 @@ const API = {
     GET_STORE_EMPLOYEE_DETAIL: `${API_BASE_URL}/store-owner/employee-detail`,
     UPLOAD_EMPLOYEE_AVATAR: `${API_BASE_URL}/store-owner/employee/upload-image`,
     UPDATE_STORE_EMPLOYEE: `${API_BASE_URL}/store-owner/employee/update`,
-    DELETE_STORE_EMPLOYEE: `${API_BASE_URL}/store-owner/employee/delete`
+    DELETE_STORE_EMPLOYEE: `${API_BASE_URL}/store-owner/employee/delete`,
+    GET_EMPTY_ZONES: `${API_BASE_URL}/store-owner/store/empty-zone`,
   },
   STORE_DETAIL: {
     GET_STORE_ZONES: `${API_BASE_URL}/store-detail/zones`,

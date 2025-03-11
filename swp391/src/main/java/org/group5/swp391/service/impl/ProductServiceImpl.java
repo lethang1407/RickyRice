@@ -141,8 +141,14 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public void deleteProduct(String productId) {
         Product product = checkProductOfUser(productId);
+        List<Zone> zones = product.getZones();
+        zones.forEach(zone -> {
+            zone.setProduct(null);
+            zoneRepository.save(zone);
+        });
         productRepository.delete(product);
     }
+
 
     // Minh Tran
     @Override

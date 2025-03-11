@@ -69,12 +69,6 @@ const ZoneList = () => {
             width: 50,
         },
         {
-            title: 'ID Khu Vực',
-            dataIndex: 'zoneID',
-            key: 'zoneID',
-            width: 100,
-        },
-        {
             title: 'Tên',
             dataIndex: 'name',
             key: 'name',
