@@ -5,12 +5,14 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.io.Serializable;
 
 @Getter
 @AllArgsConstructor
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DebtCreationRequest implements Serializable {
     @NotNull
@@ -23,10 +25,9 @@ public class DebtCreationRequest implements Serializable {
     @NotNull
     String customerId;
 
-    @NotNull
-    String storeId;
-
     String description;
 
     String image;
+
+    String createdBy;
 }

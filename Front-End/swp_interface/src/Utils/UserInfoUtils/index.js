@@ -13,6 +13,14 @@ export const getRole = () =>{
   return decodedToken.scope;
 }
 
+export const getUsername = () =>{
+  const token = getToken();
+  if (!token) return null;
+  const decodedToken = jwtDecode(token);
+  return decodedToken.sub;
+
+}
+
 export const logout = () => {
   const token = getToken();
   if(token){

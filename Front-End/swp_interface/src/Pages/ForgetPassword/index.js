@@ -20,7 +20,7 @@ function ForgetPassword(){
 
   const handleChangeValues = (changedValues, allValues) =>{
     setAcc({
-      username: allValues.key
+      username: allValues.key.trim().toLowerCase()
     })
   }
 
@@ -33,12 +33,19 @@ function ForgetPassword(){
 
   const handleNextToChange = async () =>{
     if(OTP){
-      const res = await checkValid(API.AUTH.CHECK_OTP,{username: acc.username, OTP: OTP});
+      const res = await checkValid(API.AUTH.CHECK_OTP,{username: acc.username.trim().toLowerCase(), OTP: OTP});
       if(res && res.code===200){
-        if(res.data===true){
+        if(res.data.isValid===true){
           setNext(true);
         }else{
-          error('OTP is Invalid! Please try again', messageApi);
+          if(res.data.times < 3){
+            error('OTP is Invalid! Please try again', messageApi);
+          }else{
+            error('You has exceeded number of time try OTP. Please try again!', messageApi);
+            setTimeout(()=>{
+              navigate('/login');
+            },1000)
+          }
         }
       }
     }else{
@@ -48,7 +55,7 @@ function ForgetPassword(){
 
   const handleChangePassword = async (values) => {
     const data = {
-      username: acc.username,
+      username: acc.username.trim().toLowerCase(),
       OTP: OTP,
       newPassword: values.password
     }
@@ -77,7 +84,10 @@ function ForgetPassword(){
         setAcc(res.data);
         setCheckOTP(true);
         setDeadline(Date.now() + 1000*300);
-      }else{
+      }else if(res.data.otpNotExpired){
+        error('Your OTP has been sent! Please check your Mail', messageApi);
+      }
+      else{
         error('Username or Email is invalid!', messageApi);
       }
     }else{
@@ -218,11 +228,11 @@ function ForgetPassword(){
                   
                 <div style={{display:'flex', alignItems:'center',justifyContent:'center'}}>
                   <Form.Item style={{margin:'20px 5px 20px 5px'}} className='forgot__form__b'>
-                    <Button className='forgot__form__b__button' disabled={checkOTP} htmlType="submit">Send OTP
+                    <Button className='forgot__form__b__button' htmlType="submit">Send OTP
                     </Button>
                   </Form.Item>
                   <Form.Item style={{margin:'20px 5px 20px 5px'}} className='forgot__form__b'>
-                    <Button className='forgot__form__b__button' disabled={!checkOTP} onClick={handleNextToChange} >Submit
+                    <Button className='forgot__form__b__button' onClick={handleNextToChange} >Submit
                     </Button>
                   </Form.Item>
                 </div>

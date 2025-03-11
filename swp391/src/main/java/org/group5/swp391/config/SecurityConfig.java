@@ -24,7 +24,7 @@ public class SecurityConfig {
     private String jwtSecret;
 
     private final String[] PUBLIC_ENDPOINTS = {
-            "/auth/**", "/store/**", "/image", "/service-web"
+            "/auth/**", "/store/**", "/image", "/ws/**", "/service-web"
     };
 
     @Bean

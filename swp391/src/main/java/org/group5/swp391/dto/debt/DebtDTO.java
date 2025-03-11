@@ -22,4 +22,5 @@ public class DebtDTO {
     String customerName;
     String storeId;
     String storeName;
+    String createdBy;
 }
