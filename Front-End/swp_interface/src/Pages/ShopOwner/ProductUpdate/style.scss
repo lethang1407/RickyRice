@@ -1,0 +1,105 @@
+.update-product-container {
+    padding: 20px;
+    background-color: #f0f2f5; 
+    min-height: 100vh;
+
+    .update-product-card {
+        max-width: 800px; 
+        margin: 0 auto; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+
+        .ant-card-head {
+            background-color: #1890ff; 
+            color: white; 
+            border-bottom: 1px solid #ddd;
+
+            .ant-card-head-title {
+                font-size: 1.25rem; 
+                font-weight: 600; 
+            }
+        }
+
+        .ant-card-body {
+            padding: 24px;
+        }
+
+        .ant-form-item {
+            margin-bottom: 24px;
+
+            .ant-form-item-label {
+                font-weight: 500; 
+                padding-bottom: 4px;
+
+                label {
+                    &::after {
+                        content: none; 
+                    }
+                }
+            }
+
+            .ant-form-item-explain-error {
+                font-size: 0.875rem;
+            }
+        }
+
+        .ant-input,
+        .ant-select,
+        .ant-input-number,
+        .ant-picker {
+            border-radius: 4px;
+            border: 1px solid #d9d9d9;
+            transition: border-color 0.3s ease;
+            &:hover,
+            &:focus {
+                border-color: #40a9ff; 
+                box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2); 
+            }
+        }
+
+        .ant-input-number {
+            width: 100%;
+        }
+
+        .ant-input-textarea {
+            border-radius: 4px; 
+            border: 1px solid #d9d9d9;
+            resize: vertical; 
+        }
+
+        .update-product-actions {
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 10px; 
+
+            .ant-btn {
+                border-radius: 4px;
+            }
+        }
+
+        .ant-upload-list-picture-card-container {
+            width: 108px !important;
+            height: 108px !important;
+            margin-right: 8px;
+            margin-bottom: 8px;
+
+            .ant-upload-list-item,
+            .ant-upload {
+                width: 100% !important;
+                height: 100% !important;
+            }
+
+            .ant-upload-list-item-info {
+                height: 100%;
+
+                &::before {
+                    height: 100%;
+                }
+
+                .ant-upload-list-item-card-actions {
+                    opacity: 1;
+                }
+
+            }
+        }
+    }
+}

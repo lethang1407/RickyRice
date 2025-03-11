@@ -55,7 +55,7 @@ const Product = () => {
             dataIndex: 'price',
             key: 'price',
             sorter: true,
-            render: (price) => `${price.toFixed(3)} đ`,
+            render: (price) => `${price.toLocaleString()} đ`,
             width: '10%',
         },
         {
@@ -67,9 +67,23 @@ const Product = () => {
         },
         {
             title: 'Category',
-            dataIndex: 'categoryName',
+            dataIndex: ['category', 'name'],
             key: 'categoryName',
-            width: '20%',
+            width: '15%',
+        },
+        {
+            title: 'Store',
+            dataIndex: ['store', 'name'],
+            key: 'storeName',
+            width: '15%',
+        },
+        {
+            title: 'Quantity',
+            dataIndex: 'quantity',
+            key: 'quantity',
+            sorter: true,
+            render: (quantity) => `${quantity.toLocaleString()} kg`,
+            width: '15%',
         },
     ];
 
@@ -89,6 +103,8 @@ const Product = () => {
             const queryParams = `?productName=${encodeURIComponent(searchValue)}&` + getProductParam(tableParams);
             const response = await getDataWithToken(API.STORE_OWNER.GET_STORE_PRODUCTS + queryParams, token);
             setData(response.content || []);
+            console.log(response);
+
             setTableParams({
                 ...tableParams,
                 pagination: {
@@ -112,6 +128,10 @@ const Product = () => {
         tableParams.sortOrder,
         searchValue,
     ]);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     const handleTableChange = (pagination, filters, sorter) => {
         setTableParams({
@@ -139,6 +159,11 @@ const Product = () => {
 
         setTimeoutId(newTimeoutId);
     };
+
+    const handleProductDeleted = () => {
+        fetchInvoice();
+    }
+
 
     return (
         <div>
@@ -173,6 +198,7 @@ const Product = () => {
                     visible={isModalOpen}
                     productID={selectedProductID}
                     onClose={() => setIsModalOpen(false)}
+                    onProductDeleted={handleProductDeleted}
                 />
             )}
         </div>

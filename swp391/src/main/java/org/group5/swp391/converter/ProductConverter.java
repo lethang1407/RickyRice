@@ -8,7 +8,9 @@ import org.group5.swp391.dto.customer_requirement.CustomerZoneDTO;
 import org.group5.swp391.dto.employee.EmployeeCategoryDTO;
 import org.group5.swp391.dto.employee.EmployeeProductDTO;
 import org.group5.swp391.dto.employee.EmployeeZoneDTO;
+import org.group5.swp391.dto.store_owner.all_product.StoreProductAttributeDTO;
 import org.group5.swp391.dto.store_owner.all_product.StoreProductDTO;
+import org.group5.swp391.dto.store_owner.all_product.StoreProductDetailDTO;
 import org.group5.swp391.entity.Product;
 import org.group5.swp391.entity.Zone;
 import org.modelmapper.ModelMapper;
@@ -24,6 +26,7 @@ public class ProductConverter {
     private final ProductAttributeConverter productAttributeConverter;
     private final ZoneConverter zoneConverter;
     private final CategoryConverter categoryConverter;
+    private final StoreConverter storeConverter;
 
     public CustomerProductDTO toCustomerProductDTO(Product product) {
         CustomerProductDTO customerProductDTO = modelMapper.map(product, CustomerProductDTO.class);
@@ -40,10 +43,24 @@ public class ProductConverter {
     }
 
     public StoreProductDTO toStoreProductDTO(Product product){
-        StoreProductDTO storeProductDTO = modelMapper.map(product, StoreProductDTO.class);
-        storeProductDTO.setCategoryName(product.getCategory().getName());
-        storeProductDTO.setProductID(product.getId());
-        return storeProductDTO;
+        StoreProductDTO dto = modelMapper.map(product, StoreProductDTO.class);
+        dto.setCategory(categoryConverter.toStoreCategoryIdAndName(product.getCategory()));
+        dto.setProductID(product.getId());
+        dto.setStore(storeConverter.toStoreInfoIdAndNameDTO(product.getStore()));
+        dto.setQuantity(product.getQuantity());
+        return dto;
+    }
+
+    public StoreProductDetailDTO toStoreProductDetailDTO(Product product){
+        StoreProductDetailDTO dto = modelMapper.map(product, StoreProductDetailDTO.class);
+        dto.setCategory(categoryConverter.toStoreCategoryIdAndName(product.getCategory()));
+        dto.setProductID(product.getId());
+        dto.setStore(storeConverter.toStoreInfoIdAndNameDTO(product.getStore()));
+        List<StoreProductAttributeDTO> attributeDTOS = product.getProductAttributes().stream().map(productAttributeConverter::toStoreProductAttributeDTO).toList();
+        dto.setAttributes(attributeDTOS);
+        dto.setQuantity(product.getQuantity());
+        dto.setZones(product.getZones().stream().map(zoneConverter::toStoreZoneIdAndNameDTO).collect(Collectors.toList()));
+        return dto;
     }
 
     private long calculateTotalQuantityFromZones(Product product) {

@@ -8,12 +8,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StoreProductDTO {
-    String productID;
-    String name;
-    double price;
-    String information;
-    StoreCategoryIdAndNameDTO category;
-    StoreInfoIdAndNameDTO store;
-    Long quantity;
+public class StoreZoneIdAndNameDTO {
+    private String id;
+    private String name;
 }
