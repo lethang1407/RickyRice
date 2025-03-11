@@ -111,16 +111,16 @@ const NavbarAccount = () => {
   };
 
   return (
-    <nav className="navbar navbar-dark bg-dark px-3 d-flex justify-content-end">
-      <div className="dropdown me-3">
+    <nav className="navbar navbar-light bg-light px-3 d-flex justify-content-end">
+      <div className="dropdown me-4">
         <button
           type="button"
-          className="btn position-relative text-white"
+          className="btn position-relative text-white border border-dark"
           id="notificationDropdown"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-          <Bell size={24} />
+          <Bell size={24} color="black" />
           {notifications.some((notif) => !notif.isRead) && (
             <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
               {notifications.filter((notif) => !notif.isRead).length}
@@ -200,7 +200,10 @@ const NavbarAccount = () => {
           style={{ zIndex: 1050 }}
         >
           <li>
-            <button className="dropdown-item" href="#">
+            <button
+              className="dropdown-item"
+              onClick={() => navigate("/account-info")}
+            >
               Hồ sơ tài khoản
             </button>
           </li>

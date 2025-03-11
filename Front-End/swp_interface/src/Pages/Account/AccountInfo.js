@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Card, Button, Spinner, Alert, Form } from "react-bootstrap";
 import avt_default from "../../assets/img/avt_default.jpg";
 import UpdateProfile from "./UpdateProfile";
+import Navbar from "./NavbarAccount.js";
 
 const AccountInfo = () => {
   const [account, setAccount] = useState(null);
@@ -96,87 +97,92 @@ const AccountInfo = () => {
   };
 
   return (
-    <Container className="mt-5">
-      <h2 className="mb-4">Thông tin tài khoản</h2>
-      {message && <Alert variant={messageType}>{message}</Alert>}
-      {loading ? (
-        <div className="text-center">
-          <Spinner animation="border" />
-        </div>
-      ) : account ? (
-        <Card className="p-4 shadow">
-          <div className="d-flex justify-content-between align-items-center">
-            <div className="text-center">
-              <img
-                src={account.avatar || avt_default}
-                alt="Avatar"
-                className="rounded-circle mb-3 border border-primary p-1"
-                width={100}
-                height={100}
-              />
-              <Form.Group>
-                <Form.Label className="btn btn-link">
-                  {uploading ? "Đang tải lên..." : "Thay đổi ảnh"}
-                  <Form.Control
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    onChange={handleAvatarChange}
-                  />
-                </Form.Label>
-              </Form.Group>
-            </div>
-            <div className="d-flex">
-              <Button variant="primary" onClick={() => setShowUpdate(true)}>
-                Chỉnh sửa
-              </Button>
-              <Button
-                variant="warning"
-                className="ms-2"
-                onClick={() => navigate("/account-change-password")}
-              >
-                Thay đổi mật khẩu
-              </Button>
-            </div>
+    <>
+      {/* <div className="mt-5">
+        <Navbar />
+      </div> */}
+      <Container className="mt-5">
+        <h2 className="mb-4">Thông tin tài khoản</h2>
+        {message && <Alert variant={messageType}>{message}</Alert>}
+        {loading ? (
+          <div className="text-center">
+            <Spinner animation="border" />
           </div>
-          <Card.Body>
-            <p>
-              <strong>Tên đăng nhập:</strong> {account.username}
-            </p>
-            <p>
-              <strong>Họ Tên:</strong> {account.name}
-            </p>
-            <p>
-              <strong>Email:</strong> {account.email}
-            </p>
-            <p>
-              <strong>Số điện thoại:</strong> {account.phoneNumber}
-            </p>
-            <p>
-              <strong>Giới tính:</strong> {account.gender ? "Nam" : "Nữ"}
-            </p>
-            <p>
-              <strong>Ngày sinh:</strong> {account.birthDate}
-            </p>
-          </Card.Body>
-          <Button variant="secondary" onClick={() => navigate(-1)}>
-            Quay lại
-          </Button>
-        </Card>
-      ) : (
-        <p className="text-danger">Không thể tải thông tin tài khoản</p>
-      )}
+        ) : account ? (
+          <Card className="p-4 shadow">
+            <div className="d-flex justify-content-between align-items-center">
+              <div className="text-center">
+                <img
+                  src={account.avatar || avt_default}
+                  alt="Avatar"
+                  className="rounded-circle mb-3 border border-primary p-1"
+                  width={100}
+                  height={100}
+                />
+                <Form.Group>
+                  <Form.Label className="btn btn-link">
+                    {uploading ? "Đang tải lên..." : "Thay đổi ảnh"}
+                    <Form.Control
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      onChange={handleAvatarChange}
+                    />
+                  </Form.Label>
+                </Form.Group>
+              </div>
+              <div className="d-flex">
+                <Button variant="primary" onClick={() => setShowUpdate(true)}>
+                  Chỉnh sửa
+                </Button>
+                <Button
+                  variant="warning"
+                  className="ms-2"
+                  onClick={() => navigate("/account-change-password")}
+                >
+                  Thay đổi mật khẩu
+                </Button>
+              </div>
+            </div>
+            <Card.Body>
+              <p>
+                <strong>Tên đăng nhập:</strong> {account.username}
+              </p>
+              <p>
+                <strong>Họ Tên:</strong> {account.name}
+              </p>
+              <p>
+                <strong>Email:</strong> {account.email}
+              </p>
+              <p>
+                <strong>Số điện thoại:</strong> {account.phoneNumber}
+              </p>
+              <p>
+                <strong>Giới tính:</strong> {account.gender ? "Nam" : "Nữ"}
+              </p>
+              <p>
+                <strong>Ngày sinh:</strong> {account.birthDate}
+              </p>
+            </Card.Body>
+            <Button variant="secondary" onClick={() => navigate(-1)}>
+              Quay lại
+            </Button>
+          </Card>
+        ) : (
+          <p className="text-danger">Không thể tải thông tin tài khoản</p>
+        )}
 
-      {account && (
-        <UpdateProfile
-          show={showUpdate}
-          handleClose={() => setShowUpdate(false)}
-          account={account}
-          onUpdateSuccess={handleUpdateSuccess}
-          onUpdateFail={handleUpdateFail}
-        />
-      )}
-    </Container>
+        {account && (
+          <UpdateProfile
+            show={showUpdate}
+            handleClose={() => setShowUpdate(false)}
+            account={account}
+            onUpdateSuccess={handleUpdateSuccess}
+            onUpdateFail={handleUpdateFail}
+          />
+        )}
+      </Container>
+    </>
   );
 };
 

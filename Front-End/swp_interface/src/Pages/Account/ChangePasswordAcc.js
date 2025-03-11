@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Alert, Spinner } from "react-bootstrap";
 import { getToken } from "../../Utils/UserInfoUtils";
 import API from "../../Utils/API/API.js";
@@ -11,9 +12,9 @@ const ChangePassword = () => {
   const [messageType, setMessageType] = useState("success");
   const [loading, setLoading] = useState(false);
 
+  const navigate = useNavigate();
   const token = getToken();
 
-  // Hàm kiểm tra định dạng của mật khẩu mới
   const validateNewPassword = (password) => {
     const errors = [];
     if (password.length < 8) {
@@ -34,7 +35,6 @@ const ChangePassword = () => {
     return errors;
   };
 
-  // Hàm kiểm tra các trường trước khi gửi
   const validateFields = () => {
     let errors = [];
     if (!oldPassword) {
@@ -49,16 +49,13 @@ const ChangePassword = () => {
     if (newPassword && confirmPassword && newPassword !== confirmPassword) {
       errors.push("Mật khẩu mới và xác nhận mật khẩu không khớp.");
     }
-    // Kiểm tra định dạng mật khẩu mới
-    const newPasswordErrors = validateNewPassword(newPassword);
-    errors = errors.concat(newPasswordErrors);
+    errors = errors.concat(validateNewPassword(newPassword));
     return errors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Kiểm tra các trường nhập liệu
     const errors = validateFields();
     if (errors.length > 0) {
       setMessage(errors.join(" "));
@@ -84,9 +81,7 @@ const ChangePassword = () => {
         setMessage("Thay đổi mật khẩu thành công");
         setMessageType("success");
       } else {
-        setMessage(
-          data.message || "Cập nhật mật khẩu thất bại. Vui lòng nhập lại."
-        );
+        setMessage(data.message || "Cập nhật mật khẩu thất bại.");
         setMessageType("danger");
       }
     } catch (error) {
@@ -134,13 +129,18 @@ const ChangePassword = () => {
             required
           />
         </Form.Group>
-        <Button variant="primary" type="submit" disabled={loading}>
-          {loading ? (
-            <Spinner animation="border" size="sm" />
-          ) : (
-            "Thay đổi mật khẩu"
-          )}
-        </Button>
+        <div className="d-flex justify-content-between">
+          <Button variant="secondary" onClick={() => navigate(-1)}>
+            Quay lại
+          </Button>
+          <Button variant="primary" type="submit" disabled={loading}>
+            {loading ? (
+              <Spinner animation="border" size="sm" />
+            ) : (
+              "Thay đổi mật khẩu"
+            )}
+          </Button>
+        </div>
       </Form>
     </Container>
   );

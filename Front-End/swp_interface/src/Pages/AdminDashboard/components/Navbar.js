@@ -114,7 +114,7 @@ const CustomNavbar = () => {
       <div className="dropdown me-3">
         <button
           type="button"
-          className="btn position-relative text-white"
+          className="btn position-relative text-white border border-light"
           id="notificationDropdown"
           data-bs-toggle="dropdown"
           aria-expanded="false"
