@@ -4,6 +4,7 @@ import org.group5.swp391.dto.employee.CustomerUpdateRequest;
 import org.group5.swp391.dto.employee.EmployeeCustomerDTO;
 import org.group5.swp391.entity.Customer;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,4 +16,5 @@ public interface CustomerService {
     public Customer updateCustomer(String customerId, Customer updatedCustomer);
     public Customer InvoiceUpdateCustomer(String phoneNumber, CustomerUpdateRequest updatedCustomer);
     Customer createCustomer(EmployeeCustomerDTO customerDTO);
+    public List<EmployeeCustomerDTO> getCustomerForDebt();
 }

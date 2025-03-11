@@ -1,14 +1,30 @@
 import { Button, Select, Form, Input, Row, Col, DatePicker } from 'antd';
+import dayjs from 'dayjs';
+
 function Filter(props){
-    const { params, setParams } = props;
-    const onFormChange = (changedValues, allValues) =>{
+    const { params, setParams, store } = props;
+    
+    const onFormChange = (changedValues, allValues) => {
       const filterParams = Object.fromEntries(
-        Object.entries(allValues).filter(([_, value]) => value !== undefined)
+        Object.entries(allValues).filter(
+          ([_, value]) => value !== undefined && value !== null && 
+          (typeof value !== 'string' || value.trim() !== '')
+        )
       );
+    
+      if (filterParams.startCreatedAt) {
+        filterParams.startCreatedAt = dayjs(filterParams.startCreatedAt).format('YYYY-MM-DD');
+      }
+    
+      if (filterParams.endCreatedAt) {
+        filterParams.endCreatedAt = dayjs(filterParams.endCreatedAt).format('YYYY-MM-DD');
+      }
+    
       const queryString = new URLSearchParams(filterParams).toString();
       console.log(queryString);
-      setParams(allValues)
-    }
+      setParams(queryString);
+    };
+
     const options = [
       {
         value: 'POSITIVE',
@@ -31,7 +47,7 @@ function Filter(props){
           </Col>
           <Col span={2}>
             <Form.Item label="Debt Type" name="type">
-              <Select options={options}/>
+              <Select allowClear options={options}/>
             </Form.Item>
           </Col>
           <Col span={2}>
@@ -44,24 +60,34 @@ function Filter(props){
               <Input type='number'/>
             </Form.Item>
           </Col>
-          <Col span={4}>
+          <Col span={3}>
             <Form.Item label="Customer" name="customerName">
               <Input />
             </Form.Item>
           </Col>
-          <Col span={4}>
-            <Form.Item label="Store" name="storeName">
+          <Col span={3}>
+            <Form.Item label="Store" name="storeId">
+              <Select allowClear options={store}/>
+            </Form.Item>
+          </Col>
+
+          <Col span={2}>
+            <Form.Item label="Created By" name="createdBy">
               <Input />
             </Form.Item>
           </Col>
+
           <Col span={3}>
             <Form.Item label="Created From" name="startCreatedAt">
-              <DatePicker />
+              <DatePicker format="YYYY-MM-DD" 
+                  onChange={(date, dateString) => console.log(dateString)}  
+              />
             </Form.Item>
           </Col>
           <Col span={3}>
             <Form.Item label="Created To" name="endCreatedAt">
-              <DatePicker />
+              <DatePicker format="YYYY-MM-DD" 
+                  onChange={(date, dateString) => console.log(dateString)}  />
             </Form.Item>
           </Col>
         </Row>

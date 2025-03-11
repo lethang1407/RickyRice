@@ -1,5 +1,7 @@
 package org.group5.swp391.repository;
 
+import org.group5.swp391.dto.employee.EmployeeCustomerDTO;
+import org.group5.swp391.dto.employee.EmployeeCustomerDTO;
 import org.group5.swp391.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,4 +26,10 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
     List<Customer> findAllWithPhoneNumberInList( @Param("phoneNumber") String phoneNumber,
                                                  @Param("id")String storeId);
     Customer findByPhoneNumber(String phoneNumber);
+
+    @Query("""
+    SELECT new org.group5.swp391.dto.employee.EmployeeCustomerDTO(c.id, c.name, c.phoneNumber) FROM Customer c
+    WHERE ( c.store.id IN (:storeList))
+    """)
+    public List<EmployeeCustomerDTO> getCustomersForDebts(List<String> storeList);
 }

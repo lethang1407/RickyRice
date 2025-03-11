@@ -15,6 +15,7 @@ import org.group5.swp391.entity.Customer;
 import org.group5.swp391.entity.Store;
 import org.group5.swp391.repository.CustomerRepository;
 import org.group5.swp391.repository.StoreRepository;
+import org.group5.swp391.utils.CurrentUserDetails;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,8 +29,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -165,6 +166,12 @@ public class CustomerServiceImpl implements CustomerService {
             log.error("Error creating customer: {}", ex.getMessage(), ex);
             throw new RuntimeException("Không thể tạo khách hàng: " + ex.getMessage());
         }
+    }
+
+    @Override
+    public List<EmployeeCustomerDTO> getCustomerForDebt() {
+        List<String> storeList = CurrentUserDetails.getCurrentStores();
+        return customerRepository.getCustomersForDebts(storeList);
     }
 
     public String capitalizeFirstLetters(String input) {

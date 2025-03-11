@@ -16,6 +16,7 @@ import java.util.List;
 @Repository("storeOwnerProductRepository")
 public interface ProductRepository extends JpaRepository<Product, String> {
     Page<Product> findAll(Pageable pageable);
+
     Page<Product> findByStoreInAndNameContainingIgnoreCase(Collection<Store> stores, String name, Pageable pageable);
    //minh
    @Query("SELECT s FROM Product s WHERE s.store.id = :id " +
@@ -32,6 +33,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     @Query("Select s from Product  s where s.category.id = ?1")
     List<Product> findAllByCategoryId(String categoryId);
+
     @Query("Select s from Product s where s.category.id = :categoryId")
     Page<Product> findAllByCategoryId(Pageable pageable,String categoryId);
 

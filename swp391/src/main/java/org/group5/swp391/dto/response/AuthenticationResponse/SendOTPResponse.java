@@ -13,4 +13,5 @@ public class SendOTPResponse {
     private String username;
     private String email;
     private Boolean isValid;
+    private Boolean otpNotExpired;
 }
