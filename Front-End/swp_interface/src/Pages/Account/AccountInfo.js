@@ -67,7 +67,7 @@ const AccountInfo = () => {
       const data = await response.json();
       if (data.code === 200) {
         const newAvatarUrl = data.data;
-        const updateResponse = await fetch(API.ACCOUNT.GET_UPDATE_ACCOUNT, {
+        const updateResponse = await fetch(API.ACCOUNT.UPDATE_ACCOUNT, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",

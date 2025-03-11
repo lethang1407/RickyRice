@@ -88,7 +88,7 @@ const InvoiceDetail = () => {
                 form.resetFields();
                 openNotificationWithIcon('success', 'Thành công', 'Cập Nhật khách hàng thành công!');
             }).catch(() => {
-                openNotificationWithIcon('error', 'Thất Bại', 'Số điện thoại đang bị trùng , không gửi dữ liệu được đến backend nha ');
+                openNotificationWithIcon('error', 'Thất Bại', 'Số điện thoại không tìm được hoặc đang bị trùng ');
             });
         }).catch(() => {
             openNotificationWithIcon('error', 'Thất Bại', 'Validation Form diii onichan');

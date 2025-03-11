@@ -73,7 +73,7 @@ const InvoiceCustomerCreate = ({ onCustomerCreated }) => {
             //     openNotificationWithIcon('error', 'Lỗi', 'Kiểm tra lại value phone hoặc email trùng nha onichang, Không gửi dữ liệu được đến backend nha onichan');
             // }
         } catch (error) {
-            openNotificationWithIcon('error', 'Thất Bại', 'Valid Kiểm tra lại value phone hoặc email nha onichang, Không gửi dữ liệu được đến backend');
+            openNotificationWithIcon('error', 'Thất Bại', 'Valid Kiểm tra lại value phone hoặc email, Không gửi dữ liệu được đến backend');
         }
     };
 
@@ -122,7 +122,7 @@ const InvoiceCustomerCreate = ({ onCustomerCreated }) => {
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'onichan, nhập tên khách hàng di',
+                                        message: 'Nhập tên khách hàng di',
                                     },
                                 ]}
                             >
@@ -140,7 +140,7 @@ const InvoiceCustomerCreate = ({ onCustomerCreated }) => {
                                     },
                                     {
                                         pattern: /^0\d{9}$/,
-                                        message: 'Vui lòng nhập 10 số và bắt đầu từ 0 nha onichan',
+                                        message: 'Vui lòng nhập 10 số và bắt đầu từ 0',
                                     }
                                 ]}
                             >
@@ -162,7 +162,7 @@ const InvoiceCustomerCreate = ({ onCustomerCreated }) => {
                                 rules={[
                                     {
                                         type: 'email',
-                                        message: 'Email không đúng định dạng onichan oi ',
+                                        message: 'Email không đúng định dạng',
                                     }
                                 ]}
                             >

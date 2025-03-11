@@ -1,58 +1,90 @@
 body {
-  background: #eee
-}
-
-.ratings i {
-  font-size: 16px;
-  color: red
-}
-
-.strike-text {
-  color: red;
-  text-decoration: line-through
-}
-
-.product-image {
-  width: 100%
-}
-
-.dot {
-  height: 7px;
-  width: 7px;
-  margin-left: 6px;
-  margin-right: 6px;
-  margin-top: 3px;
-  background-color: blue;
-  border-radius: 50%;
-  display: inline-block
-}
-
-.spec-1 {
-  color: #938787;
-  font-size: 15px
-}
-
-h5 {
-  font-weight: 400
-}
-
-.para {
-  font-size: 16px
+  background-color: white !important;
 }
 
 .container-all {
-  margin-top: 200px;
-}
-
-.search {
   display: flex;
+  gap: 40px;
+  margin: 100px 300px 100px 300px;
 }
 
-.search button {
-  border-radius: 5px;
-  border: 1px solid #ccc;
+.banner {
+  position: relative;
+  width: 100%; /* Chiều rộng toàn màn hình */
+  height: 350px; /* Điều chỉnh chiều cao theo mong muốn */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
-.search input {
-  padding: 0px !important;
+.banner img { 
+  width: 100%;
+  height: 100%;
+}
+
+.banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4); /* Lớp phủ tối nhẹ giúp chữ nổi bật */
+}
+
+.home {
+  margin: 100px 300px;
+  border-bottom: 2px solid #e1e1e1;
+}
+
+.home a {
+  text-decoration: none;
+  color: black;
+}
+
+.home a:hover {
+  color: #198754;
+  
+}
+
+.div1 {
+  width: 20%;
+}
+
+.div2 {
+  width: 80%;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.container-product {
+  border-radius: 10px;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+  padding: 10px ;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.container-product:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.container-pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.sortBy p:hover {
+  cursor: pointer;
+  color: #198754;
+}
+
+.categoryFilter p:hover {
+  cursor: pointer;
+  color: #198754;
 }

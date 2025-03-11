@@ -8,6 +8,7 @@ import org.group5.swp391.dto.customer_requirement.CustomerProductDTO;
 import org.group5.swp391.dto.employee.EmployeeProductDTO;
 import org.group5.swp391.dto.store_owner.all_product.StoreProductAttributeDTO;
 import org.group5.swp391.dto.store_owner.all_product.StoreProductDTO;
+import org.group5.swp391.dto.store_owner.store_detail.StoreDetailProductDTO;
 import org.group5.swp391.entity.Account;
 import org.group5.swp391.entity.Employee;
 import org.group5.swp391.entity.Product;
@@ -169,7 +170,7 @@ public class ProductServiceImpl implements ProductService {
         Pageable pageable = PageRequest.of(page, size, sort);
         if (name.equals("") || name.isEmpty()) {
             name = null;
-        }else {
+        } else {
             name = name.toLowerCase();
             name = capitalizeFirstLetters(name);
             System.out.println(name);
@@ -190,7 +191,7 @@ public class ProductServiceImpl implements ProductService {
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
         if (name.equals("") || name.isEmpty()) {
             name = null;
-        }else {
+        } else {
             name = name.toLowerCase();
             name = capitalizeFirstLetters(name);
         }
@@ -198,7 +199,6 @@ public class ProductServiceImpl implements ProductService {
         return productPage.stream().map(productConverter::toEmployeeProductDTO).collect(Collectors.toList());
 
     }
-
 
     // Hieu
     @Override
@@ -218,12 +218,80 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<CustomerProductDTO> searchProductsQuery(String querySearchName, Double minPrice, Double maxPrice, int page, int size, String sortBy, boolean descending) {
+    public Page<StoreDetailProductDTO> getAllProductsByStoreID(String search, String storeID, int page, int size, String sortBy, boolean descending) {
+        Sort sort = descending
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        List<StoreDetailProductDTO> productPages;
+        if (search == null || search.isEmpty()) {
+            List<Product> products = productRepository.findProductsByStoreID(storeID, pageable);
+            productPages = products.stream().map(productConverter::toStoreDetailProductDTO).collect(Collectors.toList());
+        } else {
+            List<Product> filteredProducts = productRepository.findProductsByInformationAndNameContainingIgnoreCase(search, storeID, pageable);
+            productPages = filteredProducts.stream().map(productConverter::toStoreDetailProductDTO).collect(Collectors.toList());
+        }
+        return new PageImpl<>(productPages, pageable, (productPages.size() + 1));
+    }
+
+    @Override
+    public Page<CustomerProductDTO> searchProductsQuery(String querySearchName, Double minPrice, Double maxPrice, int page, int size, String sortBy, boolean descending, String categoryID) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        List<Product> products = productRepository.findByNameContainingAndPriceBetween(querySearchName, minPrice, maxPrice, pageable);
-        List<CustomerProductDTO> productPages = products.stream().map(productConverter::toCustomerProductDTO).collect(Collectors.toList());
+        List<Product> products = productRepository
+                .findByNameContainingAndPriceBetween(querySearchName, minPrice, maxPrice, pageable);
+        List<CustomerProductDTO> productPages;
+        if (categoryID != null && !categoryID.isEmpty()) {
+            productPages = productRepository.findAllByCategoryId(categoryID).stream()
+                    .map(productConverter::toCustomerProductDTO).collect(Collectors.toList());
+        } else {
+            productPages = products.stream()
+                    .map(productConverter::toCustomerProductDTO).collect(Collectors.toList());
+        }
         return new PageImpl<>(productPages, pageable, (products.size() + 1));
+    }
+
+    @Override
+    public void addProduct(String storeID, StoreDetailProductDTO storeDetailProductDTO) throws Exception {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || !auth.isAuthenticated()) {
+                throw new Exception("Not authenticated");
+            }
+            String username = auth.getName();
+            Account account = accountRepository.findByUsername(username)
+                    .orElseThrow(() -> new Exception("Account not found for username: " + username));
+            List<Store> stores = storeRepository.findByStoreAccount(account);
+            String storeList = new String();
+            for (Store store : stores) {
+                storeList += store.getId() + " ";
+            }
+            if (!storeList.contains(storeID)) {
+                throw new Exception("Store not found for id: " + storeID);
+            }
+
+            Product newProduct = new Product();
+
+            Category cateExisting = categoryRepository.findCategoryById(storeDetailProductDTO.getStoreDetailCategoryDTO().getId());
+            if (cateExisting == null) {
+                throw new Exception("Category does not exist");
+            }
+
+            Store storeExisting = storeRepository.findById(storeID)
+                    .orElseThrow(() -> new Exception("Store not found for ID: " + storeID));
+
+            newProduct.setName(storeDetailProductDTO.getName());
+            newProduct.setPrice(storeDetailProductDTO.getPrice());
+            newProduct.setInformation(storeDetailProductDTO.getInformation());
+            newProduct.setCategory(cateExisting);
+            newProduct.setStore(storeExisting);
+            newProduct.setQuantity(storeDetailProductDTO.getQuantity());
+            newProduct.setProductImage(storeDetailProductDTO.getProductImage());
+            System.out.println(newProduct.toString());
+            productRepository.save(newProduct);
+        } catch (Exception e) {
+            throw new Exception("Failed to save product: " + e.getMessage());
+        }
     }
 
     //hàm cắt chuỗi in hoa chữ đầu cho mọi người

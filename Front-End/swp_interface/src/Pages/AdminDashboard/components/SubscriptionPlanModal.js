@@ -86,7 +86,7 @@ const SubscriptionPlanModal = ({
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Giá tiền ($)</label>
+                <label className="form-label">Giá tiền (VNĐ)</label>
                 <input
                   type="number"
                   className={`form-control ${errors.price ? "is-invalid" : ""}`}

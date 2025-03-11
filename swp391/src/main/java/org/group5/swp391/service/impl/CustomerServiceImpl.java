@@ -109,6 +109,11 @@ public class CustomerServiceImpl implements CustomerService {
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
         System.out.println("tai sao nhi" + a.getEmployeeAccount().getName());
         Customer existingCustomer = customerRepository.findById(customerId).orElseThrow();
+        if(existingCustomer!=null) {
+            if(!existingCustomer.getName().equals(updatedCustomer.getName())) {
+                throw new IllegalArgumentException("Số điện thoại này là của khách hàng khác");
+            }
+        }
         existingCustomer.setCreatedBy(username);
         existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
@@ -129,6 +134,13 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
         Customer existingCustomer = customerRepository.findByPhoneNumber(phoneNumber);
+        System.out.println(existingCustomer.getName());
+        System.out.println(updatedCustomer.getName());
+        if(existingCustomer!=null) {
+            if(!existingCustomer.getName().equals(updatedCustomer.getName())) {
+                throw new IllegalArgumentException("Số điện thoại này là của khách hàng khác");
+            }
+        }
         validatePhoneNumber(updatedCustomer.getPhoneNumberNew());
         existingCustomer.setCreatedBy(username);
         existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));

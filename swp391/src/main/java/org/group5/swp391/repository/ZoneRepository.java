@@ -28,4 +28,14 @@ public interface ZoneRepository extends JpaRepository<Zone, String> {
     Page<Zone> findByNameAndLocationIgnoreCase(String search, Pageable pageable);
 
     List<Zone> findByStoreId(String storeId);
+
+    @Query("SELECT z FROM Zone z WHERE z.store.id = :storeID")
+    Page<Zone> findZonesByStore_StoreID(String storeID, Pageable pageable);
+
+    @Query("SELECT z FROM Zone z WHERE z.store.id = :storeID AND ( z.name LIKE %:search% OR z.product.information LIKE %:search%)")
+    Page<Zone> findZoneByNameAndInformationContainsIgnoreCase(String storeID, String search, Pageable pageable);
+
+    Zone findZoneById(String id);
+
+    Zone getZoneById(String id);
 }

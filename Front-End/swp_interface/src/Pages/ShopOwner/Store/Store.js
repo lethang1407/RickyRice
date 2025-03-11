@@ -97,7 +97,7 @@ const Store = () => {
                     {data && data.map((store) => (
                         <StoreCard
                             key={store.storeID} // Sử dụng storeID làm key
-                            urlStore={`/store/${store.storeID}`} // Đường dẫn
+                            urlStore={`/store/${store.storeID}/zone`} // Đường dẫn
                             storeName={store.storeName} // Tên cửa hàng
                             storeStatus={store.status === 'ACTIVE' ? 'Active' : 'Inactive'} // Trạng thái
                             urlImg={store.imageUrl || 'https://via.placeholder.com/150'} // Ảnh mặc định nếu không có ảnh

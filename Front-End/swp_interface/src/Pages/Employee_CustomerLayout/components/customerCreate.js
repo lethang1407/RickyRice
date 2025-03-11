@@ -121,7 +121,7 @@ const CustomerIN4Create = () => {
                         { required: true, message: 'Vui lòng nhập số điện thoại!' },
                         {
                             pattern: /^0\d{9}$/,
-                            message: 'Vui lòng nhập 10 số và bắt đầu từ 0 nha onichan',
+                            message: 'Vui lòng nhập 10 số và bắt đầu từ 0',
                         }
                     ]}
                 >

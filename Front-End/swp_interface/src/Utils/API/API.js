@@ -26,6 +26,7 @@ const API = {
   },
   CUSTOMER: {
     GET_ALL_PRODUCT: `${API_BASE_URL}/store/products`,
+    GET_ALL_CATEGORY: `${API_BASE_URL}/store/categories`
   },
   EMPLOYEE: {
     GET_ALL_CUSTOMER: `${API_BASE_URL}/employee/customers`,
@@ -64,6 +65,13 @@ const API = {
     UPLOAD_EMPLOYEE_AVATAR: `${API_BASE_URL}/store-owner/employee/upload-image`,
     UPDATE_STORE_EMPLOYEE: `${API_BASE_URL}/store-owner/employee/update`,
     DELETE_STORE_EMPLOYEE: `${API_BASE_URL}/store-owner/employee/delete`
+  },
+  STORE_DETAIL: {
+    GET_STORE_ZONES: `${API_BASE_URL}/store-detail/zones`,
+    GET_STORE_PRODUCTS_BY_STOREID: `${API_BASE_URL}/store-detail/products`,
+    UPDATE_STORE_ZONE: (id) => `${API_BASE_URL}/store-detail/zones/${id}`,
+    GET_ZONE_ID: `${API_BASE_URL}/store-detail/get-zone`,
+    GET_CATEGORIES_BY_STOREID: `${API_BASE_URL}/store-detail/categories`,
   },
   AUTH: {
     LOGIN: `${API_BASE_URL}/auth/login`,
