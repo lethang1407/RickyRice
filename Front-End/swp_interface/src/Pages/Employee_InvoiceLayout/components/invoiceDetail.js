@@ -326,7 +326,7 @@ const InvoiceDetail = () => {
             return;
         }
         if (!activeKey || items.length === 0) {
-            setErrorMessage("Chưa có tab nào để thêm sản phẩm nha bro");
+            setErrorMessage("Chưa có tab nào để thêm sản phẩm nha");
             return;
         }
         if (!selectedProduct.productID || !selectedProduct.label || !selectedProduct.price) {
