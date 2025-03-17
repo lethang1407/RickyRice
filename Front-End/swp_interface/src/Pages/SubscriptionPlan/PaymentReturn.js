@@ -47,12 +47,7 @@ export default function PaymentReturn() {
           throw new Error("Không nhận được dữ liệu giao dịch.");
         }
 
-        let parsedData;
-        try {
-          parsedData = JSON.parse(data.data);
-        } catch {
-          throw new Error("Lỗi khi xử lý dữ liệu giao dịch.");
-        }
+        const parsedData = data.data;
 
         if (parsedData.vnp_ResponseCode === "94") {
           setError("Vui lòng kiểm tra giao dịch của bạn sau ít phút nữa.");

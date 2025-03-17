@@ -35,4 +35,9 @@ public class AppStatisticsServiceServiceImpl implements AppStatisticsService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    // lấy danh sách giao dich có StoreID null
+    public List<String> getTransactionNosWithNullStore() {
+        return appStatisticsRepository.findTransactionNosWithNullStore();
+    }
 }

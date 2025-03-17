@@ -1,5 +1,6 @@
 package org.group5.swp391.service.impl;
 
+import com.nimbusds.jose.shaded.gson.Gson;
 import com.nimbusds.jose.shaded.gson.JsonObject;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +9,6 @@ import org.group5.swp391.entity.SubscriptionPlan;
 import org.group5.swp391.repository.SubscriptionPlanRepository;
 import org.group5.swp391.service.VNPayService;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -25,6 +25,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class VNPayServiceImpl implements VNPayService {
     private final SubscriptionPlanRepository subscriptionPlanRepository;
+
 
     // tạo yêu cầu thanh toán đến VN Pay
     public String createPayment(HttpServletRequest request, double amount, String subscriptionPlanId) throws UnsupportedEncodingException {
@@ -118,13 +119,13 @@ public class VNPayServiceImpl implements VNPayService {
     }
 
     // truy xuất giao dịch VNPay từ TxnRef và PayDate
-    public String queryPayment(String vnp_TxnRef, String vnp_TransDate, HttpServletRequest req) {
+    public Map<String, Object> queryPayment(String vnp_TxnRef, String vnp_TransDate, HttpServletRequest req) {
         try {
             String vnp_RequestId = VNPayConfig.getRandomNumber(8);
             String vnp_Version = "2.1.0";
             String vnp_Command = "querydr";
             String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
-            String vnp_OrderInfo = "Kiem tra ket qua GD OrderId:" + vnp_TxnRef;
+            String vnp_OrderInfo = "Kiem tra ket qua GD OrderId: " + vnp_TxnRef;
 
             Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
             SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -159,10 +160,6 @@ public class VNPayServiceImpl implements VNPayService {
             wr.close();
 
             int responseCode = con.getResponseCode();
-            System.out.println("Sending 'POST' request to URL: " + url);
-            System.out.println("Post Data: " + vnp_Params);
-            System.out.println("Response Code: " + responseCode);
-
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             StringBuilder response = new StringBuilder();
             String output;
@@ -171,9 +168,11 @@ public class VNPayServiceImpl implements VNPayService {
             }
             in.close();
 
-            return response.toString();
+            // Chuyển đổi JSON String thành Map<String, Object>
+            return new Gson().fromJson(response.toString(), Map.class);
         } catch (Exception e) {
-            return "Error: " + e.getMessage();
+            return Map.of("error", e.getMessage());
         }
     }
 }
+
