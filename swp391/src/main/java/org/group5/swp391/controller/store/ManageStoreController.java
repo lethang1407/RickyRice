@@ -3,7 +3,6 @@ package org.group5.swp391.controller.store;
 import jakarta.validation.Valid;
 import org.group5.swp391.dto.request.store_request.StoreRequest;
 import org.group5.swp391.dto.response.store_response.StoreResponse;
-import org.group5.swp391.service.AppStatisticsService;
 import org.group5.swp391.service.StoreService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.group5.swp391.dto.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestClient;
 
 
 import java.util.List;
@@ -24,27 +22,6 @@ import java.util.Map;
 public class ManageStoreController {
 
     private final StoreService storeService;
-    private final AppStatisticsService appStatisticsService;
-    private final RestClient.Builder builder;
-
-    // Tra cứu lịch sử giao dịch để tạo cửa hàng mới
-    @PostMapping("/payment-create-store")
-    public ApiResponse<Map<String, Object>> paymentCreateStore(
-            @RequestParam("order_id") String vnp_TxnRef,
-            @RequestParam("trans_date") String vnp_TransDate,
-            HttpServletRequest req) {
-
-        // Lấy username từ JWT
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Map<String, Object> transaction = storeService.paymentCreateStore(username, vnp_TxnRef, vnp_TransDate, req);
-
-        // Trả về response với thông báo thành công
-        return ApiResponse.<Map<String, Object>>builder()
-                .code(HttpStatus.OK.value())
-                .message("Success")
-                .data(transaction)
-                .build();
-    }
 
     // Tạo cửa hàng mới
     @PostMapping("/create-store/{transaction}")
@@ -53,19 +30,57 @@ public class ManageStoreController {
         StoreResponse createdStore = storeService.createNewStore(request, transaction, username);
         return ApiResponse.<StoreResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Success")
+                .message("Create store Success")
                 .data(createdStore)
                 .build();
     }
 
     // Danh sách những yêu cầu tạo cửa hàng mới được xử lí
     @GetMapping("/request-store")
-    public ApiResponse<List<String>> requestStore() {
-        List<String> listStoreNull = appStatisticsService.getTransactionNosWithNullStore();
-        return ApiResponse.<List<String>>builder()
+    public ApiResponse<List<Map<String, Object>>> requestStore() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Map<String, Object>> stores = storeService.getRequestCreateStores(username);
+        return ApiResponse.<List<Map<String, Object>>>builder()
                 .code(HttpStatus.OK.value())
-                .message("Success")
-                .data(listStoreNull)
+                .message("Request store success")
+                .data(stores)
+                .build();
+    }
+
+    // Xử lí thanh toán tạo cửa hàng và cập nhật thời hạn
+    @GetMapping("/handle-payment")
+    public ApiResponse<String> handlePayment(@RequestParam("order_id") String vnp_TxnRef, @RequestParam("trans_date") String vnp_TransDate,
+                                             HttpServletRequest req) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String transaction = storeService.handlePayment(username, vnp_TxnRef, vnp_TransDate, req);
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
+                .message("Payment success")
+                .data(transaction)
+                .build();
+    }
+
+    // Cập nhật thông tin cửa hàng
+    @PatchMapping("/update-store/{storeID}")
+    public ApiResponse<StoreResponse> updateStoreInfor(@PathVariable String storeID, @RequestBody @Valid StoreRequest request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        StoreResponse updateRespone = storeService.updateStoreInfor(storeID, request, username);
+        return ApiResponse.<StoreResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Update store success")
+                .data(updateRespone)
+                .build();
+    }
+
+    // Lấy thông tin của 1 Store theo ID
+    @GetMapping("/get-store/{storeID}")
+    public ApiResponse<StoreResponse> getStoreInfo(@PathVariable String storeID) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        StoreResponse store = storeService.getStoreById(storeID, username);
+        return ApiResponse.<StoreResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get information store success")
+                .data(store)
                 .build();
     }
 }

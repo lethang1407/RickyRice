@@ -20,7 +20,7 @@ public interface AppStatisticsRepository extends JpaRepository<AppStatistics, St
 
     // Kiểm tra tồn tại mã giao dịch
     boolean existsByTransactionNo(String transactionNo);
-    
+
     // Lấy danh sách các TransactionNo có StoreID là null
     @Query("SELECT a.transactionNo FROM AppStatistics a WHERE a.store IS NULL")
     List<String> findTransactionNosWithNullStore();
@@ -30,4 +30,10 @@ public interface AppStatisticsRepository extends JpaRepository<AppStatistics, St
 
     // Lấy giao dịch theo TransactionNo
     Optional<AppStatistics> findByTransactionNo(String transactionNo);
+
+    // Lấy mã giao dịch và gói dịch vụ của Owner theo username
+    @Query("SELECT a.transactionNo, a.subcriptionTimeOfExpiration FROM AppStatistics a WHERE a.store IS NULL AND a.createdBy = :username")
+    List<Object[]> findTransactionAndExpirationWithNullStoreAndCreatedBy(String username);
+
+
 }

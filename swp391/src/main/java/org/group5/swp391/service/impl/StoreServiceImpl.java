@@ -6,13 +6,13 @@ import lombok.RequiredArgsConstructor;
 import org.group5.swp391.converter.StoreConverter;
 import org.group5.swp391.dto.request.store_request.StoreRequest;
 import org.group5.swp391.dto.response.AdminResponse.ViewStoreResponse;
+import org.group5.swp391.dto.response.account_response.AccountResponse;
 import org.group5.swp391.dto.response.store_response.StoreResponse;
 import org.group5.swp391.dto.store_owner.all_store.StoreInfoDTO;
 import org.group5.swp391.entity.*;
 import org.group5.swp391.exception.AppException;
 import org.group5.swp391.exception.ErrorCode;
 import org.group5.swp391.repository.*;
-import org.group5.swp391.service.AccountService;
 import org.group5.swp391.service.StoreService;
 import org.group5.swp391.service.SubscriptionPlanService;
 import org.group5.swp391.service.VNPayService;
@@ -24,10 +24,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -92,48 +91,18 @@ public class StoreServiceImpl implements StoreService {
                 .toList();
     }
 
-    // Xử lí dữ liệu trả về để tạo cửa hàng mới
+    // xử lí dữ liệu trả về để tạo cửa hàng mới
     @Transactional
-    public Map<String, Object> paymentCreateStore(String username, String vnp_TxnRef, String vnp_TransDate, HttpServletRequest req) {
-        // Gọi VNPay API để truy vấn giao dịch
-        Map<String, Object> transaction = vnPayService.queryPayment(vnp_TxnRef, vnp_TransDate, req);
+    public String paymentCreateStore(String username, String vnp_TransactionNo, double amount) {
 
-        // Kiểm tra nếu VNPay trả về lỗi
-        if (transaction.containsKey("error")) {
-            transaction.put("status", HttpStatus.BAD_REQUEST.value());
-            transaction.put("message", "Failed to retrieve payment history: " + transaction.get("error"));
-            return transaction;
-        }
-
-        // Kiểm tra vnp_ResponseCode (chỉ xử lý nếu == "00")
-        String vnp_ResponseCode = (String) transaction.getOrDefault("vnp_ResponseCode", "99");
-        if (!"00".equals(vnp_ResponseCode)) {
-            transaction.put("status", HttpStatus.BAD_REQUEST.value());
-            transaction.put("message", "vnp_ResponseCode: " + vnp_ResponseCode);
-            return transaction;
-        }
-
-        // Lấy `vnp_TransactionNo` từ response VNPay (nếu có)
-        String vnp_TransactionNo = (String) transaction.getOrDefault("vnp_TransactionNo", "UNKNOWN");
-
-        // Kiểm tra nếu giao dịch đã tồn tại trong appStatistics
-        if (appStatisticsRepository.existsByTransactionNo(vnp_TransactionNo)) {
-            transaction.put("status", HttpStatus.OK.value());
-            transaction.put("message", "Transaction already recorded.");
-            return transaction;
-        }
-
-        // Lấy số tiền từ VNPay response (nếu có)
-        String vnp_Amount = String.valueOf(transaction.getOrDefault("vnp_Amount", null));
-        double amount = Double.parseDouble(vnp_Amount) / 100;
-
-        String message = "Bạn đã thanh toán " + amount + " thành công. Vui lòng thực hiện tạo cửa hàng mới trong 30 ngày từ khi hoàn tất thanh toán.";
+        NumberFormat nf = NumberFormat.getInstance(new Locale("vi", "VN"));
+        String message = "Bạn đã thanh toán " + nf.format(amount) + " thành công.";
 
         // Tạo thông báo thanh toán thành công
         Notification notification = new Notification();
         Account account = accountRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         notification.setTargetAccount(account);
-        notification.setCreatedBy("Admin");
+        notification.setCreatedBy("admin");
         notification.setIsRead(false);
         notification.setMessage(message);
         notificationRepository.save(notification);
@@ -147,11 +116,10 @@ public class StoreServiceImpl implements StoreService {
         appStatistics.setSubcriptionTimeOfExpiration(subscriptionPlanService.getSubscriptionPlanByPrice(amount).getTimeOfExpiration());
         appStatisticsRepository.save(appStatistics);
 
-        transaction.put("status", HttpStatus.OK.value());
-        return transaction;
+        return message;
     }
 
-    // Tạo cửa hàng mới
+    // tạo cửa hàng mới
     @Transactional
     public StoreResponse createNewStore(StoreRequest request, String transactionNo, String username) {
         // Kiểm tra transactionNo trong app_statistics
@@ -200,6 +168,14 @@ public class StoreServiceImpl implements StoreService {
         appStatistics.setStore(newStore);
         appStatisticsRepository.save(appStatistics);
 
+        // Tạo thông báo thanh toán thành công
+        Notification notification = new Notification();
+        notification.setTargetAccount(account);
+        notification.setCreatedBy("admin");
+        notification.setIsRead(false);
+        notification.setMessage("Tạo cửa hàng thành công.");
+        notificationRepository.save(notification);
+
         return StoreResponse.builder()
                 .storeID(savedStore.getId())
                 .storeName(savedStore.getStoreName())
@@ -211,4 +187,190 @@ public class StoreServiceImpl implements StoreService {
                 .image(savedStore.getImage())
                 .build();
     }
+
+    // cập nhật thời hạn cho cửa hàng
+    @Transactional
+    public String updateStoreExpiration(String username, String storeID, double amount, String vnp_TransactionNo) {
+
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Tài khoản không tồn tại."));
+
+        if (storeID == null) {
+            throw new IllegalArgumentException("Không tìm thấy storeID trong vnp_OrderInfo.");
+        }
+
+        // Tìm cửa hàng theo storeID
+        Store store = storeRepository.findById(storeID)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+
+        // Kiểm tra cửa hàng có thuộc người dùng không
+        if (!store.getStoreAccount().equals(account)) {
+            throw new IllegalArgumentException("Cửa hàng không thuộc quyền sở hữu của người dùng.");
+        }
+
+        // Lấy thông tin gói đăng ký của cửa hàng
+        SubscriptionPlan subscriptionPlan = subscriptionPlanService.getSubscriptionPlanByPrice(amount);
+        if (subscriptionPlan == null) {
+            throw new IllegalArgumentException("Gói đăng ký không phù hợp.");
+        }
+
+        // Cập nhật expire_at dựa trên thời gian hết hạn của gói đăng ký
+        Integer subscriptionTime = subscriptionPlan.getTimeOfExpiration();
+        if (subscriptionTime == null) {
+            throw new IllegalArgumentException("Thời hạn gói đăng ký không hợp lệ.");
+        }
+
+        store.setExpireAt(LocalDateTime.now().plusMonths(subscriptionTime));
+        storeRepository.save(store);
+
+        String message = "Cập nhật ngày hết hạn thành công cho cửa hàng " + store.getStoreName();
+
+        // Tạo thông báo thanh toán thành công
+        Notification notification = new Notification();
+        notification.setTargetAccount(account);
+        notification.setCreatedBy("admin");
+        notification.setIsRead(false);
+        notification.setMessage(message);
+        notificationRepository.save(notification);
+
+        // Lưu lịch sử giao dịch
+        AppStatistics appStatistics = new AppStatistics();
+        appStatistics.setTransactionNo(vnp_TransactionNo);
+        appStatistics.setSubcriptionDescription(message);
+        appStatistics.setSubcriptionPlanName(subscriptionPlanService.getSubscriptionPlanByPrice(amount).getName());
+        appStatistics.setSubcriptionPlanPrice(amount);
+        appStatistics.setSubcriptionTimeOfExpiration(subscriptionPlanService.getSubscriptionPlanByPrice(amount).getTimeOfExpiration());
+        appStatistics.setStore(store);
+        appStatisticsRepository.save(appStatistics);
+
+        return message;
+    }
+
+    // xử lí cập nhật thời hạn hoặc tạo mới cửa hàng
+    @Transactional
+    public String handlePayment(String username, String vnp_TxnRef, String vnp_TransDate, HttpServletRequest req) {
+        // Gọi VNPay API để lấy thông tin giao dịch
+        Map<String, Object> transaction = vnPayService.queryPayment(vnp_TxnRef, vnp_TransDate, req);
+
+        // Kiểm tra nếu VNPay trả về lỗi
+        if (transaction.containsKey("error")) {
+            transaction.put("status", HttpStatus.BAD_REQUEST.value());
+            transaction.put("message", "Không lấy được lịch sử thanh toán: " + transaction.get("error"));
+            return "Không lấy được lịch sử thanh toán: " + transaction.get("error");
+        }
+
+        // Kiểm tra vnp_ResponseCode (chỉ xử lý nếu == "00")
+        String vnp_ResponseCode = (String) transaction.get("vnp_ResponseCode");
+        if (!"00".equals(vnp_ResponseCode)) {
+            transaction.put("status", HttpStatus.BAD_REQUEST.value());
+            transaction.put("message", "vnp_ResponseCode: " + vnp_ResponseCode);
+            return "vnp_ResponseCode: " + vnp_ResponseCode;
+        }
+
+        String vnp_TransactionStatus = (String) transaction.get("vnp_TransactionStatus");
+        if (!"00".equals(vnp_TransactionStatus)) {
+            transaction.put("status", HttpStatus.BAD_REQUEST.value());
+            transaction.put("message", "vnp_TransactionStatus: " + vnp_TransactionStatus);
+            return "Giao dịch chưa hoàn tất";
+        }
+        if ("00".equals(vnp_ResponseCode) && "00".equals(vnp_TransactionStatus)) {
+            // Trích xuất thông tin cần thiết
+            String vnp_OrderInfo = (String) transaction.get("vnp_OrderInfo");
+            String vnp_TransactionNo = (String) transaction.get("vnp_TransactionNo");
+            String vnp_Amount = (String) transaction.get("vnp_Amount");
+            double amount = Double.parseDouble(vnp_Amount) / 100;
+
+            // Kiểm tra nếu giao dịch đã tồn tại trong appStatistics
+            if (appStatisticsRepository.existsByTransactionNo(vnp_TransactionNo)) {
+                transaction.put("status", HttpStatus.OK.value());
+                transaction.put("message", "Giao dịch đã được ghi nhận.");
+                return "Giao dịch đã được ghi nhận.";
+            }
+
+            // Kiểm tra xem vnp_OrderInfo có chứa Store ID không
+            String storeID = extractStoreID(vnp_OrderInfo);
+            if (storeID == null) {
+                return paymentCreateStore(username, vnp_TransactionNo, amount);
+            } else {
+                return updateStoreExpiration(username, storeID, amount, vnp_TransactionNo);
+            }
+        } else {
+            return "Lỗi giao dịch." + "vnp_ResponseCode: " + vnp_ResponseCode + "vnp_TransactionStatus: " + vnp_TransactionStatus;
+        }
+
+    }
+
+    // trích xuất Store ID từ vnp_OrderInfo
+    private String extractStoreID(String vnp_OrderInfo) {
+        if (vnp_OrderInfo == null || !vnp_OrderInfo.contains("ID:")) {
+            return null;
+        }
+        return vnp_OrderInfo.replaceAll(".*ID:\\s*", "").trim();
+    }
+
+    // cập nhật thông tin cửa hàng
+    public StoreResponse updateStoreInfor(String storeID, StoreRequest request, String username) {
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Tài khoản không tồn tại."));
+        if (storeID == null) {
+            throw new IllegalArgumentException("Không tìm thấy storeID");
+        }
+        Store store = storeRepository.findById(storeID)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        if (!store.getStoreAccount().equals(account)) {
+            throw new IllegalArgumentException("Cửa hàng không thuộc quyền sở hữu của người dùng.");
+        }
+
+        store.setStoreName(request.getStoreName());
+        store.setAddress(request.getAddress());
+        store.setHotline(request.getHotline());
+        store.setOperatingHour(request.getOperatingHour());
+        store.setDescription(request.getDescription());
+        store.setImage(request.getImage());
+
+        Store updateStore = storeRepository.save(store);
+
+        return StoreResponse.builder()
+                .storeID(updateStore.getId())
+                .storeName(updateStore.getStoreName())
+                .address(updateStore.getAddress())
+                .hotline(updateStore.getHotline())
+                .operatingHour(updateStore.getOperatingHour())
+                .description(updateStore.getDescription())
+                .image(updateStore.getImage())
+                .expireAt(updateStore.getExpireAt())
+                .build();
+    }
+
+    // lấy danh sách những yêu cầu tạo cửa hàng mới
+    public List<Map<String, Object>> getRequestCreateStores(String username) {
+        List<Object[]> results = appStatisticsRepository.findTransactionAndExpirationWithNullStoreAndCreatedBy(username);
+        List<Map<String, Object>> response = new ArrayList<>();
+
+        for (Object[] row : results) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("transactionNo", row[0]);
+            map.put("subcriptionTimeOfExpiration", row[1]);
+            response.add(map);
+        }
+        return response;
+    }
+
+    // lấy thông tin store theo ID
+    public StoreResponse getStoreById(String storeID, String username) {
+        Store store = storeRepository.findByIdAndStoreAccount_Username(storeID, username)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+
+        return StoreResponse.builder()
+                .storeID(store.getId())
+                .storeName(store.getStoreName())
+                .address(store.getAddress())
+                .hotline(store.getHotline())
+                .operatingHour(store.getOperatingHour())
+                .description(store.getDescription())
+                .image(store.getImage())
+                .expireAt(store.getExpireAt())
+                .build();
+    }
+
 }

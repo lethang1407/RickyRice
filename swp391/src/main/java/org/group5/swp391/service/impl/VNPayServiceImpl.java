@@ -26,9 +26,8 @@ import java.util.*;
 public class VNPayServiceImpl implements VNPayService {
     private final SubscriptionPlanRepository subscriptionPlanRepository;
 
-
     // tạo yêu cầu thanh toán đến VN Pay
-    public String createPayment(HttpServletRequest request, double amount, String subscriptionPlanId) throws UnsupportedEncodingException {
+    public String createPayment(HttpServletRequest request, double amount, String subscriptionPlanId, String storeID) throws UnsupportedEncodingException {
         SubscriptionPlan plan = subscriptionPlanRepository.findByIdAndIsActiveTrue(subscriptionPlanId)
                 .orElseThrow(() -> new IllegalArgumentException("Subscription Plan not exist!"));
 
@@ -43,6 +42,10 @@ public class VNPayServiceImpl implements VNPayService {
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
         String vnp_IpAddr = VNPayConfig.getIpAddress(request);
         String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
+
+        String message = (storeID == null || storeID.isEmpty())
+                ? "Thanh toan don hang: " + vnp_TxnRef
+                : "Thanh toan don hang: " + vnp_TxnRef + ". ID: " + storeID;
 
 //        long amount = Integer.parseInt(request.getParameter("amount"))*100;
 //        String bankCode = req.getParameter("bankCode");
@@ -66,7 +69,7 @@ public class VNPayServiceImpl implements VNPayService {
         vnp_Params.put("vnp_OrderType", orderType);
         vnp_Params.put("vnp_Locale", "vn");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
+        vnp_Params.put("vnp_OrderInfo", message);
         vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_ReturnUrl);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
@@ -159,7 +162,7 @@ public class VNPayServiceImpl implements VNPayService {
             wr.flush();
             wr.close();
 
-            int responseCode = con.getResponseCode();
+//            int responseCode = con.getResponseCode();
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             StringBuilder response = new StringBuilder();
             String output;

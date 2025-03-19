@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 public class AppStatisticsResponse {
     String appStatisticsID;
     String storeID;
-    String storeName;
     String subcriptionPlanName;
     double subcriptionPlanPrice; // vnp_Amount
     String subcriptionDescription; // vnp_OrderInfo

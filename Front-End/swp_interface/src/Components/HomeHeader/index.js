@@ -76,7 +76,7 @@ function HomeHeader() {
                     <div
                       className="header__navbar__menu__item"
                       onClick={() =>
-                        (window.location.href = "/subscriptionPlan")
+                        (window.location.href = "/service")
                       }
                     >
                       Gói đăng ký

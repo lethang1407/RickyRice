@@ -14,9 +14,9 @@ const API = {
     UPDATE_SUBSCRIPTION_PLAN: (id) =>
       `${API_BASE_URL}/admin/update-subscription-plan/${id}`,
   },
-  CUSTOMER: {
-    GET_ALL_PRODUCT: `${API_BASE_URL}/store/products`
-  },
+  // CUSTOMER: {
+  //   GET_ALL_PRODUCT: `${API_BASE_URL}/store/products`,
+  // },
   ACCOUNT: {
     GET_ALL_NOTIFICATIONS: `${API_BASE_URL}/account/notifications`,
     MARK_NOTI_AS_READ: `${API_BASE_URL}/account/notifications/mark-as-read`,
@@ -26,13 +26,14 @@ const API = {
   },
   CUSTOMER: {
     GET_ALL_PRODUCT: `${API_BASE_URL}/store/products`,
-    GET_ALL_CATEGORY: `${API_BASE_URL}/store/categories`
+    GET_ALL_CATEGORY: `${API_BASE_URL}/store/categories`,
   },
   EMPLOYEE: {
     GET_ALL_CUSTOMER: `${API_BASE_URL}/employee/customers`,
     GET_ALL_CUSTOMERlist: `${API_BASE_URL}/employee/customersList`,
     UPDATE_USER: (id) => `${API_BASE_URL}/employee/customers/edit/${id}`,
-    INVOICE_UPDATE_USER: (phoneNumber) => `${API_BASE_URL}/employee/customers/editInvoice/${phoneNumber}`,
+    INVOICE_UPDATE_USER: (phoneNumber) =>
+      `${API_BASE_URL}/employee/customers/editInvoice/${phoneNumber}`,
     CREATE_CUSTOMER: `${API_BASE_URL}/employee/customers/create`,
     // GET_CATEGORY_PAGINATION: `${API_BASE_URL}/employee/categories/pagination`,
     // GET_ALL_CATEGORY: `${API_BASE_URL}/employee/categories`,
@@ -66,6 +67,11 @@ const API = {
     UPDATE_STORE_EMPLOYEE: `${API_BASE_URL}/store-owner/employee/update`,
     DELETE_STORE_EMPLOYEE: `${API_BASE_URL}/store-owner/employee/delete`,
     GET_EMPTY_ZONES: `${API_BASE_URL}/store-owner/store/empty-zone`,
+    CREATE_NEW_STORE: (transaction) =>
+      `${API_BASE_URL}/manage-store/create-store/${transaction}`,
+    GET_REQUEST_STORE: `${API_BASE_URL}/manage-store/request-store`,
+    UPDATE_STORE_INFOR: (storeID) =>
+      `${API_BASE_URL}/manage-store/update-store/${storeID}`,
   },
   STORE_DETAIL: {
     GET_STORE_ZONES: `${API_BASE_URL}/store-detail/zones`,
@@ -81,9 +87,10 @@ const API = {
     LOGOUT: `${API_BASE_URL}/auth/logout`,
     INTROSPECT: `${API_BASE_URL}/auth/introspect`,
     CHECK_EMAIL_PHONE: `${API_BASE_URL}/auth/check-email-phone`,
-    CHECK_USERNAME: (username) => `${API_BASE_URL}/auth/check-username/${username}`,
     CHECK_USERNAME: (username) =>
       `${API_BASE_URL}/auth/check-username/${username}`,
+    // CHECK_USERNAME: (username) =>
+    //   `${API_BASE_URL}/auth/check-username/${username}`,
     SEND_OTP: (key) => `${API_BASE_URL}/auth/send-otp/${key}`,
     CHECK_OTP: `${API_BASE_URL}/auth/check-otp`,
   },
@@ -95,8 +102,9 @@ const API = {
   },
   VNPAY: {
     CREATE_PAYMENT: (amount, subscriptionPlanId) =>
-      `${API_BASE_URL}/vnpay/create-payment?amount=${amount}&subscriptionPlanId=${subscriptionPlanId}`,
-    PAYMENT_TRANSACTION: `${API_BASE_URL}/vnpay/payment-history`,
+      `${API_BASE_URL}/vnpay/payment?amount=${amount}&subscriptionPlanId=${subscriptionPlanId}`,
+    PAYMENT_TRANSACTION: (orderId, transDate) =>
+      `${API_BASE_URL}/manage-store/handle-payment?order_id=${orderId}&trans_date=${transDate}`,
   },
 };
 

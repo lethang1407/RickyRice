@@ -15,6 +15,7 @@ public class StoreRequest {
     String address;
     @NotBlank(message = "Hotline of store must not leave empty")
     String hotline;
+    @NotBlank(message = "Description of store must not leave empty")
     String description;
     @NotBlank(message = "Operating hour of store must not leave empty")
     String operatingHour;

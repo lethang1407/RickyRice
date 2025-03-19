@@ -6,7 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 public interface VNPayService {
-    String createPayment(HttpServletRequest request, double amount, String subscriptionPlanId) throws UnsupportedEncodingException;
+    String createPayment(HttpServletRequest request, double amount, String subscriptionPlanId, String storeID) throws UnsupportedEncodingException;
 
     Map<String, Object> queryPayment(String vnp_TxnRef, String vnp_TransDate, HttpServletRequest req);
 }

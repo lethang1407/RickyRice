@@ -38,7 +38,9 @@ import ChangePassword from "./Pages/Account/ChangePasswordAcc";
 import Zone from "./Pages/StoreManagement/Zone/Zone.js";
 import StoreLayout from "./Components/StoreLayout/storelayout.js";
 import StoreProduct from "./Pages/StoreManagement/Product/Product.js";
-import { WebSocketProvider } from "./Utils/Websocket/WebsocketContextProvider.js"
+import { WebSocketProvider } from "./Utils/Websocket/WebsocketContextProvider.js";
+import CreateStore from "./Pages/StoreManagement/StoreInfor/CreateStore.js";
+import UpdateStore from "./Pages/StoreManagement/StoreInfor/UpdateStore.js";
 
 function App() {
   return (
@@ -49,62 +51,93 @@ function App() {
         <Route path="/forgot-password" element={<ForgetPassword />}></Route>
         <Route path="/register" element={<Register />}></Route>
         <Route path="/unauthorized" element={<Unauthorized />}></Route>
-        <Route path='/storehome' element={<StoreHome />}></Route>
         <Route path="/storehome" element={<StoreHome />}></Route>
-        <Route path="/subscriptionPlan" element={<SubscriptionPlan />}></Route>
-
+        <Route path="/storehome" element={<StoreHome />}></Route>
+        <Route path="/service/:storeID?" element={<SubscriptionPlan />} />
         <Route element={<CommonProtected />}>
-            <Route element={<AdminProtected />}>
-              <Route path="/admin" element={<AdminDashboard />}></Route>
+          <Route element={<AdminProtected />}>
+            <Route path="/admin" element={<AdminDashboard />}></Route>
+            <Route
+              path="/admin/account_owner"
+              element={<AccountOwner />}
+            ></Route>
+            <Route
+              path="/admin/view_stores"
+              element={<AdminViewStores />}
+            ></Route>
+            <Route
+              path="/admin/subscription_plans"
+              element={<SubscriptionPlans />}
+            ></Route>
+          </Route>
+          <Route element={<EmployeeProtected />}>
+            <Route path="/employee/products" element={<Employee_Products />}>
+              {" "}
+            </Route>
+            <Route path="/employee/ricezone" element={<ZoneList />}></Route>
+            <Route
+              path="/employee/customers/edit"
+              element={<CustomerIN4Edit />}
+            ></Route>
+            <Route
+              path="/employee/customers"
+              element={<Employee_Customer />}
+            ></Route>
+            <Route
+              path="/employee/customers/create"
+              element={<CustomerIN4Create />}
+            ></Route>
+            <Route
+              path="/employee/invoices"
+              element={
+                <WebSocketProvider>
+                  <Employee_Invoices />
+                </WebSocketProvider>
+              }
+            ></Route>
+            {/* <Route path="/employee/products" element={<ProductsList />}></Route> */}
+            {/* <Route path="/employee/products/createproduct" element={<CreateProduct />} ></Route> */}
+            <Route
+              path="/employee/customers/edit"
+              element={<CustomerIN4Edit />}
+            ></Route>
+            <Route
+              path="/employee/customers"
+              element={<Employee_Customer />}
+            ></Route>
+            <Route
+              path="/employee/customers/create"
+              element={<CustomerIN4Create />}
+            ></Route>
+          </Route>
+          <Route element={<StoreOwnerProtected />}>
+            <Route path="/store-owner" element={<StoreOwnerLayout />}>
+              <Route path="store" element={<Store />}></Route>
+              <Route path="invoice" element={<Invoice />}></Route>
+              <Route path="product" element={<Product />}></Route>
+              <Route path="employee" element={<Employee />}></Route>
+              <Route path="statistic" element={<Statistic />}></Route>
+              <Route path="debt" element={<Debt />}></Route>
+              <Route path="product/update" element={<ProductUpdate />} />
+              <Route path="employee/update" element={<EmployeeUpdate />} />
+              <Route path="debt" element={<Debt />}></Route>
               <Route
-                path="/admin/account_owner"
-                element={<AccountOwner />}
-              ></Route>
-              <Route
-                path="/admin/view_stores"
-                element={<AdminViewStores />}
-              ></Route>
-              <Route
-                path="/admin/subscription_plans"
-                element={<SubscriptionPlans />}
+                path="create-store/:transactionNo"
+                element={<CreateStore />}
               ></Route>
             </Route>
-            <Route element={<EmployeeProtected />}>
-              <Route path='/employee/products' element={<Employee_Products />}> </Route>
-              <Route path='/employee/ricezone' element={<ZoneList />}></Route>
-              <Route path='/employee/customers/edit' element={<CustomerIN4Edit />}></Route>
-              <Route path='/employee/customers' element={<Employee_Customer />}></Route>
-              <Route path='/employee/customers/create' element={<CustomerIN4Create />}></Route>
-              <Route path='/employee/invoices' element={<WebSocketProvider><Employee_Invoices /></WebSocketProvider>}></Route>
-              {/* <Route path="/employee/products" element={<ProductsList />}></Route> */}
-              {/* <Route path="/employee/products/createproduct" element={<CreateProduct />} ></Route> */}
-              <Route path="/employee/customers/edit" element={<CustomerIN4Edit />} ></Route>
-              <Route path="/employee/customers" element={<Employee_Customer />}></Route>
-              <Route path="/employee/customers/create" element={<CustomerIN4Create />}></Route>
+            <Route path="/vnpay/payment-return" element={<PaymentReturn />} />
+          </Route>
+          <Route element={<StoreOwnerProtected />}>
+            <Route path="/store/:id" element={<StoreLayout />}>
+              <Route path="zone" element={<Zone />}></Route>
+              <Route path="product" element={<StoreProduct />}></Route>
+              <Route path="update-info" element={<UpdateStore />}></Route>
             </Route>
-            <Route element={<StoreOwnerProtected />}>
-              <Route path="/store-owner" element={<StoreOwnerLayout />}>
-                <Route path="store" element={<Store />}></Route>
-                <Route path="invoice" element={<Invoice />}></Route>
-                <Route path="product" element={<Product />}></Route>
-                <Route path="employee" element={<Employee />}></Route>
-                <Route path="statistic" element={<Statistic />}></Route>
-                <Route path="debt" element={<Debt />}></Route>
-                <Route path="product/update" element={<ProductUpdate />} />
-                <Route path="employee/update" element={<EmployeeUpdate />} />
-                <Route path="debt" element={<Debt />}></Route>
-              </Route>
-              <Route path="/vnpay/payment-return" element={<PaymentReturn />} />
-            </Route>
-            <Route element={<StoreOwnerProtected/>}>
-              <Route path="/store/:id" element={<StoreLayout />}>  
-                <Route path="zone" element={<Zone />}></Route>
-                <Route path="product" element={<StoreProduct />}></Route>
-              </Route>
-            </Route>
-            <Route path="/account-info" element={<AccountInfo />} />
-            <Route path="/account-change-password" element={<ChangePassword />} />
-            </Route>
+          </Route>
+          <Route path="/account-info" element={<AccountInfo />} />
+          <Route path="/account-change-password" element={<ChangePassword />} />
+        </Route>
       </Routes>
     </>
   );
