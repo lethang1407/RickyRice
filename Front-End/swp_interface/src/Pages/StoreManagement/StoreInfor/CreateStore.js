@@ -182,7 +182,7 @@ const CreateStore = () => {
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <Button type="primary" htmlType="submit" loading={loading}>
-            Submit
+            Tạo cửa hàng
           </Button>
         </Form.Item>
       </Form>
