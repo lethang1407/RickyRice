@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 
@@ -31,11 +33,26 @@ public interface InvoiceRepository extends JpaRepository<Invoice, String> {
 
     Page<Invoice> findByStoreIn(Collection<Store> stores, Pageable pageable);
     @Query("SELECT c FROM Invoice c " +
-            "WHERE c.store.id= :storeId AND " +
-            "(:customerPhone IS NULL OR c.customer.phoneNumber  LIKE %:customerPhone% ) ")
-    Page<Invoice> findInvoiceByCustomerPhone(String customerPhone,
-                                             String storeId,
-                                             Pageable pageable);
+            "WHERE c.store.id = :storeId " +
+            "AND (:customerPhone IS NULL OR c.customer.phoneNumber LIKE %:customerPhone%) " +
+            "AND (:name IS NULL OR c.customer.name LIKE %:name%) " +
+            "AND (:minAmount IS NULL OR c.productMoney >= :minAmount) " +
+            "AND (:maxAmount IS NULL OR c.productMoney <= :maxAmount) " +
+            "AND (:minShipping IS NULL OR c.shipMoney >= :minShipping) " +
+            "AND (:maxShipping IS NULL OR c.shipMoney <= :maxShipping) " +
+            "AND (:startDate IS NULL OR c.createdAt >= :startDate) " +
+            "AND (:endDate IS NULL OR c.createdAt <= :endDate)")
+    Page<Invoice> findInvoiceByCustomerPhone(
+            @Param("customerPhone") String customerPhone,
+            @Param("name") String name,
+            @Param("storeId") String storeId,
+            @Param("minAmount") Long minAmount,
+            @Param("maxAmount") Long maxAmount,
+            @Param("minShipping") Long minShipping,
+            @Param("maxShipping") Long maxShipping,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            Pageable pageable);
 
 
 

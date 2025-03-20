@@ -9,6 +9,8 @@ import org.group5.swp391.dto.notification.SendNotificationRequest;
 import org.group5.swp391.dto.store_owner.all_invoice.StoreInvoiceDTO;
 import org.group5.swp391.entity.*;
 import org.group5.swp391.entity.Package;
+import org.group5.swp391.exception.AppException;
+import org.group5.swp391.exception.ErrorCode;
 import org.group5.swp391.repository.*;
 import org.group5.swp391.service.InvoiceService;
 import org.group5.swp391.service.NotificationService;
@@ -20,12 +22,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -67,13 +72,14 @@ public class InvoiceServiceImpl implements InvoiceService {
         List<Customer> customers = customerRepository.findByPhoneNumberContainingIgnoreCase(phoneNumber);
         Boolean type = typeStr.equals("all") ? null : typeStr.equals("export");
         Boolean status = statusStr.equals("all") ? null : statusStr.equals("paid");
-        return invoiceRepository.findInvoices(stores, customers, type, status, pageable).map(invoiceConverter::toStoreInvoiceDTO);    }
+        return invoiceRepository.findInvoices(stores, customers, type, status, pageable).map(invoiceConverter::toStoreInvoiceDTO);
+    }
 
     @Override
     @Transactional
     public void CreateInvoice(InvoiceRequest invoiceRequest) {
-        validateInvoiceRequest(invoiceRequest);
         String username = invoiceRequest.getEmployeeUsername();
+        validateInvoiceRequest(invoiceRequest, username);
         System.out.println(invoiceRequest.getEmployeeUsername());
         if (username == null) {
             throw new IllegalArgumentException("Không có thông tin nhân viên trong yêu cầu!");
@@ -82,12 +88,12 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
 
-        Customer customer=customerRepository.findByPhoneNumber(invoiceRequest.getInvoice().getCustomerPhone());
-        Invoice invoice=new Invoice();
+        Customer customer = customerRepository.findByPhoneNumber(invoiceRequest.getInvoice().getCustomerPhone());
+        Invoice invoice = new Invoice();
         invoice.setProductMoney(invoiceRequest.getInvoice().getTotalAmount());
         invoice.setShipMoney(invoiceRequest.getInvoice().getTotalShipping());
         invoice.setStatus(true);
-        invoice.setType(false);
+        invoice.setType(invoiceRequest.getInvoice().isType());
         invoice.setCreatedBy(a.getEmployeeAccount().getUsername());
         invoice.setCustomerName(capitalizeFirstLetters(invoiceRequest.getInvoice().getCustomerName()));
         invoice.setCustomerPhoneNumber(invoiceRequest.getInvoice().getCustomerPhone());
@@ -97,46 +103,54 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setDeletedAt(null);
         invoice.setDeletedBy(null);
 
-        List<InvoiceDetail>details=invoiceRequest.getInvoiceDetails().stream().map(
-             detail->{
-                 InvoiceDetail invoiceDetail=new InvoiceDetail();
-                 Package packageEntity=packageRepository.findPackageByStringId(detail.getPackageId());
-                 Product product=productRepository.findByStringId(detail.getProductID());
-                 Category categoryProduct=categoryRepository.findByStringId(product.getCategory().getId());
-                 long lastQuantity = product.getQuantity() - detail.getQuantity();
-                 if (lastQuantity < 0) {
-                     notificationService.sendNotification(SendNotificationRequest.builder()
-                                     .message("Xử lý hóa đơn thất bại. Số lượng sản phẩm " + product.getName() + " không đủ trong kho!")
-                                     .targetUsername(username)
-                                     .type("Error")
-                             .build());
-                     throw new IllegalArgumentException("Số lượng sản phẩm " + product.getName() + " không đủ trong kho!");
-                 }
-                 product.setQuantity(lastQuantity);
-                 productRepository.save(product);
-                 invoiceDetail.setDiscount(detail.getDiscount());
-                 invoiceDetail.setPackageType(packageEntity);
-                 invoiceDetail.setProductPrice(product.getPrice());
-                 invoiceDetail.setQuantity(detail.getQuantity());
-                 invoiceDetail.setProductCategoryDescription(categoryProduct.getDescription());
-                 invoiceDetail.setProductCategoryName(categoryProduct.getName());
-                 invoiceDetail.setProductImage(product.getProductImage());
-                 invoiceDetail.setProductInformation(product.getInformation());
-                 invoiceDetail.setProductName(product.getName());
-                 invoiceDetail.setInvoice(invoice);
-                 return invoiceDetail;
-             }).collect(Collectors.toList());
-            invoice.setInvoiceDetails(details);
-            invoiceRepository.save(invoice);
-            notificationService.sendNotification(SendNotificationRequest.builder()
-                .message("Xử lý hóa đơn của khách hàng "+ invoiceRequest.getInvoice().getCustomerName()+" thành công! Vui lòng check lại thông tin")
+        List<InvoiceDetail> details = invoiceRequest.getInvoiceDetails().stream().map(
+                detail -> {
+                    InvoiceDetail invoiceDetail = new InvoiceDetail();
+                    Package packageEntity = packageRepository.findPackageByStringId(detail.getPackageId());
+                    Product product = productRepository.findByStringId(detail.getProductID());
+                    Category categoryProduct = categoryRepository.findByStringId(product.getCategory().getId());
+                    long lastQuantity = 0;
+                    if (invoiceRequest.getInvoice().isType()) {
+                        lastQuantity = product.getQuantity() + detail.getQuantity();
+                    } else {
+                        lastQuantity = product.getQuantity() - detail.getQuantity();
+                        if (lastQuantity < 0) {
+                            notificationService.sendNotification(SendNotificationRequest.builder()
+                                    .message("Xử lý hóa đơn thất bại. Số lượng sản phẩm " + product.getName() + " không đủ trong kho!")
+                                    .targetUsername(username)
+                                    .type("Error")
+                                    .build());
+                            throw new IllegalArgumentException("Số lượng sản phẩm " + product.getName() + " không đủ trong kho!");
+                        }
+                    }
+                    product.setQuantity(lastQuantity);
+                    productRepository.save(product);
+                    invoiceDetail.setDiscount(detail.getDiscount());
+                    invoiceDetail.setPackageType(packageEntity);
+                    invoiceDetail.setProductPrice(product.getPrice());
+                    invoiceDetail.setQuantity(detail.getQuantity());
+                    invoiceDetail.setProductCategoryDescription(categoryProduct.getDescription());
+                    invoiceDetail.setProductCategoryName(categoryProduct.getName());
+                    invoiceDetail.setProductImage(product.getProductImage());
+                    invoiceDetail.setProductInformation(product.getInformation());
+                    invoiceDetail.setProductName(product.getName());
+                    invoiceDetail.setInvoice(invoice);
+                    return invoiceDetail;
+                }).collect(Collectors.toList());
+        invoice.setInvoiceDetails(details);
+        invoiceRepository.save(invoice);
+        notificationService.sendNotification(SendNotificationRequest.builder()
+                .message("Xử lý hóa đơn của khách hàng " + invoiceRequest.getInvoice().getCustomerName() + " thành công! Vui lòng check lại thông tin")
                 .targetUsername(username)
                 .type("Success")
                 .build());
     }
 
     @Override
-    public Page<InvoiceDTO> getInvoicesForEmployee(String phoneNumber, int page, int size, String sortBy, boolean descending) {
+    public Page<InvoiceDTO> getInvoicesForEmployee(String phoneNumber, String name, int page, int size,
+                                                   String sortBy, boolean descending,
+                                                   Long minAmount, Long maxAmount, Long minShipping, Long maxShipping,
+                                                   LocalDateTime startDate, LocalDateTime endDate) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AccessDeniedException("Bạn chưa đăng nhập!");
@@ -145,15 +159,25 @@ public class InvoiceServiceImpl implements InvoiceService {
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
+
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
+
         if (phoneNumber.equals("")) {
             phoneNumber = null;
-        }else{
+        } else {
             phoneNumber = capitalizeFirstLetters(phoneNumber);
         }
-        Page<Invoice> invoicePage=invoiceRepository.findInvoiceByCustomerPhone(phoneNumber,a.getStore().getId(),pageable);
-       return invoicePage.map(invoiceConverter::toEmployeeInvoiceDTO);
+        if (name.equals("")) {
+            name = null;
+        } else {
+            name = capitalizeFirstLetters(name);
+        }
+
+        Page<Invoice> invoicePage = invoiceRepository.findInvoiceByCustomerPhone(phoneNumber, name,
+                a.getStore().getId(), minAmount, maxAmount, minShipping, maxShipping,
+                startDate, endDate, pageable);
+        return invoicePage.map(invoiceConverter::toEmployeeInvoiceDTO);
     }
 
     public String capitalizeFirstLetters(String input) {
@@ -172,7 +196,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         return capitalizedString.toString().trim();
     }
 
-    private void validateInvoiceRequest(InvoiceRequest invoiceRequest) {
+    private void validateInvoiceRequest(InvoiceRequest invoiceRequest, String username) {
         if (invoiceRequest == null) {
             throw new IllegalArgumentException("hóa đơn không được null!");
         }
@@ -190,10 +214,15 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
         Customer customer = customerRepository.findByPhoneNumber(invoiceRequest.getInvoice().getCustomerPhone());
         if (!customer.getName().equals(invoiceRequest.getInvoice().getCustomerName())) {
-            throw new IllegalArgumentException("Số điện thoại này là của khách hàng khác");
+            throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
         }
         if (invoiceRequest.getInvoice().getTotalAmount() < 0 || invoiceRequest.getInvoice().getTotalShipping() < 0) {
-            throw new IllegalArgumentException("Tổng tiền hoặc phí vận chuyển không được < 0!");
+            notificationService.sendNotification(SendNotificationRequest.builder()
+                    .message("Xử lý hóa đơn thất bại, không thể tạo hóa đơn âm ")
+                    .targetUsername(username)
+                    .type("Error")
+                    .build());
+            throw new IllegalArgumentException("không thể tạo hóa đơn âm");
         }
         if (invoiceRequest.getInvoiceDetails() == null || invoiceRequest.getInvoiceDetails().isEmpty()) {
             throw new IllegalArgumentException("detail hóa đơn không được để trống!");

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, Layout, Menu, theme, SearchOutlined, Select, Space, Modal, Dropdown } from 'antd';
+import { Button, Layout, Menu, theme, SearchOutlined, Select, Space, Modal, Dropdown, Form, message } from 'antd';
 import { ShopOutlined, EditOutlined, DeleteOutlined, SettingOutlined, DisconnectOutlined } from "@ant-design/icons";
 import {
     Table,
@@ -14,6 +14,8 @@ import { useNavigate } from 'react-router-dom';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import API from '../../../Utils/API/API';
 import '../style.css'
+
+const { TextArea } = Input;
 const CustomerList = () => {
     const [loading, setLoading] = useState(true);
     const [customers, setCustomers] = useState([]);
@@ -24,12 +26,18 @@ const CustomerList = () => {
     const [modalData, setModalData] = useState([]);
     const [selectedZoneName, setSelectedZoneName] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [filters, setFilters] = useState({
         phonesearch: null,
     });
     const navigate = useNavigate();
-
+    const refreshData = () => {
+        fetchZone(currentPage || 1, pageSize || 10, filters || {});
+    };
     const token = getToken();
+    const [form] = Form.useForm();
+
 
     const CustomerColumns = [
         {
@@ -101,7 +109,7 @@ const CustomerList = () => {
                         icon={<SettingOutlined />}
                         style={{ backgroundColor: "#52c41a", borderColor: "#52c41a", color: "white" }}
                         title="Customer Settings"
-                        onClick={() => navigate('/employee/customers/edit', { state: record })}
+                        onClick={() => showEditModal(record)}
                     />
                     <Button
                         type="danger"
@@ -186,8 +194,8 @@ const CustomerList = () => {
     const handleTableChange = (pagination) => {
         const { current, pageSize } = pagination;
 
-        setCurrentPage(current);
-        setPageSize(pageSize);
+        setCurrentPage(current || 1);
+        setPageSize(pageSize || 10);
         //handleSearch(current, pageSize);
     };
     const handleFilterSubmit = () => {
@@ -198,16 +206,11 @@ const CustomerList = () => {
 
 
     useEffect(() => {
-        fetchZone(currentPage, pageSize, filters
-            // null, searchTerm
-        );
+        fetchZone(currentPage, pageSize, filters);
     }, [currentPage, pageSize, filters]);
-    const fetchZone = async (page, size,
-        filters,
-        // sorter, search
-    ) => {
+    const fetchZone = async (page, size, filters,) => {
         // const { field, order } = sorter || sorterState || {};
-
+        console.log("fetchZone được gọi với các tham số:", { page, size, filters });
         try {
             const response = await axios.get(API.EMPLOYEE.GET_ALL_CUSTOMER, {
 
@@ -252,6 +255,53 @@ const CustomerList = () => {
     const handleCancel = () => {
         setIsModalVisible(false);
     };
+    const showEditModal = (record) => {
+        setSelectedCustomer(record);
+        form.setFieldsValue({
+            name: record.name,
+            phoneNumber: record.phoneNumber,
+            email: record.email,
+            address: record.address,
+        });
+        setIsEditModalVisible(true);
+    };
+    const handleEditOk = () => {
+        form.submit();
+    };
+
+    const handleEditCancel = () => {
+        setIsEditModalVisible(false);
+        form.resetFields();
+    };
+    const handleEditSubmit = async (values) => {
+        try {
+            const requestData = {
+                customerID: selectedCustomer.customerID,
+                name: values.name,
+                phoneNumber: values.phoneNumber,
+                email: values.email,
+                address: values.address,
+                updatedAt: moment().format('YYYY-MM-DDTHH:mm:ss'),
+            };
+
+            const response = await axios.put(
+                API.EMPLOYEE.UPDATE_USER(selectedCustomer.customerID),
+                requestData,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            if (response.status === 200 || response.status === 204) {
+                message.success('Cập nhật thông tin khách hàng thành công!');
+                setIsEditModalVisible(false);
+                refreshData();
+            } else {
+                message.error('Có lỗi xảy ra, vui lòng thử lại!');
+            }
+        } catch (error) {
+            console.error('Lỗi khi cập nhật:', error);
+            message.error('Không thể cập nhật thông tin khách hàng!');
+        }
+    };
     const handleFilterChange = debounce((type, value) => {
         setFilters({ ...filters, [type]: value });
     }, 1000)
@@ -277,7 +327,7 @@ const CustomerList = () => {
                 </Space>
 
             </div>
-            <div style={{ marginLeft: 1250, marginTop: 15 }}> <DropDown /></div>
+            <div style={{ marginLeft: 1250, marginTop: 15 }}> <DropDown refreshData={fetchZone} /></div>
             {loading ? (<Spin size="large" />) : (
                 <Table style={{ marginTop: 25 }}
                     dataSource={customers}
@@ -322,6 +372,50 @@ const CustomerList = () => {
                     rowKey={(record) => record.storeID}
                     pagination={false}
                 />
+            </Modal>
+            <Modal
+                title={<span style={{ fontWeight: 500, fontSize: '18px', color: "#E3C584" }}>Chỉnh sửa thông tin khách hàng</span>}
+                open={isEditModalVisible}
+                onOk={handleEditOk}
+                onCancel={handleEditCancel}
+                okText="Lưu"
+                cancelText="Hủy"
+            >
+                <Form
+                    form={form}
+                    labelCol={{ span: 6 }}
+                    wrapperCol={{ span: 16 }}
+                    layout="horizontal"
+                    onFinish={handleEditSubmit}
+                >
+                    <Form.Item
+                        label="Tên"
+                        name="name"
+                        rules={[{ required: true, message: 'Vui lòng nhập tên!' }]}
+                    >
+                        <Input placeholder="Nhập tên khách hàng" />
+                    </Form.Item>
+                    <Form.Item
+                        label="SĐT"
+                        name="phoneNumber"
+                        rules={[
+                            { required: true, message: 'Vui lòng nhập số điện thoại!' },
+                            { pattern: /^0\d{9}$/, message: 'Vui lòng nhập 10 số và bắt đầu từ 0' },
+                        ]}
+                    >
+                        <Input placeholder="Nhập số điện thoại" />
+                    </Form.Item>
+                    <Form.Item
+                        label="Email"
+                        name="email"
+                        rules={[{ type: 'email', message: 'Vui lòng nhập Email hợp lệ!' }]}
+                    >
+                        <Input placeholder="Nhập Email của khách hàng" />
+                    </Form.Item>
+                    <Form.Item label="Địa chỉ" name="address">
+                        <TextArea rows={3} placeholder="Nhập địa chỉ" />
+                    </Form.Item>
+                </Form>
             </Modal>
         </>
     )

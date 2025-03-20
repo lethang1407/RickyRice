@@ -16,6 +16,15 @@ const InvoiceList = () => {
     const [sorterState, setSorterState] = useState({ field: null, order: null });
     const [filters, setFilters] = useState({
         phonesearch: null,
+        namesearch: null,
+    });
+    const [dynamicFilters, setDynamicFilters] = useState({
+        minAmount: null,
+        maxAmount: null,
+        minShipping: null,
+        maxShipping: null,
+        startDate: null,
+        endDate: null,
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
@@ -137,20 +146,21 @@ const InvoiceList = () => {
         setCurrentPage(current);
         setPageSize(pageSize);
         setSorterState({ field, order });
-        fetchZone(current, pageSize, filters, { field, order });
+        fetchZone(current, pageSize, { ...filters, ...dynamicFilters }, filters, { field, order });
     };
     const handleFilterSubmit = () => {
-        fetchZone(currentPage, pageSize, filters, sorterState
-            //null, searchTerm
-        );
+        // fetchZone(currentPage, pageSize, filters, sorterState
+        //     //null, searchTerm
+        // );
+        fetchZone(currentPage, pageSize, { ...filters, ...dynamicFilters }, sorterState);
     };
 
 
     useEffect(() => {
-        fetchZone(currentPage, pageSize, filters, sorterState
+        fetchZone(currentPage, pageSize, { ...filters, ...dynamicFilters }, sorterState
             // null, searchTerm
         );
-    }, [currentPage, pageSize, filters, sorterState]);
+    }, [currentPage, pageSize, filters, dynamicFilters, sorterState]);
 
     const fetchZone = async (page, size,
         filters, sorter
@@ -169,6 +179,13 @@ const InvoiceList = () => {
                     page: page - 1,
                     size: size,
                     phonesearch: filters ? filters.phonesearch : null,
+                    namesearch: filters ? filters.namesearch : null,
+                    minAmount: filters.minAmount,
+                    maxAmount: filters.maxAmount,
+                    minShipping: filters.minShipping,
+                    maxShipping: filters.maxShipping,
+                    startDate: filters.startDate,
+                    endDate: filters.endDate,
                     sortBy: sortBy,
                     sortOrder: order === 'ascend' ? true : false
                 },
@@ -215,8 +232,17 @@ const InvoiceList = () => {
         }
     };
     const handleFilterChange = debounce((type, value) => {
-        setFilters({ ...filters, [type]: value });
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            [type]: value || null,
+        }));
     }, 1000)
+    const handleDynamicFilterChange = debounce((type, value) => {
+        setDynamicFilters((prev) => ({
+            ...prev,
+            [type]: value || null,
+        }));
+    }, 1000);
     const handleRowClick = (record) => {
         setSelectedInvoice({
             id: record.id,
@@ -251,11 +277,85 @@ const InvoiceList = () => {
                         />
                     </div>
                     <Button type="primary" onClick={handleFilterSubmit} >
-                        Tìm Kiếm
+                        Tìm Kiếm SDT
+                    </Button>
+
+                </Space>
+                <Space size="middle">
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
+                        <Input
+                            placeholder="Tìm tên"
+                            maxLength={10}
+                            style={{ width: 220 }}
+                            allowClear onChange={(e) => handleFilterChange('namesearch', e.target.value)}
+
+                        />
+                    </div>
+                    <Button type="primary" onClick={handleFilterSubmit} >
+                        Tìm Kiếm Tên
                     </Button>
 
                 </Space>
 
+            </div>
+            <div className="filter-container">
+                <Space size="middle">
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px", color: "#6B7012" }}>
+                        <span>Tiền Tối Thiểu :</span>
+                        <Input
+                            type="number"
+                            placeholder="Nhập min"
+                            style={{ width: 100 }}
+                            onChange={(e) => handleDynamicFilterChange('minAmount', e.target.value)}
+
+                        />
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px", color: "#6B7012" }}>
+                        <span>Tiền Tối Đa :</span>
+                        <Input
+                            type="number"
+                            placeholder="Nhập min"
+                            style={{ width: 100 }}
+                            onChange={(e) => handleDynamicFilterChange('maxAmount', e.target.value)}
+                        />
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px", color: "#6B7012" }}>
+                        <span>Tiền Ship Tối Thiểu :</span>
+                        <Input
+                            type="number"
+                            placeholder="Nhập min"
+                            style={{ width: 100 }}
+                            onChange={(e) => handleDynamicFilterChange('minShipping', e.target.value)}
+                        />
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px", color: "#6B7012" }}>
+                        <span>Tiền Ship Tối Đa :</span>
+                        <Input
+                            type="number"
+                            placeholder="Nhập min"
+                            style={{ width: 100 }}
+                            onChange={(e) => handleDynamicFilterChange('maxShipping', e.target.value)}
+                        />
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px", color: "#6B7012" }}>
+                        <span> Ngày Bắt Đầu:</span>
+                        <Input
+                            type="datetime-local"
+                            placeholder="Nhập min"
+                            style={{ width: 100 }}
+                            onChange={(e) => handleDynamicFilterChange('startDate', e.target.value)}
+                        />
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px", color: "#6B7012" }}>
+                        <span>Ngày Kết Thúc:</span>
+                        <Input
+                            type="datetime-local"
+                            placeholder="Nhập min"
+                            style={{ width: 100 }}
+                            onChange={(e) => handleDynamicFilterChange('endDate', e.target.value)}
+                        />
+                    </div>
+                </Space>
             </div>
             {loading ? (<Spin size="large" />) : (
                 <Table style={{ marginTop: 25 }}
@@ -310,7 +410,7 @@ const InvoiceList = () => {
                                     : 'N/A'}
                             </Descriptions.Item>
                             <Descriptions.Item label="Tổng tiền sản phẩm">
-                                {(selectedInvoice.totalAmount || 0).toLocaleString()} đ
+                                {(selectedInvoice.totalAmount - selectedInvoice.totalShipping || 0).toLocaleString()} đ
                             </Descriptions.Item>
                             <Descriptions.Item label="Tiền vận chuyển">
                                 {(selectedInvoice.totalShipping || 0).toLocaleString()} đ
@@ -326,9 +426,9 @@ const InvoiceList = () => {
                             scroll={{ y: 240 }}
                         />
                         <div style={{ marginTop: 16, textAlign: 'right' }}>
-                            <p><strong>Tổng tiền sản phẩm:</strong> {(selectedInvoice.totalAmount || 0).toLocaleString()} đ</p>
+                            <p><strong>Tổng tiền sản phẩm:</strong> {(selectedInvoice.totalAmount - selectedInvoice.totalShipping || 0).toLocaleString()} đ</p>
                             <p><strong>Tiền vận chuyển:</strong> {(selectedInvoice.totalShipping || 0).toLocaleString()} đ</p>
-                            <p><strong>Tổng cộng:</strong> {((selectedInvoice.totalAmount + selectedInvoice.totalShipping) || 0).toLocaleString()} đ</p>
+                            <p><strong>Tổng cộng:</strong> {((selectedInvoice.totalAmount) || 0).toLocaleString()} đ</p>
                         </div>
                     </>
                 ) : (

@@ -9,6 +9,7 @@ import {
   VideoCameraOutlined,
   InsertRowBelowOutlined,
   TeamOutlined,
+  SolutionOutlined,
 } from '@ant-design/icons';
 import logo from '../../assets/img/logoviet.png';
 import { useNavigate } from 'react-router-dom';
@@ -69,7 +70,7 @@ const Employee_Customer = () => {
             </Menu.Item>
             <Menu.Item
               key="4"
-              icon={<TeamOutlined />}
+              icon={<SolutionOutlined />}
               onClick={() => handleNavigation('/employee/invoices')}
             >
               Hóa Đơn

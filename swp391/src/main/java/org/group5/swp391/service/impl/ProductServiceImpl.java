@@ -160,7 +160,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<EmployeeProductDTO> getProductBySearch(String name, int page, int size, String sortBy, boolean descending) {
+    public Page<EmployeeProductDTO> getProductBySearch(String name, int page, int size,
+                                                       String sortBy, boolean descending,Integer minQuantity, Integer maxQuantity) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AccessDeniedException("Bạn chưa đăng nhập!");
@@ -181,7 +182,7 @@ public class ProductServiceImpl implements ProductService {
             name = capitalizeFirstLetters(name);
             System.out.println(name);
         }
-        Page<Product> productPage = productRepository.findByNameAndStoreIdContainingIgnoreCase(name, a.getStore().getId(), pageable);
+        Page<Product> productPage = productRepository.findByNameAndStoreIdContainingIgnoreCase(name, a.getStore().getId(), pageable,minQuantity,maxQuantity);
         return productPage.map(productConverter::toEmployeeProductDTO);
     }
 

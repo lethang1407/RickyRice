@@ -9,7 +9,7 @@ import { Content } from 'antd/es/layout/layout';
 import { success, error } from '../../../Utils/AntdNotification';
 import TextArea from 'antd/es/input/TextArea';
 
-const InvoiceDetail = () => {
+const InvoiceDetail2 = () => {
     // của tạo mới Invoice
     const [size, setSize] = useState('small');
     const [activeKey, setActiveKey] = useState('1');
@@ -23,7 +23,6 @@ const InvoiceDetail = () => {
     const [customerPayment, setCustomerPayment] = useState(0);
     const [totalwithoutdiscount, setTotalWithoutDiscount] = useState(0);
     const [packageOptions, setPackageOptions] = useState([]);
-    const [isExceedingQuantity, setIsExceedingQuantity] = useState(false);
 
     // của thông tin khách hàng 
     const [options2, setOptions2] = useState([]);
@@ -124,7 +123,7 @@ const InvoiceDetail = () => {
     const calculateProductTotal = (dataSource) => {
         if (!dataSource || !Array.isArray(dataSource)) return 0;
         return dataSource.reduce((sum, item) => {
-            const itemTotal = (item.quantity || 0) * (item.pricePay || item.price || 0) - ((item.discount || 0) * (item.quantity || 0));
+            const itemTotal = (item.quantity || 0) * (item.pricePay || 0) - ((item.discount || 0) * (item.quantity || 0));
             return sum + itemTotal;
         }, 0);
     };
@@ -207,13 +206,7 @@ const InvoiceDetail = () => {
             ),
         },
         {
-            title: 'Giá Gạo/Kg',
-            dataIndex: 'price',
-            key: 'price',
-            render: (text) => (text || 0).toLocaleString(),
-        },
-        {
-            title: 'Giá bán/kg',
+            title: 'Giá nhập/kg',
             dataIndex: 'pricePay',
             key: 'pricePay',
             render: (text, record) => (
@@ -237,35 +230,28 @@ const InvoiceDetail = () => {
     const handleInputChange = (value, key, field) => {
         let finalValue;
         if (field === 'quantity') {
-            finalValue = value === null || value < 1 ? 1 : value;
+            finalValue = value === null || value < 1 ? 1 : value; // Số lượng tối thiểu là 1
         } else {
-            finalValue = value === null || value < 0 ? 0 : value;
+            finalValue = value === null || value < 0 ? 0 : value; // Giá nhập tối thiểu là 0
         }
         setItems(prevItems =>
             prevItems.map(item => {
                 if (item.key === activeKey) {
-                    const updatedDataSource = item.children.props.dataSource.map(row => {
-                        if (row.key === key) {
-                            const productOption = options.find(opt => opt.productID === row.productID);
-                            const maxQuantity = productOption ? productOption.quantity : Infinity;
-                            const cappedValue = field === 'quantity' ? Math.min(finalValue, maxQuantity) : finalValue;
-
-                            return {
+                    const updatedDataSource = item.children.props.dataSource.map(row =>
+                        row.key === key
+                            ? {
                                 ...row,
-                                [field]: cappedValue,
+                                [field]: finalValue,
                                 total:
+                                    // finalValue * row.pricePay -
+                                    // (row.discount * finalValue || 0) +
+                                    // (row.moneyShip * finalValue || 0),
                                     field === 'quantity'
-                                        ? cappedValue * (row.pricePay || 0) - (row.discount * cappedValue || 0)
-                                        : row.quantity * (field === 'pricePay' ? cappedValue : row.pricePay || 0) - (row.discount * row.quantity || 0),
-                            };
-                        }
-                        return row;
-                    });
-                    const exceeds = updatedDataSource.some(row => {
-                        const productOption = options.find(opt => opt.productID === row.productID);
-                        return productOption && row.quantity > productOption.quantity;
-                    });
-                    setIsExceedingQuantity(exceeds);
+                                        ? finalValue * (row.pricePay || 0) - (row.discount * finalValue || 0)
+                                        : row.quantity * (field === 'pricePay' ? finalValue : row.pricePay || 0) - (row.discount * row.quantity || 0),
+                            }
+                            : row
+                    );
                     setTotalAmount(calculateProductTotal(updatedDataSource));
                     setTotalWithoutDiscount(calculateTotalWithoutDiscount(updatedDataSource));
 
@@ -291,19 +277,15 @@ const InvoiceDetail = () => {
         setItems(prevItems =>
             prevItems.map(item => {
                 if (item.key === activeKey) {
-                    const updatedDataSource = item.children.props.dataSource.map(row => {
-                        if (row.key === key) {
-                            const maxDiscount = row.pricePay || row.price || 0;
-                            const finalValue = value === null || value < 0 ? 0 : Math.min(value, maxDiscount);
-
-                            return {
+                    const updatedDataSource = item.children.props.dataSource.map(row =>
+                        row.key === key
+                            ? {
                                 ...row,
                                 [field]: finalValue,
                                 total: row.quantity * (row.pricePay || 0) - (finalValue * row.quantity || 0),
-                            };
-                        }
-                        return row;
-                    });
+                            }
+                            : row
+                    );
                     setTotalAmount(calculateProductTotal(updatedDataSource));
                     setTotalWithoutDiscount(calculateTotalWithoutDiscount(updatedDataSource));
 
@@ -573,7 +555,6 @@ const InvoiceDetail = () => {
                     price: item.price,
                     productID: item.productID,
                     image: item.productImage,
-                    quantity: item.quantity,
                 }));
                 setOptions(formattedOptions);
             })
@@ -676,7 +657,7 @@ const InvoiceDetail = () => {
                 totalAmount: calculateFinalAmount(),
                 totalShipping: activeTab.moneyShip,
                 description: activeTab.description || '',
-                type: false,
+                type: true,
             },
             invoiceDetails: activeTab.children.props.dataSource.map(product => ({
                 productID: product.productID,
@@ -712,7 +693,6 @@ const InvoiceDetail = () => {
                     const newActiveKey = remainingItems[0].key;
                     setActiveKey(newActiveKey);
                     const activeTabDataSource = remainingItems.find(item => item.key === newActiveKey)?.children.props.dataSource || [];
-                    // setTotalAmount(calculateTotalAmount(activeTabDataSource, remainingItems.find(item => item.key === newActiveKey)?.moneyShip || 0));
                     setTotalAmount(calculateProductTotal(activeTabDataSource));
                     setTotalWithoutDiscount(calculateTotalWithoutDiscount(activeTabDataSource));
                     setCustomerPayment(remainingItems.find(item => item.key === newActiveKey)?.customerPayment || 0);
@@ -725,10 +705,6 @@ const InvoiceDetail = () => {
             })
             .catch(err => {
                 error(err.response.data.message || "Lỗi khi tạo hóa đơn", messageApi);
-                messageApi.open({
-                    type: 'error',
-                    content: errorMessage,
-                });
             });
     };
     const handleCustomerPaymentChange = (value) => {
@@ -748,7 +724,7 @@ const InvoiceDetail = () => {
             {contextHolder}
             <div className="main-container">
                 <Content className="invoice-content">
-                    <h1 className="invoice-title">Hoá Đơn Khách Hàng</h1>
+                    <h1 className="invoice-title">Hoá Đơn Nhập Gạo</h1>
                     <div className="control-section">
                         <Radio.Group value={size} onChange={(e) => setSize(e.target.value)}>
                             <Radio.Button value="small">Small</Radio.Button>
@@ -765,14 +741,6 @@ const InvoiceDetail = () => {
                                     onSearch={onSearch2}
                                     onChange={(value, option) => setSelectedProduct(option)}
                                     notFoundContent={loading ? <Spin size="small" /> : "Không tìm thấy"}
-                                    optionRender={(option) => (
-                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span>{option.data.value}</span>
-                                            <span style={{ opacity: 0.5, color: '#888' }}>
-                                                (Số lượng còn: {option.data.quantity})
-                                            </span>
-                                        </div>
-                                    )}
                                 />
                                 <Button type="primary" onClick={addProductToTab}>
                                     Thêm
@@ -805,11 +773,11 @@ const InvoiceDetail = () => {
                 </Content>
 
                 <Content className="customer-content">
-                    <h1 className="customer-title">Thông Tin Khách Hàng</h1>
+                    <h1 className="customer-title">Nhà Cung Cấp</h1>
                     <div className="customer-info">
                         <div className="customer-form">
                             <div className="form-row">
-                                <label className="form-label">Phone Number: </label>
+                                <label className="form-label">Số điện thoại : </label>
                                 <Select
                                     showSearch
                                     placeholder="Chọn số điện thoại"
@@ -829,7 +797,7 @@ const InvoiceDetail = () => {
                                 )}
                             </div>
                             <div className="form-row">
-                                <label className="form-label2">Tên khách hàng:</label>
+                                <label className="form-label2">Nhà cung cấp :</label>
                                 <Input
                                     style={inputStyle}
                                     value={currentTab.customerName}
@@ -892,11 +860,11 @@ const InvoiceDetail = () => {
 
                         <div className="payment-details">
                             <div className="payment-row">
-                                <label className="payment-label total-product-label"><h5>Tổng tiền sản phẩm:</h5></label>
+                                <label className="payment-label total-product-label"><h5>Tổng tiền Gạo :</h5></label>
                                 <div className="payment-value total-product-value">{totalAmount.toLocaleString()}</div>
                             </div>
                             <div className="payment-row">
-                                <label className="payment-label customer-payment-label"><h6>Phí vận chuyển:</h6></label>
+                                <label className="payment-label customer-payment-label"><h6>Phí vận chuyển :</h6></label>
                                 <InputNumber
                                     className="customer-payment-input"
                                     min={0}
@@ -919,29 +887,13 @@ const InvoiceDetail = () => {
                                 />
                             </div>
                             <div className="payment-row">
-                                <label className="payment-label final-amount-label"><h6>Tiền khách phải trả:</h6></label>
+                                <label className="payment-label final-amount-label"><h6>Tiền cửa hàng phải trả :</h6></label>
                                 <div className="payment-value final-amount-value">{calculateFinalAmount().toLocaleString()}</div>
-                            </div>
-                            <div className="payment-row">
-                                <label className="payment-label customer-payment-label"><h6>Tiền khách đưa:</h6></label>
-                                <InputNumber
-                                    placeholder="Nhập số tiền"
-                                    min={0}
-                                    value={customerPayment}
-                                    onChange={handleCustomerPaymentChange}
-                                    className="customer-payment-input"
-                                    formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                                />
-                            </div>
-                            <div className="payment-row">
-                                <label className="payment-label change-label"><h6>Tiền thừa trả khách:</h6></label>
-                                <div className="payment-value change-value">{calculateChange().toLocaleString()}</div>
                             </div>
                             <div className="description_content">
                                 <label><h6><i>Ghi chú :</i></h6></label>
                                 <TextArea
-                                    rows={5}
+                                    rows={10}
                                     value={currentTab.description || ''}
                                     onChange={handleDescriptionChange}
                                 />
@@ -953,10 +905,6 @@ const InvoiceDetail = () => {
 
             <div className="invoice-footer">
                 <div className="total-section">
-                    <div className="detail-line">
-                        <span className="detail-label">Tiền hàng sản phẩm gốc :</span>
-                        <span>{totalwithoutdiscount.toLocaleString()} VND</span>
-                    </div>
                     <div className="detail-line">
                         <span className="detail-label">Tiền hàng sản phẩm bán :</span>
                         <span>{calculateTotalSellPrice(items.find(item => item.key === activeKey)?.children.props.dataSource || []).toLocaleString()} VND</span>
@@ -993,7 +941,7 @@ const InvoiceDetail = () => {
                         className="payment-button"
                         onClick={handlePayment}
                     >
-                        Thanh Toán
+                        Tạo Hóa Đơn
                     </Button>
                 </div>
 
@@ -1003,4 +951,4 @@ const InvoiceDetail = () => {
     );
 };
 
-export default InvoiceDetail;
+export default InvoiceDetail2;

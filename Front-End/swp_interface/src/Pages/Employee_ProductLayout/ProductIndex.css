@@ -6,3 +6,54 @@
     text-align: center;
     /* Căn giữa nội dung trong tiêu đề */
 }
+
+/* Tùy chỉnh container của bộ lọc */
+.filter-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+    gap: 20px;
+    padding: 10px;
+    background-color: #fffbe6;
+    /* Màu nền nhẹ nhàng */
+    border: 1px solid #e3c584;
+    /* Viền nhấn */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Đổ bóng */
+}
+
+/* Nút lọc */
+.filter-container button {
+    background-color: #e3c584;
+    /* Màu vàng nhấn */
+    color: #6B7012;
+    font-weight: bold;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.filter-container button:hover {
+    background-color: #d4b76d;
+    /* Màu tối hơn khi hover */
+    color: white;
+    /* Chữ màu trắng */
+}
+
+/* Input tìm kiếm */
+.filter-container input {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 150px;
+    transition: border-color 0.3s ease;
+}
+
+.filter-container input:focus {
+    outline: none;
+    border-color: #e3c584;
+    box-shadow: 0 0 5px rgba(227, 197, 132, 0.6);
+}

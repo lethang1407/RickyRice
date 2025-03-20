@@ -25,9 +25,11 @@ public class EmployeeProductController {
             @RequestParam("page") int page,
             @RequestParam("size") int size,
             @RequestParam(value = "sortBy", defaultValue = "price") String sortBy,
-            @RequestParam(value = "descending", defaultValue = "false") boolean descending
+            @RequestParam(value = "descending", defaultValue = "false") boolean descending,
+            @RequestParam(value = "minQuantity", required = false) Integer minQuantity,
+            @RequestParam(value = "maxQuantity", required = false) Integer maxQuantity
     ) {
-        return productService.getProductBySearch(name, page, size, sortBy, descending);
+        return productService.getProductBySearch(name, page, size, sortBy, descending,minQuantity, maxQuantity);
     }
     @GetMapping("/productsList")
     public List<EmployeeProductDTO>getAllProductByNameInList(@RequestParam(value = "name", required = false) String name){

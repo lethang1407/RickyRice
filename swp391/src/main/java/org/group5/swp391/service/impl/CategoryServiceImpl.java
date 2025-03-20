@@ -74,20 +74,21 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public Page<EmployeeProductDTO> getProductBySearch(String name, int page, int size, String sortBy, boolean descending){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AccessDeniedException("Bạn chưa đăng nhập!");
-        }
-        String username = authentication.getName();
-        Account account = accountRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
-        Employee a=employeeRepository.findStoreIdByAccountEmpId(account.getId());
-        System.out.println(a.getStore().getId());
-        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Category> categoryPage = CategoryRepository.findByNameIgnoreCase(name, pageable);
-        Page<Product> productPage= productRepository.findByNameAndStoreIdContainingIgnoreCase(name,a.getStore().getId(),pageable);
-        return productPage.map(productConverter::toEmployeeProductDTO);
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication == null || !authentication.isAuthenticated()) {
+//            throw new AccessDeniedException("Bạn chưa đăng nhập!");
+//        }
+//        String username = authentication.getName();
+//        Account account = accountRepository.findByUsername(username)
+//                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
+//        Employee a=employeeRepository.findStoreIdByAccountEmpId(account.getId());
+//        System.out.println(a.getStore().getId());
+//        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+//        Pageable pageable = PageRequest.of(page, size, sort);
+//        Page<Category> categoryPage = CategoryRepository.findByNameIgnoreCase(name, pageable);
+//        Page<Product> productPage= productRepository.findByNameAndStoreIdContainingIgnoreCase(name,a.getStore().getId(),pageable);
+//        return productPage.map(productConverter::toEmployeeProductDTO);
+        return null;
     }
 
     public List<StoreCategoryIdAndNameDTO> getAllStoreCategories(){

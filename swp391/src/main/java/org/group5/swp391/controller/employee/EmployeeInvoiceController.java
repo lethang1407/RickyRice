@@ -12,11 +12,13 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -27,12 +29,21 @@ public class EmployeeInvoiceController {
     private final RabbitTemplate rabbitTemplate;
 
     @GetMapping("/invoices")
-    public Page<InvoiceDTO> getEmployeeInvoices (@RequestParam("page") int page,
-                                                 @RequestParam("size") int size,
-                                                 @RequestParam(value = "sortBy", required = false, defaultValue = "createdAt")String sortBy,
-                                                 @RequestParam(value = "sortOrder", required = false, defaultValue = "false")boolean sortOrder,
-                                                 @RequestParam(value = "phonesearch", required = false, defaultValue = "") String phonesearch ) {
-        return invoiceService.getInvoicesForEmployee(phonesearch,page,size,sortBy,sortOrder);
+    public Page<InvoiceDTO> getEmployeeInvoices(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "createdAt") String sortBy,
+            @RequestParam(value = "sortOrder", required = false, defaultValue = "false") boolean sortOrder,
+            @RequestParam(value = "phonesearch", required = false, defaultValue = "") String phonesearch,
+            @RequestParam(value = "namesearch", required = false, defaultValue = "") String name,
+            @RequestParam(value = "minAmount", required = false) Long minAmount,
+            @RequestParam(value = "maxAmount", required = false) Long maxAmount,
+            @RequestParam(value = "minShipping", required = false) Long minShipping,
+            @RequestParam(value = "maxShipping", required = false) Long maxShipping,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime endDate) {
+        return invoiceService.getInvoicesForEmployee(phonesearch, name, page, size, sortBy, sortOrder,
+                minAmount, maxAmount, minShipping, maxShipping, startDate, endDate);
     }
 
     @PostMapping("/invoice/invoice-create")

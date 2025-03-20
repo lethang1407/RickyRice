@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import InvoiceList from './components/invoiceList';
 import InvoiceCreate from './components/invoiceCreate';
+import InvoiceCreateToImportRice from './components/invoiceCreateToImportRice';
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -10,10 +11,11 @@ import {
     VideoCameraOutlined,
     InsertRowBelowOutlined,
     TeamOutlined,
+    SolutionOutlined,
 } from '@ant-design/icons';
 import logo from '../../assets/img/logoviet.png';
 import { useNavigate } from 'react-router-dom';
-import { Button, Layout, Menu, theme, Dropdown, notification, message  } from 'antd';
+import { Button, Layout, Menu, theme, Dropdown, notification, message } from 'antd';
 import './styleInvoices.css';
 import CustomFooter from "../../Components/Footer";
 import { useWebSocket } from '../../Utils/Websocket/WebsocketContextProvider';
@@ -35,11 +37,11 @@ const Employee_Invoices = () => {
         navigate(path);
     };
 
-    useEffect(()=>{
-        if(messages){
-            openNotification(api,messages.message)
+    useEffect(() => {
+        if (messages) {
+            openNotification(api, messages.message)
         }
-    },[messages])
+    }, [messages])
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -81,7 +83,7 @@ const Employee_Invoices = () => {
                         >
                             Khách Hàng
                         </Menu.Item>
-                        <SubMenu key="4" icon={<TeamOutlined />} title="Hóa Đơn" onClick={() => handleNavigation('/employee/invoices')}>
+                        <SubMenu key="4" icon={<SolutionOutlined />} title="Hóa Đơn" onClick={() => handleNavigation('/employee/invoices')}>
                             <Menu.Item key="4-1" onClick={() => setSelectedMenu('invoicesList')}>
                                 Danh Sách Hóa Đơn
                             </Menu.Item>
@@ -125,7 +127,7 @@ const Employee_Invoices = () => {
 
                         {selectedMenu === 'invoicesList' && <InvoiceList />}
                         {selectedMenu === 'createInvoice' && <InvoiceCreate />}
-                        {selectedMenu === 'canceledInvoices' && <h2>Tạo Hóa Đơn Xuất</h2>}
+                        {selectedMenu === 'canceledInvoices' && <InvoiceCreateToImportRice />}
 
                     </Content>
 
