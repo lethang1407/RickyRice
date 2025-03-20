@@ -3,6 +3,7 @@ package org.group5.swp391.service.impl;
 import org.group5.swp391.dto.debt.CustomerCreationRequest;
 import org.group5.swp391.dto.debt.CustomerDebtUpdateRequest;
 import org.group5.swp391.dto.debt.DebtCustomerDTO;
+import jakarta.transaction.Transactional;
 import org.group5.swp391.dto.employee.CustomerUpdateRequest;
 import org.group5.swp391.dto.response.PageResponse;
 import org.group5.swp391.entity.Account;
@@ -22,6 +23,7 @@ import org.group5.swp391.entity.Store;
 import org.group5.swp391.repository.CustomerRepository;
 import org.group5.swp391.repository.StoreRepository;
 import org.group5.swp391.utils.CurrentUserDetails;
+import org.hibernate.id.enhanced.CustomOptimizerDescriptor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -132,11 +134,13 @@ public class CustomerServiceImpl implements CustomerService {
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
         existingCustomer.setEmail(updatedCustomer.getEmail());
         existingCustomer.setAddress(updatedCustomer.getAddress());
+        existingCustomer.setBalance(updatedCustomer.getBalance());
         existingCustomer.setUpdatedAt(LocalDateTime.now());
         return customerRepository.save(existingCustomer);
     }
 
     @Override
+    @Transactional
     public Customer InvoiceUpdateCustomer(String phoneNumber, CustomerUpdateRequest updatedCustomer) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -147,12 +151,9 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
         Customer existingCustomer = customerRepository.findByPhoneNumber(phoneNumber);
-        System.out.println(existingCustomer.getName());
-        System.out.println(updatedCustomer.getName());
-        if(existingCustomer!=null) {
-            if(!existingCustomer.getName().equals(updatedCustomer.getName())) {
-                throw new IllegalArgumentException("Số điện thoại này là của khách hàng khác");
-            }
+        Customer existingCustomerByNewPhone = customerRepository.findByPhoneNumber(updatedCustomer.getPhoneNumberNew());
+        if(existingCustomerByNewPhone!=null) {
+                throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
         }
         validatePhoneNumber(updatedCustomer.getPhoneNumberNew());
         existingCustomer.setCreatedBy(username);
@@ -166,6 +167,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
+    @Transactional
     public Customer createCustomer(EmployeeCustomerDTO customerDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -174,15 +176,25 @@ public class CustomerServiceImpl implements CustomerService {
         String username = authentication.getName();
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
-        log.info(account.getId());
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
-        try {
             validatePhoneNumber(customerDTO.getPhoneNumber());
             if (customerDTO.getEmail() != null) {
                 validateEmail(customerDTO.getEmail());
             }
             Customer customer = new Customer();
             customer.setName(capitalizeFirstLetters(customerDTO.getName()));
+            Customer existingCustomer = customerRepository.findByPhoneNumber(customerDTO.getPhoneNumber());
+            List<Customer> existingCustomerEmail = customerRepository.findByEmail(customerDTO.getEmail());
+            if(existingCustomer!=null) {
+                throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
+            }
+            if(customerDTO.getEmail() !=null) {
+                for (Customer c : existingCustomerEmail){
+                    if(c.getEmail().equals(customerDTO.getEmail())) {
+                        throw new AppException(ErrorCode.EMAIL_EXISTED);
+                    }
+                }
+            }
             customer.setPhoneNumber(customerDTO.getPhoneNumber());
             customer.setEmail(customerDTO.getEmail());
             customer.setAddress(customerDTO.getAddress());
@@ -193,10 +205,6 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setStore(store);
             log.info("Saving customer thanh cong : {}", customer);
             return customerRepository.save(customer);
-        } catch (Exception ex) {
-            log.error("Error creating customer: {}", ex.getMessage(), ex);
-            throw new RuntimeException("Không thể tạo khách hàng: " + ex.getMessage());
-        }
     }
 
     @Override
@@ -323,13 +331,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     private void validatePhoneNumber(String phoneNumber) {
         if (phoneNumber == null || !phoneNumber.matches("^0\\d{9}$")) {
-            throw new IllegalArgumentException("SDT phải gồm 10 chữ số và bắt đầu bằng 0.");
+            throw new AppException(ErrorCode.PHONENUMBER_INVALID);
         }
     }
 
     private void validateEmail(String email) {
         if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")) {
-            throw new IllegalArgumentException("Email không đúng định dạng.");
+            throw new AppException(ErrorCode.EMAIL_INVALID);
         }
     }
 }

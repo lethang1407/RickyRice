@@ -51,22 +51,14 @@ public class EmployeeCustomerController {
             @PathVariable String phoneNumber,
             @RequestBody CustomerUpdateRequest customerDetails)
     {
-        try {
             Customer updatedCustomer = customerService.InvoiceUpdateCustomer(phoneNumber, customerDetails);
             return ResponseEntity.ok(updatedCustomer);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        }
     }
 
 
     @PostMapping("/customers/create")
     public ResponseEntity<?> createCustomer(@RequestBody EmployeeCustomerDTO customerDTO) {
-        try {
-            Customer savedCustomer = customerService.createCustomer(customerDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lỗi khi tạo khách hàng: " + e.getMessage());
-        }
+            customerService.createCustomer(customerDTO);
+            return ResponseEntity.ok("tạo khách hàng thành công ");
     }
 }

@@ -15,6 +15,7 @@ import {
     VideoCameraOutlined,
     InsertRowBelowOutlined,
     TeamOutlined,
+    SolutionOutlined,
 } from '@ant-design/icons';
 import axios from 'axios';
 import { Spin, List as ListItem } from 'antd';
@@ -293,7 +294,7 @@ const ZoneList = () => {
                         </Menu.Item>
                         <Menu.Item
                             key="4"
-                            icon={<TeamOutlined />}
+                            icon={<SolutionOutlined />}
                             onClick={() => handleNavigation('/employee/invoices')}
                         >
                             Hóa Đơn
@@ -322,18 +323,6 @@ const ZoneList = () => {
                                 height: 64,
                             }}
                         />
-
-                        <Space.Compact
-                            style={{
-                                width: '100%',
-                            }}
-                        >
-                            <Input
-                                placeholder="Tìm kiếm khu vực..."
-                                onChange={(e) => handleSearchChange(e.target.value)}
-                            />
-                            <Button type="primary">Tìm Kiếm</Button>
-                        </Space.Compact>
                     </Header>
                     <Content
                         style={{
@@ -344,57 +333,19 @@ const ZoneList = () => {
                             borderRadius: borderRadiusLG,
                         }}
                     >
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 15px" }}>
-                            <h3><i style={{ marginLeft: 15, color: "#E3C584" }}>Khu Vực Chứa Gạo  </i></h3>
-                            <Space size="middle">
-                                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px", color: "#6B7012" }}>
-                                    <span>Số Lượng Tối Thiểu :</span>
-                                    <Input
-                                        type="number"
-                                        placeholder="Min"
-                                        min={0}
-                                        style={{ width: 120 }}
-                                        allowClear onChange={(e) => handleFilterChange('quantityMin', e.target.value)}
-                                    />
-                                </div>
-                                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px", color: "#6B7012" }}>
-                                    <span>Số Lượng Tối Đa :</span>
-                                    <Input
-                                        type="number"
-                                        placeholder="Max"
-                                        min={0}
-                                        style={{ width: 120 }}
-                                        allowClear onChange={(e) => handleFilterChange('quantityMax', e.target.value)}
-                                    />
-                                </div>
-                                {/* <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
-                                    <span>Size Tối Thiểu:</span>
-                                    <Input
-                                        type="number"
-                                        placeholder="Min"
-                                        min={0}
-                                        style={{ width: 120 }}
-                                        allowClear onChange={(e) => handleFilterChange('sizeMin', e.target.value)}
-                                    />
-                                </div>
-                                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
-                                    <span>Size Tối Đa:</span>
-                                    <Input
-                                        type="number"
-                                        placeholder="Max"
-                                        min={0}
-                                        style={{ width: 120 }}
-                                        allowClear onChange={(e) => handleFilterChange('sizeMax', e.target.value)}
-                                    />
-                                </div> */}
-                                <Button type="primary" onClick={handleFilterSubmit}>
-                                    Lọc Sản Phẩm
-                                </Button>
-                            </Space>
-
-
-
-                            {/* <span style={{ marginLeft: 840 }}> <DropDown /></span> */}
+                        <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: "0 15px" }}>
+                            <h3 style={{ textAlign: "center", margin: 0, color: "#E3C584" }}><i>Khu Vực Chứa Gạo  </i></h3>
+                            <Space.Compact
+                                style={{
+                                    width: '20%',
+                                }}
+                            >
+                                <Input
+                                    placeholder="Tìm kiếm khu vực..."
+                                    onChange={(e) => handleSearchChange(e.target.value)}
+                                />
+                                <Button type="primary">Tìm Kiếm</Button>
+                            </Space.Compact>
                         </div>
 
                         {loading ? (<Spin size="large" />) : (

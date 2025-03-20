@@ -29,6 +29,7 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
     List<Customer> findAllWithPhoneNumberInList( @Param("phoneNumber") String phoneNumber,
                                                  @Param("id")String storeId);
     Customer findByPhoneNumber(String phoneNumber);
+    List<Customer> findByEmail(String email);
 
     @Query("""
     SELECT new org.group5.swp391.dto.employee.EmployeeCustomerDTO(c.id, c.name, c.phoneNumber) FROM Customer c

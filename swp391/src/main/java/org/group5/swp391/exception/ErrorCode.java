@@ -21,7 +21,10 @@ public enum ErrorCode {
     PHONENUMBER_EXISTED(400,"Phone number already existed",HttpStatus.CONFLICT),
     OTP_INVALID(400,"OTP invalid",HttpStatus.CONFLICT),
     PRODUCT_NOT_FOUND(400,"Product not found",HttpStatus.CONFLICT),
-    USER_NOT_REGISTERED(400, "User has not registered", HttpStatus.BAD_REQUEST)
+    USER_NOT_REGISTERED(400, "User has not registered", HttpStatus.BAD_REQUEST),
+    PHONENUMBER_INVALID(401,"SDT phải gồm 10 chữ số và bắt đầu bằng 0.",HttpStatus.BAD_REQUEST),
+    EMAIL_INVALID(402,"Email không đúng định dạng",HttpStatus.BAD_REQUEST),
+    INVOICE_INVALID(403,"Tổng tiền hoặc phí vận chuyển không được < 0!",HttpStatus.BAD_REQUEST),
     ;
     private int code;
     private String message;

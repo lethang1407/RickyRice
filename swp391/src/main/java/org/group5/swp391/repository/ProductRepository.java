@@ -21,12 +21,16 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     Page<Product> findByStoreInAndNameContainingIgnoreCase(Collection<Store> stores, String name, Pageable pageable);
 
     //minh
-    @Query("SELECT s FROM Product s WHERE s.store.id = :id " +
-            "AND (:name IS NULL OR :name = '' " +
-            "OR LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%')))")
+    @Query("SELECT p FROM Product p WHERE "
+            + "(:name IS NULL OR LOWER(p.name) LIKE %:name%) AND "
+            + "(p.store.id = :storeId) AND "
+            + "(:minQuantity IS NULL OR p.quantity >= :minQuantity) AND "
+            + "(:maxQuantity IS NULL OR p.quantity <= :maxQuantity)")
     Page<Product> findByNameAndStoreIdContainingIgnoreCase(@Param("name") String name,
-                                                           @Param("id") String storeid,
-                                                           Pageable pageable);
+                                                           @Param("storeId") String storeId,
+                                                           Pageable pageable,
+                                                           @Param("minQuantity") Integer minQuantity,
+                                                           @Param("maxQuantity") Integer maxQuantity);
 
     @Query("SELECT s FROM Product s WHERE s.store.id = :id " +
             "AND (:name IS NULL OR :name = '' " +

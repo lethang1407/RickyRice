@@ -5,14 +5,14 @@ import moment from 'moment';
 import { Button, Col, DatePicker, Drawer, Form, Input, Row, Select, Space, message, notification } from 'antd';
 import API from '../../../Utils/API/API';
 import { getToken } from '../../../Utils/UserInfoUtils';
+import { success, error } from '../../../Utils/AntdNotification';
 const { Option } = Select;
 
 const InvoiceCustomerCreate = ({ onCustomerCreated }) => {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
-    const [api, contextHolder] = notification.useNotification();
-
+    const [messageApi, contextHolder] = message.useMessage();
     const token = getToken();
     const showDrawer = () => {
         setOpen(true);
@@ -26,15 +26,8 @@ const InvoiceCustomerCreate = ({ onCustomerCreated }) => {
     const handleReset = () => {
         form.resetFields();
     };
-    const openNotificationWithIcon = (type, title, description) => {
-        api[type]({
-            message: title,
-            description: description,
-            placement: 'bottomRight',
-        });
-    };
-
     const handleSubmit = async () => {
+        setLoading(true)
         try {
             const values = await form.validateFields();
             const createdAt = moment().valueOf(); // Epoch timestamp (millisecond)
@@ -60,20 +53,25 @@ const InvoiceCustomerCreate = ({ onCustomerCreated }) => {
                 }
             );
             console.log("Dữ liệu gửi lên Backend thanh cong :", requestData);
-            if (response.status === 201) {
-                openNotificationWithIcon('success', 'Thành công', 'Tạo khách hàng mới thành công!');
-                if (onCustomerCreated) {
-                    onCustomerCreated(values.phoneNumber.trim(), values.name.trim());
-                }
-                setTimeout(() => {
-                    onClose();
-                }, 1000);
+            success("Tạo khách hàng mới thành công", messageApi);
+            if (onCustomerCreated) {
+                onCustomerCreated(values.phoneNumber.trim(), values.name.trim());
             }
-            //  else {
-            //     openNotificationWithIcon('error', 'Lỗi', 'Kiểm tra lại value phone hoặc email trùng nha onichang, Không gửi dữ liệu được đến backend nha onichan');
-            // }
-        } catch (error) {
-            openNotificationWithIcon('error', 'Thất Bại', 'Valid Kiểm tra lại value phone hoặc email, Không gửi dữ liệu được đến backend');
+            setTimeout(() => {
+                onClose();
+            }, 1000);
+
+        } catch (err) {
+            if (err.errorFields) {
+                messageApi.open({
+                    type: 'warning',
+                    content: 'Vui lòng điền đầy đủ và đúng thông tin trước khi gửi!',
+                });
+            } else {
+                error(err.response?.data?.message || "Tạo mới tài khoản thất bại.", messageApi);
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -81,7 +79,6 @@ const InvoiceCustomerCreate = ({ onCustomerCreated }) => {
         <>
             {contextHolder}
             <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
-                Khách Hàng Mới
             </Button>
             <Drawer
                 title="Tạo khách hàng mới"
@@ -113,7 +110,7 @@ const InvoiceCustomerCreate = ({ onCustomerCreated }) => {
                     </Space>
                 }
             >
-                <Form form={form} layout="vertical" hideRequiredMark>
+                <Form form={form} layout="vertical" hideRequiredMark validateTrigger="onSubmit">
                     <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item

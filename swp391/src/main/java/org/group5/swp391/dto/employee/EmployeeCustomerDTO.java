@@ -19,6 +19,7 @@ public class EmployeeCustomerDTO {
     Long created_at;
     Long updated_at;
     String created_by;
+    Double balance;
     EmployeeStoreDTO employeeStoreDTO;
 
     public EmployeeCustomerDTO(String customerID, String name, String phoneNumber) {

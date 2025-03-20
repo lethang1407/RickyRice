@@ -9,9 +9,7 @@ import AdminDashboard from "./Pages/AdminDashboard";
 import AccountOwner from "./Pages/AdminDashboard/AccountOwner";
 import AdminViewStores from "./Pages/AdminDashboard/AdminViewStores";
 import SubscriptionPlans from "./Pages/AdminDashboard/SubscriptionPlans";
-// import ProductsList from "./Pages/ProductsLayout/ProductsLayout";
 import ZoneList from "./Pages/ZoneLayout/Zone";
-// import CreateProduct from "./Pages/CreateProduct/CreateProduct";
 import Store from "./Pages/ShopOwner/Store/Store";
 import StoreOwnerLayout from "./Components/StoreOwner/Layout";
 import Invoice from "./Pages/ShopOwner/Invoice/Invoice";
@@ -41,6 +39,8 @@ import StoreProduct from "./Pages/StoreManagement/Product/Product.js";
 import { WebSocketProvider } from "./Utils/Websocket/WebsocketContextProvider.js"
 import CustomerDebt from "./Pages/Debt/CustomerDebt/customer.js";
 import Authenticate from "./Pages/Login/authenticate.js";
+import CreateStore from "./Pages/StoreManagement/StoreInfor/CreateStore.js";
+import UpdateStore from "./Pages/StoreManagement/StoreInfor/UpdateStore.js";
 
 function App() {
   return (
@@ -50,7 +50,7 @@ function App() {
         <Route path="/login" element={<Login />}></Route>
         <Route path="/forgot-password" element={<ForgetPassword />}></Route>
         <Route path="/register" element={<Register />}></Route>
-        <Route path='/authenticate' element={<Authenticate/>}></Route>
+        <Route path='/authenticate' element={<Authenticate />}></Route>
         <Route path="/unauthorized" element={<Unauthorized />}></Route>
         <Route path="/storehome" element={<StoreHome />}></Route>
         <Route path="/storehome" element={<StoreHome />}></Route>
@@ -73,7 +73,6 @@ function App() {
           </Route>
           <Route element={<EmployeeProtected />}>
             <Route path="/employee/products" element={<Employee_Products />}>
-              {" "}
             </Route>
             <Route path="/employee/ricezone" element={<ZoneList />}></Route>
             <Route

@@ -8,6 +8,7 @@ import {
     VideoCameraOutlined,
     InsertRowBelowOutlined,
     TeamOutlined,
+    SolutionOutlined,
 } from '@ant-design/icons';
 import axios from 'axios';
 import logo from '../../../../src/assets/img/logoviet.png';
@@ -37,6 +38,8 @@ const Employee_Products = () => {
     const [isSearch, setIsSearch] = useState(false);
     const [sortInfo, setSortInfo] = useState({ field: 'price', order: false });
     const token = getToken();
+    const [minQuantity, setMinQuantity] = useState(0);
+    const [maxQuantity, setMaxQuantity] = useState();
 
     const handleNavigation = (path) => {
         navigate(path);
@@ -118,6 +121,8 @@ const Employee_Products = () => {
                     size: size,
                     sortBy: sortInfo.field,
                     descending: sortInfo.order,
+                    minQuantity: minQuantity || undefined,
+                    maxQuantity: maxQuantity || undefined,
                 },
                 headers: {
                     Authorization: `Bearer ${token}`, // Thêm dấu backtick để sử dụng template string
@@ -186,7 +191,7 @@ const Employee_Products = () => {
                         </Menu.Item>
                         <Menu.Item
                             key="4"
-                            icon={<TeamOutlined />}
+                            icon={<SolutionOutlined />}
                             onClick={() => handleNavigation('/employee/invoices')}
                         >
                             Hóa Đơn
@@ -214,19 +219,6 @@ const Employee_Products = () => {
                                 height: 64,
                             }}
                         />
-
-                        <Space.Compact
-                            style={{
-                                width: '100%',
-                            }}
-                        >
-                            <Input
-                                placeholder='Tìm Tên Loại Gạo.....'
-                                value={searchTerm}
-                                onChange={(e) => { setIsSearch(false); setSearchTerm(e.target.value) }}
-                            />
-                            <Button type="primary" onClick={() => { setIsSearch(true); handleSearch(1, pageSize) }}>Tìm Kiếm </Button>
-                        </Space.Compact>
                     </Header>
                     <Content
                         style={{
@@ -237,10 +229,51 @@ const Employee_Products = () => {
                             borderRadius: borderRadiusLG,
                         }}
                     >
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "0 15px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: "0 15px" }}>
                             <h3 style={{ textAlign: "center", margin: 0, color: "#E3C584" }}>
                                 <i>Danh mục sản phẩm của cửa hàng</i>
                             </h3>
+                            <Space.Compact
+                                style={{
+                                    width: '20%',
+                                }}
+                            >
+                                <Input
+                                    placeholder='Tìm Tên Loại Gạo.....'
+                                    value={searchTerm}
+                                    onChange={(e) => { setIsSearch(false); setSearchTerm(e.target.value) }}
+                                />
+                                <Button type="primary" onClick={() => { setIsSearch(true); handleSearch(1, pageSize) }}>Tìm Kiếm </Button>
+                            </Space.Compact>
+                        </div>
+                        <div className="filter-container">
+                            <Space size="middle">
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px", color: "#6B7012" }}>
+                                    <span>Số Lượng Tối Thiểu :</span>
+                                    <Input
+                                        type="number"
+                                        value={minQuantity}
+                                        onChange={(e) => setMinQuantity(e.target.value)}
+                                        placeholder="Nhập min"
+                                        style={{ width: 150 }}
+                                        allowClear
+                                    />
+                                </div>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px", color: "#6B7012" }}>
+                                    <span>Số Lượng Tối Đa :</span>
+                                    <Input
+                                        type="number"
+                                        value={maxQuantity}
+                                        onChange={(e) => setMaxQuantity(e.target.value)}
+                                        placeholder="Nhập max"
+                                        style={{ width: 150 }}
+                                        allowClear
+                                    />
+                                </div>
+                                <Button type="primary" onClick={() => { setIsSearch(true); handleSearch(1, pageSize); }}>
+                                    Lọc Sản Phẩm
+                                </Button>
+                            </Space>
                         </div>
                         {loading ? (<Spin size="large" />) : (
                             <Table style={{ marginTop: 45 }}
