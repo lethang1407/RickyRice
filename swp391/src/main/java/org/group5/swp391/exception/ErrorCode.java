@@ -21,6 +21,7 @@ public enum ErrorCode {
     PHONENUMBER_EXISTED(400,"Phone number already existed",HttpStatus.CONFLICT),
     OTP_INVALID(400,"OTP invalid",HttpStatus.CONFLICT),
     PRODUCT_NOT_FOUND(400,"Product not found",HttpStatus.CONFLICT),
+    USER_NOT_REGISTERED(400, "User has not registered", HttpStatus.BAD_REQUEST)
     ;
     private int code;
     private String message;
