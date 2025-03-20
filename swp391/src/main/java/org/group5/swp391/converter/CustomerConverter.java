@@ -32,9 +32,10 @@ public class CustomerConverter {
         dto.setEmail(customer.getEmail());
         dto.setAddress(customer.getAddress());
         dto.setCreated_by(customer.getCreatedBy());
+        dto.setBalance(customer.getBalance());
         dto.setEmployeeStoreDTO((customer.getStore() != null) ? modelMapper.map(customer.getStore(), EmployeeStoreDTO.class) : null);
         if (customer.getStore() != null) {
-        dto.getEmployeeStoreDTO().setStoreID(customer.getStore().getId());
+            dto.getEmployeeStoreDTO().setStoreID(customer.getStore().getId());
         }
         if (customer.getCreatedAt() != null) {
             dto.setCreated_at(customer.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());

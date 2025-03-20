@@ -123,6 +123,7 @@ public class CustomerServiceImpl implements CustomerService {
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
         existingCustomer.setEmail(updatedCustomer.getEmail());
         existingCustomer.setAddress(updatedCustomer.getAddress());
+        existingCustomer.setBalance(updatedCustomer.getBalance());
         existingCustomer.setUpdatedAt(LocalDateTime.now());
         return customerRepository.save(existingCustomer);
     }
