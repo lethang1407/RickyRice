@@ -1,12 +1,13 @@
 import "../../assets/css/main.css";
 import "../../assets/css/style.css";
-import logo from "../../assets/img/logoviet.png";
+import logo from "../../assets/img/logo-no-background.png";
 import Upper from "../../Utils/Animation/Upper";
 import { useNavigate } from "react-router-dom";
 import { getToken, logout, getRole } from "../../Utils/UserInfoUtils";
 import Loading from "../../Pages/Loading/Loading";
 import { useState } from "react";
 import { successWSmile } from "../../Utils/AntdNotification";
+import { scroller } from "react-scroll";
 import { message } from "antd";
 
 function HomeHeader() {
@@ -53,26 +54,33 @@ function HomeHeader() {
     }
   };
 
+    const scrollToSection = (str) => {
+      scroller.scrollTo(str, {
+        duration: 300,
+        delay: 0,
+        smooth: "easeInOutQuart",
+      });
+    }
+
   return (
     <>
       {contextHolder}
       {loading && <Loading />}
       <Upper>
-        <div class="header">
+        <div class="header" >
           <div class="container">
             <div class="row">
               <div class="col-xl-12">
-                <div class="header__navbar">
+                <div class="header__navbar" style={{padding:'20px 0px'}}>
                   <img
-                    style={{ width: "90px", marginRight: "100px" }}
+                    style={{marginRight: "100px", height:'60px' }}
                     src={logo}
                     alt="logo"
                     class="header__navbar__img"
                   />
-                  <div class="header__navbar__menu">
-                    <div class="header__navbar__menu__item">Trang chủ</div>
-                    <div class="header__navbar__menu__item">Giới thiệu</div>
-                    <div class="header__navbar__menu__item">Quy trình</div>
+                  <div style={{padding:'10px 0px'}} class="header__navbar__menu">
+                    <div onClick={() => scrollToSection("head")} class="header__navbar__menu__item">Trang chủ</div>
+                    <div onClick={() => scrollToSection("introduction")} class="header__navbar__menu__item">Giới thiệu</div>
                     <div
                       className="header__navbar__menu__item"
                       onClick={() =>
@@ -81,8 +89,8 @@ function HomeHeader() {
                     >
                       Gói đăng ký
                     </div>
-                    <div class="header__navbar__menu__item">Blog</div>
-                    <div class="header__navbar__menu__item">Liên hệ</div>
+                    <div onClick={() => scrollToSection("feedback")} class="header__navbar__menu__item">Feedback</div>
+                    <div onClick={() => scrollToSection("lienhe")} class="header__navbar__menu__item">Liên hệ</div>
                     {token ? (
                       <>
                         <div

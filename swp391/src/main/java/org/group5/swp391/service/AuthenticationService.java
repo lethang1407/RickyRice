@@ -18,4 +18,5 @@ public interface AuthenticationService {
     public SendOTPResponse sendOTP(String key);
     public CheckOTPResponse checkOTP(OTPCheckRequest request);
     public void changePassword(ChangePasswordRequest request);
+    public AuthenticationResponse outboundAuthenticate(String code);
 }

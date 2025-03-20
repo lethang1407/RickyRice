@@ -43,4 +43,27 @@ public interface DebtRepository extends JpaRepository<Debt, String> {
             Pageable pageable
     );
 
+    @Query("""
+    SELECT d FROM Debt d 
+    WHERE (:customerId IS NULL OR TRIM(:customerId) <> '' AND d.customer.id = :customerId )
+      AND (:number IS NULL OR TRIM(:number) <> '' AND LOWER(d.number) LIKE LOWER(CONCAT('%', :number, '%')))
+      AND (:type IS NULL OR d.type = :type)
+      AND (:startCreatedAt IS NULL OR d.createdAt >= :startCreatedAt)
+      AND (:endCreatedAt IS NULL OR d.createdAt <= :endCreatedAt)
+      AND (:fromAmount IS NULL OR d.amount >= :fromAmount)
+      AND (:toAmount IS NULL OR d.amount <= :toAmount)
+      AND (:createdBy IS NULL OR TRIM(:createdBy) <> '' AND LOWER(d.createdBy) LIKE LOWER(CONCAT('%', :createdBy, '%')))
+""")
+    Page<Debt> searchForDetailCustomerDebt(
+            @Param("customerId") String customerId,
+            @Param("number") String number,
+            @Param("type") DebtType type,
+            @Param("startCreatedAt") LocalDateTime startCreatedAt,
+            @Param("endCreatedAt") LocalDateTime endCreatedAt,
+            @Param("fromAmount") Double fromAmount,
+            @Param("toAmount") Double toAmount,
+            @Param("createdBy") String createdBy,
+            Pageable pageable
+    );
+
 }

@@ -1,8 +1,14 @@
 package org.group5.swp391.service.impl;
 
+import org.group5.swp391.dto.debt.CustomerCreationRequest;
+import org.group5.swp391.dto.debt.CustomerDebtUpdateRequest;
+import org.group5.swp391.dto.debt.DebtCustomerDTO;
 import org.group5.swp391.dto.employee.CustomerUpdateRequest;
+import org.group5.swp391.dto.response.PageResponse;
 import org.group5.swp391.entity.Account;
 import org.group5.swp391.entity.Employee;
+import org.group5.swp391.exception.AppException;
+import org.group5.swp391.exception.ErrorCode;
 import org.group5.swp391.repository.AccountRepository;
 import org.group5.swp391.repository.EmployeeRepository;
 import org.group5.swp391.service.CustomerService;
@@ -24,10 +30,16 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -43,6 +55,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final StoreRepository storeRepository;
     private final EmployeeRepository employeeRepository;
     private final AccountRepository accountRepository;
+    private final CustomerConverter customerConverter;
 
 
     @Override
@@ -190,6 +203,106 @@ public class CustomerServiceImpl implements CustomerService {
     public List<EmployeeCustomerDTO> getCustomerForDebt() {
         List<String> storeList = CurrentUserDetails.getCurrentStores();
         return customerRepository.getCustomersForDebts(storeList);
+    }
+
+    @Override
+    public PageResponse<DebtCustomerDTO> getDebtCustomers(Integer pageNo, Integer pageSize, String sortBy, String storeId,
+                                                          LocalDate startCreatedAt, LocalDate endCreatedAt, LocalDate startUpdatedAt,
+                                                          LocalDate endUpdatedAt, String customerName, String phoneNumber, String email,
+                                                          String address, Double fromAmount, Double toAmount, String createdBy) {
+
+        Sort sort = Sort.by("createdAt").descending();
+
+        int p = 0;
+        if(pageNo >= 0){
+            p = pageNo - 1;
+        }
+
+        if (StringUtils.hasLength(sortBy)) {
+            Pattern pattern = Pattern.compile("(\\w+?)(:)(asc|desc)");
+            Matcher matcher = pattern.matcher(sortBy);
+            if (matcher.find()) {
+                String columnName = matcher.group(1);
+                if (matcher.group(3).equalsIgnoreCase("asc")) {
+                    sort = Sort.by(columnName).ascending();
+                } else {
+                    sort = Sort.by(columnName).descending();
+                }
+            }
+        }
+
+        List<String> storeList;
+        if(!StringUtils.hasLength(storeId)){
+            storeList = CurrentUserDetails.getCurrentStores();
+        }else{
+            String[] list = storeId.split(" ");
+            storeList = Arrays.stream(list).toList();
+        }
+
+        Pageable pageable = PageRequest.of(p, pageSize, sort);
+
+        Page<Customer> listCustomer = customerRepository.searchForDebtCustomer(storeList, startCreatedAt!=null ? startCreatedAt.atStartOfDay() : null,
+                endCreatedAt!=null ? endCreatedAt.atTime(23, 59, 59) : null, startUpdatedAt!=null ? startUpdatedAt.atStartOfDay() : null,
+                endUpdatedAt!=null ? endUpdatedAt.atTime(23, 59, 59) : null, customerName, phoneNumber,
+                email, address, fromAmount, toAmount, createdBy, pageable);
+
+        List<DebtCustomerDTO> dtos = listCustomer.stream().map(customerConverter::debtCustomerDTO).toList();
+
+        return PageResponse.<DebtCustomerDTO>builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .data(dtos)
+                .totalPages((long) listCustomer.getTotalPages())
+                .build();
+    }
+
+    @Override
+    public void updateCustomerDebt(String id, CustomerDebtUpdateRequest request) {
+        Customer update = customerConverter.toCustomerEntity(request);
+        Customer now = customerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        if(request.getPhoneNumber()!=null){
+            if(!request.getPhoneNumber().equals(now.getPhoneNumber()) && customerRepository.existsByPhoneNumber(request.getPhoneNumber())){
+                throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
+            }
+        }
+        if(request.getEmail()!=null){
+            if(!request.getEmail().equals(now.getEmail()) && customerRepository.existsByEmail(request.getEmail())){
+                throw new AppException(ErrorCode.EMAIL_EXISTED);
+            }
+        }
+        try{
+            Field[] fields = Customer.class.getDeclaredFields();
+            for(Field field : fields){
+                field.setAccessible(true);
+                if(field.get(update)!=null){
+                    field.set(now,field.get(update));
+                }
+            }
+            customerRepository.save(now);
+        }catch (Exception e){
+            throw new AppException(ErrorCode.UNCATEGORIZED);
+        }
+    }
+
+    @Override
+    public void createCustomerDebt(CustomerCreationRequest request) {
+        if(customerRepository.existsByPhoneNumber(request.getPhoneNumber())){
+            throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
+        }
+        if(request.getEmail()!=null && customerRepository.existsByEmail(request.getEmail())){
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
+        Customer customer = customerConverter.toCustomerEntity(request);
+        Store store = storeRepository.findById(request.getStoreId()).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        customer.setStore(store);
+        customer.setId(null);
+        customerRepository.save(customer);
+    }
+
+    @Override
+    public DebtCustomerDTO getDebtCustomerById(String id) {
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return customerConverter.debtCustomerDTO(customer);
     }
 
     public String capitalizeFirstLetters(String input) {

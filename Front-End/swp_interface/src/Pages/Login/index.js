@@ -5,6 +5,7 @@ import { useNavigate  } from 'react-router-dom';
 import { checkLogin } from '../../Utils/FetchUtils';
 import API from '../../Utils/API/API.js';
 import { error, successWSmile} from '../../Utils/AntdNotification';
+import { OAuthConfig } from '../../Configurations/configuration.js';
 function Login(){
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
@@ -31,6 +32,20 @@ function Login(){
     }
   }
 
+  const handleLoginGoogle = () => {
+    const callbackUrl = OAuthConfig.redirectUri;
+    const authUrl = OAuthConfig.authUri;
+    const googleClientId = OAuthConfig.clientId;
+
+    const targetUrl = `${authUrl}?redirect_uri=${encodeURIComponent(
+      callbackUrl
+    )}&response_type=code&client_id=${googleClientId}&scope=openid%20email%20profile`;
+
+    console.log(targetUrl);
+
+    window.location.href = targetUrl;
+  }
+
   const naviForgetPassword = () =>{
     navigate('/forgot-password');
   }
@@ -48,9 +63,7 @@ function Login(){
         <h2 className='login__title'>LOGIN</h2>
         <h5 className='login__slogan'>Join Us Today and Start Your Journey to Success!</h5>
         <div className='login__icon'>
-          <GoogleOutlined className='login__icon__i'/>
-          <FacebookOutlined className='login__icon__i'/>
-          <GithubOutlined className='login__icon__i'/>
+          <GoogleOutlined onClick={handleLoginGoogle} className='login__icon__i'/>
         </div>
         <Form 
           initialValues={{

@@ -39,6 +39,8 @@ import Zone from "./Pages/StoreManagement/Zone/Zone.js";
 import StoreLayout from "./Components/StoreLayout/storelayout.js";
 import StoreProduct from "./Pages/StoreManagement/Product/Product.js";
 import { WebSocketProvider } from "./Utils/Websocket/WebsocketContextProvider.js"
+import CustomerDebt from "./Pages/Debt/CustomerDebt/customer.js";
+import Authenticate from "./Pages/Login/authenticate.js";
 
 function App() {
   return (
@@ -48,6 +50,7 @@ function App() {
         <Route path="/login" element={<Login />}></Route>
         <Route path="/forgot-password" element={<ForgetPassword />}></Route>
         <Route path="/register" element={<Register />}></Route>
+        <Route path='/authenticate' element={<Authenticate/>}></Route>
         <Route path="/unauthorized" element={<Unauthorized />}></Route>
         <Route path='/storehome' element={<StoreHome />}></Route>
         <Route path="/storehome" element={<StoreHome />}></Route>
@@ -93,6 +96,7 @@ function App() {
                 <Route path="product/update" element={<ProductUpdate />} />
                 <Route path="employee/update" element={<EmployeeUpdate />} />
                 <Route path="debt" element={<Debt />}></Route>
+                <Route path="customer-debt" element={<CustomerDebt />}></Route>
               </Route>
               <Route path="/vnpay/payment-return" element={<PaymentReturn />} />
             </Route>

@@ -488,4 +488,20 @@ body {
   padding: 12px 20px;
 }
 
-/*# sourceMappingURL=style.css.map */
+.section-four .ant-input-outlined{
+  border-radius: 20px!important;
+  font-size: 18px;
+  padding:5px 20px;
+}
+
+.section-four .ant-btn{
+  background-color: green;
+  color: white;
+  transition: all ease 0.5s;
+}
+
+.section-four .ant-btn:hover {
+  background-color: white!important;
+  cursor: pointer;
+  color: green!important;
+}

@@ -105,4 +105,12 @@ public class AuthenticationAPI {
                 .build();
     }
 
+    @PostMapping(value = "/outbound/authenticate")
+    ApiResponse<AuthenticationResponse> authenticateOutbound(@RequestParam String code) {
+        AuthenticationResponse authenticated = authenticationService.outboundAuthenticate(code);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .code((authenticated.isSuccess() ? 200 : 401))
+                .data(authenticated)
+                .build();
+    }
 }
