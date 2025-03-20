@@ -77,7 +77,7 @@ const DashboardContent = () => {
           <Card className="text-center bg-success text-white">
             <Card.Body>
               <Card.Title>Tổng doanh thu</Card.Title>
-              <Card.Text>${totalRevenue.toLocaleString()}</Card.Text>
+              <Card.Text>{totalRevenue.toLocaleString()} VND</Card.Text>
             </Card.Body>
           </Card>
         </Col>
