@@ -1,46 +1,51 @@
 import React, { useEffect, useState } from "react";
-import { Container, Card, Button, Row, Col } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { getToken } from "../../Utils/UserInfoUtils";
 import API from "../../Utils/API/API.js";
 import HomeHeader from "../../Components/HomeHeader";
 import "./style.css";
+import { Card, Col, Row, Button } from "antd";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const SubscriptionPlans = () => {
+  const { storeID } = useParams(); // Lấy storeID nếu có
   const [plans, setPlans] = useState([]);
   const token = getToken();
 
   useEffect(() => {
-    fetch(API.PUBLIC.SUBSCRIPTION_PLAN)
-      .then((res) => res.json())
-      .then((data) => setPlans(data.data))
+    axios
+      .get(API.PUBLIC.SUBSCRIPTION_PLAN)
+      .then((res) => setPlans(res.data.data))
       .catch((err) => console.error("Error fetching plans:", err));
   }, []);
 
   const handlePayment = async (plan) => {
     if (!token) {
       alert("Bạn cần đăng nhập để thanh toán!");
-      window.location.href = "/login"; // Chuyển hướng đến trang đăng nhập
+      window.location.href = "/login";
       return;
     }
-
+  
     try {
-      const response = await fetch(
-        API.VNPAY.CREATE_PAYMENT(plan.price, plan.subscriptionPlanID),
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
+      // Kiểm tra nếu storeID tồn tại thì thêm vào API
+      const paymentUrl = storeID
+        ? API.VNPAY.CREATE_PAYMENT(plan.price, plan.subscriptionPlanID) + `&storeID=${storeID}`
+        : API.VNPAY.CREATE_PAYMENT(plan.price, plan.subscriptionPlanID);
+  
+      const response = await axios.get(paymentUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
       if (response.status === 403) {
         alert("Vui lòng sử dụng tài khoản chủ cửa hàng để sử dụng dịch vụ.");
         return;
       }
-
-      const data = await response.json();
-      if (data.data) {
-        window.location.href = data.data;
+  
+      if (response.data.data) {
+        window.location.href = response.data.data;
       } else {
         alert("Fail create payment VNPay request!");
       }
@@ -48,6 +53,7 @@ const SubscriptionPlans = () => {
       console.error("Payment error:", error);
     }
   };
+  
 
   return (
     <>
@@ -57,23 +63,20 @@ const SubscriptionPlans = () => {
 
       <Container className="subscription-plans-container">
         <h2 className="text-center mb-4">Chọn Gói Đăng Ký</h2>
-        <Row className="justify-content-center align-items-center w-100">
+        <Row gutter={[16, 16]} justify="center">
           {plans.map((plan) => (
-            <Col
-              md={4}
-              key={plan.subscriptionPlanID}
-              className="d-flex justify-content-center"
-            >
-              <Card className="subscription-card shadow-sm w-100">
-                <Card.Body>
-                  <Card.Title>{plan.name}</Card.Title>
-                  <Card.Text>{plan.description}</Card.Text>
-                  <h5>{plan.price.toLocaleString()} VND</h5>
-                  <p>Thời hạn: {plan.timeOfExpiration} tháng</p>
-                  <Button variant="primary" onClick={() => handlePayment(plan)}>
-                    Thanh toán
-                  </Button>
-                </Card.Body>
+            <Col span={8} key={plan.subscriptionPlanID}>
+              <Card
+                title={plan.name}
+                bordered={false}
+                className="subscription-card"
+              >
+                <p>{plan.description}</p>
+                <h5>{plan.price.toLocaleString()} VND</h5>
+                <p>Thời hạn: {plan.timeOfExpiration} tháng</p>
+                <Button type="primary" onClick={() => handlePayment(plan)}>
+                  Thanh toán
+                </Button>
               </Card>
             </Col>
           ))}

@@ -32,7 +32,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(request ->
                 request.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
-                        .requestMatchers("/store-owner/**", "/debt/**").hasAuthority("STORE_OWNER")
+                        .requestMatchers("/store-owner/**", "/debt/**", "/manage-store/**").hasAuthority("STORE_OWNER")
                         .requestMatchers("/employee/**").hasAuthority("EMPLOYEE")
                         .requestMatchers("/account/**").hasAnyAuthority("ADMIN", "STORE_OWNER", "EMPLOYEE")
                         .requestMatchers("/vnpay/**").hasAuthority("STORE_OWNER")

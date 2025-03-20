@@ -11,8 +11,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "AppStatistics")
-public class AppStatistics extends AbstractEntity{
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+public class AppStatistics extends AbstractEntity {
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "StoreID")
     Store store;
 
@@ -22,7 +22,7 @@ public class AppStatistics extends AbstractEntity{
     @Column(name = "SubcriptionPlanPrice")
     Double subcriptionPlanPrice;
 
-    @Column(name = "SubcriptionDescription")
+    @Column(name = "SubcriptionDescription", columnDefinition = "NVARCHAR(255)")
     String subcriptionDescription;
 
     @Column(name = "SubcriptionTimeOfExpiration")

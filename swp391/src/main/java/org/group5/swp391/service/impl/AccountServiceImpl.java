@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
-    private final PasswordEncoder passwordEncoder;
 
     // lấy danh sách tài khoản theo role
     public List<AccountResponse> getAccountsByRole(String roleCode) {

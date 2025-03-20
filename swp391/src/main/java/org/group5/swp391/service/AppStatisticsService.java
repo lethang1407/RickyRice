@@ -8,4 +8,6 @@ import java.util.List;
 @Service
 public interface AppStatisticsService {
     public List<AppStatisticsResponse> getStatistics();
+
+    List<String> getTransactionNosWithNullStore();
 }

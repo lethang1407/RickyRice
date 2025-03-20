@@ -1,0 +1,11 @@
+.upload-wrapper {
+  width: 100%;
+  height: 100px; /* Điều chỉnh chiều cao theo ý muốn */
+}
+
+.upload-wrapper .uploaded-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Giúp ảnh lấp đầy mà không méo */
+  border-radius: 8px; /* Tùy chỉnh bo góc */
+}
