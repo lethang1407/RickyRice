@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -114,6 +115,45 @@ public class DebtServiceImpl implements DebtService {
         Page<Debt> debts = debtRepository.searchForDebt( storeList, number, StringUtils.hasLength(type) ? DebtType.valueOf(type) : null, startCreatedAt!=null ? startCreatedAt.atStartOfDay() : null,
                 endCreatedAt!=null ? endCreatedAt.atTime(23, 59, 59) : null, customerName,
                 phoneNumber, email, address, fromAmount, toAmount, createdBy ,pageable);
+
+        List<DebtDTO> dtos = debts.stream().map(debtConverter::toDto).toList();
+
+        return PageResponse.<DebtDTO>builder()
+                .data(dtos)
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .totalPages((long) debts.getTotalPages())
+                .build();
+    }
+
+    @Override
+    public PageResponse<DebtDTO> searchForDetailCustomerDebt(int pageNo, int pageSize, String sortBy, String customerId, String number, String type,
+                                                             LocalDate startCreatedAt, LocalDate endCreatedAt, Double fromAmount,
+                                                             Double toAmount, String createdBy) {
+        Sort sort = Sort.by("number").descending();
+
+        int p = 0;
+        if(pageNo >= 0){
+            p = pageNo - 1;
+        }
+
+        if (StringUtils.hasLength(sortBy)) {
+            Pattern pattern = Pattern.compile("(\\w+?)(:)(asc|desc)");
+            Matcher matcher = pattern.matcher(sortBy);
+            if (matcher.find()) {
+                String columnName = matcher.group(1);
+                if (matcher.group(3).equalsIgnoreCase("asc")) {
+                    sort = Sort.by(columnName).ascending();
+                } else {
+                    sort = Sort.by(columnName).descending();
+                }
+            }
+        }
+
+        Pageable pageable = PageRequest.of(p, pageSize, sort);
+        Page<Debt> debts = debtRepository.searchForDetailCustomerDebt(customerId, number, StringUtils.hasLength(type) ? DebtType.valueOf(type) : null,
+                startCreatedAt!=null ? startCreatedAt.atStartOfDay() : null,
+                endCreatedAt!=null ? endCreatedAt.atTime(23, 59, 59) : null, fromAmount, toAmount, createdBy, pageable);
 
         List<DebtDTO> dtos = debts.stream().map(debtConverter::toDto).toList();
 

@@ -94,4 +94,9 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    // lấy gói dịch vụ theo giá tiền
+    public SubscriptionPlan getSubscriptionPlanByPrice(double price) {
+        return subscriptionPlanRepository.findByPrice(price);
+    }
 }

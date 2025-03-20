@@ -6,6 +6,8 @@ import { Container, Card, Button, Spinner, Alert, Form } from "react-bootstrap";
 import avt_default from "../../assets/img/avt_default.jpg";
 import UpdateProfile from "./UpdateProfile";
 import Navbar from "./NavbarAccount.js";
+import { UserOutlined } from "@ant-design/icons";
+import { Avatar, Space } from "antd";
 
 const AccountInfo = () => {
   const [account, setAccount] = useState(null);
@@ -112,13 +114,16 @@ const AccountInfo = () => {
           <Card className="p-4 shadow">
             <div className="d-flex justify-content-between align-items-center">
               <div className="text-center">
-                <img
-                  src={account.avatar || avt_default}
-                  alt="Avatar"
-                  className="rounded-circle mb-3 border border-primary p-1"
-                  width={100}
-                  height={100}
-                />
+                <Space direction="vertical" size={20}>
+                  <Space wrap size={20}>
+                    <Avatar
+                      size={64}
+                      src={account.avatar || avt_default}
+                      icon={!account.avatar && <UserOutlined />}
+                    />
+                  </Space>
+                </Space>
+                
                 <Form.Group>
                   <Form.Label className="btn btn-link">
                     {uploading ? "Đang tải lên..." : "Thay đổi ảnh"}

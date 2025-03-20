@@ -23,8 +23,7 @@ public class AppStatisticsServiceServiceImpl implements AppStatisticsService {
         return statistics.stream()
                 .map(stat -> AppStatisticsResponse.builder()
                         .appStatisticsID(stat.getId())
-                        .storeID(stat.getStore().getId())
-                        .storeName(stat.getStore().getStoreName())
+                        .storeID(stat.getStore() != null ? stat.getStore().getId() : null)
                         .subcriptionPlanName(stat.getSubcriptionPlanName())
                         .subcriptionPlanPrice(stat.getSubcriptionPlanPrice())
                         .subcriptionDescription(stat.getSubcriptionDescription())
@@ -34,5 +33,11 @@ public class AppStatisticsServiceServiceImpl implements AppStatisticsService {
                         .transactionNo(stat.getTransactionNo())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+
+    // lấy danh sách giao dich có StoreID null
+    public List<String> getTransactionNosWithNullStore() {
+        return appStatisticsRepository.findTransactionNosWithNullStore();
     }
 }

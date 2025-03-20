@@ -12,7 +12,7 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
   const [sortBy, setSortBy] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
   const [currentPage, setCurrentPage] = useState(1);
-  const [recordsPerPage, setRecordsPerPage] = useState(5);
+  const [recordsPerPage, setRecordsPerPage] = useState(10);
   const token = getToken();
 
   useEffect(() => {
@@ -24,21 +24,23 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
       })
       .then((response) => {
         if (response.data.code === 200) {
-          const data = response.data.data;
+          const data = response.data.data.filter(
+            (item) => item.createdBy && item.createdAt && item.transactionNo
+          );
           setRevenueData(data);
           setTotalRevenue(
             data.reduce((sum, item) => sum + item.subcriptionPlanPrice, 0)
           );
         } else {
-          setError("Failed to fetch data");
+          setError("Không thể lấy dữ liệu");
         }
       })
       .catch((err) => {
-        console.error("Error fetching data:", err);
-        setError("Error fetching data");
+        console.error("Lỗi khi lấy dữ liệu:", err);
+        setError("Lỗi khi lấy dữ liệu");
       })
       .finally(() => setLoading(false));
-  }, [setTotalRevenue]);
+  }, [setTotalRevenue, token]);
 
   const handleSort = (key) => {
     setSortBy(key);
@@ -47,9 +49,9 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
 
   const filteredData = useMemo(() => {
     return revenueData.filter((item) =>
-      [item.storeName, item.subcriptionPlanName, item.createdBy].some((field) =>
-        field.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      [item.storeName, item.subcriptionPlanName, item.createdBy]
+        .filter(Boolean)
+        .some((field) => field.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   }, [revenueData, searchTerm]);
 
@@ -82,14 +84,13 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
       <div className="d-flex justify-content-between align-items-center mb-3">
         <Form.Control
           type="text"
-          placeholder="Tìm kiếm theo tên cửa hàng, gói đăng kí, người tạo"
+          placeholder="Tìm kiếm theo gói đăng kí, người tạo"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="me-2"
           style={{ width: "500px" }}
         />
         <div className="d-flex align-items-center">
-          <Form.Label className="me-2 mb-0">Hiển thị</Form.Label>
           <Form.Select
             value={recordsPerPage}
             onChange={(e) => {
@@ -115,14 +116,6 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
           <Table striped bordered hover className="mt-3">
             <thead>
               <tr>
-                <th onClick={() => handleSort("storeName")}>
-                  Tên cửa hàng{" "}
-                  {sortBy === "storeName"
-                    ? sortOrder === "asc"
-                      ? "▲"
-                      : "▼"
-                    : "⇅"}
-                </th>
                 <th>Gói đăng kí</th>
                 <th>Giá (VND)</th>
                 <th>Mô tả</th>
@@ -143,7 +136,6 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
               {currentRecords.length > 0 ? (
                 currentRecords.map((item) => (
                   <tr key={item.appStatisticsID}>
-                    <td>{item.storeName}</td>
                     <td>{item.subcriptionPlanName}</td>
                     <td className="text-right">
                       {item.subcriptionPlanPrice.toLocaleString()}
@@ -152,42 +144,24 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
                     <td className="text-center">
                       {item.subcriptionTimeOfExpiration}
                     </td>
-                    <td>{item.createdBy}</td>
-                    <td>{new Date(item.createdAt).toLocaleDateString()}</td>
-                    <td>{item.transactionNo}</td>
+                    <td>{item.createdBy ? item.createdBy : "N/A"}</td>
+                    <td>
+                      {item.createdAt
+                        ? new Date(item.createdAt).toLocaleDateString()
+                        : "N/A"}
+                    </td>
+                    <td>{item.transactionNo ? item.transactionNo : "N/A"}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="text-center text-muted">
+                  <td colSpan="8" className="text-center text-muted">
                     Không có giao dịch được tìm thấy
                   </td>
                 </tr>
               )}
             </tbody>
           </Table>
-
-          <Pagination className="mt-3">
-            <Pagination.Prev
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            />
-            {[...Array(totalPages)].map((_, index) => (
-              <Pagination.Item
-                key={index}
-                active={index + 1 === currentPage}
-                onClick={() => setCurrentPage(index + 1)}
-              >
-                {index + 1}
-              </Pagination.Item>
-            ))}
-            <Pagination.Next
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-            />
-          </Pagination>
         </>
       )}
     </div>

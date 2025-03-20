@@ -1,9 +1,16 @@
 package org.group5.swp391.converter;
 
 import lombok.RequiredArgsConstructor;
+import org.group5.swp391.dto.debt.CustomerCreationRequest;
+import org.group5.swp391.dto.debt.CustomerDebtUpdateRequest;
+import org.group5.swp391.dto.debt.DebtCustomerDTO;
 import org.group5.swp391.dto.employee.EmployeeCustomerDTO;
 import org.group5.swp391.dto.employee.EmployeeStoreDTO;
 import org.group5.swp391.entity.Customer;
+import org.group5.swp391.entity.Store;
+import org.group5.swp391.exception.AppException;
+import org.group5.swp391.exception.ErrorCode;
+import org.group5.swp391.repository.StoreRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +20,7 @@ import java.time.ZoneId;
 @RequiredArgsConstructor
 public class CustomerConverter {
     private final ModelMapper modelMapper;
+    private final StoreRepository storeRepository;
 
     //minh_snuppi
 //    public EmployeeCustomerDTO toEmployeeCustomerDTO(Customer customer) {
@@ -45,5 +53,22 @@ public class CustomerConverter {
             dto.setUpdated_at(customer.getUpdatedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
         }
         return dto;
+    }
+
+    public DebtCustomerDTO debtCustomerDTO(Customer customer){
+        DebtCustomerDTO dto = modelMapper.map(customer, DebtCustomerDTO.class);
+        dto.setCustomerId(customer.getId());
+        dto.setStoreId(customer.getStore().getId());
+        return dto;
+    }
+
+    public Customer toCustomerEntity(CustomerCreationRequest request){
+        Customer customer = modelMapper.map(request, Customer.class);
+        customer.setBalance((double) 0);
+        return customer;
+    }
+
+    public Customer toCustomerEntity(CustomerDebtUpdateRequest request){
+        return modelMapper.map(request, Customer.class);
     }
 }

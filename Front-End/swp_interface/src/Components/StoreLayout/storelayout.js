@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   AppstoreOutlined,
   FileTextOutlined,
@@ -6,11 +6,18 @@ import {
   MenuUnfoldOutlined,
   ShopOutlined,
   TeamOutlined,
-} from '@ant-design/icons';
-import { Button, Layout, Menu, theme } from 'antd';
+  IdcardOutlined,
+} from "@ant-design/icons";
+import { Button, Layout, Menu, theme } from "antd";
 // import './style.css';
-import { Link, Outlet, useLocation, useParams, useNavigate } from 'react-router-dom';
-import CustomFooter from '../../Components/Footer'; 
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useParams,
+  useNavigate,
+} from "react-router-dom";
+import CustomFooter from "../../Components/Footer";
 
 const { Header, Sider, Content } = Layout;
 
@@ -21,42 +28,53 @@ const StoreLayout = () => {
   } = theme.useToken();
 
   const location = useLocation();
-  const storeID  = useParams();  // Lấy storeID từ URL
-
+  const storeID = useParams();
   const selectedKey = location.pathname.startsWith(`/store/${storeID.id}/zone`)
-    ? '1'
+    ? "1"
     : location.pathname.startsWith(`/store/${storeID.id}/product`)
-      ? '2'
-      : '';
+    ? "2"
+    : location.pathname.startsWith(`/store/${storeID.id}/update-info`)
+    ? "3"
+    : "";
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Layout style={{ minHeight: '100vh' }}>
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <Layout style={{ minHeight: "100vh" }}>
         <Sider
           style={{
-            backgroundColor: 'white',
-            color: '#fff',
+            backgroundColor: "white",
+            color: "#fff",
           }}
-          trigger={null} collapsible collapsed={collapsed}>
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
+        >
           <div className="demo-logo-vertical" />
-          <div style={{ height: '80px' }}>
-            Logo
-          </div>
+          <div style={{ height: "80px" }}>Logo</div>
           <Menu
             theme="light"
             mode="inline"
             selectedKeys={[selectedKey]}
             items={[
               {
-                key: '1',
+                key: "1",
                 icon: <ShopOutlined />,
                 label: <Link to={`/store/${storeID.id}/zone`}>Zone</Link>,
               },
               {
-                key: '2',
+                key: "2",
                 icon: <AppstoreOutlined />,
                 label: <Link to={`/store/${storeID.id}/product`}>Product</Link>,
-              }
+              },
+              {
+                key: "3",
+                icon: <IdcardOutlined />,
+                label: (
+                  <Link to={`/store/${storeID.id}/update-info`}>
+                    Cập nhật cửa hàng
+                  </Link>
+                ),
+              },
             ]}
           />
         </Sider>
@@ -72,7 +90,7 @@ const StoreLayout = () => {
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
               onClick={() => setCollapsed(!collapsed)}
               style={{
-                fontSize: '16px',
+                fontSize: "16px",
                 width: 64,
                 height: 64,
               }}
@@ -80,7 +98,7 @@ const StoreLayout = () => {
           </Header>
           <Content
             style={{
-              margin: '24px 16px',
+              margin: "24px 16px",
               padding: 24,
               minHeight: 280,
               background: colorBgContainer,

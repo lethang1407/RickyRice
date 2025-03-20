@@ -112,50 +112,50 @@ function Debt(){
 
   const columns = [
     {
-      title: 'Number',
+      title: 'Mã số nợ',
       dataIndex: 'number',
       key: 'number',
       sorter: true
     },
     {
-      title: 'Type',
+      title: 'Loại nợ',
       dataIndex: 'type',
       key: 'type',
     },
     {
-      title: 'Amount',
+      title: 'Số tiền',
       dataIndex: 'amount',
       key: 'amount',
       sorter: true
     },
     {
-      title: 'Description',
+      title: 'Mô tả',
       dataIndex: 'description',
       key: 'description',
     },
     {
-      title: 'Image',
+      title: 'Hình ảnh',
       dataIndex: 'image',
       key: 'image',
       render: (src) => <Image width={50} src={src ? src : noimg} alt="Ảnh mô tả" />,
     },
     {
-      title: 'Customer Name',
+      title: 'Khách hàng',
       dataIndex: 'customerName',
       key: 'customerName',
     },
     {
-      title: 'Store Name',
+      title: 'Cửa hàng',
       dataIndex: 'storeName',
       key: 'storeName',
     },
     {
-      title: 'Created By',
+      title: 'Được tạo bởi',
       dataIndex: 'createdBy',
       key: 'createdBy',
     },
     {
-      title: 'Created At',
+      title: 'Được tạo khi',
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (text) => (text ? dayjs(text).format("HH:mm:ss DD/MM/YYYY") : "-"),

@@ -14,4 +14,7 @@ public interface SubscriptionPlanRepository extends JpaRepository<SubscriptionPl
 
     // Tìm gói dịch vụ có trạng thái hiển thị True theo ID
     Optional<SubscriptionPlan> findByIdAndIsActiveTrue(String id);
+
+    // Tìm gói dịch vụ theo giá
+    SubscriptionPlan findByPrice(Double price);
 }

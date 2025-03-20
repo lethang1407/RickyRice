@@ -41,51 +41,51 @@ function Filter(props){
       <Form onValuesChange={onFormChange} name="basic" layout="vertical">
         <Row gutter={16}>
           <Col span={4}>
-            <Form.Item label="Debt Number" name="number">
+            <Form.Item label="Mã số nợ" name="number">
               <Input />
             </Form.Item>
           </Col>
           <Col span={2}>
-            <Form.Item label="Debt Type" name="type">
+            <Form.Item label="Loại nợ" name="type">
               <Select allowClear options={options}/>
             </Form.Item>
           </Col>
           <Col span={2}>
-            <Form.Item label="Amount From" name="fromAmount">
+            <Form.Item label="Số tiền từ" name="fromAmount">
               <Input type='number'/>
             </Form.Item>
           </Col>
           <Col span={2}>
-            <Form.Item label="Amount To" name="toAmount">
+            <Form.Item label="Số tiền tới" name="toAmount">
               <Input type='number'/>
             </Form.Item>
           </Col>
           <Col span={3}>
-            <Form.Item label="Customer" name="customerName">
+            <Form.Item label="Khách hàng" name="customerName">
               <Input />
             </Form.Item>
           </Col>
           <Col span={3}>
-            <Form.Item label="Store" name="storeId">
+            <Form.Item label="Cửa hàng" name="storeId">
               <Select allowClear options={store}/>
             </Form.Item>
           </Col>
 
           <Col span={2}>
-            <Form.Item label="Created By" name="createdBy">
+            <Form.Item label="Được tạo bởi" name="createdBy">
               <Input />
             </Form.Item>
           </Col>
 
           <Col span={3}>
-            <Form.Item label="Created From" name="startCreatedAt">
+            <Form.Item label="Được tạo từ" name="startCreatedAt">
               <DatePicker format="YYYY-MM-DD" 
                   onChange={(date, dateString) => console.log(dateString)}  
               />
             </Form.Item>
           </Col>
           <Col span={3}>
-            <Form.Item label="Created To" name="endCreatedAt">
+            <Form.Item label="Được tạo tới" name="endCreatedAt">
               <DatePicker format="YYYY-MM-DD" 
                   onChange={(date, dateString) => console.log(dateString)}  />
             </Form.Item>
