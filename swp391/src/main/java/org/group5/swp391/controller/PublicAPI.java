@@ -49,4 +49,10 @@ public class PublicAPI {
                 .data(plans)
                 .build();
     }
+
+    @PostMapping("/send-email")
+    public ApiResponse<Void> sendEmail(){
+        return ApiResponse.<Void>builder()
+                .build();
+    }
 }

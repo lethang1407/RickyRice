@@ -11,12 +11,15 @@ import org.group5.swp391.entity.Account;
 import org.group5.swp391.entity.InvalidatedToken;
 import org.group5.swp391.exception.AppException;
 import org.group5.swp391.exception.ErrorCode;
+import org.group5.swp391.repository.client.OutboundRickyClient;
+import org.group5.swp391.repository.client.UserInfoClient;
 import org.group5.swp391.service.AuthenticationService;
 import org.group5.swp391.utils.Jwt;
 import org.group5.swp391.repository.AccountRepository;
 import org.group5.swp391.repository.InvalidatedTokenRepository;
 import org.group5.swp391.utils.Mail;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +38,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final Mail mail;
     private final ModelMapper modelMapper;
     private final ThreadPoolTaskScheduler taskScheduler;
+    private final UserInfoClient userInfoClient;
+    private final OutboundRickyClient outboundRickyClient;
+
+    @Value("${ricky.outbound.client_id}")
+    protected String clientId;
+
+    @Value("${ricky.outbound.client_secret}")
+    protected String clientSecret;
+
+    @Value("${ricky.outbound.grant_type}")
+    protected String grantType;
+
+    @Value("${ricky.outbound.redirect_uri}")
+    protected String redirectUri;
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
         Account account = accountRepository.findByUsername(authenticationRequest.getUsername())
@@ -192,6 +209,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         account.setOtp(null);
         accountRepository.save(account);
+    }
+
+    @Override
+    public AuthenticationResponse outboundAuthenticate(String code) {
+        OutboundAuthenticationResponse response = outboundRickyClient.exchange(OutboundAuthenticationRequest.builder()
+                .code(code)
+                .clientId(clientId)
+                .clientSecret(clientSecret)
+                .grantType(grantType)
+                .redirectUri(redirectUri)
+                .build());
+
+        UserInfoResponse userInfo = userInfoClient.getUserInfo("json", response.getAccessToken());
+        Account account = accountRepository
+                .findByEmail(userInfo.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_REGISTERED));
+
+        String token = jwt.generateToken(account);
+
+        return AuthenticationResponse.builder().token(token).success(true).build();
     }
 
     private void scheduleTokenDeletion(String accountID) {

@@ -38,9 +38,9 @@ import ChangePassword from "./Pages/Account/ChangePasswordAcc";
 import Zone from "./Pages/StoreManagement/Zone/Zone.js";
 import StoreLayout from "./Components/StoreLayout/storelayout.js";
 import StoreProduct from "./Pages/StoreManagement/Product/Product.js";
-import { WebSocketProvider } from "./Utils/Websocket/WebsocketContextProvider.js";
-import CreateStore from "./Pages/StoreManagement/StoreInfor/CreateStore.js";
-import UpdateStore from "./Pages/StoreManagement/StoreInfor/UpdateStore.js";
+import { WebSocketProvider } from "./Utils/Websocket/WebsocketContextProvider.js"
+import CustomerDebt from "./Pages/Debt/CustomerDebt/customer.js";
+import Authenticate from "./Pages/Login/authenticate.js";
 
 function App() {
   return (
@@ -50,6 +50,7 @@ function App() {
         <Route path="/login" element={<Login />}></Route>
         <Route path="/forgot-password" element={<ForgetPassword />}></Route>
         <Route path="/register" element={<Register />}></Route>
+        <Route path='/authenticate' element={<Authenticate/>}></Route>
         <Route path="/unauthorized" element={<Unauthorized />}></Route>
         <Route path="/storehome" element={<StoreHome />}></Route>
         <Route path="/storehome" element={<StoreHome />}></Route>
