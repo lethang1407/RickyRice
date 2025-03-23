@@ -54,7 +54,7 @@ const API = {
     GET_STORE: `${API_BASE_URL}/store-owner/stores`,
     GET_STORE_PRODUCTS: `${API_BASE_URL}/store-owner/products`,
     GET_STORE_EMPLOYEES: `${API_BASE_URL}/store-owner/employees`,
-    GET_STORE_STATISTICs: `${API_BASE_URL}/store-owner/statistics`,
+    GET_STORE_STATISTICs: `${API_BASE_URL}/store-owner/statistics/data`,
     GET_STORE_PRODUCT_DETAIL: `${API_BASE_URL}/store-owner/product-detail`,
     GET_CATEGORIES: `${API_BASE_URL}/store-owner/all/category`,
     UPDATE_STORE_PRODUCT: `${API_BASE_URL}/store-owner/product/update`,
@@ -67,6 +67,9 @@ const API = {
     UPDATE_STORE_EMPLOYEE: `${API_BASE_URL}/store-owner/employee/update`,
     DELETE_STORE_EMPLOYEE: `${API_BASE_URL}/store-owner/employee/delete`,
     GET_EMPTY_ZONES: `${API_BASE_URL}/store-owner/store/empty-zone`,
+    GET_STORE_STATISTIC_CHART: `${API_BASE_URL}/store-owner/statistics/chart`,
+    GET_STORE_TRANSACTIONS: `${API_BASE_URL}/store-owner/statistic-transactions`,
+    GET_ALL_STORES: `${API_BASE_URL}/store-owner/all/stores`,
     CREATE_NEW_STORE: (transaction) =>
       `${API_BASE_URL}/manage-store/create-store/${transaction}`,
     GET_REQUEST_STORE: `${API_BASE_URL}/manage-store/request-store`,

@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.group5.swp391.dto.request.store_request.StoreRequest;
 import org.group5.swp391.dto.response.AdminResponse.ViewStoreResponse;
 import org.group5.swp391.dto.response.store_response.StoreResponse;
+import org.group5.swp391.dto.store_owner.all_product.StoreInfoIdAndNameDTO;
 import org.group5.swp391.dto.store_owner.all_store.StoreInfoDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ public interface StoreService {
     public List<ViewStoreResponse> getAllStores();
 
     public List<StoreInfoDTO> getStoresForDebt();
+
+    public List<StoreInfoIdAndNameDTO> getStoresInfoIdAndName();
 
     StoreResponse createNewStore(StoreRequest request, String transactionNo, String username);
 

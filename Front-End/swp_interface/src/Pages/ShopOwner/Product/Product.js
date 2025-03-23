@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, message, Input } from 'antd';
+import { Table, message, Input, Form, Select, Row, Col, Button, InputNumber } from 'antd';
 import qs from 'qs';
 import API from '../../../Utils/API/API';
 import { getToken } from '../../../Utils/UserInfoUtils';
@@ -7,25 +7,39 @@ import { getDataWithToken } from '../../../Utils/FetchUtils';
 import ProductDetailModal from '../../../Components/StoreOwner/ProductDetailModal/ProductDetailModal';
 import './style.scss';
 
-
-const { Search } = Input;
-
+const { Option } = Select;
 
 const Product = () => {
+    const [form] = Form.useForm();
     const token = getToken();
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [searchValue, setSearchValue] = useState("");
-    const [timeoutId, setTimeoutId] = useState(null);
     const [tableParams, setTableParams] = useState({
         pagination: {
             current: 1,
             pageSize: 5,
         },
-        filters: {},
+        sortField: null,
+        sortOrder: null,
     });
+    const [filters, setFilters] = useState({
+        productID: '',
+        name: '',
+        priceMin: null,
+        priceMax: null,
+        categoryName: '',
+        store: [],
+        quantityMin: null,
+        quantityMax: null
+    });
+    const [stores, setStores] = useState([]);
+    const [fetchingStores, setFetchingStores] = useState(false);
+    const [searchTimeout, setSearchTimeout] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProductID, setSelectedProductID] = useState(null);
+    const [selectedProductDetails, setSelectedProductDetails] = useState(null); 
+
+
     const columns = [
         {
             title: 'ID',
@@ -42,7 +56,7 @@ const Product = () => {
             title: 'ProductID',
             dataIndex: 'productID',
             key: 'productID',
-            width: '8%',
+            width: '10%',
         },
         {
             title: 'Name',
@@ -54,7 +68,7 @@ const Product = () => {
             title: 'Price',
             dataIndex: 'price',
             key: 'price',
-            sorter: true,
+            sorter: (a, b) => a.price - b.price,  
             render: (price) => `${price.toLocaleString()} đ`,
             width: '10%',
         },
@@ -81,40 +95,79 @@ const Product = () => {
             title: 'Quantity',
             dataIndex: 'quantity',
             key: 'quantity',
-            sorter: true,
+            sorter: (a, b) => a.quantity - b.quantity, 
             render: (quantity) => `${quantity.toLocaleString()} kg`,
-            width: '15%',
+            width: '10%',
         },
     ];
 
+    useEffect(() => {
+        const fetchStores = async () => {
+            setFetchingStores(true);
+            try {
+                const response = await getDataWithToken(API.STORE_OWNER.GET_ALL_STORES, token);
+                if (Array.isArray(response)) {
+                    const cleanedStores = response
+                        .filter(store => store.id != null)
+                        .map((store) => ({
+                            ...store,
+                            storeID: store.id,
+                        }));
+                    setStores(cleanedStores);
+                } else {
+                    message.error('Failed to fetch stores: Invalid response format');
+                    setStores([]);
+                }
+            } catch (error) {
+                message.error('Could not fetch stores.');
+                setStores([]);
+            } finally {
+                setFetchingStores(false);
+            }
+        };
+        fetchStores();
+    }, [token]);
 
-    const getProductParam = (params) => {
-        const { pagination, sortField, sortOrder } = params;
-        return qs.stringify({
-            page: pagination.current - 1,
-            size: pagination.pageSize,
-            sortBy: sortField,
-            descending: sortOrder === 'descend',
-        });
-    };
-
-
-    const fetchInvoice = async () => {
+    const fetchProduct = async () => {
         setLoading(true);
         try {
-            const queryParams = `?productName=${encodeURIComponent(searchValue)}&` + getProductParam(tableParams);
-            const response = await getDataWithToken(API.STORE_OWNER.GET_STORE_PRODUCTS + queryParams, token);
-            setData(response.content || []);
-           
-            setTableParams({
-                ...tableParams,
+            const queryParams = qs.stringify(
+                {
+                    productID: filters.productID,
+                    name: filters.name,
+                    priceMin: filters.priceMin,
+                    priceMax: filters.priceMax,
+                    categoryName: filters.categoryName,
+                    store: filters.store,
+                    quantityMin: filters.quantityMin,
+                    quantityMax: filters.quantityMax,
+                    page: tableParams.pagination.current - 1,
+                    size: tableParams.pagination.pageSize,
+                    sortBy: tableParams.sortField || 'createdAt',
+                    descending: tableParams.sortOrder === 'descend',
+                },
+                { arrayFormat: 'repeat', encode: true } 
+            );
+            const response = await getDataWithToken(`${API.STORE_OWNER.GET_STORE_PRODUCTS}?${queryParams}`, token);
+            console.log(response);
+            
+            if (Array.isArray(response.content)) {
+              setData(response.content);
+            } else {
+              message.error('Failed to fetch products: Invalid response format');
+              setData([]);
+            }
+
+            setTableParams((prev) => ({
+                ...prev,
                 pagination: {
-                    ...tableParams.pagination,
+                    ...prev.pagination,
                     total: response.totalElements,
                 },
-            });
+            }));
         } catch (error) {
             message.error('Không thể tải dữ liệu danh sách products');
+            setData([]); // Set data to empty array on error
         } finally {
             setLoading(false);
         }
@@ -122,93 +175,232 @@ const Product = () => {
 
 
     useEffect(() => {
-        fetchInvoice();
+      fetchProduct();
     }, [
         tableParams.pagination.current,
         tableParams.pagination.pageSize,
         tableParams.sortField,
         tableParams.sortOrder,
-        searchValue,
+        filters.productID,
+        filters.name,
+        filters.categoryName,
+        filters.priceMin,
+        filters.priceMax,
+        filters.quantityMin,
+        filters.quantityMax,
+        JSON.stringify(filters.store) // Important for array filters
     ]);
 
 
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-
-
-    const handleTableChange = (pagination, filters, sorter) => {
+    const handleTableChange = (pagination, _, sorter) => {
         setTableParams({
             pagination,
-            filters,
-            sortField: sorter.field,
-            sortOrder: sorter.order,
+            sortField: sorter?.field || null,
+            sortOrder: sorter?.order || null,
         });
     };
 
 
-    const handleSearch = (e) => {
-        const value = e.target.value;
-
-
-        if (timeoutId) {
-            clearTimeout(timeoutId);
+    const handleInputChange = (changedValues, allValues) => {
+        if (changedValues.hasOwnProperty('productID') || changedValues.hasOwnProperty('name') || changedValues.hasOwnProperty('categoryName') || changedValues.hasOwnProperty('priceMin')  || changedValues.hasOwnProperty('priceMax') || changedValues.hasOwnProperty('quantityMin') || changedValues.hasOwnProperty('quantityMax')) {
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
+            setSearchTimeout(
+                setTimeout(() => {
+                    handleSearch();
+                }, 1000)
+            );
+        }  else {
+          handleSearch(); // Call handleSearch if other fields change
         }
+        form.setFieldsValue(allValues);
+    };
 
+    const handleSearch = () => {
+        const values = form.getFieldsValue();
+        setFilters({
+            productID: values.productID || '',
+            name: values.name || '',
+            priceMin: values.priceMin || null,
+            priceMax: values.priceMax || null,
+            categoryName: values.categoryName || '',
+            store: values.store || [],
+            quantityMin: values.quantityMin || null,
+            quantityMax: values.quantityMax || null
+        });
+        setTableParams((prev) => ({
+            ...prev,
+            pagination: { ...prev.pagination, current: 1 },
+        }));
+    };
 
-        const newTimeoutId = setTimeout(() => {
-            setSearchValue(value);
-            setTableParams({
-                ...tableParams,
-                pagination: { current: 1, pageSize: tableParams.pagination.pageSize },
-            });
-        }, 1000);
-
-
-        setTimeoutId(newTimeoutId);
+    const handleReset = () => {
+        form.resetFields();
+        setFilters({
+            productID: '',
+            name: '',
+            priceMin: null,
+            priceMax: null,
+            categoryName: '',
+            store: [],
+            quantityMin: null,
+            quantityMax: null
+        });
+        setTableParams((prev) => ({
+            ...prev,
+            pagination: { ...prev.pagination, current: 1 },
+        }));
     };
 
 
+    const onRowClick = (record) => {
+        setSelectedProductID(record.productID);
+        setSelectedProductDetails(record); // Store the entire record
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedProductID(null);
+        setSelectedProductDetails(null); // Clear the details on close
+    };
+
     const handleProductDeleted = () => {
-        fetchInvoice();
-    }
+        fetchProduct();
+    };
 
 
+    const handleStoreChange = (value) => {
+        setFilters(prevFilters => ({
+          ...prevFilters,
+          store: value
+        }));
+        form.setFieldsValue({ store: value }); // Update form value
+    };
 
 
     return (
-        <div>
-            <Search
-                placeholder="Enter Product Name"
-                onChange={handleSearch}
-                enterButton
-                style={{ marginBottom: 16 }}
-                loading={loading}
-            />
+        <div className="product-list-container">
+            <Form
+                form={form}
+                layout="vertical"
+                className="filter-form"
+                onValuesChange={handleInputChange}
+            >
+                <Row gutter={16} className="filter-form-row">
+                    <Col span={3} className="filter-form-col">
+                        <Form.Item label="Product ID" name="productID">
+                            <Input placeholder="Enter Product ID" className="filter-form-input" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={3} className="filter-form-col">
+                        <Form.Item label="Name" name="name">
+                            <Input placeholder="Enter name" className="filter-form-input" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={3} className="filter-form-col">
+                        <Form.Item label="Min Price" name="priceMin">
+                            <InputNumber
+                                placeholder="Min"
+                                style={{ width: '100%' }}
+                                formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                step={1000}
+                                className="filter-form-input-number"
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={3} className="filter-form-col">
+                        <Form.Item label="Max Price" name="priceMax">
+                            <InputNumber
+                                placeholder="Max"
+                                style={{ width: '100%' }}
+                                formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                step={1000}
+                                className="filter-form-input-number"
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={3} className="filter-form-col">
+                        <Form.Item label="Category" name="categoryName">
+                            <Input placeholder="Enter category" className="filter-form-input" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={3} className="filter-form-col">
+                        <Form.Item label="Store" name="store">
+                            <Select
+                                mode="multiple"
+                                placeholder="Select store"
+                                allowClear
+                                loading={fetchingStores}
+                                onChange={handleStoreChange}
+                                className="filter-form-select"
+                            >
+                                {stores.map((store) => (
+                                    <Option key={store.storeID} value={store.storeID}>
+                                        {store.name}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={3} className="filter-form-col">
+                        <Form.Item label="Min Quantity" name="quantityMin">
+                            <InputNumber
+                                placeholder="Min"
+                                style={{ width: '100%' }}
+                                min={0}
+                                className="filter-form-input-number"
+                                step={10}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={3} className="filter-form-col">
+                        <Form.Item label="Max Quantity" name="quantityMax">
+                            <InputNumber
+                                placeholder="Max"
+                                style={{ width: '100%' }}
+                                min={0}
+                                className="filter-form-input-number"
+                                step={10}
+                            />
+                        </Form.Item>
+                    </Col>
+                </Row>
+                <Row className="filter-form-row">
+                    <Col span={24} className="filter-form-col" style={{ textAlign: 'right', marginTop: '8px' }}>
+                        <Button onClick={handleReset} className="filter-form-reset-button">
+                            Reset
+                        </Button>
+                    </Col>
+                </Row>
+            </Form>
+
             <Table
+                className="product-table" 
                 columns={columns}
                 rowKey="productID"
                 dataSource={data}
                 pagination={{
                     ...tableParams.pagination,
                     showSizeChanger: true,
-                    pageSizeOptions: ['1', '2', '3', '4', '5'],
+                    pageSizeOptions: ['5', '10', '20', '50'],
                 }}
                 loading={loading}
                 onChange={handleTableChange}
                 onRow={(record) => ({
-                    onClick: () => {
-                        setSelectedProductID(record.productID);
-                        setIsModalOpen(true);
-                    },
+                    onClick: () => onRowClick(record),
                     style: { cursor: 'pointer' },
                 })}
             />
             {isModalOpen && (
-                <ProductDetailModal
+                <ProductDetailModal 
                     visible={isModalOpen}
                     productID={selectedProductID}
-                    onClose={() => setIsModalOpen(false)}
+                    productDetails={selectedProductDetails}
+                    onClose={closeModal}
                     onProductDeleted={handleProductDeleted}
                 />
             )}
@@ -216,8 +408,4 @@ const Product = () => {
     );
 };
 
-
 export default Product;
-
-
-
