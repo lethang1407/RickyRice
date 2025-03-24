@@ -44,16 +44,20 @@ public class StoreOwnerController {
 
     @GetMapping("/invoices")
     public Page<StoreInvoiceDTO> getInvoices(
-            @RequestParam String phoneNumber,
+            @RequestParam(required = false) String phoneNumber,
+            @RequestParam(required = false) List<String> store,
+            @RequestParam(required = false) String invoiceNumber,
+            @RequestParam(required = false) Double totalMoneyMin,
+            @RequestParam(required = false) Double totalMoneyMax,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "false") boolean descending,
-            @RequestParam(defaultValue = "false") String type,
-            @RequestParam(defaultValue = "false") String status
+            @RequestParam(defaultValue = "false") boolean descending
     ) {
         try {
-            return invoiceService.getInvoices(phoneNumber, page, size, sortBy, descending, type, status);
+            return invoiceService.getInvoices(invoiceNumber, phoneNumber, store, totalMoneyMin, totalMoneyMax, type, status, page, size, sortBy, descending);
         } catch (Exception e) {
             throw new AppException(ErrorCode.CANT_GET_INFO);
         }

@@ -8,7 +8,6 @@ import ProductDetailModal from '../../../Components/StoreOwner/ProductDetailModa
 import './style.scss';
 
 const { Option } = Select;
-
 const Product = () => {
     const [form] = Form.useForm();
     const token = getToken();
@@ -148,9 +147,7 @@ const Product = () => {
                 },
                 { arrayFormat: 'repeat', encode: true } 
             );
-            const response = await getDataWithToken(`${API.STORE_OWNER.GET_STORE_PRODUCTS}?${queryParams}`, token);
-            console.log(response);
-            
+            const response = await getDataWithToken(`${API.STORE_OWNER.GET_STORE_PRODUCTS}?${queryParams}`, token);            
             if (Array.isArray(response.content)) {
               setData(response.content);
             } else {

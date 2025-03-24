@@ -12,22 +12,33 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 
 public interface InvoiceRepository extends JpaRepository<Invoice, String> {
 
     @Query("""
-    SELECT i FROM Invoice i 
-    WHERE i.store IN :stores 
-      AND i.customer IN :customers
-      AND (:type IS NULL OR i.type = :type) 
+    SELECT i FROM Invoice i
+    JOIN i.store s
+    JOIN s.storeAccount sa
+    WHERE (:invoiceId IS NULL OR i.id = :invoiceId)
+      AND (:phoneNumber IS NULL OR LOWER(i.customer.phoneNumber) LIKE LOWER(CONCAT('%', :phoneNumber, '%')))
+      AND (:totalMoneyMin IS NULL OR (i.shipMoney + i.productMoney) >= :totalMoneyMin)
+      AND (:totalMoneyMax IS NULL OR (i.shipMoney + i.productMoney) <= :totalMoneyMax)
+      AND (:type IS NULL OR i.type = :type)
       AND (:status IS NULL OR i.status = :status)
+      AND (:storeIds IS NULL OR s.id IN (:storeIds))
+      AND sa.username = :username
 """)
     Page<Invoice> findInvoices(
-            @Param("stores") Collection<Store> stores,
-            @Param("customers") Collection<Customer> customers,
+            @Param("invoiceId") String invoiceId,
+            @Param("phoneNumber") String phoneNumber,
+            @Param("totalMoneyMin") Double totalMoneyMin,
+            @Param("totalMoneyMax") Double totalMoneyMax,
             @Param("type") Boolean type,
             @Param("status") Boolean status,
+            @Param("storeIds") List<String> storeIds,
+            @Param("username") String username,
             Pageable pageable
     );
 

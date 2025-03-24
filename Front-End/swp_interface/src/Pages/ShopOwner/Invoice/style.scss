@@ -1,3 +1,76 @@
-.ant-table {
-    user-select: none; /* Ngăn chặn bôi đen */
+.invoice-list-container {
+    .filter-form {
+        margin-bottom: 24px;
+
+        .ant-form-item {
+            margin-bottom: 0;
+        }
+
+        &-row {
+            display: flex;
+            flex-wrap: nowrap;
+            margin-bottom: 16px;
+
+            .filter-form-col {
+                padding-left: 8px;
+                padding-right: 8px;
+                flex: 1;
+
+                .ant-form-item {
+                    label {
+                        font-weight: bold;
+                        color: #333;
+                        display: block;
+                        margin-bottom: 4px;
+                    }
+
+                    .filter-form-input,
+                    .filter-form-input-number,
+                    .filter-form-select {
+                        width: 100%;
+                        border-radius: 4px;
+
+                        &:hover {
+                            border-color: #40a9ff;
+                        }
+
+                        &:focus,
+                        &.ant-select-focused {
+                            border-color: #40a9ff;
+                            box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+                        }
+                    }
+
+                    .filter-form-select {
+                        &.ant-select {
+                            &.ant-select-multiple {
+                                .ant-select-selection-item {
+                                    background-color: #e6f7ff;
+                                    border: 1px solid #91d5ff;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .invoice-table {
+        user-select: none;
+
+        .ant-table-thead > tr > th {
+            background-color: #f0f2f5;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .ant-table-tbody > tr:hover > td {
+            background: #e6f7ff;
+        }
+
+        .ant-table-pagination.ant-pagination {
+            margin-top: 16px;
+        }
+    }
 }

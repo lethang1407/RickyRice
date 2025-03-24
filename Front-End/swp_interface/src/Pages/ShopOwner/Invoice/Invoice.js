@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Table, message, Input, Button } from 'antd';
+import { Table, message, Input, Form, Select, Row, Col, Button, InputNumber } from 'antd';
 import qs from 'qs';
 import InvoiceDetailModal from '../../../Components/StoreOwner/InvoiceDetailModal/InvoiceDetailModal';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import { getDataWithToken } from '../../../Utils/FetchUtils';
 import API from '../../../Utils/API/API';
-import './style.scss'
+import './style.scss';
 
-const { Search } = Input;
+const { Option } = Select;
 
 const Invoice = () => {
+    const [form] = Form.useForm();
     const token = getToken();
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [searchValue, setSearchValue] = useState("");
-    const [timeoutId, setTimeoutId] = useState(null);
+    const [stores, setStores] = useState([]);
+    const [fetchingStores, setFetchingStores] = useState(false);
+    const [searchTimeout, setSearchTimeout] = useState(null);
     const [tableParams, setTableParams] = useState({
         pagination: {
             current: 1,
@@ -24,6 +26,15 @@ const Invoice = () => {
         sortField: null,
         sortOrder: null,
     });
+    const [filters, setFilters] = useState({
+        phoneNumber: '',
+        invoiceNumber: '',
+        store: [],
+        totalMoneyMin: null,
+        totalMoneyMax: null,
+        type: null,
+        status: null
+    });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedInvoiceID, setSelectedInvoiceID] = useState(null);
 
@@ -32,10 +43,7 @@ const Invoice = () => {
             title: 'ID',
             key: 'id',
             render: (_, __, index) => {
-                const id =
-                    (tableParams.pagination.current - 1) * tableParams.pagination.pageSize +
-                    index + 1;
-                return id;
+                return (tableParams.pagination.current - 1) * tableParams.pagination.pageSize + index + 1;
             },
             width: '5%',
         },
@@ -83,42 +91,29 @@ const Invoice = () => {
             key: 'totalMoney',
             dataIndex: 'totalMoney',
             render: (totalMoney) => `${(totalMoney || 0).toLocaleString()} đ`,
-            sorter: true,
-            width: '8%',
+            width: '12%',
         },
         {
             title: 'Type',
             dataIndex: 'type',
             key: 'type',
-            filters: [
-                { text: 'Xuất Khẩu', value: true },
-                { text: 'Nhập Khẩu', value: false }
-            ],
-            filterMultiple: false,
-            onFilter: (value, record) => record.type === value,
+            width: '9%',
             render: (type) => (
                 <span style={{ color: type ? 'green' : 'red' }}>
                     {type ? 'Xuất Khẩu' : 'Nhập Khẩu'}
                 </span>
             ),
-            width: '9%',
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            filters: [
-                { text: 'Thanh toán', value: true },
-                { text: 'Nợ', value: false }
-            ],
-            filterMultiple: false,
-            onFilter: (value, record) => record.status === value,
+            width: '9%',
             render: (status) => (
                 <span style={{ color: status ? 'green' : 'red' }}>
                     {status ? 'Thanh toán' : 'Nợ'}
                 </span>
             ),
-            width: '9%',
         },
         {
             title: 'Description',
@@ -128,28 +123,55 @@ const Invoice = () => {
         },
     ];
 
-    const getInvoiceParam = (params) => {
-        const { pagination, sortField, sortOrder, filters } = params;
-        const typeFilter = filters?.type?.[0] === true ? "export" : filters?.type?.[0] === false ? "import" : "all";
-        console.log(typeFilter)
-        const statusFilter = filters?.status?.[0] === true ? "paid" : filters?.status?.[0] === false ? "unpaid" : "all";
-        console.log(statusFilter)
+    useEffect(() => {
+        const fetchStores = async () => {
+            setFetchingStores(true);
+            try {
+                const response = await getDataWithToken(API.STORE_OWNER.GET_ALL_STORES, token);                
+                if (Array.isArray(response)) {
+                    const cleanedStores = response
+                        .filter(store => store.id != null)
+                        .map((store) => ({
+                            ...store,
+                            storeID: store.id,
+                        }));
+                    setStores(cleanedStores);
+                } else {
+                    message.error('Failed to fetch stores: Invalid response format');
+                    setStores([]);
+                }
+            } catch (error) {
+                message.error('Could not fetch stores.');
+                setStores([]);
+            } finally {
+                setFetchingStores(false);
+            }
+        };
+        fetchStores();
+    }, [token]);
+
+    const getInvoiceParam = () => {
+        const { pagination, sortField, sortOrder } = tableParams;
         return qs.stringify({
+            phoneNumber: filters.phoneNumber,
+            invoiceNumber: filters.invoiceNumber,
+            store: filters.store,
+            totalMoneyMin: filters.totalMoneyMin,
+            totalMoneyMax: filters.totalMoneyMax,
+            type: filters.type || 'all',
+            status: filters.status || 'all',
             page: pagination.current - 1,
             size: pagination.pageSize,
             sortBy: sortField,
             descending: sortOrder === "descend",
-            type: typeFilter,
-            status: statusFilter,
-        });
+        }, { arrayFormat: 'repeat' });
     };
 
     const fetchInvoice = async () => {
         setLoading(true);
         try {
-            const queryParams = `?phoneNumber=${encodeURIComponent(searchValue)}&` + getInvoiceParam(tableParams);
-            const response = await getDataWithToken(API.STORE_OWNER.GET_INVOICES + queryParams, token);
-            console.log(response)
+            const queryParams = getInvoiceParam();
+            const response = await getDataWithToken(API.STORE_OWNER.GET_INVOICES + '?' + queryParams, token);
             setData(response.content);
             setTableParams((prev) => ({
                 ...prev,
@@ -159,7 +181,8 @@ const Invoice = () => {
                 },
             }));
         } catch (error) {
-            message.error('Không thể tải dữ liệu danh sách invoices');
+            message.error('Could not load invoice list');
+            setData([]);
         } finally {
             setLoading(false);
         }
@@ -172,35 +195,59 @@ const Invoice = () => {
         tableParams.pagination.pageSize,
         tableParams.sortField,
         tableParams.sortOrder,
-        tableParams.filters,
-        searchValue
+        filters
     ]);
 
-    const handleTableChange = (pagination, filters, sorter) => {
-        setTableParams({
-            pagination,
-            filters: {
-                type: filters.type || [],
-                status: filters.status || [],
-            },
-            sortField: sorter?.field || null,
-            sortOrder: sorter?.order || null
-        });
+    const handleInputChange = (changedValues, allValues) => {
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        setSearchTimeout(
+            setTimeout(() => {
+                handleSearch(allValues);
+            }, 1000)
+        );
     };
 
-    const handleSearch = (e) => {
-        const value = e.target.value;
-        if (timeoutId) {
-            clearTimeout(timeoutId);
-        }
-        const newTimeoutId = setTimeout(() => {
-            setSearchValue(value);
-            setTableParams((prev) => ({
-                ...prev,
-                pagination: { ...prev.pagination, current: 1 },
-            }));
-        }, 1000);
-        setTimeoutId(newTimeoutId);
+    const handleSearch = (values = form.getFieldsValue()) => {
+        setFilters({
+            phoneNumber: values.phoneNumber || '',
+            invoiceNumber: values.invoiceNumber || '',
+            store: values.store || [],
+            totalMoneyMin: values.totalMoneyMin || null,
+            totalMoneyMax: values.totalMoneyMax || null,
+            type: values.type || null,
+            status: values.status || null
+        });
+        setTableParams((prev) => ({
+            ...prev,
+            pagination: { ...prev.pagination, current: 1 },
+        }));
+    };
+
+    const handleReset = () => {
+        form.resetFields();
+        setFilters({
+            phoneNumber: '',
+            invoiceNumber: '',
+            store: [],
+            totalMoneyMin: null,
+            totalMoneyMax: null,
+            type: null,
+            status: null
+        });
+        setTableParams((prev) => ({
+            ...prev,
+            pagination: { ...prev.pagination, current: 1 },
+        }));
+    };
+
+    const handleTableChange = (pagination, _, sorter) => {
+        setTableParams({
+            pagination,
+            sortField: sorter?.field || null,
+            sortOrder: sorter?.order || null,
+        });
     };
 
     const onRowClick = (record) => {
@@ -213,36 +260,97 @@ const Invoice = () => {
         setSelectedInvoiceID(null);
     };
 
-    const handleCreate = () => {
-
-        message.info('Create button clicked');
-    };
     return (
-        <div>
-            {/* Container for search and button */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-                <Search
-                    placeholder="Enter Phone Number"
-                    onChange={handleSearch}
-                    enterButton
-                    loading={loading}
-                    style={{ maxWidth: '90%' }}
-                />
-                <Button type="primary" onClick={handleCreate}
-                    style={{ marginRight: '30px' }}
-                >
-                    Create
-                </Button>
-            </div>
+        <div className="invoice-list-container">
+            <Form
+                form={form}
+                layout="vertical"
+                className="filter-form"
+                onValuesChange={handleInputChange}
+            >
+                <Row gutter={16} className="filter-form-row">
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Invoice Number" name="invoiceNumber">
+                            <Input placeholder="Enter invoice number" className="filter-form-input" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Phone Number" name="phoneNumber">
+                            <Input placeholder="Enter phone number" className="filter-form-input" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Store" name="store">
+                            <Select
+                                className="filter-form-select"
+                                mode="multiple"
+                                placeholder="Select store"
+                                allowClear
+                                loading={fetchingStores}
+                            >
+                                {stores.map((store) => (
+                                    <Option key={store.storeID} value={store.storeID}>
+                                        {store.name}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Min Total Money" name="totalMoneyMin">
+                            <InputNumber
+                                className="filter-form-input-number"
+                                placeholder="Min"
+                                style={{ width: '100%' }}
+                                formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                step={1000}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Type" name="type">
+                            <Select 
+                                className="filter-form-select"
+                                placeholder="Select type" 
+                                allowClear
+                            >
+                                <Option value="export">Xuất Khẩu</Option>
+                                <Option value="import">Nhập Khẩu</Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Status" name="status">
+                            <Select 
+                                className="filter-form-select"
+                                placeholder="Select status" 
+                                allowClear
+                            >
+                                <Option value="paid">Thanh toán</Option>
+                                <Option value="unpaid">Nợ</Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={24} style={{ textAlign: 'right', marginBottom: '16px' }}>
+                        <Button onClick={handleReset} style={{ marginRight: '8px' }}>
+                            Reset
+                        </Button>
+                    </Col>
+                </Row>
+            </Form>
 
             <Table
+                className="invoice-table"
                 columns={columns}
                 rowKey="invoiceID"
                 dataSource={data}
                 pagination={{
                     ...tableParams.pagination,
                     showSizeChanger: true,
-                    pageSizeOptions: ['1', '2', '3', '4', '5'],
+                    pageSizeOptions: ['5', '10', '20', '50'],
                 }}
                 loading={loading}
                 onChange={handleTableChange}
@@ -256,18 +364,10 @@ const Invoice = () => {
                 <InvoiceDetailModal
                     visible={isModalOpen}
                     invoiceID={selectedInvoiceID}
-                    shipMoney={
-                        data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.shipMoney || 0
-                    }
-                    totalMoney={
-                        data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.totalMoney || 0
-                    }
-                    customerName={
-                        data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.customerName || 0
-                    }
-                    customerPhoneNumber={
-                        data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.customerPhoneNumber || 0
-                    }
+                    shipMoney={data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.shipMoney || 0}
+                    totalMoney={data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.totalMoney || 0}
+                    customerName={data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.customerName || ''}
+                    customerPhoneNumber={data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.customerPhoneNumber || ''}
                     onClose={closeModal}
                 />
             )}
