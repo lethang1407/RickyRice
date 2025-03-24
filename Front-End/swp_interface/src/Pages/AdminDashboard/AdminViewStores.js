@@ -10,12 +10,10 @@ import {
   Pagination,
 } from "react-bootstrap";
 import axios from "axios";
-import Sidebar from "./components/Sidebar";
-import Navbar from "./components/Navbar";
 import StoreDetailModal from "./components/StoreDetailModal.js";
 import API from "../../Utils/API/API.js";
 import { getToken } from "../../Utils/UserInfoUtils";
-import "./style.css";
+// import "./style.css";
 
 const AdminViewStores = () => {
   const token = getToken();
@@ -117,13 +115,7 @@ const AdminViewStores = () => {
 
   return (
     <div>
-      <div className="sidebar">
-        <Sidebar />
-      </div>
-      <div className="navbar">
-        <Navbar />
-      </div>
-      <div className="content">
+      <div className="container">
         <Container className="mt-4">
           <h2 className="mb-4 text-center">Danh sách cửa hàng</h2>
 

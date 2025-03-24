@@ -171,7 +171,7 @@ public class StoreServiceImpl implements StoreService {
         // Tạo thông báo thanh toán thành công
         Notification notification = new Notification();
         notification.setTargetAccount(account);
-        notification.setCreatedBy("admin");
+        notification.setCreatedBy("Hệ thống");
         notification.setIsRead(false);
         notification.setMessage("Tạo cửa hàng thành công.");
         notificationRepository.save(notification);
@@ -228,7 +228,7 @@ public class StoreServiceImpl implements StoreService {
         // Tạo thông báo thanh toán thành công
         Notification notification = new Notification();
         notification.setTargetAccount(account);
-        notification.setCreatedBy("admin");
+        notification.setCreatedBy("Hệ thống");
         notification.setIsRead(false);
         notification.setMessage(message);
         notificationRepository.save(notification);

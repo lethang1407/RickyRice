@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Row, Col } from "react-bootstrap";
+// import { Card, Row, Col } from "react-bootstrap";
+import { Card, Row, Col, Pagination } from "antd";
 import axios from "axios";
 import RevenueStatistics from "./RevenueStatistics";
 import API from "../../Utils/API/API.js";
@@ -30,7 +31,7 @@ const DashboardContent = () => {
       }
     };
     fetchTotalAccounts();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     const fetchTotalStores = async () => {
@@ -48,7 +49,7 @@ const DashboardContent = () => {
       }
     };
     fetchTotalStores();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     const fetchTotalSubscriptions = async () => {
@@ -66,62 +67,78 @@ const DashboardContent = () => {
       }
     };
     fetchTotalSubscriptions();
-  }, []);
+  }, [token]);
 
   return (
-    <div className="p-4">
-      <h2>Chào mừng bạn đến với bảng điều khiển của quản trị viên!</h2>
-      <br />
-      <Row className="mt-4">
-        <Col md={3}>
-          <Card className="text-center bg-success text-white">
-            <Card.Body>
-              <Card.Title>Tổng doanh thu</Card.Title>
-              <Card.Text>{totalRevenue.toLocaleString()} VND</Card.Text>
-            </Card.Body>
+    <div style={{ padding: "20px" }}>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} sm={12} md={6}>
+          <Card
+            title="Doanh thu"
+            style={{
+              backgroundColor: "grey",
+              color: "white",
+              textAlign: "center",
+            }}
+          >
+            <p style={{ fontSize: "18px", fontWeight: "bold" }}>
+              {totalRevenue.toLocaleString()} VND
+            </p>
           </Card>
         </Col>
 
-        <Col md={3}>
+        <Col xs={24} sm={12} md={6}>
           <Card
-            className="text-center bg-primary text-white"
-            style={{ cursor: "pointer" }}
+            title="Tài khoản chủ cửa hàng"
+            hoverable
+            style={{
+              backgroundColor: "grey",
+              color: "white",
+              textAlign: "center",
+            }}
             onClick={() => navigate("/admin/account_owner")}
           >
-            <Card.Body>
-              <Card.Title>Tổng chủ cửa hàng</Card.Title>
-              <Card.Text>{totalAccounts}</Card.Text>
-            </Card.Body>
+            <p style={{ fontSize: "18px", fontWeight: "bold" }}>
+              {totalAccounts}
+            </p>
           </Card>
         </Col>
 
-        <Col md={3}>
+        <Col xs={24} sm={12} md={6}>
           <Card
-            className="text-center bg-warning text-white"
-            style={{ cursor: "pointer" }}
+            title="Cửa hàng"
+            hoverable
+            style={{
+              backgroundColor: "grey",
+              color: "white",
+              textAlign: "center",
+            }}
             onClick={() => navigate("/admin/view_stores")}
           >
-            <Card.Body>
-            <Card.Title>Tổng cửa hàng</Card.Title>
-              <Card.Text>{totalStores}</Card.Text>
-            </Card.Body>
+            <p style={{ fontSize: "18px", fontWeight: "bold" }}>
+              {totalStores}
+            </p>
           </Card>
         </Col>
 
-        <Col md={3}>
+        <Col xs={24} sm={12} md={6}>
           <Card
-            className="text-center bg-info text-white"
-            style={{ cursor: "pointer" }}
+            title="Dịch vụ đăng ký"
+            hoverable
+            style={{
+              backgroundColor: "grey",
+              color: "white",
+              textAlign: "center",
+            }}
             onClick={() => navigate("/admin/subscription_plans")}
           >
-            <Card.Body>
-              <Card.Title>Tổng dịch vụ đăng kí</Card.Title>
-              <Card.Text>{totalSubscriptions}</Card.Text>
-            </Card.Body>
+            <p style={{ fontSize: "18px", fontWeight: "bold" }}>
+              {totalSubscriptions}
+            </p>
           </Card>
         </Col>
       </Row>
-
+      {/* Thống kê doanh thu */}
       <RevenueStatistics setTotalRevenue={setTotalRevenue} />
     </div>
   );

@@ -5,7 +5,8 @@ import Login from "./Pages/Login";
 import StoreHome from "./Pages/StoreHome";
 import Register from "./Pages/Register";
 import ForgetPassword from "./Pages/ForgetPassword";
-import AdminDashboard from "./Pages/AdminDashboard";
+import AdminLayout from "./Pages/AdminDashboard/index.js";
+import AdminDashboard from "./Pages/AdminDashboard/DashboardContent";
 import AccountOwner from "./Pages/AdminDashboard/AccountOwner";
 import AdminViewStores from "./Pages/AdminDashboard/AdminViewStores";
 import SubscriptionPlans from "./Pages/AdminDashboard/SubscriptionPlans";
@@ -36,7 +37,7 @@ import ChangePassword from "./Pages/Account/ChangePasswordAcc";
 import Zone from "./Pages/StoreManagement/Zone/Zone.js";
 import StoreLayout from "./Components/StoreLayout/storelayout.js";
 import StoreProduct from "./Pages/StoreManagement/Product/Product.js";
-import { WebSocketProvider } from "./Utils/Websocket/WebsocketContextProvider.js"
+import { WebSocketProvider } from "./Utils/Websocket/WebsocketContextProvider.js";
 import CustomerDebt from "./Pages/Debt/CustomerDebt/customer.js";
 import Authenticate from "./Pages/Login/authenticate.js";
 import CreateStore from "./Pages/StoreManagement/StoreInfor/CreateStore.js";
@@ -50,30 +51,25 @@ function App() {
         <Route path="/login" element={<Login />}></Route>
         <Route path="/forgot-password" element={<ForgetPassword />}></Route>
         <Route path="/register" element={<Register />}></Route>
-        <Route path='/authenticate' element={<Authenticate />}></Route>
+        <Route path="/authenticate" element={<Authenticate />}></Route>
         <Route path="/unauthorized" element={<Unauthorized />}></Route>
         <Route path="/storehome" element={<StoreHome />}></Route>
         <Route path="/storehome" element={<StoreHome />}></Route>
         <Route path="/service/:storeID?" element={<SubscriptionPlan />} />
         <Route element={<CommonProtected />}>
           <Route element={<AdminProtected />}>
-            <Route path="/admin" element={<AdminDashboard />}></Route>
-            <Route
-              path="/admin/account_owner"
-              element={<AccountOwner />}
-            ></Route>
-            <Route
-              path="/admin/view_stores"
-              element={<AdminViewStores />}
-            ></Route>
-            <Route
-              path="/admin/subscription_plans"
-              element={<SubscriptionPlans />}
-            ></Route>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route path="statistic" element={<AdminDashboard />}></Route>
+              <Route path="account_owner" element={<AccountOwner />}></Route>
+              <Route path="view_stores" element={<AdminViewStores />}></Route>
+              <Route path="subscription_plans" element={<SubscriptionPlans />}></Route>
+            </Route>
           </Route>
           <Route element={<EmployeeProtected />}>
-            <Route path="/employee/products" element={<Employee_Products />}>
-            </Route>
+            <Route
+              path="/employee/products"
+              element={<Employee_Products />}
+            ></Route>
             <Route path="/employee/ricezone" element={<ZoneList />}></Route>
             <Route
               path="/employee/customers/edit"

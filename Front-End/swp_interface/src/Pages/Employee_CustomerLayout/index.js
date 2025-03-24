@@ -16,6 +16,9 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Layout, Menu, theme, Dropdown } from 'antd';
 import './style.css';
 import CustomFooter from "../../Components/Footer";
+import NavbarAccount from "../Account/NavbarAccount";
+
+
 const { Header, Sider, Content } = Layout;
 
 
@@ -78,10 +81,13 @@ const Employee_Customer = () => {
           </Menu>
         </Sider>
         <Layout>
-          <Header
+        <Header
             style={{
-              padding: 0,
+              padding: "0 16px",
               background: colorBgContainer,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <Button
@@ -89,11 +95,12 @@ const Employee_Customer = () => {
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
               onClick={() => setCollapsed(!collapsed)}
               style={{
-                fontSize: '16px',
+                fontSize: "16px",
                 width: 64,
                 height: 64,
               }}
             />
+            <NavbarAccount />
           </Header>
           <Content
             style={{

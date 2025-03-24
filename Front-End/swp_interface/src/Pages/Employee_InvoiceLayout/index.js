@@ -20,6 +20,8 @@ import './styleInvoices.css';
 import CustomFooter from "../../Components/Footer";
 import { useWebSocket } from '../../Utils/Websocket/WebsocketContextProvider';
 import { openNotification } from '../../Utils/AntdNotification';
+import NavbarAccount from "../Account/NavbarAccount";
+
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
@@ -98,23 +100,27 @@ const Employee_Invoices = () => {
                     </Menu>
                 </Sider>
                 <Layout>
-                    <Header
-                        style={{
-                            padding: 0,
-                            background: colorBgContainer,
-                        }}
-                    >
-                        <Button
-                            type="text"
-                            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                            onClick={() => setCollapsed(!collapsed)}
-                            style={{
-                                fontSize: '16px',
-                                width: 64,
-                                height: 64,
-                            }}
-                        />
-                    </Header>
+                <Header
+            style={{
+              padding: "0 16px",
+              background: colorBgContainer,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              type="text"
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => setCollapsed(!collapsed)}
+              style={{
+                fontSize: "16px",
+                width: 64,
+                height: 64,
+              }}
+            />
+            <NavbarAccount />
+          </Header>
                     <Content
                         style={{
                             margin: '8px 8px',

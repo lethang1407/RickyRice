@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import { Bell } from "react-bootstrap-icons";
 import API from "../../Utils/API/API";
 import { getToken, logout } from "../../Utils/UserInfoUtils";
 import { message } from "antd";
 import { successWSmile } from "../../Utils/AntdNotification";
 import { useNavigate } from "react-router-dom";
 import avt_default from "../../assets/img/avt_default.jpg";
-import "./style.css";
+import {
+  Dropdown,
+  Badge,
+  Avatar,
+  List,
+  Button,
+  Checkbox,
+  Menu,
+  Spin,
+  Space,
+} from "antd";
+import {
+  BellOutlined,
+  UserOutlined,
+  LogoutOutlined,
+  CheckOutlined,
+} from "@ant-design/icons";
 
 const NavbarAccount = () => {
   const [notifications, setNotifications] = useState([]);
@@ -109,120 +122,116 @@ const NavbarAccount = () => {
       console.error("Error marking notification as read:", error);
     }
   };
+  const menu = (
+    <Menu>
+      <Menu.Item key="1" onClick={() => navigate("/account-info")}>
+        <UserOutlined /> Hồ sơ tài khoản
+      </Menu.Item>
+      <Menu.Item key="2" onClick={handleLogout} danger>
+        <LogoutOutlined /> Đăng xuất
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
-    <nav className="navbar navbar-light bg-light px-3 d-flex justify-content-end">
-      <div className="dropdown me-4">
-        <button
-          type="button"
-          className="btn position-relative text-white border border-dark"
-          id="notificationDropdown"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          <Bell size={24} color="black" />
-          {notifications.some((notif) => !notif.isRead) && (
-            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-              {notifications.filter((notif) => !notif.isRead).length}
-            </span>
-          )}
-        </button>
-        <ul
-          className="dropdown-menu dropdown-menu-end p-2"
-          aria-labelledby="notificationDropdown"
-          style={{ minWidth: "350px" }}
-        >
-          <li className="d-flex justify-content-between align-items-center px-2">
-            <span className="fw-bold">Thông báo</span>
-            <button
-              className="btn btn-sm btn-outline-primary"
-              onClick={markAllAsRead}
+    <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+      <Dropdown
+        overlay={
+          <div
+            style={{
+              width: "550px",
+              background: "white",
+              borderRadius: "5px",
+              padding: "10px",
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Space
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
             >
-              Đánh dấu tất cả là đã đọc
-            </button>
-          </li>
-          <hr className="m-2" />
-          {notifications.length > 0 ? (
-            notifications.map((notif) => (
-              <li
-                key={notif.notificationId}
-                className={`dropdown-item ${
-                  notif.isRead ? "text-muted" : "fw-bold"
-                }`}
+              <b>Thông báo</b>
+              <Button
+                type="link"
+                onClick={markAllAsRead}
+                disabled={notifications.every((notif) => notif.isRead)}
               >
-                <div>
-                  <p className="mb-1">{notif.message}</p>
-                  <small className="text-muted">
-                    Tạo bởi: {notif.createdBy} -{" "}
-                    {new Date(notif.createdAt).toLocaleString()}
-                  </small>
+                Đánh dấu tất cả đã xem
+              </Button>
+            </Space>
+
+            <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+              {notifications.length > 0 ? (
+                <List
+                  bordered
+                  dataSource={notifications}
+                  renderItem={(notif) => (
+                    <List.Item
+                      style={{
+                        background: notif.isRead ? "#f5f5f5" : "#fff",
+                        cursor: "pointer",
+                        padding: "10px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "5px",
+                        alignItems: "flex-start",
+                      }}
+                    >
+                      <b>{notif.message}</b>
+
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          width: "100%",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span style={{ fontSize: "12px", color: "gray" }}>
+                          Người gửi: {notif.createdBy} | Thời gian:{" "}
+                          {new Date(notif.createdAt).toLocaleDateString(
+                            "vi-VN"
+                          )}
+                        </span>
+
+                        {notif.isRead ? (
+                          <span style={{ fontSize: "12px", color: "black" }}>
+                            (Đã xem)
+                          </span>
+                        ) : (
+                          <Checkbox
+                            onChange={() => markAsRead(notif.notificationId)}
+                          />
+                        )}
+                      </div>
+                    </List.Item>
+                  )}
+                />
+              ) : (
+                <div style={{ padding: "20px", textAlign: "center" }}>
+                  Không có thông báo
                 </div>
-                {!notif.isRead && (
-                  <input
-                    type="checkbox"
-                    onChange={() => markAsRead(notif.notificationId)}
-                    className="ms-2"
-                  />
-                )}
-              </li>
-            ))
-          ) : (
-            <li className="dropdown-item text-muted">Không có thông báo</li>
-          )}
-        </ul>
-      </div>
+              )}
+            </div>
+          </div>
+        }
+        trigger={["click"]}
+        placement="bottomRight"
+      >
+        <Badge count={notifications.filter((notif) => !notif.isRead).length}>
+          <BellOutlined style={{ fontSize: "25px", cursor: "pointer", marginRight: "3px" }} />
+        </Badge>
+      </Dropdown>
 
-      {/* Profile Dropdown */}
-      <div className="dropdown">
-        <button
-          type="button"
-          className="btn p-0"
-          id="dropdownMenuButton"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-          style={{
-            border: "none",
-            background: "transparent",
-            cursor: "pointer",
-          }}
-        >
-          <img
-            src={avatarUrl}
-            alt="Admin Avatar"
-            className="rounded-circle"
-            style={{ width: "40px", height: "40px" }}
-          />
-        </button>
+      <Dropdown overlay={menu} placement="bottomRight">
+        <Avatar src={avatarUrl} size={40} style={{ cursor: "pointer", marginRight: "10px" }} />
+      </Dropdown>
 
-        <ul
-          className="dropdown-menu dropdown-menu-end"
-          aria-labelledby="dropdownMenuButton"
-          style={{ zIndex: 1050 }}
-        >
-          <li>
-            <button
-              className="dropdown-item"
-              onClick={() => navigate("/account-info")}
-            >
-              Hồ sơ tài khoản
-            </button>
-          </li>
-          <li>
-            <button className="dropdown-item" href="#">
-              Cài đặt
-            </button>
-          </li>
-          <li>
-            <hr className="dropdown-divider" />
-          </li>
-          <li>
-            <button className="dropdown-item" onClick={handleLogout}>
-              Đăng xuất
-            </button>
-          </li>
-        </ul>
-      </div>
-    </nav>
+      {/* {loading && <Spin />} */}
+    </div>
   );
 };
 

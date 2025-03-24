@@ -20,6 +20,8 @@ import API from '../../../Utils/API/API';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import moment from 'moment';
 import '../ProductIndex.css'
+import NavbarAccount from "../../Account/NavbarAccount";
+
 const { Header, Sider, Content } = Layout;
 
 
@@ -199,27 +201,27 @@ const Employee_Products = () => {
                     </Menu>
                 </Sider>
                 <Layout>
-                    <Header
-                        style={{
-                            padding: '0 16px',
-                            background: colorBgContainer,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                        }}
-                    >
-
-                        <Button
-                            type="text"
-                            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                            onClick={() => setCollapsed(!collapsed)}
-                            style={{
-                                fontSize: '16px',
-                                width: 64,
-                                height: 64,
-                            }}
-                        />
-                    </Header>
+                <Header
+            style={{
+              padding: "0 16px",
+              background: colorBgContainer,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              type="text"
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => setCollapsed(!collapsed)}
+              style={{
+                fontSize: "16px",
+                width: 64,
+                height: 64,
+              }}
+            />
+            <NavbarAccount />
+          </Header>
                     <Content
                         style={{
                             margin: '24px 16px',

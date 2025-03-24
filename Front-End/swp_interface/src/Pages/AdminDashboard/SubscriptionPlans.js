@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Sidebar from "./components/Sidebar";
-import Navbar from "./components/Navbar";
 import SubscriptionPlanModal from "./components/SubscriptionPlanModal";
-import "./style.css";
+// import "./style.css";
 import axios from "axios";
 import API from "../../Utils/API/API.js";
 import { getToken } from "../../Utils/UserInfoUtils";
@@ -122,13 +120,7 @@ const SubscriptionPlan = () => {
 
   return (
     <div>
-      <div className="sidebar">
-        <Sidebar />
-      </div>
-      <div className="navbar">
-        <Navbar />
-      </div>
-      <div className="content">
+      <div>
         <div className="container mt-5">
           <h2 className="mb-4 text-center">Dịch vụ đăng kí</h2>
           {successMessage && (

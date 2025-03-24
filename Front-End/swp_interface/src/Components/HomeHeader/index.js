@@ -37,7 +37,7 @@ function HomeHeader() {
       setLoading(true);
       setTimeout(() => {
         setLoading(false);
-        navigate("/admin");
+        navigate("/admin/statistic");
       }, 1000);
     } else if (role == "EMPLOYEE") {
       setLoading(true);

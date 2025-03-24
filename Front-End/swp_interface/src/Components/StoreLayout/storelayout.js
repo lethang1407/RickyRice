@@ -18,6 +18,8 @@ import {
   useNavigate,
 } from "react-router-dom";
 import CustomFooter from "../../Components/Footer";
+import NavbarAccount from "../../Pages/Account/NavbarAccount";
+
 
 const { Header, Sider, Content } = Layout;
 
@@ -79,10 +81,13 @@ const StoreLayout = () => {
           />
         </Sider>
         <Layout>
-          <Header
+        <Header
             style={{
-              padding: 0,
+              padding: "0 16px",
               background: colorBgContainer,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <Button
@@ -95,6 +100,7 @@ const StoreLayout = () => {
                 height: 64,
               }}
             />
+            <NavbarAccount />
           </Header>
           <Content
             style={{

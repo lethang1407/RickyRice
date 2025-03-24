@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Container, Table, Form, Pagination } from "react-bootstrap";
-import Sidebar from "./components/Sidebar";
-import Navbar from "./components/Navbar";
-import "./style.css";
+// import "./style.css";
 import API from "../../Utils/API/API.js";
 import { getToken } from "../../Utils/UserInfoUtils";
 
@@ -171,14 +169,6 @@ const AccountOwner = () => {
   };
 
   return (
-    <div>
-      <div className="sidebar">
-        <Sidebar />
-      </div>
-      <div className="navbar">
-        <Navbar />
-      </div>
-      <div className="content">
         <Container className="mt-5">
           <h2 className="mb-4 text-center">Tài khoản của chủ cửa hàng</h2>
 
@@ -281,8 +271,6 @@ const AccountOwner = () => {
             />
           </Pagination>
         </Container>
-      </div>
-    </div>
   );
 };
 
