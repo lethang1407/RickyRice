@@ -39,12 +39,8 @@ public class EmployeeCustomerController {
             @PathVariable String customerId,
             @RequestBody Customer customerDetails  )
     {
-        try {
             Customer updatedCustomer = customerService.updateCustomer(customerId, customerDetails);
             return ResponseEntity.ok(updatedCustomer);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        }
     }
     @PutMapping("/customers/editInvoice/{phoneNumber}")
     public ResponseEntity<?> updateCustomerInvoice(

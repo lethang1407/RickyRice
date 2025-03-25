@@ -2,6 +2,7 @@ package org.group5.swp391.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.converter.ProductAttributeConverter;
+import org.group5.swp391.dto.employee.EmployeeProductAttributeDTO;
 import org.group5.swp391.dto.store_owner.all_product.StoreProductAttributeDTO;
 import org.group5.swp391.repository.ProductAttributeRepository;
 import org.group5.swp391.service.ProductAttributeService;
@@ -24,5 +25,10 @@ public class ProductAttributeServiceImpl implements ProductAttributeService {
         }
         String username = authentication.getName();
         return productAttributeRepository.findProductAttributeForUser(username).stream().map(productAttributeConverter::toStoreProductAttributeDTO).toList();
+    }
+
+    @Override
+    public List<EmployeeProductAttributeDTO> getALLProductAttributes2() {
+        return productAttributeRepository.findAll().stream().map(productAttributeConverter::toEmpProductAttributeDTO).toList();
     }
 }

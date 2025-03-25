@@ -37,6 +37,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -161,7 +163,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<EmployeeProductDTO> getProductBySearch(String name, int page, int size,
-                                                       String sortBy, boolean descending,Integer minQuantity, Integer maxQuantity) {
+                                                       String sortBy, boolean descending,Long minQuantity, Long maxQuantity,String attributes) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AccessDeniedException("Bạn chưa đăng nhập!");
@@ -170,9 +172,6 @@ public class ProductServiceImpl implements ProductService {
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
-        System.out.println(a.getStore().getId());
-        System.out.println(sortBy);
-        System.out.println(descending);
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         if (name.equals("") || name.isEmpty()) {
@@ -182,7 +181,12 @@ public class ProductServiceImpl implements ProductService {
             name = capitalizeFirstLetters(name);
             System.out.println(name);
         }
-        Page<Product> productPage = productRepository.findByNameAndStoreIdContainingIgnoreCase(name, a.getStore().getId(), pageable,minQuantity,maxQuantity);
+        List<String> attributeList = (attributes != null && !attributes.isEmpty())
+                ? Arrays.asList(attributes.split(","))
+                : null;
+        Long attributeCount = attributeList != null ? (long) attributeList.size() : 0L;
+        Page<Product> productPage = productRepository.findByNameAndStoreIdContainingIgnoreCase(
+                name, a.getStore().getId(), pageable, minQuantity, maxQuantity, attributeList, attributeCount);
         return productPage.map(productConverter::toEmployeeProductDTO);
     }
 

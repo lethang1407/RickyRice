@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import logo from '../../assets/img/logoviet.png'
+import logo from '../../assets/img/logo-no-background.png'
 import { Table, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { Pagination } from "antd";

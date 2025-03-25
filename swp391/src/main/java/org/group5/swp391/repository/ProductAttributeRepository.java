@@ -14,4 +14,6 @@ public interface ProductAttributeRepository extends JpaRepository<ProductAttribu
             "JOIN s.storeAccount a " +
             "WHERE a.username = :username")
     List<ProductAttribute> findProductAttributeForUser(@Param("username") String username);
+    @Query("select s from ProductAttribute s")
+    List<ProductAttribute> findAll();
 }

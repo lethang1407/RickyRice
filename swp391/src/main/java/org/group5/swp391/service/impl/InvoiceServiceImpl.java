@@ -47,6 +47,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final CategoryRepository categoryRepository;
     private final NotificationService notificationService;
 
+
     @Override
     public Page<StoreInvoiceDTO> getInvoices(
             String phoneNumber,
@@ -102,6 +103,12 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setStore(a.getStore());
         invoice.setDeletedAt(null);
         invoice.setDeletedBy(null);
+
+        Statistics statistics = new Statistics();
+        statistics.setId(invoice.getId());
+        statistics.setCreatedBy(invoice.getCreatedBy());
+        statistics.setCreatedAt(LocalDateTime.now());
+
 
         List<InvoiceDetail> details = invoiceRequest.getInvoiceDetails().stream().map(
                 detail -> {

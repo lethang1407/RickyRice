@@ -47,6 +47,8 @@ const API = {
     INVOICE_PACKAGElist: `${API_BASE_URL}/employee/packageList`,
     INVOICE_CREATE: `${API_BASE_URL}/employee/invoice/invoice-create`,
     GET_eINVOICES_DETAILS: `${API_BASE_URL}/employee/invoice-detail`,
+    GET_PRODUCT_ATTRIBUTES: `${API_BASE_URL}/employee/attributeList`,
+    CREATE_DEBT: `${API_BASE_URL}/debt`
   },
   STORE_OWNER: {
     GET_INVOICES: `${API_BASE_URL}/store-owner/invoices`,
