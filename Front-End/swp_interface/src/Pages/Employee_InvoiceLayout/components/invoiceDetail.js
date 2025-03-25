@@ -766,11 +766,10 @@ const InvoiceDetail = () => {
             });
             return;
         }
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+        const autoDescription = `${activeTab.customerName || 'Khách hàng'} - ${formattedDate}`;
         const finalDebtAmount = debtAmount !== null && debtAmount >= 0 ? debtAmount : calculateFinalAmount();
-        const productNames = activeTab.children.props.dataSource.length > 0
-            ? `(${activeTab.children.props.dataSource.map(product => product.name).join(", ")})`
-            : "(không có sản phẩm)";
-        const autoDescription = `${activeTab.customerName || 'Khách hàng'} mua ${productNames}`;
         const invoiceData = {
             phoneNumber: activeTab.customerPhone,
             customerName: activeTab.customerName,
@@ -1119,9 +1118,7 @@ const InvoiceDetail = () => {
                             )}
                             <p>
                                 <strong>Ghi chú :</strong>
-                                {currentTab?.children?.props?.dataSource?.length > 0
-                                    ? `${currentTab.customerName || 'Khách hàng'} mua (${currentTab.children.props.dataSource.map(product => product.name).join(", ")})`
-                                    : `${currentTab.customerName || 'Khách hàng'} mua (không có sản phẩm)`}
+                                {`${currentTab.customerName || 'Khách hàng'} - ${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()} ${new Date().getHours()}:${new Date().getMinutes()}`}
                             </p>
                         </div>
                     </Modal>

@@ -67,7 +67,7 @@ const InvoiceList = () => {
             onFilter: (value, record) => record.type === value,
         },
         {
-            title: 'Tổng Tiền',
+            title: 'Tiền Sản Phẩm',
             dataIndex: 'totalAmount',
             render: (totalAmount) => `${(totalAmount || 0).toLocaleString()} đ`,
             key: 'totalAmount',
@@ -426,9 +426,9 @@ const InvoiceList = () => {
                             scroll={{ y: 240 }}
                         />
                         <div style={{ marginTop: 16, textAlign: 'right' }}>
-                            <p><strong>Tổng tiền sản phẩm:</strong> {(selectedInvoice.totalAmount - selectedInvoice.totalShipping || 0).toLocaleString()} đ</p>
+                            <p><strong>Tổng tiền sản phẩm:</strong> {(selectedInvoice.totalAmount || 0).toLocaleString()} đ</p>
                             <p><strong>Tiền vận chuyển:</strong> {(selectedInvoice.totalShipping || 0).toLocaleString()} đ</p>
-                            <p><strong>Tổng cộng:</strong> {((selectedInvoice.totalAmount) || 0).toLocaleString()} đ</p>
+                            <p><strong>Tổng cộng:</strong> {((selectedInvoice.totalAmount + selectedInvoice.totalShipping) || 0).toLocaleString()} đ</p>
                         </div>
                     </>
                 ) : (

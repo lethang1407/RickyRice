@@ -362,7 +362,7 @@ const CustomerList = () => {
                 width="75%"
                 bodyStyle={{ height: '10vh' }}
             >
-                <Table
+                <Table style={{ width: '100%' }}
                     dataSource={modalData}
                     columns={StoreIN4columns}
                     rowKey={(record) => record.storeID}

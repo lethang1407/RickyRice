@@ -91,7 +91,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Customer customer = customerRepository.findByPhoneNumber(invoiceRequest.getInvoice().getCustomerPhone());
         Invoice invoice = new Invoice();
-        invoice.setProductMoney(invoiceRequest.getInvoice().getTotalAmount());
+        invoice.setProductMoney(invoiceRequest.getInvoice().getTotalAmount()- invoiceRequest.getInvoice().getTotalShipping());
         invoice.setShipMoney(invoiceRequest.getInvoice().getTotalShipping());
         invoice.setStatus(true);
         invoice.setType(invoiceRequest.getInvoice().isType());
@@ -105,10 +105,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setDeletedBy(null);
 
         Statistics statistics = new Statistics();
-        statistics.setId(invoice.getId());
-        statistics.setCreatedBy(invoice.getCreatedBy());
         statistics.setCreatedAt(LocalDateTime.now());
-
+        statistics.setCreatedBy(invoice.getCreatedBy());
+        statistics.setType(invoice.getType());
+        statistics.setTotalMoney(invoiceRequest.getInvoice().getTotalAmount());
+        statistics.setStore(invoice.getStore());
 
         List<InvoiceDetail> details = invoiceRequest.getInvoiceDetails().stream().map(
                 detail -> {
