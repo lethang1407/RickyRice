@@ -20,33 +20,4 @@ import java.util.List;
 public class EmployeeCategoryController {
     private final ProductService productService;
     private final CategoryService categoryService;
-//    @GetMapping("/categories/pagination")
-//    public Page<EmployeeCategoryDTO> getAllCategories(@RequestParam("page") int page,
-//                                                      @RequestParam("size") int size) {
-//
-//        return categoryService.getAllCategories(page,size,"categoryID",false);
-//    }
-//
-//    @GetMapping("/category")
-//    public Page<EmployeeProductDTO> getCategoryByName(@RequestParam("name")String name, @RequestParam("page") int page,
-//                                                       @RequestParam("size") int size) {
-//        return categoryService.getProductBySearch(name,page,size,"categoryID",false);
-//    }
-//
-//    @GetMapping("/categories")
-//    public List<EmployeeCategoryDTO> getAllCategoriesList() {
-//        return categoryService.getAllCategories();
-//    }
-//
-//    @GetMapping("/products-by-category")
-//    public Page<EmployeeProductDTO> getProductByCateID(@RequestParam("categoryID")String categoryID, @RequestParam("page") int page,
-//                                                       @RequestParam("size") int size) {
-//       return productService.getProductsByCateID(categoryID,page,size,"price",false);
-//    }
-//    @GetMapping("/products-by-name")
-//    public Page<EmployeeProductDTO> getProductByName(@RequestParam("name")String name, @RequestParam("categoryID")String categoryID, @RequestParam("page") int page,
-//                                                     @RequestParam("size") int size) {
-//        return productService.getProductBySearch(name,categoryID,page,size,"price",false);
-//    }
-    //CODE BỎ NHƯNG MÀ SỢ ANH ĐỨC TÔI MERGE LỖI XONG MẮNG OAN NÊN ĐÀNH COMMENT NHA MN
 }

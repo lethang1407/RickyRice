@@ -13,7 +13,7 @@ import {
     TeamOutlined,
     SolutionOutlined,
 } from '@ant-design/icons';
-import logo from '../../assets/img/logoviet.png';
+import logo from '../../assets/img/logo-no-background.png';
 import { useNavigate } from 'react-router-dom';
 import { Button, Layout, Menu, theme, Dropdown, notification, message } from 'antd';
 import './styleInvoices.css';

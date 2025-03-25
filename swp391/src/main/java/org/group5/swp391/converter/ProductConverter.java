@@ -6,6 +6,7 @@ import org.group5.swp391.dto.customer_requirement.CustomerProductAttributeDTO;
 import org.group5.swp391.dto.customer_requirement.CustomerProductDTO;
 import org.group5.swp391.dto.customer_requirement.CustomerZoneDTO;
 import org.group5.swp391.dto.employee.EmployeeCategoryDTO;
+import org.group5.swp391.dto.employee.EmployeeProductAttributeDTO;
 import org.group5.swp391.dto.employee.EmployeeProductDTO;
 import org.group5.swp391.dto.employee.EmployeeZoneDTO;
 import org.group5.swp391.dto.store_owner.all_product.StoreProductAttributeDTO;
@@ -95,7 +96,11 @@ public class ProductConverter {
             employeeCategoryDTO.setDescription(product.getCategory().getDescription());
             employeeProductDTO.setEmployeeCategoryDTO(employeeCategoryDTO);
         }
-
+        if(product.getProductAttributes() != null) {
+             List<EmployeeProductAttributeDTO> employeeProductAttributeDTOList=product.getProductAttributes()
+                     .stream().map(productAttributeConverter::toEmpProductAttributeDTO).collect(Collectors.toList());
+          employeeProductDTO.setEmployeeProductAttributeDTO(employeeProductAttributeDTOList);
+        }
         if(product.getZones() != null) {
             List<EmployeeZoneDTO> employeeZoneDTOList =  product.getZones().stream()
                     .map(zone -> {

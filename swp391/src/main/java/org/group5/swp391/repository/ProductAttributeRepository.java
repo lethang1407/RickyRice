@@ -20,4 +20,6 @@ public interface ProductAttributeRepository extends JpaRepository<ProductAttribu
     List<ProductAttribute> findAllByStore_Id(String storeId);
 
     List<ProductAttribute> findAllByStore_Id(String storeId, Pageable pageable);
+    @Query("select s from ProductAttribute s")
+    List<ProductAttribute> findAll();
 }

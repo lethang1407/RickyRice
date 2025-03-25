@@ -22,9 +22,8 @@ public class DebtCreationRequest implements Serializable {
     @NotNull
     String type;
 
-    @NotNull
     String customerId;
-
+    String phoneNumber;
     String description;
 
     String image;

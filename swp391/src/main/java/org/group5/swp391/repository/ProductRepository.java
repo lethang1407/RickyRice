@@ -21,16 +21,24 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     Page<Product> findByStoreInAndNameContainingIgnoreCase(Collection<Store> stores, String name, Pageable pageable);
 
     //minh
-    @Query("SELECT p FROM Product p WHERE "
-            + "(:name IS NULL OR LOWER(p.name) LIKE %:name%) AND "
-            + "(p.store.id = :storeId) AND "
-            + "(:minQuantity IS NULL OR p.quantity >= :minQuantity) AND "
-            + "(:maxQuantity IS NULL OR p.quantity <= :maxQuantity)")
-    Page<Product> findByNameAndStoreIdContainingIgnoreCase(@Param("name") String name,
-                                                           @Param("storeId") String storeId,
-                                                           Pageable pageable,
-                                                           @Param("minQuantity") Integer minQuantity,
-                                                           @Param("maxQuantity") Integer maxQuantity);
+    @Query("SELECT p FROM Product p " +
+            "WHERE (:name IS NULL OR LOWER(p.name) LIKE %:name%) " +
+            "AND (p.store.id = :storeId) " +
+            "AND (:minQuantity IS NULL OR p.quantity >= :minQuantity) " +
+            "AND (:maxQuantity IS NULL OR p.quantity <= :maxQuantity) " +
+            "AND (:attributes IS NULL OR " +
+            "p IN (SELECT p2 FROM Product p2 JOIN p2.productAttributes pa " +
+            "WHERE pa.value IN :attributes " +
+            "GROUP BY p2 " +
+            "HAVING COUNT(pa) = :attributeCount))")
+    Page<Product> findByNameAndStoreIdContainingIgnoreCase(
+            @Param("name") String name,
+            @Param("storeId") String storeId,
+            Pageable pageable,
+            @Param("minQuantity") Long minQuantity,
+            @Param("maxQuantity") Long maxQuantity,
+            @Param("attributes") List<String> attributes,
+            @Param("attributeCount") Long attributeCount);
 
     @Query("SELECT s FROM Product s WHERE s.store.id = :id " +
             "AND (:name IS NULL OR :name = '' " +

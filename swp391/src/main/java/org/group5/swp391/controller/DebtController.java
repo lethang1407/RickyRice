@@ -9,11 +9,13 @@ import org.group5.swp391.dto.employee.EmployeeCustomerDTO;
 import org.group5.swp391.dto.response.ApiResponse;
 import org.group5.swp391.dto.response.PageResponse;
 import org.group5.swp391.dto.store_owner.all_store.StoreInfoDTO;
+import org.group5.swp391.entity.Customer;
 import org.group5.swp391.enums.DebtType;
 import org.group5.swp391.repository.CustomerRepository;
 import org.group5.swp391.service.CustomerService;
 import org.group5.swp391.service.DebtService;
 import org.group5.swp391.service.StoreService;
+import org.group5.swp391.service.impl.CustomerServiceImpl;
 import org.group5.swp391.utils.CurrentUserDetails;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,6 +38,10 @@ public class DebtController {
 
     @PostMapping("")
     public ApiResponse<String> createDebt(@RequestBody @Valid DebtCreationRequest request){
+        if(StringUtils.hasLength(request.getPhoneNumber())){
+            Customer customer = customerService.getCustomerByPhone(request.getPhoneNumber());
+            request.setCustomerId(customer.getId());
+        }
         request.setCreatedBy(SecurityContextHolder.getContext().getAuthentication().getName());
         rabbitTemplate.convertAndSend("debtExchange", "debtKey", request);
         return ApiResponse.<String>builder()

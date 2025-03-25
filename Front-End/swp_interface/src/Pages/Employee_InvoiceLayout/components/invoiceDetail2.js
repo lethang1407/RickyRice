@@ -23,6 +23,9 @@ const InvoiceDetail2 = () => {
     const [customerPayment, setCustomerPayment] = useState(0);
     const [totalwithoutdiscount, setTotalWithoutDiscount] = useState(0);
     const [packageOptions, setPackageOptions] = useState([]);
+    const [isExceedingQuantity, setIsExceedingQuantity] = useState(false);
+    const [isDebtModalVisible, setIsDebtModalVisible] = useState(false);
+    const [debtAmount, setDebtAmount] = useState(null);
 
     // của thông tin khách hàng 
     const [options2, setOptions2] = useState([]);
@@ -230,9 +233,9 @@ const InvoiceDetail2 = () => {
     const handleInputChange = (value, key, field) => {
         let finalValue;
         if (field === 'quantity') {
-            finalValue = value === null || value < 1 ? 1 : value; // Số lượng tối thiểu là 1
+            finalValue = value === null || value < 1 ? 1 : value;
         } else {
-            finalValue = value === null || value < 0 ? 0 : value; // Giá nhập tối thiểu là 0
+            finalValue = value === null || value < 0 ? 0 : value;
         }
         setItems(prevItems =>
             prevItems.map(item => {
@@ -243,9 +246,6 @@ const InvoiceDetail2 = () => {
                                 ...row,
                                 [field]: finalValue,
                                 total:
-                                    // finalValue * row.pricePay -
-                                    // (row.discount * finalValue || 0) +
-                                    // (row.moneyShip * finalValue || 0),
                                     field === 'quantity'
                                         ? finalValue * (row.pricePay || 0) - (row.discount * finalValue || 0)
                                         : row.quantity * (field === 'pricePay' ? finalValue : row.pricePay || 0) - (row.discount * row.quantity || 0),
@@ -650,6 +650,13 @@ const InvoiceDetail2 = () => {
     };
     const handlePayment = () => {
         const activeTab = items.find(item => item.key === activeKey);
+        if (!activeTab) {
+            messageApi.open({
+                type: 'warning',
+                content: 'Không tìm thấy tab hiện tại, vui lòng thử lại!',
+            });
+            return;
+        }
         const invoiceData = {
             invoice: {
                 customerPhone: activeTab.customerPhone,
@@ -707,6 +714,51 @@ const InvoiceDetail2 = () => {
                 error(err.response.data.message || "Lỗi khi tạo hóa đơn", messageApi);
             });
     };
+    const showDebtModal = () => {
+        setDebtAmount(null);
+        setIsDebtModalVisible(true);
+    };
+    const handleDebtOk = () => {
+        const activeTab = items.find(item => item.key === activeKey)
+        if (!activeTab) {
+            messageApi.open({
+                type: 'error',
+                content: 'Không tìm thấy tab hiện tại!',
+            });
+            return;
+        }
+
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+        const autoDescription = `${activeTab.customerName || 'Khách hàng'} - ${formattedDate}`;
+        const finalDebtAmount = debtAmount !== null && debtAmount >= 0 ? debtAmount : calculateFinalAmount();
+        const invoiceData = {
+            phoneNumber: activeTab.customerPhone,
+            customerName: activeTab.customerName,
+            amount: finalDebtAmount,
+            description: autoDescription || "Không có sản phẩm mua",
+            type: "POSITIVE",
+        };
+        axios.post(API.EMPLOYEE.CREATE_DEBT,
+            invoiceData, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then(response => {
+                remove(activeKey);
+                setIsDebtModalVisible(false);
+            })
+            .catch(err => {
+                error(err.response.data.message || "Lỗi khi tạo hóa đơn nợ", messageApi);
+                messageApi.open({
+                    type: 'error',
+                    content: errorMessage,
+                });
+            });
+    };
+
+    const handleDebtCancel = () => {
+        setIsDebtModalVisible(false);
+    };
     const handleCustomerPaymentChange = (value) => {
         const finalValue = value || 0;
         setItems(prevItems =>
@@ -717,6 +769,43 @@ const InvoiceDetail2 = () => {
             )
         );
         setCustomerPayment(finalValue);
+    };
+    const handleDebtAndPayment = () => {
+        const activeTab = items.find(item => item.key === activeKey);
+
+        if (!activeTab) {
+            messageApi.open({
+                type: 'warning',
+                content: 'Không tìm thấy tab hiện tại, vui lòng thử lại!',
+            });
+            return;
+        }
+
+        if (activeTab.children.props.dataSource.length === 0) {
+            messageApi.open({
+                type: 'warning',
+                content: 'Vui lòng chọn ít nhất một sản phẩm trước khi ghi nợ!',
+            });
+            return;
+        }
+
+        if (!activeTab.customerPhone) {
+            messageApi.open({
+                type: 'warning',
+                content: 'Vui lòng chọn một khách hàng trước khi ghi nợ!',
+            });
+            return;
+        }
+
+        if (!/^[0-9]{10}$/.test(activeTab.customerPhone)) {
+            messageApi.open({
+                type: 'warning',
+                content: 'Số điện thoại không hợp lệ, vui lòng kiểm tra lại!',
+            });
+            return;
+        }
+        handleDebtOk();
+        handlePayment();
     };
 
     return (
@@ -931,6 +1020,7 @@ const InvoiceDetail2 = () => {
                         type="primary"
                         size="large"
                         className="debt-button"
+                        onClick={showDebtModal}
 
                     >
                         Ghi Nợ
@@ -943,6 +1033,40 @@ const InvoiceDetail2 = () => {
                     >
                         Tạo Hóa Đơn
                     </Button>
+                    <Modal
+                        title="Tạo Hóa Đơn Nợ"
+                        visible={isDebtModalVisible}
+                        onOk={handleDebtAndPayment}
+                        onCancel={handleDebtCancel}
+                        okText="Xác Nhận"
+                        cancelText="Hủy"
+                    >
+                        <div className="debt-modal-content">
+                            <p><strong>Tên Đại Lý :</strong> {currentTab.customerName || 'Chưa xác định'}</p>
+                            <p><strong>Tổng tiền phải trả:</strong> {calculateFinalAmount().toLocaleString()} VND</p>
+                            <div style={{ marginBottom: '16px' }}>
+                                <label><strong>Số tiền nợ:</strong></label>
+                                <InputNumber
+                                    style={{ width: '100%', marginTop: '8px' }}
+                                    min={0}
+                                    value={debtAmount}
+                                    onChange={(value) => setDebtAmount(value)}
+                                    formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                    placeholder="Nhập số tiền nợ (để trống sẽ lấy tổng tiền)"
+                                />
+                            </div>
+                            {debtAmount === null && (
+                                <p style={{ color: 'red' }}>
+                                    Ghi hóa đơn nợ nhận giá trị: {calculateFinalAmount().toLocaleString()} VND
+                                </p>
+                            )}
+                            <p>
+                                <strong>Ghi chú :</strong>
+                                {`${currentTab.customerName || 'Khách hàng'} - ${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()} ${new Date().getHours()}:${new Date().getMinutes()}`}
+                            </p>
+                        </div>
+                    </Modal>
                 </div>
 
             </div>
