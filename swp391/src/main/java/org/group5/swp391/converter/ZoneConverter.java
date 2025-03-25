@@ -53,9 +53,11 @@ public class ZoneConverter {
 
     public StoreDetailZoneDTO toStoreZoneDTO(Zone zone){
         StoreDetailZoneDTO storeDetailZoneDTO = modelMapper.map(zone, StoreDetailZoneDTO.class);
-        storeDetailZoneDTO.setProductID(zone.getProduct().getId());
-        storeDetailZoneDTO.setStoreID(zone.getStore().getId());
-        storeDetailZoneDTO.setProductName(zone.getProduct().getName());
+        if(zone.getProduct() != null){
+            storeDetailZoneDTO.setProductID(zone.getProduct().getId());
+            storeDetailZoneDTO.setStoreID(zone.getStore().getId());
+            storeDetailZoneDTO.setProductName(zone.getProduct().getName());
+        }
         storeDetailZoneDTO.setCreatedAt(zone.getCreatedAt());
         storeDetailZoneDTO.setUpdatedAt(zone.getUpdatedAt());
         return storeDetailZoneDTO;
