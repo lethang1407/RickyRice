@@ -114,7 +114,6 @@ public class CustomerServiceImpl implements CustomerService {
             throw new AccessDeniedException("Bạn chưa đăng nhập!");
         }
         String username = authentication.getName();
-        System.out.println(username);
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         validatePhoneNumber(updatedCustomer.getPhoneNumber());
@@ -125,10 +124,26 @@ public class CustomerServiceImpl implements CustomerService {
         System.out.println("tai sao nhi" + a.getEmployeeAccount().getName());
         Customer existingCustomer = customerRepository.findById(customerId).orElseThrow();
         if(existingCustomer!=null) {
-            if(!existingCustomer.getName().equals(updatedCustomer.getName())) {
-                throw new IllegalArgumentException("Số điện thoại này là của khách hàng khác");
+            List<Customer> existingCustomerPhone = customerRepository.findByPhoneNumberContainingIgnoreCase(updatedCustomer.getPhoneNumber());
+            for (Customer c : existingCustomerPhone) {
+                if (c.getPhoneNumber().equals(updatedCustomer.getPhoneNumber())) {
+                    if (!c.getId().equals(existingCustomer.getId())) {
+                        throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
+                    }
+                }
             }
         }
+        if (existingCustomer.getEmail() != null) {
+            List<Customer> existingCustomerEmail = customerRepository.findByEmail(updatedCustomer.getEmail());
+            for (Customer c : existingCustomerEmail) {
+                if (c.getEmail().equals(updatedCustomer.getEmail())) {
+                    if (!c.getId().equals(existingCustomer.getId())) {
+                        throw new AppException(ErrorCode.EMAIL_EXISTED);
+                    }
+                }
+            }
+        }
+        existingCustomer.setBalance(existingCustomer.getBalance());
         existingCustomer.setCreatedBy(username);
         existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
@@ -156,6 +171,7 @@ public class CustomerServiceImpl implements CustomerService {
                 throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
         }
         validatePhoneNumber(updatedCustomer.getPhoneNumberNew());
+        existingCustomer.setBalance(existingCustomer.getBalance());
         existingCustomer.setCreatedBy(username);
         existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumberNew());
@@ -195,6 +211,7 @@ public class CustomerServiceImpl implements CustomerService {
                     }
                 }
             }
+            customer.setBalance(0.0);
             customer.setPhoneNumber(customerDTO.getPhoneNumber());
             customer.setEmail(customerDTO.getEmail());
             customer.setAddress(customerDTO.getAddress());
@@ -327,6 +344,11 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
         return capitalizedString.toString().trim();
+    }
+
+    public Customer getCustomerByPhone(String phoneNumber) {
+        Customer customer = customerRepository.findByPhoneNumber(phoneNumber);
+        return customer;
     }
 
     private void validatePhoneNumber(String phoneNumber) {

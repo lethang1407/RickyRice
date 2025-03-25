@@ -7,33 +7,32 @@ import { getDataWithToken } from '../../../Utils/FetchUtils';
 import { useNavigate, useParams } from 'react-router-dom';
 import './style.css';
 import moment from 'moment';
-import CreateZone from './CreateZone';
-import UpdateZone from './UpdateZone';
+import CreateCategory from './CreateCategory';
+import UpdateCategory from './UpdateCategory';
 
 const { Search } = Input;
 
-const Zone = () => {
+const Category = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const token = getToken();
     const navigate = useNavigate();
+    const storeID = useParams();
 
+    // Khai báo các state
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchValue, setSearchValue] = useState('');
-    const storeID = useParams();
-
     const [tableParams, setTableParams] = useState({
         pagination: {
             current: 1,
             pageSize: 5,
         },
         sortBy: "createdAt",
-        descending: false,
+        descending: false
     });
-
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-    const [selectedZone, setSelectedZone] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
     const handleCreateSuccess = (key) => {
@@ -75,19 +74,19 @@ const Zone = () => {
             type: 'loading',
             content: 'Đang xóa sản phẩm...',
         });
-        fetch(`${API.STORE_DETAIL.DELETE_STORE_ZONE(record.id)}`, {
+        fetch(`${API.STORE_DETAIL.DELETE_STORE_CATEGORY(record.id)}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` },
         })
             .then((response) => {
-                if (!response.ok) throw new Error('Không thể xóa sản phẩm');
+                if (!response.ok) {throw new Error('Không thể xóa sản phẩm')};
                 messageApi.open({
                     key,
                     type: 'success',
                     content: 'Xóa sản phẩm thành công!',
                     duration: 2,
                 });
-                fetchZones();
+                fetchCategories();
             })
             .catch((error) => {
                 messageApi.open({
@@ -98,16 +97,15 @@ const Zone = () => {
             });
     };
 
+    // Định nghĩa các cột cho bảng
     const columns = [
-        { title: 'Tên Khu', dataIndex: 'name', key: 'name', width: '15%' },
-        { title: 'Phân Khu', dataIndex: 'location', key: 'location', width: '10%', sorter: true },
-        { title: 'Tên Sản Phẩm', dataIndex: 'productName', key: 'productName', width: '15%' },
-        { title: 'Thông Tin Sản Phẩm', dataIndex: 'productInformation', key: 'productInformation', width: '30%' },
+        { title: 'Tên Danh Mục', dataIndex: 'name', key: 'name', width: '20%' },
+        { title: 'Mô Tả', dataIndex: 'description', key: 'description', width: '30%' },
         {
             title: 'Tạo Lúc',
             dataIndex: 'createdAt',
             key: 'createdAt',
-            width: '10%',
+            width: '15%',
             render: (text) => (text ? moment(text).format('HH:mm DD/MM/YYYY') : 'Chưa có thông tin'),
             sorter: true,
         },
@@ -115,9 +113,9 @@ const Zone = () => {
             title: 'Cập Nhật Lúc',
             dataIndex: 'updatedAt',
             key: 'updatedAt',
-            width: '10%',
+            width: '15%',
             render: (text) => (text ? moment(text).format('HH:mm DD/MM/YYYY') : 'Chưa có thông tin'),
-            sorter: true
+            sorter: true,
         },
         {
             title: 'Hành động',
@@ -128,7 +126,7 @@ const Zone = () => {
                     <Button
                         type="primary"
                         onClick={() => {
-                            setSelectedZone(record);
+                            setSelectedCategory(record);
                             setIsInfoModalOpen(true);
                         }}
                         title="Thông tin chi tiết"
@@ -138,14 +136,14 @@ const Zone = () => {
                     <Button
                         type=""
                         onClick={() => {
-                            setSelectedZone(record);
+                            setSelectedCategory(record);
                             setIsUpdateModalOpen(true);
                         }}
                     >
                         <EditOutlined />
                     </Button>
                     <Popconfirm
-                        title="Xóa sản phẩm"
+                        title="Xóa loại"
                         description="Bạn có chắc chắn muốn xóa không?"
                         icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                         onConfirm={() => handleDelete(record)}
@@ -159,25 +157,29 @@ const Zone = () => {
         },
     ];
 
-    const getZoneParams = (params, searchValue) => {
+    // Hàm tạo tham số truy vấn API
+    const getCategoryParams = (params, searchValue) => {
         const { pagination, sortBy, descending } = params;
         let query = `storeID=${storeID.id}&page=${pagination.current - 1}&size=${pagination.pageSize}`;
         if (sortBy) query += `&sortBy=${sortBy}&descending=${descending}`;
-        if (searchValue) query += `&zoneName=${encodeURIComponent(searchValue)}`;
+        if (searchValue) query += `&search=${encodeURIComponent(searchValue)}`;
         return query;
     };
 
-    const fetchZones = async () => {
+    // Hàm lấy dữ liệu danh mục từ API
+    const fetchCategories = async () => {
         setLoading(true);
         try {
-            const queryParams = '?' + getZoneParams(tableParams, searchValue);
-            const response = await getDataWithToken(API.STORE_DETAIL.GET_STORE_ZONES + queryParams, token);
+            const queryParams = '?' + getCategoryParams(tableParams, searchValue);
+            const response = await getDataWithToken(API.STORE_DETAIL.GET_CATEGORIES + queryParams, token);
             if (!response || !response.content) throw new Error('Dữ liệu trả về không hợp lệ');
+            console.log(queryParams);
+            console.log(response.totalElements);
             setData(response.content);
             setTableParams((prev) => ({
                 ...prev,
                 pagination: { ...prev.pagination, total: response.totalElements },
-            }));
+            }));    
         } catch (error) {
             navigate('/unauthorized');
         } finally {
@@ -185,10 +187,12 @@ const Zone = () => {
         }
     };
 
+    // Gọi fetchCategories khi các tham số thay đổi
     useEffect(() => {
-        fetchZones();
+        fetchCategories();
     }, [tableParams.pagination.current, tableParams.pagination.pageSize, tableParams.sortBy, tableParams.descending, searchValue]);
 
+    // Xử lý thay đổi bảng (phân trang, sắp xếp)
     const handleTableChange = (pagination, filters, sorter) => {
         setTableParams((prev) => ({
             ...prev,
@@ -198,14 +202,15 @@ const Zone = () => {
         }));
     };
 
+    // Giao diện component
     return (
         <div>
             {contextHolder}
-            <Button className="btn-create" title="Thêm zone mới" onClick={() => setIsCreateModalOpen(true)}>
+            <Button className="btn-create" title="Thêm danh mục mới" onClick={() => setIsCreateModalOpen(true)}>
                 Thêm mới
             </Button>
             <Search
-                placeholder="Nhập tên khu..."
+                placeholder="Nhập tên danh mục và mô tả..."
                 value={searchValue}
                 onChange={(e) => {
                     setSearchValue(e.target.value);
@@ -227,37 +232,37 @@ const Zone = () => {
             <Flex vertical gap="middle" align="flex-start">
                 {/* Modal thông tin chi tiết */}
                 <Modal open={isInfoModalOpen} onCancel={() => setIsInfoModalOpen(false)} footer={null}>
-                    {selectedZone && (
-                        <div className="zone-modal">
+                    {selectedCategory && (
+                        <div className="category-modal">
                             <div className="product-header">
-                                <div className="product-icon">Z</div>
-                                <span className="product-label">Mã: {selectedZone.id}</span>
+                                <div className="product-icon">C</div>
+                                <span className="product-label">Mã: {selectedCategory.id}</span>
                             </div>
-                            <div className="zone-content">
+                            <div className="category-content">
                                 <table>
                                     <tr>
-                                        <td><strong>Tên Khu:</strong></td>
-                                        <td>{selectedZone.name}</td>
+                                        <td><strong>Tên Danh Mục:</strong></td>
+                                        <td>{selectedCategory.name}</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Phân Khu:</strong></td>
-                                        <td>{selectedZone.location}</td>
+                                        <td><strong>Mô Tả:</strong></td>
+                                        <td>{selectedCategory.description}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Tạo Bởi:</strong></td>
-                                        <td>{selectedZone.createdBy || 'Chưa có thông tin'}</td>
+                                        <td>{selectedCategory.createdBy || 'Chưa có thông tin'}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Tạo Lúc:</strong></td>
-                                        <td>{selectedZone.createdAt ? moment(selectedZone.createdAt).format('HH:mm DD/MM/YYYY') : 'Chưa có thông tin'}</td>
+                                        <td>{selectedCategory.createdAt ? moment(selectedCategory.createdAt).format('HH:mm DD/MM/YYYY') : 'Chưa có thông tin'}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Cập Nhật Bởi:</strong></td>
-                                        <td>{selectedZone.updatedBy || 'Chưa có thông tin'}</td>
+                                        <td>{selectedCategory.updatedBy || 'Chưa có thông tin'}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Cập Nhật Lúc:</strong></td>
-                                        <td>{selectedZone.updatedAt ? moment(selectedZone.updatedAt).format('HH:mm DD/MM/YYYY') : 'Chưa có thông tin'}</td>
+                                        <td>{selectedCategory.updatedAt ? moment(selectedCategory.updatedAt).format('HH:mm DD/MM/YYYY') : 'Chưa có thông tin'}</td>
                                     </tr>
                                 </table>
                             </div>
@@ -266,33 +271,33 @@ const Zone = () => {
                 </Modal>
                 {/* Modal tạo mới */}
                 <Modal
-                    title="Thêm Khu Mới"
+                    title="Thêm Danh Mục Mới"
                     open={isCreateModalOpen}
                     onCancel={() => setIsCreateModalOpen(false)}
                     footer={null}>
-                    <CreateZone
+                    <CreateCategory
                         onClose={() => setIsCreateModalOpen(false)}
                         storeID={storeID.id}
-                        fetchZones={fetchZones}
+                        fetchCategories={fetchCategories}
                         onSuccess={handleCreateSuccess}
                     />
+
                 </Modal>
                 {/* Modal cập nhật */}
-                <Modal
-                    title="Cập Nhật Khu"
-                    open={isUpdateModalOpen}
-                    onCancel={() => setIsUpdateModalOpen(false)}
-                    footer={null}>
-                    {selectedZone && <UpdateZone
-                        zone={selectedZone}
-                        onClose={() => setIsUpdateModalOpen(false)}
-                        fetchZones={fetchZones}
-                        onSuccess={handleUpdateSuccess}
-                    />}
+                <Modal title="Cập Nhật Danh Mục" open={isUpdateModalOpen} onCancel={() => setIsUpdateModalOpen(false)} footer={null}>
+                    {selectedCategory && (
+                        <UpdateCategory
+                            category={selectedCategory}
+                            storeID={storeID.id}
+                            onClose={() => setIsUpdateModalOpen(false)}
+                            fetchCategories={fetchCategories}
+                            onSuccess={handleUpdateSuccess}
+                        />
+                    )}
                 </Modal>
             </Flex>
         </div>
     );
 };
 
-export default Zone;
+export default Category;

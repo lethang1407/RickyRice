@@ -34,8 +34,10 @@ import SubscriptionPlan from "./Pages/SubscriptionPlan/SubscriptionPlans";
 import PaymentReturn from "./Pages/SubscriptionPlan/PaymentReturn";
 import AccountInfo from "./Pages/Account/AccountInfo";
 import ChangePassword from "./Pages/Account/ChangePasswordAcc";
-import Zone from "./Pages/StoreManagement/Zone/Zone.js";
 import StoreLayout from "./Components/StoreLayout/storelayout.js";
+import Zone from "./Pages/StoreManagement/Zone/Zone.js";
+import StoreDetailCategory from "./Pages/StoreManagement/Category/Category.js";
+import StoreDetailProductAttribute from "./Pages/StoreManagement/ProductAttribute/ProductAttribute.js";
 import StoreProduct from "./Pages/StoreManagement/Product/Product.js";
 import { WebSocketProvider } from "./Utils/Websocket/WebsocketContextProvider.js";
 import CustomerDebt from "./Pages/Debt/CustomerDebt/customer.js";
@@ -129,6 +131,8 @@ function App() {
               <Route path="zone" element={<Zone />}></Route>
               <Route path="product" element={<StoreProduct />}></Route>
               <Route path="update-info" element={<UpdateStore />}></Route>
+              <Route path="category" element={<StoreDetailCategory />}></Route>
+              <Route path="productattribute" element={<StoreDetailProductAttribute />}></Route>
             </Route>
           </Route>
           <Route path="/account-info" element={<AccountInfo />} />

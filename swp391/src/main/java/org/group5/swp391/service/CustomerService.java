@@ -29,4 +29,5 @@ public interface CustomerService {
     public void updateCustomerDebt(String customerId, CustomerDebtUpdateRequest request);
     public void createCustomerDebt(CustomerCreationRequest request);
     public DebtCustomerDTO getDebtCustomerById(String id);
+    public Customer getCustomerByPhone(String phone);
 }
