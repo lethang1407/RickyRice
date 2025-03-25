@@ -1,9 +1,7 @@
-/* Nhúng font Google Fonts */
-/* Nhúng font Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
 /* Container chính của modal */
-.zone-modal {
+.category-modal {
     font-family: 'Roboto', sans-serif;
     background: linear-gradient(to bottom, #E0F7FA, #FFFFFF);
     border-radius: 15px;
@@ -14,7 +12,7 @@
     position: relative;
 }
 
-/* Phần header với biểu tượng "Z" */
+/* Phần header với biểu tượng "C" */
 .product-header {
     display: flex;
     align-items: center;
@@ -42,45 +40,32 @@
 }
 
 /* Nội dung chi tiết - CSS cho bảng */
-.zone-content table {
+.category-content table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.zone-content tr {
+.category-content tr {
     border-bottom: 1px solid #E0F7FA; /* Viền xanh nhạt giữa các hàng */
 }
 
-.zone-content tr:last-child {
+.category-content tr:last-child {
     border-bottom: none; /* Loại bỏ viền dưới của hàng cuối cùng */
 }
 
-.zone-content td {
+.category-content td {
     padding: 10px 0; /* Khoảng cách tương tự margin của <p> */
     font-size: 16px;
     color: #333;
 }
 
-.zone-content td.product-name-cell {
-    position: relative; /* Để định vị biểu tượng 🌾 */
-}
-
-.zone-content strong {
+.category-content strong {
     color: #007BFF;
     font-weight: bold;
     text-decoration: underline; /* Gạch chân xanh dương */
 }
 
-/* Biểu tượng hạt gạo */
-.product-name-icon {
-    position: absolute;
-    left: -20px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #007BFF;
-    font-size: 18px;
-}
-
+/* Nút tạo mới */
 .btn-create {
     background: linear-gradient(to left, #007BFF, #149ae7);
     background-size: 200% 100%;
@@ -88,7 +73,7 @@
     margin-bottom: 20px;
 }
 
-.btn-create:hover{
+.btn-create:hover {
     transition: 0.4s;
 }
 

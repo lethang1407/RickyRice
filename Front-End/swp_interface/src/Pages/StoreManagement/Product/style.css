@@ -1,14 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
+.ant-modal-body {
+    display: flex;
+    justify-content: center;
+}
+
 .product-modal {
     font-family: 'Roboto', sans-serif;
     background: #fff; /* Thay đổi background thành màu trắng để dễ tùy chỉnh hơn */
     border-radius: 15px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Tăng độ nổi của box-shadow */
-    max-width: 800px; /* Tăng kích thước modal để có không gian cho ảnh */
-    width: 95%; /* Đảm bảo responsive trên các màn hình nhỏ hơn */
+    max-width: 1200px; /* Tăng kích thước modal để có không gian cho ảnh */
+    width: 100%; /* Đảm bảo responsive trên các màn hình nhỏ hơn */
     padding: 30px; /* Tăng padding */
-    margin: 30px auto; /* Căn giữa modal và tăng margin */
     position: relative;
     overflow: hidden; /* Để chứa các phần tử float nếu cần */
     background: linear-gradient(135deg, #E0F7FA 0%, #FFFFFF 100%); /* Gradient nhẹ nhàng hơn */
@@ -37,10 +41,22 @@
     margin-right: 15px;
 }
 
+#delete-button {
+    background: #FF4500 !important; 
+    color: white !important; 
+    border: red !important;
+}
+
+#delete-button:hover {
+    background: #f06f40 !important; 
+    color: white !important; 
+    border: black !important;
+}
+
 .product-label {
-    margin-left: 0; /* Loại bỏ margin left thừa */
-    color: #333; /* Màu chữ đậm hơn */
-    font-size: 22px; /* Tăng kích thước label mã sản phẩm */
+    margin-left: 0; 
+    color: #333; 
+    font-size: 22px; 
     font-weight: bold; /* In đậm label mã sản phẩm */
 }
 

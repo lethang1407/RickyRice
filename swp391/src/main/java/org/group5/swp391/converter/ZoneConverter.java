@@ -7,6 +7,8 @@ import org.group5.swp391.dto.employee.EmployeeZoneDTO;
 import org.group5.swp391.dto.store_owner.all_product.StoreZoneIdAndNameDTO;
 import org.group5.swp391.dto.store_owner.store_detail.StoreDetailZoneDTO;
 import org.group5.swp391.entity.Zone;
+import org.group5.swp391.repository.ProductRepository;
+import org.group5.swp391.repository.StoreRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Component;
 public class ZoneConverter {
 
     private final ModelMapper modelMapper;
+    private final ProductRepository productRepository;
+    private final StoreRepository storeRepository;
     public CustomerZoneDTO toZoneDTO(Zone zone) {
         return modelMapper.map(zone, CustomerZoneDTO.class);
     }
@@ -55,5 +59,14 @@ public class ZoneConverter {
         storeDetailZoneDTO.setCreatedAt(zone.getCreatedAt());
         storeDetailZoneDTO.setUpdatedAt(zone.getUpdatedAt());
         return storeDetailZoneDTO;
+    }
+
+    public Zone toZone(StoreDetailZoneDTO storeDetailZoneDTO) {
+        Zone zone = new Zone();
+        zone.setName(storeDetailZoneDTO.getName());
+        zone.setLocation(storeDetailZoneDTO.getLocation());
+        zone.setProduct(productRepository.findById(storeDetailZoneDTO.getProductID()).orElse(null));
+        zone.setStore(storeRepository.findById(storeDetailZoneDTO.getStoreID()).orElse(null));
+        return zone;
     }
 }

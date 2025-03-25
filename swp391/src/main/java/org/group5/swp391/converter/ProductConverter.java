@@ -13,6 +13,13 @@ import org.group5.swp391.dto.store_owner.all_product.StoreProductDTO;
 import org.group5.swp391.dto.store_owner.all_product.StoreProductDetailDTO;
 import org.group5.swp391.dto.store_owner.store_detail.StoreDetailProductDTO;
 import org.group5.swp391.entity.Product;
+import org.group5.swp391.entity.ProductAttribute;
+import org.group5.swp391.entity.Zone;
+import org.group5.swp391.exception.AppException;
+import org.group5.swp391.exception.ErrorCode;
+import org.group5.swp391.repository.CategoryRepository;
+import org.group5.swp391.repository.ProductAttributeRepository;
+import org.group5.swp391.repository.ZoneRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +35,9 @@ public class ProductConverter {
     private final ZoneConverter zoneConverter;
     private final CategoryConverter categoryConverter;
     private final StoreConverter storeConverter;
+    private final CategoryRepository categoryRepository;
+    private final ProductAttributeRepository productAttributeRepository;
+    private final ZoneRepository zoneRepository;
 
     public CustomerProductDTO toCustomerProductDTO(Product product) {
         CustomerProductDTO customerProductDTO = modelMapper.map(product, CustomerProductDTO.class);
@@ -103,11 +113,33 @@ public class ProductConverter {
     }
 
     public StoreDetailProductDTO toStoreDetailProductDTO(Product product){
-        StoreDetailProductDTO storeDetailProductDTO = modelMapper.map(product, StoreDetailProductDTO.class);
-        storeDetailProductDTO.setQuantity(product.getQuantity());
-        storeDetailProductDTO.setStoreDetailCategoryDTO(categoryConverter.toStoreDetailCategoryDTO(product.getCategory()));
-        storeDetailProductDTO.setProductImage(product.getProductImage());
-        return storeDetailProductDTO;
+        StoreDetailProductDTO dto = modelMapper.map(product, StoreDetailProductDTO.class);
+        dto.setStoreDetailProductAttributeDTOList(product.getProductAttributes().stream().map(productAttributeConverter::toStoreDetailProductAttributeDTO).collect(Collectors.toList()));
+        dto.setStoreDetailZoneDTOList(product.getZones().stream().map(zoneConverter::toStoreZoneDTO).collect(Collectors.toList()));
+        dto.setProductAttributeList(product.getProductAttributes().stream().map(ProductAttribute::getId).toList());
+        dto.setZoneList(product.getZones().stream().map(Zone::getId).toList());
+        return dto;
+    }
+
+    public Product toProduct(StoreDetailProductDTO storeDetailProductDTO){
+        Product product = modelMapper.map(storeDetailProductDTO, Product.class);
+        product.setQuantity(storeDetailProductDTO.getQuantity());
+        product.setCategory(categoryRepository.findById(storeDetailProductDTO.getCategoryID()).orElse(null));
+        product.setProductImage(storeDetailProductDTO.getProductImage());
+        product.setInformation(storeDetailProductDTO.getInformation());
+        product.setPrice(storeDetailProductDTO.getPrice());
+        product.setName(storeDetailProductDTO.getName());
+        if(storeDetailProductDTO.getProductAttributeList() != null) {
+            product.setProductAttributes(storeDetailProductDTO.getProductAttributeList().stream().map((producAttributeID) -> {
+                return productAttributeRepository.findById(producAttributeID).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+            }).toList());
+        }
+        if(storeDetailProductDTO.getZoneList() != null) {
+            product.setZones(storeDetailProductDTO.getZoneList().stream().map((zoneID) -> {
+                return zoneRepository.findById(zoneID).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+            }).toList());
+        }
+        return product;
     }
 
 }

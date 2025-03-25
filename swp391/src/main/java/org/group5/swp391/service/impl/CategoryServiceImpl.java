@@ -15,10 +15,7 @@ import org.group5.swp391.entity.Category;
 import org.group5.swp391.repository.CategoryRepository;
 import org.group5.swp391.repository.ZoneRepository;
 import org.group5.swp391.service.CategoryService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,6 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final ProductConverter productConverter;
+    private final StoreRepository storeRepository;
 
     private final CategoryConverter categoryConverter;
 
@@ -108,13 +106,57 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category getCategoryById(String categoryId) {
-        return categoryRepository.findById(categoryId).orElseThrow();
+    public StoreDetailCategoryDTO getCategoryByID(String categoryID) throws Exception {
+        Category category = categoryRepository.findById(categoryID).orElseThrow(() -> new Exception("Không tìm được category"));
+        return categoryConverter.toStoreDetailCategoryDTO(category);
     }
 
     @Override
-    public List<StoreDetailCategoryDTO> getStoreDetailCategory() {
-        List<Category> categories = categoryRepository.findAll();
+    public List<StoreDetailCategoryDTO> getStoreDetailAllCategoriesByStoreID(String storeID) {
+        List<Category> categories = categoryRepository.findCategoryByStore_Id(storeID);
         return categories.stream().map(categoryConverter::toStoreDetailCategoryDTO).collect(Collectors.toList());
+    }
+
+
+    @Override
+    public Page<StoreDetailCategoryDTO> getStoreDetailCategory(String search, String storeID, int page, int size, String sortBy, boolean descending) {
+        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        List<StoreDetailCategoryDTO> storeDetailCategoryDTOS;
+        List<Category> categories;
+        int total = 0;
+        if(search == null) {
+            categories = categoryRepository.findCategoriesByStoreID(storeID, pageable);
+            total = categoryRepository.countAllByStore_Id(storeID);
+        } else {
+            categories = categoryRepository.findCategories(storeID, search, pageable);
+            total = categoryRepository.countAllByStore_IdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(storeID, search);
+        }
+        storeDetailCategoryDTOS = categories.stream().map(categoryConverter::toStoreDetailCategoryDTO).collect(Collectors.toList());
+        return new PageImpl<>(storeDetailCategoryDTOS, pageable, total);
+    }
+
+    @Override
+    public void addCategory(StoreDetailCategoryDTO storeDetailCategoryDTO) throws Exception {
+        Category category = new Category();
+        Store storeExisting = storeRepository
+                .findById(storeDetailCategoryDTO.getStoreID()).orElseThrow(() -> new Exception("Store not found"));
+        category.setName(storeDetailCategoryDTO.getName());
+        category.setDescription(storeDetailCategoryDTO.getDescription());
+        category.setStore(storeExisting);
+        categoryRepository.save(category);
+    }
+
+    @Override
+    public void updateCategory(String categoryId, StoreDetailCategoryDTO storeDetailCategoryDTO) throws Exception {
+        Category updatingCategory = categoryRepository.findById(categoryId).orElseThrow(() -> new Exception("Category not found"));
+        updatingCategory.setName(storeDetailCategoryDTO.getName());
+        updatingCategory.setDescription(storeDetailCategoryDTO.getDescription());
+        categoryRepository.save(updatingCategory);
+    }
+
+    @Override
+    public void deleteCategory(String categoryId) {
+        categoryRepository.deleteById(categoryId);
     }
 }
