@@ -21,6 +21,10 @@ public interface CategoryService {
     public Page<EmployeeProductDTO> getProductBySearch(String name, int page, int size, String sortBy, boolean descending);
     //Hieu
     public List<CustomerCategoryDTO> getAllCustomerCategories();
-    public Category getCategoryById(String categoryId);
-    public List<StoreDetailCategoryDTO> getStoreDetailCategory();
+    public StoreDetailCategoryDTO getCategoryByID(String categoryID) throws Exception;
+    public List<StoreDetailCategoryDTO> getStoreDetailAllCategoriesByStoreID(String storeID);
+    public Page<StoreDetailCategoryDTO> getStoreDetailCategory(String search, String storeID,int page, int size, String sortBy, boolean descending);
+    public void addCategory(StoreDetailCategoryDTO storeCategoryDTO) throws Exception;
+    public void updateCategory(String categoryId, StoreDetailCategoryDTO storeCategoryDTO) throws Exception;
+    public void deleteCategory(String categoryId);
 }

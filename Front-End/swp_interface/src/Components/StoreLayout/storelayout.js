@@ -31,11 +31,15 @@ const StoreLayout = () => {
   const storeID = useParams();
   const selectedKey = location.pathname.startsWith(`/store/${storeID.id}/zone`)
     ? "1"
-    : location.pathname.startsWith(`/store/${storeID.id}/product`)
-    ? "2"
-    : location.pathname.startsWith(`/store/${storeID.id}/update-info`)
-    ? "3"
-    : "";
+    : location.pathname.startsWith(`/store/${storeID.id}/productattribute`)
+      ? '4'
+      : location.pathname.startsWith(`/store/${storeID.id}/product`)
+        ? "2"
+        : location.pathname.startsWith(`/store/${storeID.id}/update-info`)
+          ? "3"
+          : location.pathname.startsWith(`/store/${storeID.id}/category`)
+            ? '5'
+            : "";
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
@@ -59,21 +63,31 @@ const StoreLayout = () => {
               {
                 key: "1",
                 icon: <ShopOutlined />,
-                label: <Link to={`/store/${storeID.id}/zone`}>Zone</Link>,
+                label: <Link to={`/store/${storeID.id}/zone`}  style={{ textDecoration: 'none' }}>Khu vực</Link>,
               },
               {
                 key: "2",
                 icon: <AppstoreOutlined />,
-                label: <Link to={`/store/${storeID.id}/product`}>Product</Link>,
+                label: <Link to={`/store/${storeID.id}/product`}  style={{ textDecoration: 'none' }}>Sản phẩm</Link>,
               },
               {
                 key: "3",
                 icon: <IdcardOutlined />,
                 label: (
-                  <Link to={`/store/${storeID.id}/update-info`}>
+                  <Link to={`/store/${storeID.id}/update-info`}  style={{ textDecoration: 'none' }}>
                     Cập nhật cửa hàng
                   </Link>
                 ),
+              },
+              {
+                key: '4',
+                icon: <FileTextOutlined />,
+                label: <Link to={`/store/${storeID.id}/productattribute`} style={{ textDecoration: 'none' }}>Thuộc tính sản phẩm</Link>,
+              },
+              {
+                key: '5',
+                icon: <FileTextOutlined />,
+                label: <Link to={`/store/${storeID.id}/category`} style={{ textDecoration: 'none' }}>Loại</Link>,
               },
             ]}
           />
