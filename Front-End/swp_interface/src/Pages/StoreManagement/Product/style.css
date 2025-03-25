@@ -1,76 +1,115 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
+
 .product-modal {
     font-family: 'Roboto', sans-serif;
-    background: #fff; /* Thay đổi background thành màu trắng để dễ tùy chỉnh hơn */
+    background: #fff;
+    /* Thay đổi background thành màu trắng để dễ tùy chỉnh hơn */
     border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Tăng độ nổi của box-shadow */
-    max-width: 800px; /* Tăng kích thước modal để có không gian cho ảnh */
-    width: 95%; /* Đảm bảo responsive trên các màn hình nhỏ hơn */
-    padding: 30px; /* Tăng padding */
-    margin: 30px auto; /* Căn giữa modal và tăng margin */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    /* Tăng độ nổi của box-shadow */
+    max-width: 1200px;
+    /* Tăng kích thước modal để có không gian cho ảnh */
+    width: 100%;
+    /* Đảm bảo responsive trên các màn hình nhỏ hơn */
+    padding: 30px;
+    /* Tăng padding */
     position: relative;
-    overflow: hidden; /* Để chứa các phần tử float nếu cần */
-    background: linear-gradient(135deg, #E0F7FA 0%, #FFFFFF 100%); /* Gradient nhẹ nhàng hơn */
+    overflow: hidden;
+    /* Để chứa các phần tử float nếu cần */
+    background: linear-gradient(135deg, #E0F7FA 0%, #FFFFFF 100%);
+    /* Gradient nhẹ nhàng hơn */
 }
 
 .product-header {
     display: flex;
     align-items: center;
-    margin-bottom: 25px; /* Tăng margin bottom */
+    margin-bottom: 25px;
+    /* Tăng margin bottom */
     padding-bottom: 20px;
-    border-bottom: 2px dashed #B2EBF2; /* Đường gạch chân header */
+    border-bottom: 2px dashed #B2EBF2;
+    /* Đường gạch chân header */
 }
 
 .product-icon {
-    width: 40px; /* Tăng kích thước icon */
-    height: 40px; /* Tăng kích thước icon */
-    background: linear-gradient(45deg, #29B6F6, #0288D1); /* Màu gradient tươi sáng hơn */
+    width: 40px;
+    /* Tăng kích thước icon */
+    height: 40px;
+    /* Tăng kích thước icon */
+    background: linear-gradient(45deg, #29B6F6, #0288D1);
+    /* Màu gradient tươi sáng hơn */
     color: white;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 20px; /* Tăng kích thước chữ trong icon */
+    font-size: 20px;
+    /* Tăng kích thước chữ trong icon */
     font-weight: bold;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* Tăng box-shadow cho icon */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    /* Tăng box-shadow cho icon */
     margin-right: 15px;
 }
 
+#delete-button {
+    background: #FF4500 !important;
+    color: white !important;
+    border: red !important;
+}
+
+#delete-button:hover {
+    background: #f06f40 !important;
+    color: white !important;
+    border: black !important;
+}
+
 .product-label {
-    margin-left: 0; /* Loại bỏ margin left thừa */
-    color: #333; /* Màu chữ đậm hơn */
-    font-size: 22px; /* Tăng kích thước label mã sản phẩm */
-    font-weight: bold; /* In đậm label mã sản phẩm */
+    margin-left: 0;
+    color: #333;
+    font-size: 22px;
+    font-weight: bold;
+    /* In đậm label mã sản phẩm */
 }
 
 .product-content {
-    display: flex; /* Sử dụng flexbox để chia bố cục nội dung */
-    gap: 30px; /* Khoảng cách giữa phần thông tin và ảnh */
-    align-items: start; /* Căn chỉnh các item lên đầu */
+    display: flex;
+    /* Sử dụng flexbox để chia bố cục nội dung */
+    gap: 30px;
+    /* Khoảng cách giữa phần thông tin và ảnh */
+    align-items: start;
+    /* Căn chỉnh các item lên đầu */
 }
 
 .product-details {
-    flex: 1; /* Phần thông tin sản phẩm chiếm phần lớn không gian */
+    flex: 1;
+    /* Phần thông tin sản phẩm chiếm phần lớn không gian */
 }
 
 .product-image-container {
-    flex: 1; /* Phần ảnh sản phẩm cũng có không gian */
+    flex: 1;
+    /* Phần ảnh sản phẩm cũng có không gian */
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 10px;
-    overflow: hidden; /* Đảm bảo ảnh không tràn ra ngoài border-radius */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow cho container ảnh */
-    background-color: #f9f9f9; /* Màu nền nhẹ cho container ảnh */
+    overflow: hidden;
+    /* Đảm bảo ảnh không tràn ra ngoài border-radius */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Box shadow cho container ảnh */
+    background-color: #f9f9f9;
+    /* Màu nền nhẹ cho container ảnh */
     padding: 10px;
 }
 
 .product-image-container img {
-    max-width: 100%; /* Ảnh không vượt quá kích thước container */
-    height: auto; /* Tự động điều chỉnh chiều cao */
-    display: block; /* Loại bỏ khoảng trắng thừa dưới ảnh */
-    border-radius: 8px; /* Bo tròn góc ảnh bên trong container */
+    max-width: 100%;
+    /* Ảnh không vượt quá kích thước container */
+    height: auto;
+    /* Tự động điều chỉnh chiều cao */
+    display: block;
+    /* Loại bỏ khoảng trắng thừa dưới ảnh */
+    border-radius: 8px;
+    /* Bo tròn góc ảnh bên trong container */
 }
 
 
@@ -81,7 +120,8 @@
 
 .product-content tr {
     border-bottom: 1px solid #E0F7FA;
-    transition: background-color 0.3s ease; /* Thêm hiệu ứng hover */
+    transition: background-color 0.3s ease;
+    /* Thêm hiệu ứng hover */
 }
 
 .product-content tr:last-child {
@@ -89,28 +129,40 @@
 }
 
 .product-content tr:hover {
-    background-color: #F0F8FF; /* Màu nền khi hover vào hàng */
+    background-color: #F0F8FF;
+    /* Màu nền khi hover vào hàng */
 }
 
 .product-content td {
-    padding: 12px 10px; /* Tăng padding cho td */
-    font-size: 18px; /* Tăng kích thước chữ trong table */
-    color: #444; /* Màu chữ đậm hơn một chút */
-    vertical-align: top; /* Căn chỉnh nội dung td lên trên */
+    padding: 12px 10px;
+    /* Tăng padding cho td */
+    font-size: 18px;
+    /* Tăng kích thước chữ trong table */
+    color: #444;
+    /* Màu chữ đậm hơn một chút */
+    vertical-align: top;
+    /* Căn chỉnh nội dung td lên trên */
 }
 
 .product-content td:first-child {
-    width: 160px; /* Cố định độ rộng cột tiêu đề */
+    width: 160px;
+    /* Cố định độ rộng cột tiêu đề */
     font-weight: bold;
-    color: #039BE5; /* Màu chữ tiêu đề đậm và khác biệt */
-    text-decoration: underline; /* Gạch chân tiêu đề */
-    text-decoration-color: #B2EBF2; /* Màu gạch chân nhạt hơn */
-    text-underline-offset: 3px; /* Khoảng cách gạch chân với chữ */
+    color: #039BE5;
+    /* Màu chữ tiêu đề đậm và khác biệt */
+    text-decoration: underline;
+    /* Gạch chân tiêu đề */
+    text-decoration-color: #B2EBF2;
+    /* Màu gạch chân nhạt hơn */
+    text-underline-offset: 3px;
+    /* Khoảng cách gạch chân với chữ */
 }
 
 .product-content strong {
-    font-weight: bolder; /* In đậm hơn nữa nếu cần */
-    color: #0288D1; /* Màu strong đồng nhất với icon và header */
+    font-weight: bolder;
+    /* In đậm hơn nữa nếu cần */
+    color: #0288D1;
+    /* Màu strong đồng nhất với icon và header */
     text-decoration: underline;
     text-decoration-color: #80DEEA;
 }
@@ -122,23 +174,36 @@
         padding: 20px;
         margin: 15px auto;
     }
+
     .product-content {
-        flex-direction: column; /* Chuyển sang bố cục dọc khi màn hình nhỏ */
+        flex-direction: column;
+        /* Chuyển sang bố cục dọc khi màn hình nhỏ */
         gap: 20px;
     }
+
     .product-image-container {
-        flex: none; /* Loại bỏ flex khi ở dạng cột */
-        width: 80%; /* Ảnh chiếm 80% chiều rộng container khi ở dạng cột */
-        margin: 0 auto; /* Căn giữa ảnh */
+        flex: none;
+        /* Loại bỏ flex khi ở dạng cột */
+        width: 80%;
+        /* Ảnh chiếm 80% chiều rộng container khi ở dạng cột */
+        margin: 0 auto;
+        /* Căn giữa ảnh */
     }
+
     .product-details {
-        flex: none; /* Loại bỏ flex khi ở dạng cột */
+        flex: none;
+        /* Loại bỏ flex khi ở dạng cột */
     }
+
     .product-label {
-        font-size: 20px; /* Giảm kích thước label trên mobile */
+        font-size: 20px;
+        /* Giảm kích thước label trên mobile */
     }
-    .product-content td, .product-content td:first-child {
-        font-size: 16px; /* Giảm kích thước chữ trong table trên mobile */
+
+    .product-content td,
+    .product-content td:first-child {
+        font-size: 16px;
+        /* Giảm kích thước chữ trong table trên mobile */
         padding: 10px;
     }
 }

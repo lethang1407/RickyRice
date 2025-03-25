@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import API from '../../../Utils/API/API';
 import '../style.css'
+import { success, error } from '../../../Utils/AntdNotification';
 
 const { TextArea } = Input;
 const CustomerList = () => {
@@ -37,6 +38,7 @@ const CustomerList = () => {
     };
     const token = getToken();
     const [form] = Form.useForm();
+    const [messageApi, contextHolder] = message.useMessage();
 
 
     const CustomerColumns = [
@@ -291,15 +293,12 @@ const CustomerList = () => {
             );
 
             if (response.status === 200 || response.status === 204) {
-                message.success('Cập nhật thông tin khách hàng thành công!');
+                success('Cập nhật khách hàng thành công!', messageApi);
                 setIsEditModalVisible(false);
                 refreshData();
-            } else {
-                message.error('Có lỗi xảy ra, vui lòng thử lại!');
             }
-        } catch (error) {
-            console.error('Lỗi khi cập nhật:', error);
-            message.error('Không thể cập nhật thông tin khách hàng!');
+        } catch (err) {
+            error(err.response?.data?.message || "Tạo mới tài khoản thất bại.", messageApi);
         }
     };
     const handleFilterChange = debounce((type, value) => {
@@ -308,6 +307,7 @@ const CustomerList = () => {
 
     return (
         <>
+            {contextHolder}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 15px" }}>
                 <h3><i style={{ marginLeft: 15, color: "#E3C584" }}>Danh Sách Khách Hàng  </i></h3>
                 <Space size="middle">
@@ -332,10 +332,6 @@ const CustomerList = () => {
                 <Table style={{ marginTop: 25 }}
                     dataSource={customers}
                     columns={CustomerColumns}
-                    // rowClassName={(record) =>
-                    //     record.quantity === 0 ? "row-red" : ""
-                    // }
-
                     pagination={{
                         current: currentPage,
                         pageSize: pageSize,
@@ -366,7 +362,7 @@ const CustomerList = () => {
                 width="75%"
                 bodyStyle={{ height: '10vh' }}
             >
-                <Table
+                <Table style={{ width: '100%' }}
                     dataSource={modalData}
                     columns={StoreIN4columns}
                     rowKey={(record) => record.storeID}

@@ -37,6 +37,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -151,6 +153,13 @@ public class ProductServiceImpl implements ProductService {
         productRepository.delete(product);
     }
 
+    @Override
+    public void deleteProductStore(String productId) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        product.setZones(null);
+        product.setProductAttributes(null);
+        productRepository.delete(product);
+    }
 
 
     // Minh Tran
@@ -164,7 +173,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<EmployeeProductDTO> getProductBySearch(String name, int page, int size,
-                                                       String sortBy, boolean descending,Integer minQuantity, Integer maxQuantity) {
+                                                       String sortBy, boolean descending,Long minQuantity, Long maxQuantity,String attributes) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AccessDeniedException("Bạn chưa đăng nhập!");
@@ -173,9 +182,6 @@ public class ProductServiceImpl implements ProductService {
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
-        System.out.println(a.getStore().getId());
-        System.out.println(sortBy);
-        System.out.println(descending);
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         if (name.equals("") || name.isEmpty()) {
@@ -185,7 +191,12 @@ public class ProductServiceImpl implements ProductService {
             name = capitalizeFirstLetters(name);
             System.out.println(name);
         }
-        Page<Product> productPage = productRepository.findByNameAndStoreIdContainingIgnoreCase(name, a.getStore().getId(), pageable,minQuantity,maxQuantity);
+        List<String> attributeList = (attributes != null && !attributes.isEmpty())
+                ? Arrays.asList(attributes.split(","))
+                : null;
+        Long attributeCount = attributeList != null ? (long) attributeList.size() : 0L;
+        Page<Product> productPage = productRepository.findByNameAndStoreIdContainingIgnoreCase(
+                name, a.getStore().getId(), pageable, minQuantity, maxQuantity, attributeList, attributeCount);
         return productPage.map(productConverter::toEmployeeProductDTO);
     }
 
@@ -234,14 +245,17 @@ public class ProductServiceImpl implements ProductService {
                 : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         List<StoreDetailProductDTO> productPages;
+        long total;
         if (search == null || search.isEmpty()) {
             List<Product> products = productRepository.findProductsByStoreID(storeID, pageable);
             productPages = products.stream().map(productConverter::toStoreDetailProductDTO).collect(Collectors.toList());
+            total = productRepository.countByStore_Id(storeID);
         } else {
             List<Product> filteredProducts = productRepository.findProductsByInformationAndNameContainingIgnoreCase(search, storeID, pageable);
             productPages = filteredProducts.stream().map(productConverter::toStoreDetailProductDTO).collect(Collectors.toList());
+            total = productRepository.countByInformationAndNameContainingIgnoreCase(search, storeID); // Đếm tổng số sản phẩm theo điều kiện search
         }
-        return new PageImpl<>(productPages, pageable, (productPages.size() + 1));
+        return new PageImpl<>(productPages, pageable, total);
     }
 
     @Override
@@ -262,46 +276,111 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public void addProduct(String storeID, StoreDetailProductDTO storeDetailProductDTO) throws Exception {
         try {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth == null || !auth.isAuthenticated()) {
-                throw new Exception("Not authenticated");
+            if (productRepository.existsProductByNameAndStore_Id(storeID, storeDetailProductDTO.getName() )) {
+                throw new AppException(ErrorCode.PRODUCT_NAME_EXISTED);
             }
-            String username = auth.getName();
-            Account account = accountRepository.findByUsername(username)
-                    .orElseThrow(() -> new Exception("Account not found for username: " + username));
-            List<Store> stores = storeRepository.findByStoreAccount(account);
-            String storeList = new String();
-            for (Store store : stores) {
-                storeList += store.getId() + " ";
-            }
-            if (!storeList.contains(storeID)) {
-                throw new Exception("Store not found for id: " + storeID);
-            }
-
             Product newProduct = new Product();
 
-            Category cateExisting = categoryRepository.findCategoryById(storeDetailProductDTO.getStoreDetailCategoryDTO().getId());
+            Category cateExisting = categoryRepository
+                    .findCategoryById(storeDetailProductDTO.getCategoryID());
             if (cateExisting == null) {
                 throw new Exception("Category does not exist");
             }
-
-            Store storeExisting = storeRepository.findById(storeID)
-                    .orElseThrow(() -> new Exception("Store not found for ID: " + storeID));
-
             newProduct.setName(storeDetailProductDTO.getName());
             newProduct.setPrice(storeDetailProductDTO.getPrice());
             newProduct.setInformation(storeDetailProductDTO.getInformation());
             newProduct.setCategory(cateExisting);
-            newProduct.setStore(storeExisting);
             newProduct.setQuantity(storeDetailProductDTO.getQuantity());
             newProduct.setProductImage(storeDetailProductDTO.getProductImage());
-            System.out.println(newProduct.toString());
+
+            if(storeDetailProductDTO.getProductAttributeList() != null) {
+                List<ProductAttribute> attributes = storeDetailProductDTO.getProductAttributeList().stream()
+                        .map(id -> {
+                            try {
+                                return productAttributeRepository.findById(id)
+                                        .orElseThrow(() -> new Exception("ProductAttribute not found for ID: " + id));
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        })
+                        .collect(Collectors.toList());
+
+                newProduct.setProductAttributes(attributes);
+            }
+            if(storeDetailProductDTO.getZoneList() != null) {
+                List<Zone> zones = storeDetailProductDTO.getZoneList().stream()
+                        .map(id -> {
+                            try {
+                                return zoneRepository.findById(id)
+                                        .orElseThrow(() -> new Exception("Zone not found for ID: " + id));
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        }).collect(Collectors.toList());
+                newProduct.setZones(zones);
+            }
+            newProduct.setStore(storeRepository.getReferenceById(storeID));
             productRepository.save(newProduct);
         } catch (Exception e) {
             throw new Exception("Failed to save product: " + e.getMessage());
         }
+    }
+
+    @Override
+    public void updateProduct(String storeID, String productID, StoreDetailProductDTO storeDetailProductDTO) throws Exception {
+        Product updatingProduct = productRepository
+                .findById(productID)
+                .orElseThrow(() -> new Exception("Product not found for ID: " + storeDetailProductDTO.getId()));
+        if(productRepository.existsProductByNameAndStore_IdAndIdNot(storeDetailProductDTO.getName(), storeID, productID)) {
+            throw new AppException(ErrorCode.PRODUCT_NAME_EXISTED);
+        }
+        updatingProduct.setName(storeDetailProductDTO.getName());
+        updatingProduct.setPrice(storeDetailProductDTO.getPrice());
+        updatingProduct.setInformation(storeDetailProductDTO.getInformation());
+        updatingProduct.setQuantity(storeDetailProductDTO.getQuantity());
+        updatingProduct.setProductImage(storeDetailProductDTO.getProductImage());
+        Category cateExisting = categoryRepository
+                .findById(storeDetailProductDTO.getCategoryID())
+                .orElseThrow(() -> new Exception("không tìm thấy category"));
+        if (cateExisting == null) {
+            throw new Exception("Category does not exist");
+        }
+        updatingProduct.setCategory(cateExisting);
+
+        if(storeDetailProductDTO.getProductAttributeList() != null) {
+            List<ProductAttribute> attributes = storeDetailProductDTO.getProductAttributeList().stream()
+                    .map(id -> {
+                        try {
+                            return productAttributeRepository.findById(id)
+                                    .orElseThrow(() -> new Exception("ProductAttribute not found for ID: " + id));
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .collect(Collectors.toList());
+
+            updatingProduct.setProductAttributes(attributes);
+        }
+        if(storeDetailProductDTO.getZoneList() != null) {
+            List<Zone> zones = storeDetailProductDTO.getZoneList().stream()
+                    .map(dto -> {
+                        try {
+                            Zone zone = zoneRepository.findById(dto)
+                                    .orElseThrow(() -> new Exception("Zone not found for ID: " + dto));
+                            return new Zone(zone.getName(),
+                                    zone.getLocation(),
+                                    productRepository.findById(productID).orElseThrow(() -> new Exception("không tìm thấy product")),
+                                    storeRepository.findById(storeID).orElseThrow(() -> new Exception("Không tìm thấy store")));
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).collect(Collectors.toList());
+            updatingProduct.setZones(zones);
+        }
+        productRepository.save(updatingProduct);
     }
 
     //hàm cắt chuỗi in hoa chữ đầu cho mọi người

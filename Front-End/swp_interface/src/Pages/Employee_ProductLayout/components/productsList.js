@@ -11,9 +11,9 @@ import {
     SolutionOutlined,
 } from '@ant-design/icons';
 import axios from 'axios';
-import logo from '../../../../src/assets/img/logoviet.png';
+import logo from '../../../../src/assets/img/logo-no-background.png';
 import { useNavigate } from 'react-router-dom';
-import { Button, Layout, Menu, theme, Input, Space } from 'antd';
+import { Button, Layout, Menu, theme, Input, Space, Tag, Select } from 'antd';
 import CustomFooter from "../../../../src/Components/Footer";
 import { Table, Spin } from 'antd';
 import API from '../../../Utils/API/API';
@@ -41,6 +41,9 @@ const Employee_Products = () => {
     const [minQuantity, setMinQuantity] = useState(0);
     const [maxQuantity, setMaxQuantity] = useState();
 
+    const [attributeOptions, setAttributeOptions] = useState([]);
+    const [selectedItems, setSelectedItems] = useState([]);
+    const filteredOptions = attributeOptions.filter((o) => !selectedItems.includes(o));
     const handleNavigation = (path) => {
         navigate(path);
     };
@@ -50,13 +53,13 @@ const Employee_Products = () => {
             title: 'STT',
             key: 'stt',
             render: (text, record, index) => index + 1,
-            width: 5,
+            width: '5%',
         },
         {
             title: 'Ảnh Sản Phẩm',
             dataIndex: 'productImage',
             key: 'productImage',
-            width: 10,
+            width: '12%',
             render: (productImage) => (
                 <img style={{ width: '100%' }} src={productImage} alt="" />
             ),
@@ -65,32 +68,58 @@ const Employee_Products = () => {
             title: 'Gạo',
             dataIndex: 'name',
             key: 'name',
-            width: 15,
+            width: '13%',
         },
         {
             title: 'Số Lượng ',
             dataIndex: 'quantity',
             key: 'quantity',
-            width: 5,
+            width: '7%',
         },
         {
             title: 'Mô Tả',
             dataIndex: 'information',
             key: 'information',
-            width: '30%',
+            width: '23%',
         },
         {
             title: 'Giá Gạo',
             dataIndex: 'price',
             sorter: true,
+            render: (price) => `${price.toLocaleString()} đ`,
             key: 'price',
-            width: 10,
-            render: (price) => `${price} đ`,
+            width: '8%',
+        },
+        {
+            title: 'Tính Chất',
+            key: 'employeeProductAttributeDTO',
+            dataIndex: 'employeeProductAttributeDTO',
+            width: '15%',
+            render: (employeeProductAttributeDTO) =>
+                employeeProductAttributeDTO ? (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                        {employeeProductAttributeDTO.map((attribute, index) => (
+                            <Tag
+                                key={index}
+                                color={getColorForAttribute(attribute.value)}
+                                style={{
+                                    fontSize: "12px",
+                                    padding: "5px 10px",
+                                    borderRadius: "10px",
+                                }}
+                            >
+                                {attribute.value}
+                            </Tag>
+                        ))}
+                    </div>
+                ) : (
+                    <Tag color="default">N/A</Tag>
+                ),
         },
         {
             title: 'Loại Gạo',
             key: 'categoryname',
-            width: 20,
+            width: '10%',
             render: (text, record) => (
                 <span>{record.employeeCategoryDTO?.name || 'N/A'}</span>
             ),
@@ -109,9 +138,47 @@ const Employee_Products = () => {
             dataIndex: 'N/A',
             key: 'N/A',
             render: (text) => text ? moment(Number(text)).format('DD/MM/YYYY HH:mm:ss') : 'N/A',
-            width: 15,
+            width: '15%',
         }
     ];
+
+    const getColorForAttribute = (value) => {
+        switch (value.toLowerCase()) {
+            case 'dẻo mềm':
+                return 'green';
+            case 'dễ bảo quản':
+                return 'blue';
+            case 'thơm tự nhiên':
+                return 'pink';
+            case 'hạt dài':
+                return 'volcano';
+            case 'nấu nhanh':
+                return 'orange';
+            case 'nguyên cám':
+                return 'pink';
+            case 'chống oxy hóa':
+                return 'grey';
+            case 'giàu dinh dưỡng':
+                return 'green';
+            default:
+                return 'default';
+        }
+    };
+
+    const fetchAttributeOptions = async () => {
+        try {
+            const response = await axios.get(API.EMPLOYEE.GET_PRODUCT_ATTRIBUTES, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const options = response.data.map(item => item.value);
+            setAttributeOptions(options);
+        } catch (error) {
+            console.error('Lỗi khi lấy danh sách thuộc tính từ API:', error);
+        }
+    };
+
     const handleSearch = async (page, size) => {
         try {
             const response = await axios.get(API.EMPLOYEE.GET_PRODUCTS_BY_NAME, {
@@ -123,6 +190,7 @@ const Employee_Products = () => {
                     descending: sortInfo.order,
                     minQuantity: minQuantity || undefined,
                     maxQuantity: maxQuantity || undefined,
+                    attributes: selectedItems.join(',')
                 },
                 headers: {
                     Authorization: `Bearer ${token}`, // Thêm dấu backtick để sử dụng template string
@@ -137,6 +205,11 @@ const Employee_Products = () => {
             setLoading(false);
         }
     };
+    const handleAttributeChange = (newSelectedItems) => {
+        setSelectedItems(newSelectedItems);
+        setCurrentPage(1);
+        handleSearch(1, pageSize);
+    };
     const handleTableChange = (pagination, filters, sorter) => {
         const { current, pageSize } = pagination;
         setSortInfo({
@@ -147,6 +220,9 @@ const Employee_Products = () => {
         setPageSize(pageSize);
         handleSearch(current, pageSize, sorter);
     };
+    useEffect(() => {
+        fetchAttributeOptions();
+    }, []);
     useEffect(() => {
         handleSearch(currentPage, pageSize);
     }, [currentPage, pageSize, sortInfo]);
@@ -233,21 +309,20 @@ const Employee_Products = () => {
                             <h3 style={{ textAlign: "center", margin: 0, color: "#E3C584" }}>
                                 <i>Danh mục sản phẩm của cửa hàng</i>
                             </h3>
-                            <Space.Compact
-                                style={{
-                                    width: '20%',
-                                }}
-                            >
-                                <Input
-                                    placeholder='Tìm Tên Loại Gạo.....'
-                                    value={searchTerm}
-                                    onChange={(e) => { setIsSearch(false); setSearchTerm(e.target.value) }}
-                                />
-                                <Button type="primary" onClick={() => { setIsSearch(true); handleSearch(1, pageSize) }}>Tìm Kiếm </Button>
-                            </Space.Compact>
                         </div>
                         <div className="filter-container">
                             <Space size="middle">
+                                <Select className='selectFilter'
+                                    mode="multiple"
+                                    placeholder="Chọn tính chất gạo"
+                                    value={selectedItems}
+                                    onChange={handleAttributeChange}
+                                    style={{ width: '100%' }}
+                                    options={filteredOptions.map((item) => ({
+                                        value: item,
+                                        label: item,
+                                    }))}
+                                />
                                 <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px", color: "#6B7012" }}>
                                     <span>Số Lượng Tối Thiểu :</span>
                                     <Input
@@ -273,10 +348,17 @@ const Employee_Products = () => {
                                 <Button type="primary" onClick={() => { setIsSearch(true); handleSearch(1, pageSize); }}>
                                     Lọc Sản Phẩm
                                 </Button>
+
+                                <Input
+                                    placeholder='Tìm Tên Loại Gạo.....'
+                                    value={searchTerm}
+                                    onChange={(e) => { setIsSearch(false); setSearchTerm(e.target.value) }}
+                                />
+                                <Button type="primary" onClick={() => { setIsSearch(true); handleSearch(1, pageSize) }}>Tìm Kiếm </Button>
                             </Space>
                         </div>
                         {loading ? (<Spin size="large" />) : (
-                            <Table style={{ marginTop: 45 }}
+                            <Table style={{ marginTop: 10 }}
                                 dataSource={products}
                                 columns={columns}
                                 rowClassName={(record) =>

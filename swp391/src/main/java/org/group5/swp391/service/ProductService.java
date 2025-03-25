@@ -17,7 +17,7 @@ public interface ProductService {
                                                   String categoryName, List<String> storeIds, Integer quantityMin, Integer quantityMax,
                                                   int page, int size, String sortBy, boolean descending);
     public Page<EmployeeProductDTO> getProductsByCateID(String CateID, int page, int size, String sortBy, boolean descending);
-    public Page<EmployeeProductDTO>getProductBySearch(String name, int page, int size, String sortBy, boolean descending,Integer minQuantity, Integer maxQuantity);
+    public Page<EmployeeProductDTO>getProductBySearch(String name, int page, int size, String sortBy, boolean descending,Long minQuantity, Long maxQuantity,String attributes);
     public List<EmployeeProductDTO>getProductBySearchInList(String name);
     public Page<CustomerProductDTO> getAllProducts();
     public Page<CustomerProductDTO> searchProducts(String query, int page, int size);
@@ -26,6 +26,8 @@ public interface ProductService {
     public StoreProductDetailDTO getStoreProduct(String id);
     public String updateStoreProductImage(String productID, MultipartFile file);
     public void deleteProduct(String productId);
+    public void deleteProductStore(String productId);
     public void addProduct(String storeID, StoreDetailProductDTO storeDetailProductDTO) throws Exception;
+    public void updateProduct(String storeID, String productID, StoreDetailProductDTO storeDetailProductDTO) throws Exception;
     public Page<StoreDetailProductDTO> getAllProductsByStoreID(String search, String storeID, int page, int size, String sortBy, boolean descending);
     }

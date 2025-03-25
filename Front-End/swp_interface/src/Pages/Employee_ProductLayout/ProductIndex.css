@@ -12,7 +12,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 20px 0;
+    margin: 7px 0;
     gap: 20px;
     padding: 10px;
     background-color: #fffbe6;
@@ -56,4 +56,8 @@
     outline: none;
     border-color: #e3c584;
     box-shadow: 0 0 5px rgba(227, 197, 132, 0.6);
+}
+
+.selectFilter {
+    width: 350px !important;
 }

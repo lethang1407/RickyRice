@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* Modal container styling */
+.attribute-modal {
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(to bottom, #F1F8E9, #FFFFFF);
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  padding: 20px 20px;
+  margin: 20px 20px;
+  position: relative;
+}
+
+/* Header with icon */
+.product-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.product-icon {
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(45deg, #29B6F6, #0288D1); 
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product-label {
+  margin-left: 10px;
+  color: #555;
+  font-size: 14px;
+}
+
+/* Table content styling */
+.attribute-content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.attribute-content tr {
+  border-bottom: 1px solid #F1F8E9;
+}
+
+.attribute-content tr:last-child {
+  border-bottom: none;
+}
+
+.attribute-content td {
+  padding: 10px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.attribute-content strong {
+  color: #0288D1;;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+#delete-button {
+  background: #FF4500 !important; 
+  color: white !important; 
+  border: red !important;
+}
+
+#delete-button:hover {
+  background: #f06f40 !important; 
+  color: white !important; 
+  border: black !important;
+}
+
+/* Add new button */
+.btn-create {
+  background-size: 200% 100%;
+  transition: background-position 0.4s ease-in-out;
+  margin-bottom: 20px;
+}
+
+.btn-create:hover {
+  background-position: right;
+  transition: 0.4s;
+}

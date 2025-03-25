@@ -6,13 +6,13 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StoreDetailProductDTO {
-
-    String productID;
+    String id;
     String name;
     double price;
     String information;
@@ -22,5 +22,9 @@ public class StoreDetailProductDTO {
     String createdBy;
     LocalDateTime updatedAt;
     String updatedBy;
-    StoreDetailCategoryDTO storeDetailCategoryDTO;
+    String categoryID;
+    List<String> zoneList;
+    List<String> productAttributeList;
+    List<StoreDetailProductAttributeDTO> storeDetailProductAttributeDTOList;
+    List<StoreDetailZoneDTO> storeDetailZoneDTOList;
 }

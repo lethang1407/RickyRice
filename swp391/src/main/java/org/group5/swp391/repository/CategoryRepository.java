@@ -29,4 +29,20 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
     List<Category> findCategoriesForUser(@Param("username") String username);
 
     Category findCategoryById(String id);
+
+    @Query("SELECT c FROM Category c " +
+            "WHERE c.store.id = :storeID AND " +
+            "(c.name LIKE %:search% OR c.description LIKE %:search%)")
+    List<Category> findCategories(String storeID, String search, Pageable pageable);
+
+    List<Category> findCategoryByStore_Id(String storeId);
+
+    @Query("SELECT c FROM Category c WHERE c.store.id = :storeID")
+    List<Category> findCategoriesByStoreID(String storeID, Pageable pageable);
+
+    int countAllByStore_Id(String storeId);
+    @Query("SELECT COUNT(c) FROM Category c WHERE c.store.id = :storeId " +
+            "AND (LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "OR LOWER(c.description) LIKE LOWER(CONCAT('%', :search, '%')))")
+    int countAllByStore_IdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String storeId, String search);
 }
