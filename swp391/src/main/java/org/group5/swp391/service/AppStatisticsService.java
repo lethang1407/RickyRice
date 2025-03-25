@@ -8,12 +8,10 @@ import java.util.List;
 
 @Service
 public interface AppStatisticsService {
-    public List<AppStatisticsResponse> getStatistics();
-
-    // ========================================================
     Page<AppStatisticsResponse> getStatistics(int page, int size, String sortBy, String sortDirection,
                                               String subscriptionPlanName, String searchQuery);
 
     List<String> getAllSubscriptionPlanNames();
+
     Double calculateTotalRevenue();
 }

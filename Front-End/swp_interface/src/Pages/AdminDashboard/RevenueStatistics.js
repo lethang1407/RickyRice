@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Table, Form, Pagination } from "react-bootstrap";
+import { Table, Select, Input, Pagination } from "antd";
 import axios from "axios";
 import { getToken } from "../../Utils/UserInfoUtils";
+import API from "../../Utils/API/API.js";
 
-const API_URL = "http://localhost:9999/admin/test-revenue";
-
-const RevenueStatistics = () => {
+const RevenueStatistics = ({ setTotalRevenue }) => {
   const [revenueData, setRevenueData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [subscriptionPlanName, setSubscriptionPlanName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [subscriptionPlanOptions, setSubscriptionPlanOptions] = useState([]);
-  const [totalRevenue, setTotalRevenue] = useState(0);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("desc");
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,7 +21,7 @@ const RevenueStatistics = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(API_URL, {
+      .get(API.ADMIN.VIEW_REVENUE, {
         headers: { Authorization: `Bearer ${token}` },
         params: {
           page: currentPage - 1,
@@ -36,10 +34,12 @@ const RevenueStatistics = () => {
       })
       .then((response) => {
         if (response.data.code === 200) {
-          const { statistics, totalRevenue } = response.data.data;
+          const { statistics, totalRevenue, subcriptionPlans } =
+            response.data.data;
           setRevenueData(statistics.content);
           setTotalRecords(statistics.totalElements);
-          setTotalRevenue(totalRevenue); // Cập nhật tổng doanh thu từ API
+          setTotalRevenue(totalRevenue); // Cập nhật tổng doanh thu ở DashboardContent
+          setSubscriptionPlanOptions(subcriptionPlans || []); // Cập nhật danh sách các gói đăng ký
         } else {
           setError("Không thể lấy dữ liệu");
         }
@@ -56,7 +56,6 @@ const RevenueStatistics = () => {
     setTotalRevenue,
     token,
   ]);
-  
 
   const handleSort = (key) => {
     setSortBy(key);
@@ -66,48 +65,53 @@ const RevenueStatistics = () => {
   const totalPages = Math.ceil(totalRecords / recordsPerPage);
 
   return (
-    <div>
+    <div style={{ minHeight: "500px" }}>
       <h3 className="mt-5">Thống kê giao dịch</h3>
 
       <div className="d-flex justify-content-between align-items-center mb-3">
-        {/* Dropdown cho Subscription Plan Name */}
-        <Form.Select
+        {/* Dropdown chọn gói đăng ký */}
+        <Select
           value={subscriptionPlanName}
-          onChange={(e) => setSubscriptionPlanName(e.target.value)}
-          className="me-2"
-          style={{ width: "250px" }}
+          onChange={(value) => {
+            setSubscriptionPlanName(value);
+            setCurrentPage(1);
+          }}
+          style={{ width: 250 }}
+          placeholder="Tất cả gói đăng ký"
         >
-          <option value="">Tất cả gói đăng ký</option>
+          <Select.Option value="">Tất cả gói đăng ký</Select.Option>
           {subscriptionPlanOptions.map((plan) => (
-            <option key={plan} value={plan}>
+            <Select.Option key={plan} value={plan}>
               {plan}
-            </option>
+            </Select.Option>
           ))}
-        </Form.Select>
+        </Select>
 
-        {/* Thanh tìm kiếm dùng chung cho createdBy và transactionNo */}
-        <Form.Control
+        {/* Thanh tìm kiếm theo người tạo hoặc mã giao dịch */}
+        <Input
           type="text"
           placeholder="Tìm kiếm theo người tạo hoặc mã giao dịch"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="me-2"
-          style={{ width: "350px" }}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            setCurrentPage(1);
+          }}
+          style={{ width: 350 }}
         />
 
         <div className="d-flex align-items-center">
-          <Form.Select
+          <Select
             value={recordsPerPage}
-            onChange={(e) => {
-              setRecordsPerPage(Number(e.target.value));
+            onChange={(value) => {
+              setRecordsPerPage(Number(value));
               setCurrentPage(1);
             }}
-            style={{ width: "80px" }}
+            style={{ width: 80 }}
           >
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-          </Form.Select>
+            <Select.Option value="5">5</Select.Option>
+            <Select.Option value="10">10</Select.Option>
+            <Select.Option value="15">15</Select.Option>
+          </Select>
           <span className="ms-2">bản ghi / trang</span>
         </div>
       </div>
@@ -118,66 +122,55 @@ const RevenueStatistics = () => {
         <p className="text-danger">{error}</p>
       ) : (
         <>
-          <Table striped bordered hover className="mt-3">
-            <thead>
-              <tr>
-                <th onClick={() => handleSort("subcriptionPlanName")}>
-                  Gói đăng kí ⇅
-                </th>
-                <th onClick={() => handleSort("subcriptionPlanPrice")}>
-                  Giá (VND) ⇅
-                </th>
-                <th>Mô tả</th>
-                <th>Thời hạn (Tháng)</th>
-                <th onClick={() => handleSort("createdBy")}>Người tạo ⇅</th>
-                <th onClick={() => handleSort("createdAt")}>Ngày tạo ⇅</th>
-                <th onClick={() => handleSort("transactionNo")}>
-                  Mã giao dịch ⇅
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {revenueData.length > 0 ? (
-                revenueData.map((item) => (
-                  <tr key={item.appStatisticsID}>
-                    <td>{item.subcriptionPlanName}</td>
-                    <td className="text-right">
-                      {item.subcriptionPlanPrice.toLocaleString()}
-                    </td>
-                    <td>{item.subcriptionDescription}</td>
-                    <td className="text-center">
-                      {item.subcriptionTimeOfExpiration}
-                    </td>
-                    <td>{item.createdBy || "N/A"}</td>
-                    <td>
-                      {item.createdAt
-                        ? new Date(item.createdAt).toLocaleDateString()
-                        : "N/A"}
-                    </td>
-                    <td>{item.transactionNo || "N/A"}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="7" className="text-center text-muted">
-                    Không có giao dịch được tìm thấy
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
-
-          <Pagination className="mt-3">
-            {[...Array(totalPages).keys()].map((num) => (
-              <Pagination.Item
-                key={num + 1}
-                active={num + 1 === currentPage}
-                onClick={() => setCurrentPage(num + 1)}
-              >
-                {num + 1}
-              </Pagination.Item>
-            ))}
-          </Pagination>
+          <Table
+            pagination={false} 
+            dataSource={revenueData}
+            columns={[
+              {
+                title: "Gói đăng ký",
+                dataIndex: "subcriptionPlanName",
+              },
+              {
+                title: "Giá (VND)",
+                dataIndex: "subcriptionPlanPrice",
+                render: (price) => price.toLocaleString(),
+                sorter: () => handleSort("subcriptionPlanPrice"),
+              },
+              {
+                title: "Mô tả",
+                dataIndex: "subcriptionDescription",
+              },
+              {
+                title: "Thời hạn (Tháng)",
+                dataIndex: "subcriptionTimeOfExpiration",
+                align: "center",
+              },
+              {
+                title: "Người tạo",
+                dataIndex: "createdBy",
+              },
+              {
+                title: "Ngày tạo",
+                dataIndex: "createdAt",
+                render: (date) =>
+                  date ? new Date(date).toLocaleDateString() : "N/A",
+                sorter: () => handleSort("createdAt"),
+              },
+              {
+                title: "Mã giao dịch",
+                dataIndex: "transactionNo",
+              },
+            ]}
+            rowKey="appStatisticsID"
+          />
+          <br/>
+          <Pagination
+            defaultCurrent={1}
+            current={currentPage}
+            total={totalRecords}
+            pageSize={recordsPerPage}
+            onChange={(page) => setCurrentPage(page)}
+          />
         </>
       )}
     </div>

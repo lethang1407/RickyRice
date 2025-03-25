@@ -38,7 +38,7 @@ public interface AppStatisticsRepository extends JpaRepository<AppStatistics, St
     List<Object[]> findTransactionAndExpirationWithNullStoreAndCreatedBy(String username);
 
 
-    // ===================================
+    // Lấy danh sách lịch sử giao dịch
     @Query("SELECT a FROM AppStatistics a WHERE " +
             "(:subscriptionPlanName IS NULL OR LOWER(a.subcriptionPlanName) = LOWER(:subscriptionPlanName)) AND " +
             "(:searchQuery IS NULL OR LOWER(a.createdBy) LIKE LOWER(CONCAT('%', :searchQuery, '%')) " +

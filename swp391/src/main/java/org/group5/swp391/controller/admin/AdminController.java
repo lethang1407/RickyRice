@@ -15,6 +15,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,17 +60,6 @@ public class AdminController {
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
                 .message("Updated active status successfully.")
-                .build();
-    }
-
-    // Xem thống kê các hoạt động dịch vụ của trang web
-    @GetMapping("/view-revenue")
-    public ApiResponse<List<AppStatisticsResponse>> viewRevenue() {
-        List<AppStatisticsResponse> statistics = appStatisticsService.getStatistics();
-        return ApiResponse.<List<AppStatisticsResponse>>builder()
-                .code(HttpStatus.OK.value())
-                .message("Fetched revenue statistics successfully")
-                .data(statistics)
                 .build();
     }
 
@@ -129,55 +119,36 @@ public class AdminController {
                 .build();
     }
 
-
-    // ===============================================================
-    @GetMapping("/test-revenue")
-    public ApiResponse<Map<String, Object>> viewRevenue(
+    // Xem thống kê các hoạt động dịch vụ của trang web
+    @GetMapping("/view-revenue")
+    public ApiResponse<Map<String, Object>> getStatistics(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDirection,
             @RequestParam(required = false) String subscriptionPlanName,
             @RequestParam(required = false) String searchQuery) {
-
-        if (size > 100) {
-            size = 100;
+        if (!sortBy.equals("createdAt") && !sortBy.equals("subcriptionPlanPrice")) {
+            sortBy = "createdAt";
         }
+        sortDirection = sortDirection.equalsIgnoreCase("asc") ? "asc" : "desc";
+        Page<AppStatisticsResponse> statistics = appStatisticsService.getStatistics(
+                page, size, sortBy, sortDirection, subscriptionPlanName, searchQuery);
 
-        if (!sortDirection.equalsIgnoreCase("asc") && !sortDirection.equalsIgnoreCase("desc")) {
-            sortDirection = "desc";
-        }
+        List<String> subscriptionPlans = appStatisticsService.getAllSubscriptionPlanNames();
 
-        try {
-            Page<AppStatisticsResponse> statistics = appStatisticsService.getStatistics(
-                    page, size, sortBy, sortDirection, subscriptionPlanName, searchQuery);
+        Double totalRevenue = appStatisticsService.calculateTotalRevenue();
 
-            // Lấy danh sách subscriptionPlanName
-            List<String> subscriptionPlans = appStatisticsService.getAllSubscriptionPlanNames();
-
-            // Tính tổng doanh thu
-            Double totalRevenue = appStatisticsService.calculateTotalRevenue();
-
-            // Gói kết quả vào Map
-            Map<String, Object> response = new HashMap<>();
-            response.put("statistics", statistics);
-            response.put("subscriptionPlans", subscriptionPlans);
-            response.put("totalRevenue", totalRevenue);
-
-            return ApiResponse.<Map<String, Object>>builder()
-                    .code(HttpStatus.OK.value())
-                    .message("Fetched revenue statistics successfully")
-                    .data(response)
-                    .build();
-
-        } catch (Exception e) {
-            return ApiResponse.<Map<String, Object>>builder()
-                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                    .message("Error fetching revenue statistics: " + e.getMessage())
-                    .data(null)
-                    .build();
-        }
+        Map<String, Object> response = Map.of(
+                "statistics", statistics,
+                "subcriptionPlans", subscriptionPlans,
+                "totalRevenue", totalRevenue
+        );
+        return ApiResponse.<Map<String, Object>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Fetched statistics successfully")
+                .data(response)
+                .build();
     }
-
 
 }
