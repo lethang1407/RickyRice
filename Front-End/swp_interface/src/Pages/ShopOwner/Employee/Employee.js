@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Table, message, Input, Form, Select, Row, Col, Button } from 'antd';
 import qs from 'qs';
-// import EmployeeDetailModal from '../../Components/StoreOwner/EmployeeDetailModal/EmployeeDetailModal';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import { getDataWithToken } from '../../../Utils/FetchUtils';
 import API from '../../../Utils/API/API';
 import './style.scss'
 import EmployeeDetailModal from '../../../Components/StoreOwner/EmployeeDetailModal/EmployeeDetailModal';
 
-const { Search } = Input;
 const { Option } = Select;
 
 const Employee = () => {
@@ -41,7 +39,7 @@ const Employee = () => {
     const [fetchingStores, setFetchingStores] = useState(false);
     const columns = [
         {
-            title: 'ID',
+            title: 'STT',
             key: 'id',
             render: (_, __, index) => {
                 const id =
@@ -50,53 +48,66 @@ const Employee = () => {
                 return id;
             },
             width: '5%',
+            align: 'center'
         },
         {
-            title: 'Employee ID',
+            title: 'Mã Nhân Viên',
             dataIndex: 'employeeID',
             key: 'employeeID',
             width: '10%',
+            align: 'center'
         },
         {
-            title: 'Employee Details',
+            title: 'Thông Tin Nhân Viên',
             key: 'employeeDetails',
             render: (_, record) => (
                 <>
-                    <div><strong>Name:</strong> {record.storeAccount?.name || 'N/A'}</div>
+                    <div><strong>Tên:</strong> {record.storeAccount?.name || 'N/A'}</div>
                     <div><strong>Email:</strong> {record.storeAccount?.email || 'N/A'}</div>
                 </>
             ),
             width: '20%',
         },
         {
-            title: 'Store Name',
+            title: 'Tên Cửa Hàng',
             dataIndex: 'storeInfo',
             key: 'storeInfo',
             render: (storeInfo) => storeInfo?.storeName || 'N/A',
             width: '15%',
+            align: 'center'
         },
         {
-            title: 'Gender',
+            title: 'Giới Tính',
             dataIndex: 'storeAccount',
             key: 'gender',
-            render: (storeAccount) => (storeAccount?.gender == true ? 'Male' : 'Female'),
+            render: (storeAccount) => (
+                <Button
+                    className={`gender-button ${storeAccount?.gender === true ? 'male' : 'female'}`}
+                    type="primary"
+                    size="small"
+                >
+                    {storeAccount?.gender === true ? 'Nam' : 'Nữ'}
+                </Button>
+            ),
             width: '10%',
+            align: 'center'
         },
         {
-            title: 'Phone Number',
+            title: 'Số Điện Thoại',
             dataIndex: 'storeAccount',
             key: 'phoneNumber',
             render: (storeAccount) => storeAccount?.phoneNumber || 'N/A',
             width: '15%',
+            align: 'center'
         },
         {
-            title: 'Account Information',
+            title: 'Thông Tin Tài Khoản',
             dataIndex: 'storeAccount',
             key: 'accountInfo',
             render: (storeAccount) => (
                 <>
-                    <div><strong>Username:</strong> {storeAccount?.username || 'N/A'}</div>
-                    <div><strong>Phone:</strong> {storeAccount?.phoneNumber || 'N/A'}</div>
+                    <div><strong>Tên Đăng Nhập:</strong> {storeAccount?.username || 'N/A'}</div>
+                    <div><strong>SĐT:</strong> {storeAccount?.phoneNumber || 'N/A'}</div>
                 </>
             ),
             width: '25%',
@@ -117,11 +128,11 @@ const Employee = () => {
                         }));
                     setStores(cleanedStores);
                 } else {
-                    message.error('Failed to fetch stores: Invalid response format');
+                    message.error('Lỗi định dạng dữ liệu cửa hàng');
                     setStores([]);
                 }
             } catch (error) {
-                message.error('Could not fetch stores.');
+                message.error('Không thể tải dữ liệu cửa hàng.');
                 setStores([]);
             } finally {
                 setFetchingStores(false);
@@ -153,8 +164,8 @@ const Employee = () => {
             if (Array.isArray(response.content)) {
                 setData(response.content);
             } else {
-                message.error('Failed to fetch employees: Invalid response format');
-                setData([]);  
+                message.error('Lỗi định dạng dữ liệu nhân viên');
+                setData([]);
             }
             setTableParams((prev) => ({
                 ...prev,
@@ -165,7 +176,7 @@ const Employee = () => {
             }));
         } catch (error) {
             message.error('Không thể tải dữ liệu danh sách nhân viên');
-            setData([]); 
+            setData([]);
         } finally {
             setLoading(false);
         }
@@ -183,7 +194,7 @@ const Employee = () => {
         filters.email,
         filters.phoneNumber,
         filters.gender,
-        JSON.stringify(filters.store) 
+        JSON.stringify(filters.store)
     ]);
 
     const handleTableChange = (pagination, _, sorter) => {
@@ -202,11 +213,11 @@ const Employee = () => {
             setSearchTimeout(
                 setTimeout(() => {
                     handleSearch();
-                }, 1000) 
+                }, 1000)
             );
         } else {
-            handleSearch(); 
-        }form.setFieldsValue(allValues); 
+            handleSearch();
+        } form.setFieldsValue(allValues);
     };
 
 
@@ -244,14 +255,14 @@ const Employee = () => {
 
     const onRowClick = (record) => {
         setSelectedEmployeeID(record.employeeID);
-        setSelectedEmployeeDetails(record); 
+        setSelectedEmployeeDetails(record);
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
         setSelectedEmployeeID(null);
-        setSelectedEmployeeDetails(null); 
+        setSelectedEmployeeDetails(null);
     };
 
     const handleEmployeeDeleted = () => {
@@ -276,30 +287,30 @@ const Employee = () => {
             >
                 <Row gutter={16} className="filter-form-row">
                     <Col span={4} className="filter-form-col">
-                        <Form.Item label="Employee ID" name="employeeID">
-                            <Input placeholder="Enter employee ID" />
+                        <Form.Item label="Mã Nhân Viên" name="employeeID">
+                            <Input placeholder="Nhập mã nhân viên" className="filter-form-input" />
                         </Form.Item>
                     </Col>
                     <Col span={4} className="filter-form-col">
-                        <Form.Item label="Name" name="name">
-                            <Input placeholder="Enter name" />
+                        <Form.Item label="Tên" name="name">
+                            <Input placeholder="Nhập tên" className="filter-form-input" />
                         </Form.Item>
                     </Col>
                     <Col span={4} className="filter-form-col">
                         <Form.Item label="Email" name="email">
-                            <Input placeholder="Enter email" />
+                            <Input placeholder="Nhập email" className="filter-form-input" />
                         </Form.Item>
                     </Col>
                     <Col span={4} className="filter-form-col">
-                        <Form.Item label="Phone Number" name="phoneNumber">
-                            <Input placeholder="Enter phone number" />
+                        <Form.Item label="Số Điện Thoại" name="phoneNumber">
+                            <Input placeholder="Nhập số điện thoại" className="filter-form-input" />
                         </Form.Item>
                     </Col>
                     <Col span={4} className="filter-form-col">
-                        <Form.Item label="Store" name="store">
+                        <Form.Item label="Cửa Hàng" name="store">
                             <Select
                                 mode="multiple"
-                                placeholder="Select stores"
+                                placeholder="Chọn cửa hàng"
                                 allowClear
                                 loading={fetchingStores}
                                 onChange={handleStoreChange}
@@ -317,18 +328,18 @@ const Employee = () => {
                         </Form.Item>
                     </Col>
                     <Col span={4} className="filter-form-col">
-                        <Form.Item label="Gender" name="gender">
-                            <Select placeholder="Select gender" allowClear className="filter-form-select">
-                                <Option value="all">All</Option>
-                                <Option value="male">Male</Option>
-                                <Option value="female">Female</Option>
+                        <Form.Item label="Giới Tính" name="gender">
+                            <Select placeholder="Chọn giới tính" allowClear className="filter-form-select">
+                                <Option value="all">Tất cả</Option>
+                                <Option value="male">Nam</Option>
+                                <Option value="female">Nữ</Option>
                             </Select>
                         </Form.Item>
                     </Col>
                 </Row>
                 <Row className="filter-form-row">
                     <Col span={24} className="filter-form-col" style={{ textAlign: 'right', marginTop: '8px' }}>
-                        <Button onClick={handleReset} className="filter-form-reset-button">Reset</Button>
+                        <Button onClick={handleReset} className="filter-form-reset-button">Làm Mới</Button>
                     </Col>
                 </Row>
             </Form>

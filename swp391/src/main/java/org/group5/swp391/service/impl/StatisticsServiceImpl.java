@@ -6,6 +6,7 @@ import org.group5.swp391.converter.StatisticsConverter;
 import org.group5.swp391.dto.store_owner.all_statistic.StoreStatisticDTO;
 import org.group5.swp391.dto.store_owner.all_statistic.StoreStatisticDataDTO;
 import org.group5.swp391.entity.Account;
+import org.group5.swp391.entity.Debt;
 import org.group5.swp391.entity.Statistics;
 import org.group5.swp391.entity.Store;
 import org.group5.swp391.repository.*;
@@ -43,9 +44,11 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final StoreRepository storeRepository;
     private final EmployeeRepository employeeRepository;
     private final ProductRepository productRepository;
+    private final DebtRepository debtRepository;
+
     @Override
-    public Page<StoreStatisticDTO> getStatistics(String storeName, Double totalMoneyMin, Double totalMoneyMax,
-                                                 String description, String strType, LocalDate createdAtStart,
+    public Page<StoreStatisticDTO> getStatistics(List<String> storeIds, Double totalMoneyMin, Double totalMoneyMax,
+                                                 String strType, LocalDate createdAtStart,
                                                  LocalDate createdAtEnd, String createdBy, int page, int size,
                                                  String sortBy, boolean descending) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -53,41 +56,19 @@ public class StatisticsServiceImpl implements StatisticsService {
             throw new AccessDeniedException("Bạn chưa đăng nhập!");
         }
         String username = authentication.getName();
-        List<String> storeIds = storeRepository.findIdsByUserName(username);
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        description = (description != null && description.isEmpty()) ? null : description;
-        Boolean type = strType.equals("all") ? null : strType.equals("paid");
+        if (storeIds != null && storeIds.isEmpty()) {
+            storeIds = null;
+        }
+        Boolean type = strType.equals("all") ? null : strType.equalsIgnoreCase("export");
         LocalDateTime startDateTime = (createdAtStart != null) ? createdAtStart.atStartOfDay() : null;
         LocalDateTime endDateTime = (createdAtEnd != null) ? createdAtEnd.atTime(LocalTime.MAX) : null;
         Page<Statistics> statisticsPage = statisticsRepository.findStatisticsByStores(
-                storeIds, storeName, totalMoneyMin, totalMoneyMax, description, type,
+                storeIds, username, totalMoneyMin, totalMoneyMax, type,
                 startDateTime, endDateTime, createdBy, pageable
         );
         return statisticsPage.map(statisticsConverter::toStoreStatisticDTO);
-    }
-
-    @Override
-    public Map<String, Map<String, Double>> getStatisticsByDescription(LocalDate createdAtStart, LocalDate createdAtEnd, List<String> storeIds) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AccessDeniedException("Bạn chưa đăng nhập!");
-        }
-        String username = authentication.getName();
-        if (storeIds == null || storeIds.isEmpty() || storeIds.contains("all")) {
-            storeIds = storeRepository.findIdsByUserName(username);
-        }
-        LocalDateTime startDateTime = createdAtStart != null ? createdAtStart.atStartOfDay() : null;
-        LocalDateTime endDateTime = createdAtEnd != null ? createdAtEnd.atTime(LocalTime.MAX) : null;
-        List<Statistics> statisticsList = statisticsRepository.findStatisticsByDescription(storeIds, startDateTime, endDateTime, null);
-        return statisticsList.stream()
-                .collect(Collectors.groupingBy(
-                        stat -> stat.getCreatedAt().toLocalDate().toString(),
-                        Collectors.groupingBy(
-                                stat -> stat.getDescription() != null ? stat.getDescription() : "Unknown",
-                                Collectors.summingDouble(Statistics::getTotalMoney)
-                        )
-                ));
     }
 
     @Override
@@ -107,9 +88,29 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .collect(Collectors.groupingBy(
                         stat -> stat.getCreatedAt().toLocalDate().toString(),
                         Collectors.groupingBy(
-                                stat -> stat.getType() != null && stat.getType() ? "Thanh Toán" : "Nợ",
+                                stat -> stat.getType() != null && stat.getType() ? "Export" : "Import",
                                 Collectors.summingDouble(Statistics::getTotalMoney)
                         )
+                ));
+    }
+
+    @Override
+    public Map<String, Double> getStatisticByDebt(LocalDate createdAtStart, LocalDate createdAtEnd, List<String> storeIds) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Bạn chưa đăng nhập!");
+        }
+        String username = authentication.getName();
+        if (storeIds == null || storeIds.isEmpty() || storeIds.contains("all")) {
+            storeIds = storeRepository.findIdsByUserName(username);
+        }
+        LocalDateTime startDateTime = createdAtStart != null ? createdAtStart.atStartOfDay() : null;
+        LocalDateTime endDateTime = createdAtEnd != null ? createdAtEnd.atTime(LocalTime.MAX) : null;
+        List<Debt> debtList = debtRepository.findDebtByTime(storeIds, startDateTime, endDateTime);
+        return debtList.stream()
+                .collect(Collectors.groupingBy(
+                        stat -> stat.getCreatedAt().toLocalDate().toString(),
+                                Collectors.summingDouble(Debt::getAmount)
                 ));
     }
 
@@ -119,6 +120,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         int totalTransactions = statisticsRepository.countByStoreIdIn(storeIds);
         double totalImport = statisticsRepository.getTotalImport(storeIds);
         double totalExport = statisticsRepository.getTotalExport(storeIds);
-        return new StoreStatisticDataDTO(totalEmployees,totalProducts, totalTransactions, totalImport, totalExport);
+        double totalDebt = debtRepository.getTotalDebt(storeIds);
+        return new StoreStatisticDataDTO(totalEmployees,totalProducts, totalTransactions, totalImport, totalExport, totalDebt);
     }
 }

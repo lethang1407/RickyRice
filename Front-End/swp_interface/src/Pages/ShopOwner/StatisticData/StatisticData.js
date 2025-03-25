@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, message, Input, Form, Select, DatePicker, Space, Button, InputNumber, Row, Col } from 'antd';
+import { Table, message, Input, Form, Select, DatePicker, Button, InputNumber, Row, Col } from 'antd';
 import qs from 'qs';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import { getDataWithToken } from '../../../Utils/FetchUtils';
@@ -7,15 +7,11 @@ import API from '../../../Utils/API/API';
 import './style.scss';
 
 const { RangePicker } = DatePicker;
-
-const descriptionOptions = [
-    { value: 'export', label: 'Xuất Khẩu' },
-    { value: 'import', label: 'Nhập Khẩu' }
-];
+const { Option } = Select;
 
 const typeOptions = [
-    { value: "paid", label: 'Thanh toán' },
-    { value: "unpaid", label: 'Nợ' },
+    { value: 'export', label: 'Xuất Khẩu' },
+    { value: 'import', label: 'Nhập Khẩu' }
 ];
 
 const Statistic = () => {
@@ -23,8 +19,10 @@ const Statistic = () => {
     const token = getToken();
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [stores, setStores] = useState([]);
+    const [fetchingStores, setFetchingStores] = useState(false);
     const [filters, setFilters] = useState({
-        storeName: "",
+        store: [],
         totalMoneyMin: null,
         totalMoneyMax: null,
         description: null,
@@ -40,73 +38,70 @@ const Statistic = () => {
         sortField: null,
         sortOrder: null,
     });
-    const [searchTimeout, setSearchTimeout] = useState(null); 
+    const [searchTimeout, setSearchTimeout] = useState(null);
 
     const columns = [
         {
-            title: 'ID',
+            title: 'STT',
             key: 'id',
             render: (_, __, index) => {
-                const id =
-                    (tableParams.pagination.current - 1) * tableParams.pagination.pageSize +
-                    index + 1;
-                return id;
+                return (tableParams.pagination.current - 1) * tableParams.pagination.pageSize + index + 1;
             },
             width: '4%',
+            align: 'center',
         },
         {
-            title: 'Statistic ID',
+            title: 'Mã Thống Kê',
             dataIndex: 'statisticsID',
             key: 'statisticsID',
             width: '10%',
+            align: 'center',
         },
         {
-            title: 'Store Name',
+            title: 'Tên Cửa Hàng',
             dataIndex: 'storeName',
             key: 'storeName',
             width: '15%',
+            align: 'center',
         },
         {
-            title: 'Total Money',
+            title: 'Tổng Tiền (VND)',
             dataIndex: 'totalMoney',
             key: 'totalMoney',
-            render: (totalMoney) => `${totalMoney.toFixed(3)} đ`,
+            render: (totalMoney) => `${totalMoney.toLocaleString()}`,
             sorter: true,
             width: '15%',
+            align: 'center',
         },
         {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description',
-            render: (description) => (
-                <span style={{ color: description === 'Export' ? 'green' : 'red' }}>
-                    {description === 'Export' ? 'Xuất Khẩu' : 'Nhập Khẩu'}
-                </span>
-            ),
-            width: '10%',
-        },
-        {
-            title: 'Type',
+            title: 'Loại',
             dataIndex: 'type',
             key: 'type',
             render: (type) => (
-                <span style={{ color: type ? 'green' : 'red' }}>
-                    {type ? 'Thanh toán' : 'Nợ'}
-                </span>
+                <Button
+                    className={`status-button ${type === true ? 'export' : 'import'}`}
+                    type="primary"
+                    size="small"
+                >
+                    {type === true ? 'Xuất Khẩu' : 'Nhập Khẩu'}
+                </Button>
             ),
-            width: '9%',
+            width: '10%',
+            align: 'center',
         },
         {
-            title: 'Created By',
+            title: 'Người Tạo',
             dataIndex: 'createdBy',
             key: 'createdBy',
-            width: '12%',
+            width: '10%',
+            align: 'center',
         },
         {
-            title: 'Created At',
+            title: 'Ngày Tạo',
             dataIndex: 'createdAt',
             key: 'createdAt',
             width: '20%',
+            align: 'center',
             render: (createdAt) => {
                 const date = new Date(createdAt);
                 return date.toLocaleString('vi-VN', {
@@ -121,30 +116,58 @@ const Statistic = () => {
         }
     ];
 
+    useEffect(() => {
+        const fetchStores = async () => {
+            setFetchingStores(true);
+            try {
+                const response = await getDataWithToken(API.STORE_OWNER.GET_ALL_STORES, token);
+                if (Array.isArray(response)) {
+                    const cleanedStores = response
+                        .filter(store => store.id != null)
+                        .map((store) => ({
+                            ...store,
+                            storeID: store.id,
+                        }));
+                    setStores(cleanedStores);
+                } else {
+                    message.error('Lỗi định dạng dữ liệu cửa hàng');
+                    setStores([]);
+                }
+            } catch (error) {
+                message.error('Không thể tải dữ liệu cửa hàng.');
+                setStores([]);
+            } finally {
+                setFetchingStores(false);
+            }
+        };
+        fetchStores();
+    }, [token]);
+
+
     const getStatisticParams = (params) => {
         const { pagination, sortField, sortOrder } = params;
+        const { store: store, totalMoneyMin, totalMoneyMax, description, type, createdAtRange, createdBy } = filters;
         return qs.stringify({
+            store: store,
+            totalMoneyMin,
+            totalMoneyMax,
+            description,
+            type,
+            createdAtStart: createdAtRange?.[0]?.format('YYYY-MM-DD'),
+            createdAtEnd: createdAtRange?.[1]?.format('YYYY-MM-DD'),
+            createdBy,
             page: pagination.current - 1,
             size: pagination.pageSize,
             sortBy: sortField || "createdAt",
             descending: sortOrder === "descend",
-        });
+        }, { arrayFormat: 'repeat' });
     };
 
     const fetchStatistics = async () => {
         setLoading(true);
         try {
-            const queryParams = `?storeName=${encodeURIComponent(filters.storeName)}&` +
-                `totalMoneyMin=${filters.totalMoneyMin || ''}&` +
-                `totalMoneyMax=${filters.totalMoneyMax || ''}&` +
-                `description=${filters.description || ''}&` +
-                `type=${filters.type || ''}&` +
-                `createdAtStart=${filters.createdAtRange?.[0]?.format('YYYY-MM-DD') || ''}&` +
-                `createdAtEnd=${filters.createdAtRange?.[1]?.format('YYYY-MM-DD') || ''}&` +
-                `createdBy=${encodeURIComponent(filters.createdBy)}&` +
-                getStatisticParams(tableParams);
-
-            const response = await getDataWithToken(API.STORE_OWNER.GET_STORE_STATISTICs + queryParams, token);
+            const queryParams = getStatisticParams(tableParams);
+            const response = await getDataWithToken(API.STORE_OWNER.GET_STORE_STATISTICs + '?' + queryParams, token);
             setData(response.content || []);
             setTableParams(prev => ({
                 ...prev,
@@ -167,7 +190,7 @@ const Statistic = () => {
         tableParams.pagination.pageSize,
         tableParams.sortField,
         tableParams.sortOrder,
-        filters 
+        filters
     ]);
 
     const handleTableChange = (pagination, _, sorter) => {
@@ -183,13 +206,11 @@ const Statistic = () => {
         if (searchTimeout) {
             clearTimeout(searchTimeout);
         }
-
         setSearchTimeout(
             setTimeout(() => {
                 handleSearch();
             }, 1000)
         );
-
         form.setFieldsValue(allValues);
     };
 
@@ -197,7 +218,7 @@ const Statistic = () => {
     const handleSearch = () => {
         const values = form.getFieldsValue();
         setFilters({
-            storeName: values.storeName || "",
+            store: values.store || [],
             totalMoneyMin: values.totalMoneyMin || null,
             totalMoneyMax: values.totalMoneyMax || null,
             description: values.description || null,
@@ -213,7 +234,7 @@ const Statistic = () => {
     const handleReset = () => {
         form.resetFields();
         setFilters({
-            storeName: "",
+            store: [],
             totalMoneyMin: null,
             totalMoneyMax: null,
             description: null,
@@ -237,61 +258,63 @@ const Statistic = () => {
             >
                 <Row gutter={16} className="filter-form-row">
                     <Col span={4} className="filter-form-col">
-                        <Form.Item label="Store Name" name="storeName">
-                            <Input placeholder="Enter store name" className="filter-form-input" />
-                        </Form.Item>
-                    </Col>
-                    <Col span={3} className="filter-form-col">
-                        <Form.Item label="Min Money" name="totalMoneyMin">
-                            <InputNumber
-                                placeholder="Min"
-                                style={{ width: '100%' }}
-                                formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                                step={1000}
-                                className="filter-form-input-number"
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col span={3} className="filter-form-col">
-                        <Form.Item label="Max Money" name="totalMoneyMax">
-                            <InputNumber
-                                placeholder="Max"
-                                style={{ width: '100%' }}
-                                formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                                step={1000}
-                                className="filter-form-input-number"
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col span={3} className="filter-form-col">
-                        <Form.Item label="Description" name="description">
+                        <Form.Item label="Cửa Hàng" name="store">
                             <Select
+                                mode="multiple"
+                                placeholder="Chọn cửa hàng"
                                 allowClear
-                                options={descriptionOptions}
-                                placeholder="Select type"
+                                loading={fetchingStores}
                                 className="filter-form-select"
+                            >
+                                {stores.map((store) => (
+                                    <Option key={store.storeID} value={store.storeID}>
+                                        {store.name}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Tiền Tối Thiểu" name="totalMoneyMin">
+                            <InputNumber
+                                placeholder="Tối thiểu"
+                                style={{ width: '100%' }}
+                                formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                step={1000}
+                                className="filter-form-input-number"
                             />
                         </Form.Item>
                     </Col>
-                    <Col span={3} className="filter-form-col">
-                        <Form.Item label="Type" name="type">
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Tiền Tối Đa" name="totalMoneyMax">
+                            <InputNumber
+                                placeholder="Tối đa"
+                                style={{ width: '100%' }}
+                                formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                step={1000}
+                                className="filter-form-input-number"
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Loại" name="type">
                             <Select
                                 allowClear
                                 options={typeOptions}
-                                placeholder="Select type"
+                                placeholder="Chọn loại"
                                 className="filter-form-select"
                             />
                         </Form.Item>
                     </Col>
                     <Col span={4} className="filter-form-col">
-                        <Form.Item label="Created By" name="createdBy">
-                            <Input placeholder="Enter creator" className="filter-form-input" />
+                        <Form.Item label="Người Tạo" name="createdBy">
+                            <Input placeholder="Nhập người tạo" className="filter-form-input" />
                         </Form.Item>
                     </Col>
                     <Col span={4} className="filter-form-col">
-                        <Form.Item label="Created At Range" name="createdAtRange">
+                        <Form.Item label="Khoảng Thời Gian Tạo" name="createdAtRange">
                             <RangePicker style={{ width: '100%' }} className="filter-form-range-picker" />
                         </Form.Item>
                     </Col>
@@ -299,7 +322,7 @@ const Statistic = () => {
                 <Row className="filter-form-row">
                     <Col span={24} className="filter-form-col" style={{ textAlign: 'right', marginTop: '8px' }}>
                         <Button onClick={handleReset} className="filter-form-reset-button">
-                            Reset
+                            Làm Mới
                         </Button>
                     </Col>
                 </Row>

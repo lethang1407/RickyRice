@@ -1,20 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Row, Col, Select, Spin, message } from 'antd';
-import ChartComponent from '../../../Components/StoreOwner/ChartComponent/ChartComponent';
 import { getDataWithToken } from '../../../Utils/FetchUtils';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import API from '../../../Utils/API/API';
 import './style.scss';
+import TypeChart from '../../../Components/StoreOwner/ChartComponent/TypeChart';
+import DebtChart from '../../../Components/StoreOwner/ChartComponent/DebtChart';
+
+const { Option } = Select;
 
 const StatisticChart = () => {
     const [stores, setStores] = useState([]);
-    const [selectedStores, setSelectedStores] = useState(['all']);
+    const [selectedStores, setSelectedStores] = useState([]);
+    const [allStoreIds, setAllStoreIds] = useState([]);
     const [storeStats, setStoreStats] = useState({
         totalEmployees: 0,
         totalProducts: 0,
         totalImport: 0,
         totalExport: 0,
         totalTransactions: 0,
+        totalDebt: 0
     });
     const [loading, setLoading] = useState(false);
     const [loadingStores, setLoadingStores] = useState(true);
@@ -30,27 +35,23 @@ const StatisticChart = () => {
                     token
                 );
                 setStores(storesResponse);
+                const ids = storesResponse.map(store => store.id);
+                setAllStoreIds(ids);
+                setSelectedStores(ids);
                 setLoadingStores(false);
-
-                let storeIdsParam;
-                if (selectedStores.includes('all')) {
-                    storeIdsParam = storesResponse.map(store => store.id).join(',');
-                } else {
-                    storeIdsParam = selectedStores.join(',');
-                }
-
+                let storeIdsParam = ids.join(',');
                 if (storeIdsParam) {
                     const transactionsRes = await getDataWithToken(
                         `${API.STORE_OWNER.GET_STORE_TRANSACTIONS}?storeIds=${storeIdsParam}`,
                         token
                     );
-
                     setStoreStats({
                         totalEmployees: transactionsRes.totalEmployees,
                         totalProducts: transactionsRes.totalProducts,
                         totalImport: transactionsRes.totalImport || 0,
                         totalExport: transactionsRes.totalExport || 0,
                         totalTransactions: transactionsRes.totalTransactions,
+                        totalDebt: transactionsRes.totalDebt || 0
                     });
                 }
             } catch (error) {
@@ -59,33 +60,79 @@ const StatisticChart = () => {
                 setLoading(false);
             }
         };
-
         fetchData();
-    }, [selectedStores, token]);
+    }, [token]);
 
-    const storeOptions = [
-        { value: 'all', label: 'Tất cả cửa hàng'},
-        ...stores.map(store => ({
-            value: store.id,
-            label: store.name
-        })),
-    ];
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                let storeIdsParam = selectedStores.join(',');
+                if (!storeIdsParam) {
+                    storeIdsParam = allStoreIds.join(',');
+                }
+                if (storeIdsParam) {
+                    const transactionsRes = await getDataWithToken(
+                        `${API.STORE_OWNER.GET_STORE_TRANSACTIONS}?storeIds=${storeIdsParam}`,
+                        token
+                    );
+                    setStoreStats({
+                        totalEmployees: transactionsRes.totalEmployees,
+                        totalProducts: transactionsRes.totalProducts,
+                        totalImport: transactionsRes.totalImport || 0,
+                        totalExport: transactionsRes.totalExport || 0,
+                        totalTransactions: transactionsRes.totalTransactions,
+                        totalDebt: transactionsRes.totalDebt || 0
+                    });
+                }
+                else {
+                    setStoreStats({
+                        totalEmployees: 0,
+                        totalProducts: 0,
+                        totalImport: 0,
+                        totalExport: 0,
+                        totalTransactions: 0,
+                        totalDebt: 0
+                    });
+                }
+            } catch (error) {
+                message.error(`Lỗi: ${error.message || 'Không thể tải dữ liệu'}`);
 
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchData();
+
+    }, [selectedStores, allStoreIds])
+    const handleStoreChange = (value) => {
+        if (value.length === 0) {
+            setSelectedStores(allStoreIds);
+        } else {
+            setSelectedStores(value);
+        }
+    };
     return (
         <div className="statistic-chart-page">
             <div className="store-selector">
                 <Select
                     mode="multiple"
                     value={selectedStores}
-                    onChange={setSelectedStores}
-                    options={storeOptions}
+                    onChange={handleStoreChange}
                     style={{ width: '100%', marginBottom: 16 }}
                     placeholder="Chọn cửa hàng"
                     maxTagCount="responsive"
                     loading={loadingStores}
-                />
+                    className="custom-select"
+                    allowClear
+                >
+                    {stores.map((store) => (
+                        <Option key={store.id} value={store.id}>
+                            {store.name}
+                        </Option>
+                    ))}
+                </Select>
             </div>
-
             <Row gutter={[16, 16]} className="store-stats">
                 <Col xs={24} sm={12} md={12} lg={6} xl={4}>
                     <Card className="stat-card employees">
@@ -135,6 +182,18 @@ const StatisticChart = () => {
                         </div>
                     </Card>
                 </Col>
+                <Col xs={24} sm={12} md={12} lg={6} xl={4}>
+                    <Card className="stat-card debt">
+                        <div className="stat-title">Tổng nợ</div>
+                        <div className="stat-value">
+                            {loading ? (
+                                <Spin />
+                            ) : (
+                                storeStats.totalDebt.toLocaleString('vi-VN') + ' ₫'
+                            )}
+                        </div>
+                    </Card>
+                </Col>
             </Row>
 
             <Row gutter={[0, 24]}>
@@ -145,30 +204,20 @@ const StatisticChart = () => {
                         className="statistic-card"
                         loading={loading}
                     >
-                        <ChartComponent
-                            apiUrl={`${API.STORE_OWNER.GET_STORE_STATISTIC_CHART}/by-description`}
-                            storeIds={
-                                selectedStores.includes('all')
-                                    ? stores?.map(store => store.id) ?? []
-                                    : selectedStores
-                            }
+                        <TypeChart
+                            storeIds={selectedStores}
                         />
                     </Card>
                 </Col>
                 <Col span={24}>
                     <Card
-                        title="Thống kê theo trạng thái thanh toán"
+                        title="Thống kê nợ"
                         bordered={false}
                         className="statistic-card"
                         loading={loading}
                     >
-                        <ChartComponent
-                            apiUrl={`${API.STORE_OWNER.GET_STORE_STATISTIC_CHART}/by-type`}
-                            storeIds={
-                                selectedStores.includes('all')
-                                    ? stores?.map(store => store.id) ?? []
-                                    : selectedStores
-                            }
+                        <DebtChart
+                            storeIds={selectedStores}
                         />
                     </Card>
                 </Col>

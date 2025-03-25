@@ -42,7 +42,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice, String> {
             Pageable pageable
     );
 
-    Page<Invoice> findByStoreIn(Collection<Store> stores, Pageable pageable);
     @Query("SELECT c FROM Invoice c " +
             "WHERE c.store.id = :storeId " +
             "AND (:customerPhone IS NULL OR c.customer.phoneNumber LIKE %:customerPhone%) " +
@@ -64,7 +63,5 @@ public interface InvoiceRepository extends JpaRepository<Invoice, String> {
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate,
             Pageable pageable);
-
-
 
 }

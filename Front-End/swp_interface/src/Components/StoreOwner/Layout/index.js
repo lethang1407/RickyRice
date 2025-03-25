@@ -1,24 +1,20 @@
 import React, { useState } from 'react';
 import {
   AppstoreOutlined,
-  FileDoneOutlined,
   FileTextOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  ProductOutlined,
   ShopOutlined,
   TeamOutlined,
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-  BarChartOutlined,
   PieChartOutlined,
   TableOutlined,
+  ArrowLeftOutlined,
+  BarChartOutlined,
 } from '@ant-design/icons';
 import { Button, Layout, Menu, theme } from 'antd';
 import './style.scss';
 import CustomFooter from '../../Footer';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 const { Header, Sider, Content } = Layout;
 
 const StoreOwnerLayout = () => {
@@ -28,6 +24,8 @@ const StoreOwnerLayout = () => {
   } = theme.useToken();
 
   const location = useLocation();
+  const navigate = useNavigate();
+
   const selectedKey = location.pathname.startsWith('/store-owner/store')
     ? '1'
     : location.pathname.startsWith('/store-owner/invoice')
@@ -43,7 +41,7 @@ const StoreOwnerLayout = () => {
               : '';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', flexDirection: 'column' }} className='layout'>
       <Layout style={{ minHeight: '100vh' }}>
         <Sider
           style={{
@@ -105,8 +103,12 @@ const StoreOwnerLayout = () => {
             style={{
               padding: 0,
               background: colorBgContainer,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
             }}
           >
+            <div>
             <Button
               type="text"
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -117,6 +119,17 @@ const StoreOwnerLayout = () => {
                 height: 64,
               }}
             />
+            <Button
+                type="text"
+                icon={<ArrowLeftOutlined />}
+                onClick={() => navigate("/")}
+                style={{
+                    fontSize: '16px',
+                    width: 64,
+                    height: 64,
+                }}
+           />
+            </div>
           </Header>
           <Content
             style={{

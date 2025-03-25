@@ -15,22 +15,22 @@ public interface StatisticsRepository extends JpaRepository<Statistics, String> 
     @Query("""
         SELECT s
         FROM Statistics s
-        WHERE s.store.id IN :storeIds
-        AND (:storeName IS NULL OR LOWER(s.store.storeName) LIKE LOWER(CONCAT('%', :storeName, '%')))
+        JOIN s.store st
+        JOIN st.storeAccount sa
+        WHERE ((:storeIds) IS NULL OR st.id IN (:storeIds))
         AND (:totalMoneyMin IS NULL OR s.totalMoney >= :totalMoneyMin)
         AND (:totalMoneyMax IS NULL OR s.totalMoney <= :totalMoneyMax)
-        AND (:description IS NULL OR s.description = :description)
         AND (:type IS NULL OR s.type = :type)
         AND (:createdBy IS NULL OR LOWER(s.createdBy) LIKE LOWER(CONCAT('%', :createdBy, '%')))
         AND (:createdAtStart IS NULL OR s.createdAt >= :createdAtStart)
         AND (:createdAtEnd IS NULL OR s.createdAt <= :createdAtEnd)
+        AND (:username = sa.username)
     """)
     Page<Statistics> findStatisticsByStores(
             @Param("storeIds") List<String> storeIds,
-            @Param("storeName") String storeName,
+            @Param("username") String username,
             @Param("totalMoneyMin") Double totalMoneyMin,
             @Param("totalMoneyMax") Double totalMoneyMax,
-            @Param("description") String description,
             @Param("type") Boolean type,
             @Param("createdAtStart") LocalDateTime createdAtStart,
             @Param("createdAtEnd") LocalDateTime createdAtEnd,
@@ -74,7 +74,7 @@ public interface StatisticsRepository extends JpaRepository<Statistics, String> 
     SELECT SUM(s.totalMoney)
     FROM Statistics s
     WHERE s.store.id IN :storeIds
-    AND LOWER(s.description) LIKE LOWER('Import')
+    AND s.type = FALSE
 """)
     Double getTotalImport(
             @Param("storeIds") List<String> storeIds
@@ -84,7 +84,7 @@ public interface StatisticsRepository extends JpaRepository<Statistics, String> 
     SELECT SUM(s.totalMoney)
     FROM Statistics s
     WHERE s.store.id IN :storeIds
-    AND LOWER(s.description) LIKE LOWER('Export')
+    AND s.type = true
 """)
     Double getTotalExport(
             @Param("storeIds") List<String> storeIds

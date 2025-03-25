@@ -1,21 +1,21 @@
 .update-product-container {
     padding: 20px;
-    background-color: #f0f2f5; 
+    background-color: #f0f2f5;
     min-height: 100vh;
 
     .update-product-card {
-        max-width: 800px; 
-        margin: 0 auto; 
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+        max-width: 800px;
+        margin: 0 auto;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
         .ant-card-head {
-            background-color: #1890ff; 
-            color: white; 
+            background-color: #388e3c; // Updated color
+            color: white;
             border-bottom: 1px solid #ddd;
 
             .ant-card-head-title {
-                font-size: 1.25rem; 
-                font-weight: 600; 
+                font-size: 1.25rem;
+                font-weight: 600;
             }
         }
 
@@ -27,12 +27,12 @@
             margin-bottom: 24px;
 
             .ant-form-item-label {
-                font-weight: 500; 
+                font-weight: 500;
                 padding-bottom: 4px;
 
                 label {
                     &::after {
-                        content: none; 
+                        content: none;
                     }
                 }
             }
@@ -49,11 +49,16 @@
             border-radius: 4px;
             border: 1px solid #d9d9d9;
             transition: border-color 0.3s ease;
+
             &:hover,
             &:focus {
-                border-color: #40a9ff; 
-                box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2); 
+                border-color: #388e3c; // Updated color
+                box-shadow: 0 0 0 2px rgba(56, 142, 60, 0.2); // Updated color
             }
+        }
+           .ant-select-focused:where(.css-dev-only-do-not-override-sk7ap8).ant-select:not(.ant-select-customize-input) .ant-select-selector{
+              border-color: #388e3c !important;
+                box-shadow: 0 0 0 2px rgba(56, 142, 60, 0.2) !important;
         }
 
         .ant-input-number {
@@ -61,18 +66,36 @@
         }
 
         .ant-input-textarea {
-            border-radius: 4px; 
+            border-radius: 4px;
             border: 1px solid #d9d9d9;
-            resize: vertical; 
+            resize: vertical;
         }
 
         .update-product-actions {
-            display: flex; 
-            justify-content: flex-end; 
-            gap: 10px; 
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
 
             .ant-btn {
                 border-radius: 4px;
+            }
+              .ant-btn-primary {
+                background-color: #388e3c; // Updated color
+                border-color: #388e3c; // Updated color
+
+                &:hover,
+                &:focus {
+                    background-color: #4caf50; // Lighter green on hover/focus
+                    border-color: #4caf50;
+                }
+            }
+
+            .ant-btn-dangerous {
+                &:hover,
+                &:focus {
+                    background-color: #ff7875; // Lighter red on hover
+                    border-color: #ff7875;
+                }
             }
         }
 
@@ -98,8 +121,10 @@
                 .ant-upload-list-item-card-actions {
                     opacity: 1;
                 }
-
             }
         }
+    }
+    .ant-select-arrow .anticon{
+        color:#388e3c
     }
 }

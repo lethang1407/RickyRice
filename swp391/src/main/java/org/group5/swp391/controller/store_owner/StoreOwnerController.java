@@ -272,11 +272,10 @@ public class StoreOwnerController {
 
     @GetMapping("/statistics/data")
     public Page<StoreStatisticDTO> getStatistics(
-            @RequestParam(required = false) String storeName,
+            @RequestParam(defaultValue = "") List<String> store,
             @RequestParam(required = false) Double totalMoneyMin,
             @RequestParam(required = false) Double totalMoneyMax,
-            @RequestParam(required = false) String description,
-            @RequestParam(required = false, defaultValue = "all") String type,
+            @RequestParam(required = false) String type,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate createdAtStart,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate createdAtEnd,
             @RequestParam(required = false) String createdBy,
@@ -285,20 +284,9 @@ public class StoreOwnerController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "false") boolean descending
     ) {
-        return statisticsService.getStatistics(storeName, totalMoneyMin, totalMoneyMax,
-                description, type, createdAtStart, createdAtEnd, createdBy,
+        return statisticsService.getStatistics(store, totalMoneyMin, totalMoneyMax,
+                type, createdAtStart, createdAtEnd, createdBy,
                 page, size, sortBy, descending);
-
-    }
-
-    @GetMapping("/statistics/chart/by-description")
-    public ResponseEntity<Map<String, Map<String, Double>>> getStatisticsByDescription(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam(required = false) List<String> storeIds
-    ) {
-        Map<String, Map<String, Double>> data = statisticsService.getStatisticsByDescription(startDate, endDate, storeIds);
-        return ResponseEntity.ok(data);
     }
 
     @GetMapping("/statistics/chart/by-type")
@@ -308,6 +296,16 @@ public class StoreOwnerController {
             @RequestParam(required = false) List<String> storeIds
     ) {
         Map<String, Map<String, Double>> data = statisticsService.getStatisticsByType(startDate, endDate, storeIds);
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/statistics/chart/by-debt")
+    public ResponseEntity<Map<String, Double>> getStatisticsByDebt(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) List<String> storeIds
+    ) {
+        Map<String, Double> data = statisticsService.getStatisticByDebt(startDate, endDate, storeIds);
         return ResponseEntity.ok(data);
     }
 

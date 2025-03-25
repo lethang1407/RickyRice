@@ -6,8 +6,10 @@ import { getToken } from '../../../Utils/UserInfoUtils';
 import { getDataWithToken } from '../../../Utils/FetchUtils';
 import ProductDetailModal from '../../../Components/StoreOwner/ProductDetailModal/ProductDetailModal';
 import './style.scss';
+import { useLocation } from 'react-router-dom';
 
 const { Option } = Select;
+
 const Product = () => {
     const [form] = Form.useForm();
     const token = getToken();
@@ -36,12 +38,12 @@ const Product = () => {
     const [searchTimeout, setSearchTimeout] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProductID, setSelectedProductID] = useState(null);
-    const [selectedProductDetails, setSelectedProductDetails] = useState(null); 
-
+    const [selectedProductDetails, setSelectedProductDetails] = useState(null);
+    const location = useLocation();
 
     const columns = [
         {
-            title: 'ID',
+            title: 'STT',
             key: 'id',
             render: (_, __, index) => {
                 const id =
@@ -49,56 +51,73 @@ const Product = () => {
                     index + 1;
                 return id;
             },
-            width: '5%',
+            width: '6%',
+            align: 'center'
         },
         {
-            title: 'ProductID',
+            title: 'Mã Sản Phẩm',
             dataIndex: 'productID',
             key: 'productID',
             width: '10%',
+            align: 'center'
         },
         {
-            title: 'Name',
+            title: 'Tên',
             dataIndex: 'name',
             key: 'name',
             width: '20%',
         },
         {
-            title: 'Price',
+            title: 'Giá (VNĐ)',
             dataIndex: 'price',
             key: 'price',
-            sorter: (a, b) => a.price - b.price,  
-            render: (price) => `${price.toLocaleString()} đ`,
+            sorter: (a, b) => a.price - b.price,
+            render: (price) => `${price.toLocaleString()}`,
             width: '10%',
+            align: 'center'
         },
         {
-            title: 'Information',
+            title: 'Thông Tin',
             dataIndex: 'information',
             key: 'information',
             ellipsis: true,
             width: '30%',
         },
         {
-            title: 'Category',
+            title: 'Danh Mục',
             dataIndex: ['category', 'name'],
             key: 'categoryName',
             width: '15%',
+            align: 'center'
         },
         {
-            title: 'Store',
+            title: 'Cửa Hàng',
             dataIndex: ['store', 'name'],
             key: 'storeName',
             width: '15%',
+            align: 'center'
         },
         {
-            title: 'Quantity',
+            title: 'Số Lượng (KG)',
             dataIndex: 'quantity',
             key: 'quantity',
-            sorter: (a, b) => a.quantity - b.quantity, 
-            render: (quantity) => `${quantity.toLocaleString()} kg`,
-            width: '10%',
+            sorter: (a, b) => a.quantity - b.quantity,
+            render: (quantity) => `${quantity.toLocaleString()}`,
+            width: '12%',
+            align: 'center'
         },
     ];
+
+    useEffect(() => {
+        if (location.state?.fromUpdate) {
+          setTableParams((prev) => ({
+              ...prev,
+              pagination: { ...prev.pagination, current: 1 },
+          }));
+          window.scrollTo(0, 0);
+          window.history.replaceState({}, document.title) 
+      }
+    }, [location]);
 
     useEffect(() => {
         const fetchStores = async () => {
@@ -114,11 +133,11 @@ const Product = () => {
                         }));
                     setStores(cleanedStores);
                 } else {
-                    message.error('Failed to fetch stores: Invalid response format');
+                    message.error('Lỗi định dạng dữ liệu cửa hàng');
                     setStores([]);
                 }
             } catch (error) {
-                message.error('Could not fetch stores.');
+                message.error('Không thể tải dữ liệu cửa hàng.');
                 setStores([]);
             } finally {
                 setFetchingStores(false);
@@ -145,13 +164,13 @@ const Product = () => {
                     sortBy: tableParams.sortField || 'createdAt',
                     descending: tableParams.sortOrder === 'descend',
                 },
-                { arrayFormat: 'repeat', encode: true } 
+                { arrayFormat: 'repeat', encode: true }
             );
-            const response = await getDataWithToken(`${API.STORE_OWNER.GET_STORE_PRODUCTS}?${queryParams}`, token);            
+            const response = await getDataWithToken(`${API.STORE_OWNER.GET_STORE_PRODUCTS}?${queryParams}`, token);
             if (Array.isArray(response.content)) {
               setData(response.content);
             } else {
-              message.error('Failed to fetch products: Invalid response format');
+              message.error('Lỗi định dạng dữ liệu sản phẩm');
               setData([]);
             }
 
@@ -163,13 +182,12 @@ const Product = () => {
                 },
             }));
         } catch (error) {
-            message.error('Không thể tải dữ liệu danh sách products');
-            setData([]); // Set data to empty array on error
+            message.error('Không thể tải dữ liệu danh sách sản phẩm');
+            setData([]); 
         } finally {
             setLoading(false);
         }
     };
-
 
     useEffect(() => {
       fetchProduct();
@@ -185,9 +203,8 @@ const Product = () => {
         filters.priceMax,
         filters.quantityMin,
         filters.quantityMax,
-        JSON.stringify(filters.store) // Important for array filters
+        JSON.stringify(filters.store) 
     ]);
-
 
     const handleTableChange = (pagination, _, sorter) => {
         setTableParams({
@@ -196,7 +213,6 @@ const Product = () => {
             sortOrder: sorter?.order || null,
         });
     };
-
 
     const handleInputChange = (changedValues, allValues) => {
         if (changedValues.hasOwnProperty('productID') || changedValues.hasOwnProperty('name') || changedValues.hasOwnProperty('categoryName') || changedValues.hasOwnProperty('priceMin')  || changedValues.hasOwnProperty('priceMax') || changedValues.hasOwnProperty('quantityMin') || changedValues.hasOwnProperty('quantityMax')) {
@@ -209,7 +225,7 @@ const Product = () => {
                 }, 1000)
             );
         }  else {
-          handleSearch(); // Call handleSearch if other fields change
+          handleSearch(); 
         }
         form.setFieldsValue(allValues);
     };
@@ -253,14 +269,14 @@ const Product = () => {
 
     const onRowClick = (record) => {
         setSelectedProductID(record.productID);
-        setSelectedProductDetails(record); // Store the entire record
+        setSelectedProductDetails(record); 
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
         setSelectedProductID(null);
-        setSelectedProductDetails(null); // Clear the details on close
+        setSelectedProductDetails(null); 
     };
 
     const handleProductDeleted = () => {
@@ -273,7 +289,7 @@ const Product = () => {
           ...prevFilters,
           store: value
         }));
-        form.setFieldsValue({ store: value }); // Update form value
+        form.setFieldsValue({ store: value }); 
     };
 
 
@@ -287,19 +303,19 @@ const Product = () => {
             >
                 <Row gutter={16} className="filter-form-row">
                     <Col span={3} className="filter-form-col">
-                        <Form.Item label="Product ID" name="productID">
-                            <Input placeholder="Enter Product ID" className="filter-form-input" />
+                        <Form.Item label="Mã Sản Phẩm" name="productID">
+                            <Input placeholder="Nhập mã sản phẩm" className="filter-form-input" />
                         </Form.Item>
                     </Col>
                     <Col span={3} className="filter-form-col">
-                        <Form.Item label="Name" name="name">
-                            <Input placeholder="Enter name" className="filter-form-input" />
+                        <Form.Item label="Tên" name="name">
+                            <Input placeholder="Nhập tên" className="filter-form-input" />
                         </Form.Item>
                     </Col>
                     <Col span={3} className="filter-form-col">
-                        <Form.Item label="Min Price" name="priceMin">
+                        <Form.Item label="Giá Tối Thiểu" name="priceMin">
                             <InputNumber
-                                placeholder="Min"
+                                placeholder="Tối thiểu"
                                 style={{ width: '100%' }}
                                 formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                 parser={value => value.replace(/\$\s?|(,*)/g, '')}
@@ -309,9 +325,9 @@ const Product = () => {
                         </Form.Item>
                     </Col>
                     <Col span={3} className="filter-form-col">
-                        <Form.Item label="Max Price" name="priceMax">
+                        <Form.Item label="Giá Tối Đa" name="priceMax">
                             <InputNumber
-                                placeholder="Max"
+                                placeholder="Tối đa"
                                 style={{ width: '100%' }}
                                 formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                 parser={value => value.replace(/\$\s?|(,*)/g, '')}
@@ -321,15 +337,15 @@ const Product = () => {
                         </Form.Item>
                     </Col>
                     <Col span={3} className="filter-form-col">
-                        <Form.Item label="Category" name="categoryName">
-                            <Input placeholder="Enter category" className="filter-form-input" />
+                        <Form.Item label="Danh Mục" name="categoryName">
+                            <Input placeholder="Nhập danh mục" className="filter-form-input" />
                         </Form.Item>
                     </Col>
                     <Col span={3} className="filter-form-col">
-                        <Form.Item label="Store" name="store">
+                        <Form.Item label="Cửa Hàng" name="store">
                             <Select
                                 mode="multiple"
-                                placeholder="Select store"
+                                placeholder="Chọn cửa hàng"
                                 allowClear
                                 loading={fetchingStores}
                                 onChange={handleStoreChange}
@@ -344,9 +360,9 @@ const Product = () => {
                         </Form.Item>
                     </Col>
                     <Col span={3} className="filter-form-col">
-                        <Form.Item label="Min Quantity" name="quantityMin">
+                        <Form.Item label="Số Lượng" name="quantityMin">
                             <InputNumber
-                                placeholder="Min"
+                                placeholder="Tối thiểu"
                                 style={{ width: '100%' }}
                                 min={0}
                                 className="filter-form-input-number"
@@ -355,9 +371,9 @@ const Product = () => {
                         </Form.Item>
                     </Col>
                     <Col span={3} className="filter-form-col">
-                        <Form.Item label="Max Quantity" name="quantityMax">
+                        <Form.Item label="Số Lượng" name="quantityMax">
                             <InputNumber
-                                placeholder="Max"
+                                placeholder="Tối đa"
                                 style={{ width: '100%' }}
                                 min={0}
                                 className="filter-form-input-number"
@@ -369,14 +385,14 @@ const Product = () => {
                 <Row className="filter-form-row">
                     <Col span={24} className="filter-form-col" style={{ textAlign: 'right', marginTop: '8px' }}>
                         <Button onClick={handleReset} className="filter-form-reset-button">
-                            Reset
+                            Làm Mới
                         </Button>
                     </Col>
                 </Row>
             </Form>
 
             <Table
-                className="product-table" 
+                className="product-table"
                 columns={columns}
                 rowKey="productID"
                 dataSource={data}
@@ -393,7 +409,7 @@ const Product = () => {
                 })}
             />
             {isModalOpen && (
-                <ProductDetailModal 
+                <ProductDetailModal
                     visible={isModalOpen}
                     productID={selectedProductID}
                     productDetails={selectedProductDetails}

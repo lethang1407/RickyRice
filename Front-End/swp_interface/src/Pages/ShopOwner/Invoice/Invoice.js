@@ -40,86 +40,88 @@ const Invoice = () => {
 
     const columns = [
         {
-            title: 'ID',
+            title: 'STT',
             key: 'id',
             render: (_, __, index) => {
                 return (tableParams.pagination.current - 1) * tableParams.pagination.pageSize + index + 1;
             },
             width: '5%',
+            align: 'center',
         },
         {
-            title: 'Invoice Number',
+            title: 'Mã HĐ',
             dataIndex: 'invoiceID',
             key: 'invoiceID',
-            width: '5%',
+            width: '6%',
+            align: 'center',
         },
         {
-            title: 'Customer Details',
+            title: 'Chi Tiết Khách Hàng',
             key: 'customerDetails',
             render: (_, record) => (
                 <>
-                    <div><strong>Name:</strong> {record.customerName}</div>
-                    <div><strong>Phone:</strong> {record.customerPhoneNumber}</div>
+                    <div><strong>Tên:</strong> {record.customerName}</div>
+                    <div><strong>SĐT:</strong> {record.customerPhoneNumber}</div>
                 </>
             ),
             width: '15%',
+            align: 'center',
         },
         {
-            title: 'Store Name',
+            title: 'Tên Cửa Hàng',
             dataIndex: 'storeName',
             key: 'storeName',
             width: '10%',
+            align: 'center',
         },
         {
-            title: 'Product Money',
+            title: 'Tiền Hàng (VNĐ)',
             dataIndex: 'productMoney',
             key: 'productMoney',
             sorter: true,
-            render: (productMoney) => `${(productMoney || 0).toLocaleString()} đ`,
-            width: '13%',
+            render: (productMoney) => `${(productMoney || 0).toLocaleString()}`,
+            width: '10%',
+            align: 'center',
         },
         {
-            title: 'Ship Money',
+            title: 'Tiền Ship (VNĐ)',
             dataIndex: 'shipMoney',
             key: 'shipMoney',
             sorter: true,
-            render: (shipMoney) => `${(shipMoney || 0).toLocaleString()} đ`,
-            width: '12%',
+            render: (shipMoney) => `${(shipMoney || 0).toLocaleString()}`,
+            width: '10%',
+            align: 'center',
         },
         {
-            title: 'Total Money',
+            title: 'Tổng Tiền (VNĐ)',
             key: 'totalMoney',
             dataIndex: 'totalMoney',
-            render: (totalMoney) => `${(totalMoney || 0).toLocaleString()} đ`,
-            width: '12%',
+            render: (totalMoney) => `${(totalMoney || 0).toLocaleString()}`,
+            width: '10%',
+            align: 'center',
         },
         {
-            title: 'Type',
+            title: 'Loại',
             dataIndex: 'type',
             key: 'type',
             width: '9%',
+            align: 'center',
             render: (type) => (
-                <span style={{ color: type ? 'green' : 'red' }}>
-                    {type ? 'Xuất Khẩu' : 'Nhập Khẩu'}
-                </span>
+                <Button
+                    className={`status-button ${type === true ? 'export' : 'import'}`}
+                    type="primary"
+                    size="small"
+                >
+                    {type === true ? 'Xuất' : 'Nhập'}
+                </Button>
             ),
         },
         {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            width: '9%',
-            render: (status) => (
-                <span style={{ color: status ? 'green' : 'red' }}>
-                    {status ? 'Thanh toán' : 'Nợ'}
-                </span>
-            ),
-        },
-        {
-            title: 'Description',
+            title: 'Mô Tả',
             dataIndex: 'description',
             key: 'description',
             width: '30%',
+            align: 'center',
         },
     ];
 
@@ -127,7 +129,7 @@ const Invoice = () => {
         const fetchStores = async () => {
             setFetchingStores(true);
             try {
-                const response = await getDataWithToken(API.STORE_OWNER.GET_ALL_STORES, token);                
+                const response = await getDataWithToken(API.STORE_OWNER.GET_ALL_STORES, token);
                 if (Array.isArray(response)) {
                     const cleanedStores = response
                         .filter(store => store.id != null)
@@ -137,11 +139,11 @@ const Invoice = () => {
                         }));
                     setStores(cleanedStores);
                 } else {
-                    message.error('Failed to fetch stores: Invalid response format');
+                    message.error('Lỗi định dạng dữ liệu cửa hàng');
                     setStores([]);
                 }
             } catch (error) {
-                message.error('Could not fetch stores.');
+                message.error('Không thể tải dữ liệu cửa hàng.');
                 setStores([]);
             } finally {
                 setFetchingStores(false);
@@ -171,8 +173,15 @@ const Invoice = () => {
         setLoading(true);
         try {
             const queryParams = getInvoiceParam();
+            console.log(queryParams);
+
             const response = await getDataWithToken(API.STORE_OWNER.GET_INVOICES + '?' + queryParams, token);
-            setData(response.content);
+            if (response && response.content) {
+                setData(response.content);
+            }
+            else {
+                setData([])
+            }
             setTableParams((prev) => ({
                 ...prev,
                 pagination: {
@@ -181,7 +190,7 @@ const Invoice = () => {
                 },
             }));
         } catch (error) {
-            message.error('Could not load invoice list');
+            message.error('Không thể tải dữ liệu hóa đơn');
             setData([]);
         } finally {
             setLoading(false);
@@ -270,21 +279,21 @@ const Invoice = () => {
             >
                 <Row gutter={16} className="filter-form-row">
                     <Col span={4} className="filter-form-col">
-                        <Form.Item label="Invoice Number" name="invoiceNumber">
-                            <Input placeholder="Enter invoice number" className="filter-form-input" />
+                        <Form.Item label="Mã Hóa Đơn" name="invoiceNumber">
+                            <Input placeholder="Nhập mã hóa đơn" className="filter-form-input" />
                         </Form.Item>
                     </Col>
                     <Col span={4} className="filter-form-col">
-                        <Form.Item label="Phone Number" name="phoneNumber">
-                            <Input placeholder="Enter phone number" className="filter-form-input" />
+                        <Form.Item label="Số Điện Thoại" name="phoneNumber">
+                            <Input placeholder="Nhập số điện thoại" className="filter-form-input" />
                         </Form.Item>
                     </Col>
                     <Col span={4} className="filter-form-col">
-                        <Form.Item label="Store" name="store">
+                        <Form.Item label="Cửa Hàng" name="store">
                             <Select
                                 className="filter-form-select"
                                 mode="multiple"
-                                placeholder="Select store"
+                                placeholder="Chọn cửa hàng"
                                 allowClear
                                 loading={fetchingStores}
                             >
@@ -297,10 +306,10 @@ const Invoice = () => {
                         </Form.Item>
                     </Col>
                     <Col span={4} className="filter-form-col">
-                        <Form.Item label="Min Total Money" name="totalMoneyMin">
+                        <Form.Item label="Tiền Tối Thiểu" name="totalMoneyMin">
                             <InputNumber
                                 className="filter-form-input-number"
-                                placeholder="Min"
+                                placeholder="Tối thiểu"
                                 style={{ width: '100%' }}
                                 formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                 parser={value => value.replace(/\$\s?|(,*)/g, '')}
@@ -309,25 +318,37 @@ const Invoice = () => {
                         </Form.Item>
                     </Col>
                     <Col span={4} className="filter-form-col">
-                        <Form.Item label="Type" name="type">
-                            <Select 
+                        <Form.Item label="Tiền Tối Đa" name="totalMoneyMax">
+                            <InputNumber
+                                className="filter-form-input-number"
+                                placeholder="Tối đa"
+                                style={{ width: '100%' }}
+                                formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                step={1000}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Loại" name="type">
+                            <Select
                                 className="filter-form-select"
-                                placeholder="Select type" 
+                                placeholder="Chọn loại"
                                 allowClear
                             >
-                                <Option value="export">Xuất Khẩu</Option>
-                                <Option value="import">Nhập Khẩu</Option>
+                                <Option value="export">Xuất</Option>
+                                <Option value="import">Nhập</Option>
                             </Select>
                         </Form.Item>
                     </Col>
                     <Col span={4} className="filter-form-col">
-                        <Form.Item label="Status" name="status">
-                            <Select 
+                        <Form.Item label="Trạng Thái" name="status">
+                            <Select
                                 className="filter-form-select"
-                                placeholder="Select status" 
+                                placeholder="Chọn trạng thái"
                                 allowClear
                             >
-                                <Option value="paid">Thanh toán</Option>
+                                <Option value="paid">Đã Thanh Toán</Option>
                                 <Option value="unpaid">Nợ</Option>
                             </Select>
                         </Form.Item>
@@ -336,7 +357,7 @@ const Invoice = () => {
                 <Row>
                     <Col span={24} style={{ textAlign: 'right', marginBottom: '16px' }}>
                         <Button onClick={handleReset} style={{ marginRight: '8px' }}>
-                            Reset
+                            Làm Mới
                         </Button>
                     </Col>
                 </Row>

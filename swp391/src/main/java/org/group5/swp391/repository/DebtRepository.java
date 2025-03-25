@@ -1,6 +1,7 @@
 package org.group5.swp391.repository;
 
 import org.group5.swp391.entity.Debt;
+import org.group5.swp391.entity.Statistics;
 import org.group5.swp391.enums.DebtType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -66,4 +67,26 @@ public interface DebtRepository extends JpaRepository<Debt, String> {
             Pageable pageable
     );
 
+    //Chien
+    @Query("""
+    SELECT d
+    FROM Debt d
+    WHERE d.store.id IN :storeIds
+    AND (:createdAtStart IS NULL OR d.createdAt >= :createdAtStart)
+    AND (:createdAtEnd IS NULL OR d.createdAt <= :createdAtEnd)
+""")
+    List<Debt> findDebtByTime(
+            @Param("storeIds") List<String> storeIds,
+            @Param("createdAtStart") LocalDateTime createdAtStart,
+            @Param("createdAtEnd") LocalDateTime createdAtEnd
+    );
+
+    @Query("""
+    SELECT SUM(d.amount)
+    FROM Debt d
+    WHERE d.store.id IN :storeIds
+""")
+    Double getTotalDebt(
+            @Param("storeIds") List<String> storeIds
+    );
 }

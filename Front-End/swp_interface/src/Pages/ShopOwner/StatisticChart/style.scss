@@ -11,71 +11,99 @@
 
   .store-selector {
     margin-bottom: 16px;
+    .custom-select { // Add a custom class for the Select
+      .ant-select-selector {
+        border-color: #388e3c;  // Dark green border
+        &:hover {
+          border-color: #4caf50; // Brighter green on hover
+        }
+      }
+
+      &.ant-select-focused .ant-select-selector {
+        border-color: #4caf50; // Brighter green when focused
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2); // Green focus ring
+      }
+      .ant-select-selection-item {
+        background-color: #c8e6c9; // Light Green
+        border: 1px solid #388e3c;
+        color: #388e3c; // dark green
+      }
+        & .ant-select-arrow .anticon {
+            color: #388e3c; // Arrow color
+        }
+    }
+
   }
 
   .store-stats {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap; // Add flex-wrap for responsiveness
     .stat-card {
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-      transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Subtle shadow
+      transition: all 0.3s ease;
       border-radius: 8px;
       border: none;
-      height: 100%; 
+      height: 100%;
+      background-color: #fff; // White background
 
       &:hover {
-        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); // More pronounced shadow on hover
+        transform: translateY(-4px); // Slight lift on hover
       }
 
       .stat-title {
         font-size: 1rem;
-        color: #666;
+        color: #4a4a4a; // Darker text for titles
         margin-bottom: 4px;
-        white-space: nowrap; 
-        overflow: hidden;    
+        white-space: nowrap;
+        overflow: hidden;
         text-overflow: ellipsis;
       }
 
       .stat-value {
-        font-size: 1.5rem;
-        font-weight: bold;
+        font-size: 1.75rem; // Slightly larger value font size
+        font-weight: 600;   // Slightly bolder value font weight
         color: #333;
       }
 
       &.employees {
-        .stat-value { color: #1890ff; }
+        .stat-value { color: #2986cc; } // Blue
       }
       &.products {
-        .stat-value { color: #52c41a; }
+        .stat-value { color: #388e3c; } // Green
       }
       &.import {
-        .stat-value { color: #faad14; }
+        .stat-value { color: #e6a23c; }  //orange
       }
       &.export {
-        .stat-value { color: #f5222d; }
+        .stat-value { color: #d9534f; }  // Red
       }
       &.transactions {
-        .stat-value { color: #2f54eb; }
+        .stat-value { color: #6f42c1; } // Purple
       }
     }
   }
 
-  .statistic-card {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
-    border-radius: 8px;
+    .statistic-card {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        border: 1px solid #e8e8e8; // Add border
 
     &:hover {
-      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+       transform: translateY(-4px);
     }
 
     .ant-card-head {
-      background-color: #f5f5f5;
+      background-color: #f0f8ff;
       border-bottom: 1px solid #e8e8e8;
       border-radius: 8px 8px 0 0;
-      .ant-card-head-title{
+      .ant-card-head-title {
         font-size: 1.25rem;
         font-weight: 600;
+        color: #388e3c;  // use dark green in head title
       }
     }
 
