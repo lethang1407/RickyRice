@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, InputNumber, Button, message, Select } from 'antd';
+import { Form, Input, Button, message, Select } from 'antd';
 import API from '../../../Utils/API/API';
 import { getToken } from '../../../Utils/UserInfoUtils';
 
-const CreateZone = ({ onClose, storeID, fetchZones }) => {
+const CreateZone = ({ onClose, storeID, fetchZones, onSuccess }) => {
   const token = getToken();
   const [products, setProducts] = useState([]);
   const [form] = Form.useForm();
@@ -26,12 +26,15 @@ const CreateZone = ({ onClose, storeID, fetchZones }) => {
   }, [storeID, token]);
 
   const handleCreateZone = async (values) => {
+    const key = 'createZoneKey'
     const newZoneData = {
       name: values.name,
       location: values.location,
       storeID: storeID,
       productID: values.productID,
     };
+
+    onSuccess(key);
 
     try {
       const response = await fetch(API.STORE_DETAIL.GET_STORE_ZONES, {
@@ -65,7 +68,7 @@ const CreateZone = ({ onClose, storeID, fetchZones }) => {
       <Form.Item label="Sản phẩm" name="productID" rules={[{ required: true, message: <i>Vui lòng chọn sản phẩm!</i> }]}>
         <Select placeholder="Chọn sản phẩm">
           {products.map((product) => (
-            <Select.Option key={product.productID} value={product.productID}>
+            <Select.Option key={product.id} value={product.id}>
               {product.name}
             </Select.Option>
           ))}

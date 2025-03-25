@@ -24,6 +24,8 @@ public interface ProductService {
     public StoreProductDetailDTO getProduct(String id);
     public String updateStoreProductImage(String productID, MultipartFile file);
     public void deleteProduct(String productId);
+    public void deleteProductStore(String productId);
     public void addProduct(String storeID, StoreDetailProductDTO storeDetailProductDTO) throws Exception;
+    public void updateProduct(String storeID, String productID, StoreDetailProductDTO storeDetailProductDTO) throws Exception;
     public Page<StoreDetailProductDTO> getAllProductsByStoreID(String search, String storeID, int page, int size, String sortBy, boolean descending);
     }
