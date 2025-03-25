@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-// import { Card, Row, Col } from "react-bootstrap";
-import { Card, Row, Col, Pagination } from "antd";
+import { Card, Row, Col } from "antd";
 import axios from "axios";
 import RevenueStatistics from "./RevenueStatistics";
 import API from "../../Utils/API/API.js";
@@ -14,6 +13,25 @@ const DashboardContent = () => {
   const [totalSubscriptions, setTotalSubscriptions] = useState(0);
   const navigate = useNavigate();
   const token = getToken();
+
+  // Gọi API lấy tổng doanh thu
+  useEffect(() => {
+    const fetchTotalRevenue = async () => {
+      try {
+        const response = await axios.get(API.ADMIN.VIEW_REVENUE_STATISTICS, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.data.code === 200) {
+          setTotalRevenue(response.data.data.totalRevenue); // Cập nhật tổng doanh thu
+        }
+      } catch (err) {
+        console.error("API Error:", err);
+      }
+    };
+    fetchTotalRevenue();
+  }, [token]);
 
   useEffect(() => {
     const fetchTotalAccounts = async () => {

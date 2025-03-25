@@ -8,10 +8,16 @@ import org.group5.swp391.dto.response.*;
 import org.group5.swp391.dto.response.AdminResponse.*;
 import org.group5.swp391.dto.response.account_response.AccountResponse;
 import org.group5.swp391.service.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/admin")
@@ -122,4 +128,56 @@ public class AdminController {
                 .data(updatedPlan)
                 .build();
     }
+
+
+    // ===============================================================
+    @GetMapping("/test-revenue")
+    public ApiResponse<Map<String, Object>> viewRevenue(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDirection,
+            @RequestParam(required = false) String subscriptionPlanName,
+            @RequestParam(required = false) String searchQuery) {
+
+        if (size > 100) {
+            size = 100;
+        }
+
+        if (!sortDirection.equalsIgnoreCase("asc") && !sortDirection.equalsIgnoreCase("desc")) {
+            sortDirection = "desc";
+        }
+
+        try {
+            Page<AppStatisticsResponse> statistics = appStatisticsService.getStatistics(
+                    page, size, sortBy, sortDirection, subscriptionPlanName, searchQuery);
+
+            // Lấy danh sách subscriptionPlanName
+            List<String> subscriptionPlans = appStatisticsService.getAllSubscriptionPlanNames();
+
+            // Tính tổng doanh thu
+            Double totalRevenue = appStatisticsService.calculateTotalRevenue();
+
+            // Gói kết quả vào Map
+            Map<String, Object> response = new HashMap<>();
+            response.put("statistics", statistics);
+            response.put("subscriptionPlans", subscriptionPlans);
+            response.put("totalRevenue", totalRevenue);
+
+            return ApiResponse.<Map<String, Object>>builder()
+                    .code(HttpStatus.OK.value())
+                    .message("Fetched revenue statistics successfully")
+                    .data(response)
+                    .build();
+
+        } catch (Exception e) {
+            return ApiResponse.<Map<String, Object>>builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message("Error fetching revenue statistics: " + e.getMessage())
+                    .data(null)
+                    .build();
+        }
+    }
+
+
 }

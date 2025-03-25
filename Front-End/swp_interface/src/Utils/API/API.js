@@ -72,6 +72,8 @@ const API = {
     GET_REQUEST_STORE: `${API_BASE_URL}/manage-store/request-store`,
     UPDATE_STORE_INFOR: (storeID) =>
       `${API_BASE_URL}/manage-store/update-store/${storeID}`,
+    GET_STORE_INFO: (storeID) =>
+      `${API_BASE_URL}/manage-store/get-store/${storeID}`,
   },
   STORE_DETAIL: {
     GET_STORE_ZONES: `${API_BASE_URL}/store-detail/zones`,

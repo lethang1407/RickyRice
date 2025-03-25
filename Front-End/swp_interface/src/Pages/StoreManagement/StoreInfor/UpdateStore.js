@@ -30,7 +30,7 @@ const UpdateStore = () => {
   // Lấy dữ liệu cửa hàng ban đầu
   useEffect(() => {
     axios
-      .get(`http://localhost:9999/manage-store/get-store/${id}`, {
+      .get(API.STORE_OWNER.GET_STORE_INFO(id), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -152,7 +152,7 @@ const UpdateStore = () => {
 
     try {
       const res = await axios.patch(
-        `http://localhost:9999/manage-store/update-store/${id}`,
+        API.STORE_OWNER.UPDATE_STORE_INFOR(id),
         payload,
         {
           headers: {
