@@ -9,9 +9,7 @@ import { getDataWithToken } from "../../../Utils/FetchUtils";
 import "./style.scss";
 import { success, error } from '../../../Utils/AntdNotification';
 
-
 const { Option } = Select;
-
 
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -20,7 +18,6 @@ const getBase64 = (file) =>
         reader.onload = () => resolve(reader.result);
         reader.onerror = reject;
     });
-
 
 const uploadImageAPI = async (url, token, file) => {
     try {
@@ -33,7 +30,6 @@ const uploadImageAPI = async (url, token, file) => {
             },
         });
 
-
         if (response.data) {
             return response.data;
         } else {
@@ -45,7 +41,6 @@ const uploadImageAPI = async (url, token, file) => {
     }
 };
 
-
 const updateProductAPI = async (url, token, product) => {
     try {
         const response = await axios.put(url, product, {
@@ -54,20 +49,15 @@ const updateProductAPI = async (url, token, product) => {
                 'Content-Type': 'application/json',
             },
         });
-
-
         if (response.data && response.data.success === false) {
             throw new Error(response.data.message || "Cập nhật sản phẩm thất bại từ server.");
         }
         return response.data;
-
-
     } catch (err) {
         console.error("Lỗi khi cập nhật sản phẩm (API):", err);
         throw new Error(err.response?.data?.message || err.message || "Cập nhật sản phẩm thất bại.");
     }
 };
-
 
 const ProductUpdate = () => {
     const location = useLocation();
@@ -89,7 +79,6 @@ const ProductUpdate = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const UPLOAD_IMAGE_URL = `${API.STORE_OWNER.UPLOAD_PRODUCT_IMAGE}/${productID}`;
     const UPDATE_PRODUCT_URL = `${API.STORE_OWNER.UPDATE_STORE_PRODUCT}/${productID}`;
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -134,21 +123,14 @@ const ProductUpdate = () => {
                 setLoading(false);
             }
         };
-
-
         if (productID) {
             fetchData();
         }
     }, [productID, storeId, token, navigate, form, messageApi]);
 
-
-
-
     const handleUpdate = async (values) => {
         setIsSubmitting(true);
         let imageUrl = null;
-
-
         try {
             if (fileList.length > 0 && fileList[0].originFileObj) {
                 imageUrl = await uploadImageAPI(UPLOAD_IMAGE_URL, token, fileList[0].originFileObj);
@@ -159,18 +141,15 @@ const ProductUpdate = () => {
                 imageUrl = "";
             }
 
-
             const categoryObj = {
                 id: values.category,
                 name: categories.find((cat) => cat.id === values.category)?.name || "",
             };
 
-
             const storeObj = {
                 id: form.getFieldValue("storeId"),
                 name: values.storeName,
             };
-
 
             const attributesArray = values.attributes.map((attrValue) => {
                 const fullAttr = attributes.find((attr) => attr.value === attrValue);
@@ -180,7 +159,6 @@ const ProductUpdate = () => {
                 };
             });
 
-
             const zonesArray = values.zones.map((zoneId) => {
                 const fullZone = zones.find((z) => z.id === zoneId) || productZones.find(z => z.id === zoneId);
                 return {
@@ -188,7 +166,6 @@ const ProductUpdate = () => {
                     name: fullZone ? fullZone.name : "",
                 };
             });
-
 
             const product = {
                 productID: productID,
@@ -203,11 +180,10 @@ const ProductUpdate = () => {
                 productImage: imageUrl,
             };
 
-
             await updateProductAPI(UPDATE_PRODUCT_URL, token, product);
             success('Cập nhật sản phẩm thành công!', messageApi);
             setTimeout(() =>
-                navigate("/store-owner/product"),
+                navigate("/store-owner/product", { state: { fromUpdate: true } }),
                 1000
             )
         } catch (err) {
@@ -217,7 +193,6 @@ const ProductUpdate = () => {
         }
     };
 
-
     const handlePreview = async (file) => {
         if (!file.url && !file.preview) {
             file.preview = await getBase64(file.originFileObj);
@@ -226,7 +201,6 @@ const ProductUpdate = () => {
         setPreviewVisible(true);
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
-
 
     return (
         <div className="update-product-container">

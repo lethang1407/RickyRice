@@ -47,33 +47,32 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final CategoryRepository categoryRepository;
     private final NotificationService notificationService;
 
-
-    @Override
-    public Page<StoreInvoiceDTO> getInvoices(
-            String phoneNumber,
-            int page,
-            int size,
-            String sortBy,
-            boolean descending,
-            String typeStr,
-            String statusStr) {
+    public Page<StoreInvoiceDTO> getInvoices(String invoiceId,
+                                             String phoneNumber,
+                                             List<String> storeIds,
+                                             Double totalMoneyMin,
+                                             Double totalMoneyMax,
+                                             String typeStr,
+                                             String statusStr,
+                                             int page,
+                                             int size,
+                                             String sortBy,
+                                             boolean descending){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AccessDeniedException("Bạn chưa đăng nhập!");
         }
         String username = authentication.getName();
-        Account account = accountRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
-        List<Store> stores = storeRepository.findByStoreAccount(account);
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        if ((phoneNumber == null || phoneNumber.isEmpty()) && typeStr.equals("all") && statusStr.equals("all")) {
-            return invoiceRepository.findByStoreIn(stores, pageable).map(invoiceConverter::toStoreInvoiceDTO);
+        if (storeIds != null && storeIds.isEmpty()) {
+            storeIds = null;
         }
-        List<Customer> customers = customerRepository.findByPhoneNumberContainingIgnoreCase(phoneNumber);
+        phoneNumber = (phoneNumber != null && !phoneNumber.trim().isEmpty()) ? phoneNumber.trim() : null;
+        invoiceId = (invoiceId != null && !invoiceId.trim().isEmpty()) ? invoiceId.trim() : null;
         Boolean type = typeStr.equals("all") ? null : typeStr.equals("export");
         Boolean status = statusStr.equals("all") ? null : statusStr.equals("paid");
-        return invoiceRepository.findInvoices(stores, customers, type, status, pageable).map(invoiceConverter::toStoreInvoiceDTO);
+        return invoiceRepository.findInvoices(invoiceId, phoneNumber, totalMoneyMin, totalMoneyMax, type, status, storeIds, username, pageable).map(invoiceConverter::toStoreInvoiceDTO);
     }
 
     @Override
@@ -81,7 +80,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     public void CreateInvoice(InvoiceRequest invoiceRequest) {
         String username = invoiceRequest.getEmployeeUsername();
         validateInvoiceRequest(invoiceRequest, username);
-        System.out.println(invoiceRequest.getEmployeeUsername());
         if (username == null) {
             throw new IllegalArgumentException("Không có thông tin nhân viên trong yêu cầu!");
         }

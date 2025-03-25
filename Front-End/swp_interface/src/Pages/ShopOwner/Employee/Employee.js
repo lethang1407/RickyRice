@@ -1,21 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { Table, message, Input } from 'antd';
+import { Table, message, Input, Form, Select, Row, Col, Button } from 'antd';
 import qs from 'qs';
-// import EmployeeDetailModal from '../../Components/StoreOwner/EmployeeDetailModal/EmployeeDetailModal';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import { getDataWithToken } from '../../../Utils/FetchUtils';
 import API from '../../../Utils/API/API';
 import './style.scss'
 import EmployeeDetailModal from '../../../Components/StoreOwner/EmployeeDetailModal/EmployeeDetailModal';
 
-const { Search } = Input;
+const { Option } = Select;
 
 const Employee = () => {
+    const [form] = Form.useForm();
     const token = getToken();
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [searchValue, setSearchValue] = useState("");
-    const [timeoutId, setTimeoutId] = useState(null);
+    const [filters, setFilters] = useState({
+        employeeID: '',
+        name: '',
+        email: '',
+        phoneNumber: '',
+        store: [],
+        gender: 'all',
+    });
     const [tableParams, setTableParams] = useState({
         pagination: {
             current: 1,
@@ -27,11 +33,13 @@ const Employee = () => {
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEmployeeID, setSelectedEmployeeID] = useState(null);
-    const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null); 
-
+    const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
+    const [searchTimeout, setSearchTimeout] = useState(null);
+    const [stores, setStores] = useState([]);
+    const [fetchingStores, setFetchingStores] = useState(false);
     const columns = [
         {
-            title: 'ID',
+            title: 'STT',
             key: 'id',
             render: (_, __, index) => {
                 const id =
@@ -40,81 +48,125 @@ const Employee = () => {
                 return id;
             },
             width: '5%',
+            align: 'center'
         },
         {
-            title: 'Employee ID',
+            title: 'Mã Nhân Viên',
             dataIndex: 'employeeID',
             key: 'employeeID',
             width: '10%',
+            align: 'center'
         },
         {
-            title: 'Employee Details',
+            title: 'Thông Tin Nhân Viên',
             key: 'employeeDetails',
             render: (_, record) => (
                 <>
-                    <div><strong>Name:</strong> {record.storeAccount?.name || 'N/A'}</div>
+                    <div><strong>Tên:</strong> {record.storeAccount?.name || 'N/A'}</div>
                     <div><strong>Email:</strong> {record.storeAccount?.email || 'N/A'}</div>
                 </>
             ),
             width: '20%',
         },
         {
-            title: 'Store Name',
+            title: 'Tên Cửa Hàng',
             dataIndex: 'storeInfo',
             key: 'storeInfo',
             render: (storeInfo) => storeInfo?.storeName || 'N/A',
             width: '15%',
+            align: 'center'
         },
         {
-            title: 'Gender',
+            title: 'Giới Tính',
             dataIndex: 'storeAccount',
             key: 'gender',
-            filters: [
-                { text: 'Male', value: 'Male' },
-                { text: 'Female', value: 'Female' }
-            ],
-            filterMultiple: false,
-            render: (storeAccount) => (storeAccount?.gender == true ? 'Male' : 'Female'),
+            render: (storeAccount) => (
+                <Button
+                    className={`gender-button ${storeAccount?.gender === true ? 'male' : 'female'}`}
+                    type="primary"
+                    size="small"
+                >
+                    {storeAccount?.gender === true ? 'Nam' : 'Nữ'}
+                </Button>
+            ),
             width: '10%',
+            align: 'center'
         },
         {
-            title: 'Phone Number',
+            title: 'Số Điện Thoại',
             dataIndex: 'storeAccount',
             key: 'phoneNumber',
             render: (storeAccount) => storeAccount?.phoneNumber || 'N/A',
             width: '15%',
+            align: 'center'
         },
         {
-            title: 'Account Information',
+            title: 'Thông Tin Tài Khoản',
             dataIndex: 'storeAccount',
             key: 'accountInfo',
             render: (storeAccount) => (
                 <>
-                    <div><strong>Username:</strong> {storeAccount?.username || 'N/A'}</div>
-                    <div><strong>Phone:</strong> {storeAccount?.phoneNumber || 'N/A'}</div>
+                    <div><strong>Tên Đăng Nhập:</strong> {storeAccount?.username || 'N/A'}</div>
+                    <div><strong>SĐT:</strong> {storeAccount?.phoneNumber || 'N/A'}</div>
                 </>
             ),
             width: '25%',
         },
     ];
 
-    const getEmployeeParams = (params) => {
-        const { pagination, sortField, sortOrder, filters } = params;
-        return qs.stringify({
-            page: pagination.current - 1,
-            size: pagination.pageSize,
-            sortBy: sortField || 'createdAt',
-            descending: sortOrder === "descend",
-            gender: filters?.gender?.[0] || "all",
-        });
-    };
+    useEffect(() => {
+        const fetchStores = async () => {
+            setFetchingStores(true);
+            try {
+                const response = await getDataWithToken(API.STORE_OWNER.GET_ALL_STORES, token);
+                if (Array.isArray(response)) {
+                    const cleanedStores = response
+                        .filter(store => store.id != null)
+                        .map((store) => ({
+                            ...store,
+                            storeID: store.id,
+                        }));
+                    setStores(cleanedStores);
+                } else {
+                    message.error('Lỗi định dạng dữ liệu cửa hàng');
+                    setStores([]);
+                }
+            } catch (error) {
+                message.error('Không thể tải dữ liệu cửa hàng.');
+                setStores([]);
+            } finally {
+                setFetchingStores(false);
+            }
+        };
+        fetchStores();
+    }, [token]);
 
     const fetchEmployees = async () => {
         setLoading(true);
         try {
-            const queryParams = `?employeeName=${encodeURIComponent(searchValue)}&` + getEmployeeParams(tableParams);
-            const response = await getDataWithToken(API.STORE_OWNER.GET_STORE_EMPLOYEES + queryParams, token);
-            setData(response.content || []);
+            const queryParams = qs.stringify(
+                {
+                    employeeID: filters.employeeID,
+                    name: filters.name,
+                    email: filters.email,
+                    phoneNumber: filters.phoneNumber,
+                    store: filters.store,
+                    gender: filters.gender,
+                    page: tableParams.pagination.current - 1,
+                    size: tableParams.pagination.pageSize,
+                    sortBy: tableParams.sortField || 'createdAt',
+                    descending: tableParams.sortOrder === "descend",
+                },
+                { arrayFormat: 'repeat', encode: true }
+            );
+
+            const response = await getDataWithToken(`${API.STORE_OWNER.GET_STORE_EMPLOYEES}?${queryParams}`, token);
+            if (Array.isArray(response.content)) {
+                setData(response.content);
+            } else {
+                message.error('Lỗi định dạng dữ liệu nhân viên');
+                setData([]);
+            }
             setTableParams((prev) => ({
                 ...prev,
                 pagination: {
@@ -124,6 +176,7 @@ const Employee = () => {
             }));
         } catch (error) {
             message.error('Không thể tải dữ liệu danh sách nhân viên');
+            setData([]);
         } finally {
             setLoading(false);
         }
@@ -136,62 +189,164 @@ const Employee = () => {
         tableParams.pagination.pageSize,
         tableParams.sortField,
         tableParams.sortOrder,
-        tableParams.filters,
-        searchValue
+        filters.employeeID,
+        filters.name,
+        filters.email,
+        filters.phoneNumber,
+        filters.gender,
+        JSON.stringify(filters.store)
     ]);
 
-    const handleTableChange = (pagination, filters, sorter) => {
+    const handleTableChange = (pagination, _, sorter) => {
         setTableParams({
             pagination,
-            filters,
             sortField: sorter?.field || null,
             sortOrder: sorter?.order || null,
         });
     };
 
-    const handleSearch = (e) => {
-        const value = e.target.value;
-        if (timeoutId) {
-            clearTimeout(timeoutId);
-        }
-        const newTimeoutId = setTimeout(() => {
-            setSearchValue(value);
-            setTableParams((prev) => ({
-                ...prev,
-                pagination: { ...prev.pagination, current: 1 },
-            }));
-        }, 1000);
-        setTimeoutId(newTimeoutId);
+    const handleInputChange = (changedValues, allValues) => {
+        if (changedValues.hasOwnProperty('employeeID') || changedValues.hasOwnProperty('name') || changedValues.hasOwnProperty('email') || changedValues.hasOwnProperty('phoneNumber')) {
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
+            setSearchTimeout(
+                setTimeout(() => {
+                    handleSearch();
+                }, 1000)
+            );
+        } else {
+            handleSearch();
+        } form.setFieldsValue(allValues);
+    };
+
+
+    const handleSearch = () => {
+        const values = form.getFieldsValue();
+        setFilters({
+            employeeID: values.employeeID || '',
+            name: values.name || '',
+            email: values.email || '',
+            phoneNumber: values.phoneNumber || '',
+            store: values.store || [],
+            gender: values.gender || 'all',
+        });
+        setTableParams((prev) => ({
+            ...prev,
+            pagination: { ...prev.pagination, current: 1 },
+        }));
+    };
+
+    const handleReset = () => {
+        form.resetFields();
+        setFilters({
+            employeeID: '',
+            name: '',
+            email: '',
+            phoneNumber: '',
+            store: [],
+            gender: 'all',
+        });
+        setTableParams((prev) => ({
+            ...prev,
+            pagination: { ...prev.pagination, current: 1 },
+        }));
     };
 
     const onRowClick = (record) => {
         setSelectedEmployeeID(record.employeeID);
-        setSelectedEmployeeDetails(record); 
+        setSelectedEmployeeDetails(record);
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
         setSelectedEmployeeID(null);
-        setSelectedEmployeeDetails(null); 
+        setSelectedEmployeeDetails(null);
     };
 
     const handleEmployeeDeleted = () => {
         fetchEmployees();
     }
 
+    const handleStoreChange = (value) => {
+        setFilters(prevFilters => ({
+            ...prevFilters,
+            store: value
+        }));
+        form.setFieldsValue({ store: value });
+    };
+
     return (
-        <div>
-            <Search
-                placeholder="Enter Employee Name"
-                onChange={handleSearch}
-                enterButton
-                style={{ marginBottom: 16 }}
-                loading={loading}
-            />
+        <div className="employee-list-container">
+            <Form
+                form={form}
+                layout="vertical"
+                className="filter-form"
+                onValuesChange={handleInputChange}
+            >
+                <Row gutter={16} className="filter-form-row">
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Mã Nhân Viên" name="employeeID">
+                            <Input placeholder="Nhập mã nhân viên" className="filter-form-input" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Tên" name="name">
+                            <Input placeholder="Nhập tên" className="filter-form-input" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Email" name="email">
+                            <Input placeholder="Nhập email" className="filter-form-input" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Số Điện Thoại" name="phoneNumber">
+                            <Input placeholder="Nhập số điện thoại" className="filter-form-input" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Cửa Hàng" name="store">
+                            <Select
+                                mode="multiple"
+                                placeholder="Chọn cửa hàng"
+                                allowClear
+                                loading={fetchingStores}
+                                onChange={handleStoreChange}
+                                className="filter-form-select"
+                            >
+                                {stores.map((store, index) => (
+                                    <Option
+                                        key={store.storeID != null ? store.storeID : `fallback-${index}`}
+                                        value={store.storeID}
+                                    >
+                                        {store.name}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Giới Tính" name="gender">
+                            <Select placeholder="Chọn giới tính" allowClear className="filter-form-select">
+                                <Option value="all">Tất cả</Option>
+                                <Option value="male">Nam</Option>
+                                <Option value="female">Nữ</Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                </Row>
+                <Row className="filter-form-row">
+                    <Col span={24} className="filter-form-col" style={{ textAlign: 'right', marginTop: '8px' }}>
+                        <Button onClick={handleReset} className="filter-form-reset-button">Làm Mới</Button>
+                    </Col>
+                </Row>
+            </Form>
             <Table
+                className="employee-table"
                 columns={columns}
-                rowKey="employeeID"
+                rowKey={(record) => record.id}
                 dataSource={data}
                 pagination={{
                     ...tableParams.pagination,
@@ -210,7 +365,7 @@ const Employee = () => {
                 <EmployeeDetailModal
                     visible={isModalOpen}
                     employeeID={selectedEmployeeID}
-                    employeeDetails={selectedEmployeeDetails} 
+                    employeeDetails={selectedEmployeeDetails}
                     onClose={closeModal}
                     onEmployeeDeleted={handleEmployeeDeleted}
                 />

@@ -18,7 +18,31 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, String> {
     Page<Product> findAll(Pageable pageable);
 
-    Page<Product> findByStoreInAndNameContainingIgnoreCase(Collection<Store> stores, String name, Pageable pageable);
+    @Query("SELECT p FROM Product p " +
+            "JOIN p.store s " +
+            "JOIN s.storeAccount sa " +
+            "JOIN p.category c " +
+            "WHERE (:productID IS NULL OR p.id = :productID) " +
+            "AND (:productName IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :productName, '%'))) " +
+            "AND (:priceMin IS NULL OR p.price >= :priceMin) " +
+            "AND (:priceMax IS NULL OR p.price <= :priceMax) " +
+            "AND (:categoryName IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))) " +
+            "AND (:quantityMin IS NULL OR p.quantity >= :quantityMin) " +
+            "AND (:quantityMax IS NULL OR p.quantity <= :quantityMax) " +
+            "AND ((:storeIds) IS NULL OR s.id IN (:storeIds))" +
+            "AND sa.username = :username")
+    Page<Product> findProducts(String productID,
+                               String productName,
+                               Double priceMin,
+                               Double priceMax,
+                               String categoryName,
+                               List<String> storeIds,
+                               Integer quantityMin,
+                               Integer quantityMax,
+                               String username,
+                               Pageable pageable);
+
+    int countByStoreIdIn(List<String> storeIds);
 
     //minh
     @Query("SELECT p FROM Product p " +

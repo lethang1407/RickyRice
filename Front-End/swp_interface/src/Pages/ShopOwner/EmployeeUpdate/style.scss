@@ -3,17 +3,19 @@
     justify-content: center;
     align-items: flex-start;
     padding: 20px;
+    background-color: #f0f2f5;
 
     .ant-spin-nested-loading {
         width: 100%;
     }
+
     .update-employee-card {
         width: 100%;
         max-width: 800px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
         .ant-card-head {
-            background-color: #1890ff;
+            background-color: #388e3c;
             color: white;
             border-bottom: 1px solid #f0f0f0;
 
@@ -45,10 +47,13 @@
             .ant-form-item-label {
                 padding: 0 0 8px;
             }
+
             .ant-upload.ant-upload-select-picture-card {
                 width: 100px;
                 height: 100px;
+                border: 1px dashed #388e3c;
             }
+
             .upload-button-content {
                 display: flex;
                 flex-direction: column;
@@ -56,6 +61,7 @@
                 justify-content: center;
                 width: 100%;
                 height: 100%;
+
                 .ant-upload-text {
                     margin-top: 8px;
                 }
@@ -68,8 +74,22 @@
                 border-radius: 4px;
             }
         }
+
         .full-width-datepicker {
             width: 100%;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+
+            &:hover,
+            &:focus {
+                border-color: #388e3c !important;
+                box-shadow: 0 0 0 2px rgba(56, 142, 60, 0.2) !important;
+            }
+        }
+
+        .ant-picker-focused {
+            border-color: #388e3c !important;
+            box-shadow: 0 0 0 2px rgba(56, 142, 60, 0.2) !important;
         }
 
         .ant-input-prefix {
@@ -77,10 +97,71 @@
             color: rgba(0, 0, 0, 0.45);
         }
 
+        .ant-input,
+        .ant-input-number {
+            border-radius: 4px;
+            border: 1px solid #d9d9d9;
+            transition: border-color 0.3s ease;
+
+            &:hover,
+            &:focus {
+                border-color: #388e3c;
+                box-shadow: 0 0 0 2px rgba(56, 142, 60, 0.2);
+            }
+        }
+
+        .ant-input-number-focused,
+        .ant-input-affix-wrapper-focused {
+            border-color: #388e3c !important;
+            box-shadow: 0 0 0 2px rgba(56, 142, 60, 0.2) !important;
+        }
+
         .gender-radio-group {
             display: flex;
+
             .ant-radio-wrapper {
                 margin-right: 16px;
+            }
+        }
+
+        .ant-form-item {
+            margin-bottom: 24px;
+
+            .ant-form-item-label {
+                font-weight: 500;
+                padding-bottom: 4px;
+
+                label {
+                    &::after {
+                        content: none;
+                    }
+                }
+            }
+
+            .ant-form-item-explain-error {
+                font-size: 0.875rem;
+            }
+
+            .ant-select,
+            .ant-picker {
+                border-radius: 4px;
+                border: 1px solid #d9d9d9;
+                transition: border-color 0.3s ease;
+
+                &:hover,
+                &:focus {
+                    border-color: #388e3c;
+                    box-shadow: 0 0 0 2px rgba(56, 142, 60, 0.2);
+                }
+            }
+
+            .ant-select-focused:where(.css-dev-only-do-not-override-sk7ap8).ant-select:not(.ant-select-customize-input) .ant-select-selector {
+                border-color: #388e3c !important;
+                box-shadow: 0 0 0 2px rgba(56, 142, 60, 0.2) !important;
+            }
+
+            .ant-select-arrow .anticon {
+                color: #388e3c
             }
         }
     }
@@ -91,6 +172,26 @@
 
         .ant-btn {
             margin-left: 8px;
+            border-radius: 4px;
+
+            .ant-btn-primary {
+                background-color: #388e3c;
+                border-color: #388e3c;
+
+                &:hover,
+                &:focus {
+                    background-color: #4caf50;
+                    border-color: #4caf50;
+                }
+            }
+
+            .ant-btn-dangerous {
+                &:hover,
+                &:focus {
+                    background-color: #ff7875;
+                    border-color: #ff7875;
+                }
+            }
         }
     }
 

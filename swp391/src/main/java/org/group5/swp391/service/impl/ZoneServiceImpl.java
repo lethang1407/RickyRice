@@ -52,7 +52,6 @@ public class ZoneServiceImpl implements ZoneService {
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
-        System.out.println(a.getStore().getId());
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         if (search.equals("")) {
@@ -61,7 +60,6 @@ public class ZoneServiceImpl implements ZoneService {
             search = search.toLowerCase();
             search = capitalizeFirstLetters(search);
         }
-        System.out.println(search);
         Page<Zone> zonePage = zoneRepository.findFilteredZones( search,a.getStore().getId(), pageable);
     return zonePage.map(zoneConverter::toEmployeeZoneDTO);
     }
@@ -152,7 +150,8 @@ public class ZoneServiceImpl implements ZoneService {
 
     @Override
     public void deleteZone(String zoneID) {
-
+        Zone zone = zoneRepository.findZoneById(zoneID);
+        zoneRepository.delete(zone);
     }
 
     @Override

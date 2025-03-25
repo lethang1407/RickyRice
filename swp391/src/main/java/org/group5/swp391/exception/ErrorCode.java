@@ -25,6 +25,8 @@ public enum ErrorCode {
     PHONENUMBER_INVALID(401,"SDT phải gồm 10 chữ số và bắt đầu bằng 0.",HttpStatus.BAD_REQUEST),
     EMAIL_INVALID(402,"Email không đúng định dạng",HttpStatus.BAD_REQUEST),
     INVOICE_INVALID(403,"Tổng tiền hoặc phí vận chuyển không được < 0!",HttpStatus.BAD_REQUEST),
+    CANT_GET_INFO(400,"Can't get information",HttpStatus.CONFLICT),
+    CANT_UPLOAD_IMAGE(400,"Can't upload image",HttpStatus.CONFLICT),
     PRODUCT_NAME_EXISTED(400,"Product existed",HttpStatus.CONFLICT),
     ;
     private int code;
