@@ -2,16 +2,31 @@ import React from "react";
 import "./style.scss";
 import { Link } from "react-router-dom";
 import { Button } from "antd";
-import { useNavigate } from "react-router-dom";
+import moment from 'moment'; 
 
 const StoreCard = ({
   urlStore,
   storeName,
-  storeStatus,
+  expireAt,
   urlImg,
   onUpdateExpiration,
 }) => {
-  const navigate = useNavigate();
+
+  const getStatusAndFormat = (expireAt) => {
+    if (!expireAt) {
+      return { statusText: "Hết hạn", className: "status-expired" };
+    }
+    const now = moment();
+    const expiration = moment(expireAt); 
+    if (expiration.isBefore(now)) {
+      return { statusText: "Hết hạn", className: "status-expired" };
+    } else {
+        return { statusText: `Hoạt động đến ${expiration.format('DD/MM/YYYY HH:mm')}`, className: "status-active" };
+    }
+  };
+
+  const { statusText, className } = getStatusAndFormat(expireAt);
+
 
   return (
     <div className="wrapper">
@@ -19,19 +34,18 @@ const StoreCard = ({
         <img src={urlImg} alt="Product" height="100%" width="100%" />
       </div>
       <Link to={urlStore} className="product-link">
-        <div className="product-info">
+        <div className={`product-info ${className}`}>
           <div className="product-text">
             <h1>{storeName}</h1>
-            <h2>{storeStatus}</h2>
+            <h2>{statusText}</h2>
           </div>
         </div>
       </Link>
       <Button
         type="primary"
-        style={{ marginTop: 8, width: "100%" }}
         onClick={(e) => {
-          e.stopPropagation(); // Ngăn chặn sự kiện click vào Card
-          onUpdateExpiration(); // Chuyển hướng đến /store-update
+          e.stopPropagation();
+          onUpdateExpiration();
         }}
       >
         Cập nhật thời hạn

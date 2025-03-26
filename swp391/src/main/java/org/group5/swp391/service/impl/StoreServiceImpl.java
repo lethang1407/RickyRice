@@ -8,6 +8,7 @@ import org.group5.swp391.dto.request.store_request.StoreRequest;
 import org.group5.swp391.dto.response.AdminResponse.ViewStoreResponse;
 import org.group5.swp391.dto.response.account_response.AccountResponse;
 import org.group5.swp391.dto.response.store_response.StoreResponse;
+import org.group5.swp391.dto.store_owner.all_product.StoreInfoIdAndNameDTO;
 import org.group5.swp391.dto.store_owner.all_store.StoreInfoDTO;
 import org.group5.swp391.entity.*;
 import org.group5.swp391.exception.AppException;
@@ -89,6 +90,16 @@ public class StoreServiceImpl implements StoreService {
                                 .storeName(item.getStoreName())
                                 .build())
                 .toList();
+    }
+
+    public List<StoreInfoIdAndNameDTO> getStoresInfoIdAndName(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+        String username = authentication.getName();
+        List<Store> list = storeRepository.findByUserName(username);
+        return list.stream().map(storeConverter::toStoreInfoIdAndNameDTO).toList();
     }
 
     // xử lí dữ liệu trả về để tạo cửa hàng mới

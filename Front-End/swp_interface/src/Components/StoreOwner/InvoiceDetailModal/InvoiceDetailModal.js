@@ -29,10 +29,9 @@ const InvoiceDetailModal = ({ visible, invoiceID, shipMoney, totalMoney, custome
         if (invoiceID) fetchInvoiceDetails();
     }, [invoiceID, token]);
 
-    const calculateProductTotal = (quantity, price, discount = 0) => {
-        const total = quantity * price;
-        const discountAmount = (total * discount) / 100;
-        return total - discountAmount;
+    const calculateProductTotal = (quantity, price, discount) => {
+        const total = quantity * (price - discount);
+        return total;
     };
 
     const totalProductCost = productDetails.reduce((sum, product) => {
@@ -48,16 +47,14 @@ const InvoiceDetailModal = ({ visible, invoiceID, shipMoney, totalMoney, custome
 
     const handlePrint = () => {
         const printContents = printRef.current.innerHTML;
-    
-        // Tạo iframe ẩn
+
         const iframe = document.createElement("iframe");
         iframe.style.position = "absolute";
         iframe.style.width = "0";
         iframe.style.height = "0";
         iframe.style.border = "none";
         document.body.appendChild(iframe);
-    
-        // Ghi nội dung vào iframe
+
         const doc = iframe.contentWindow.document;
         doc.open();
         doc.write(`
@@ -83,8 +80,6 @@ const InvoiceDetailModal = ({ visible, invoiceID, shipMoney, totalMoney, custome
         iframe.contentWindow.print();
         setTimeout(() => document.body.removeChild(iframe), 1000);
     };
-    
-    
 
     return (
         <Modal
@@ -95,7 +90,7 @@ const InvoiceDetailModal = ({ visible, invoiceID, shipMoney, totalMoney, custome
                 <Button key="print" onClick={handlePrint}>
                     In hóa đơn
                 </Button>,
-                
+
             ]}
             width={800}
         >
@@ -137,7 +132,7 @@ const InvoiceDetailModal = ({ visible, invoiceID, shipMoney, totalMoney, custome
                             render={(price) => price.toLocaleString()}
                         />
                         <Table.Column
-                            title="Giảm giá (%)"
+                            title="Giảm giá (VND)"
                             dataIndex="discount"
                             key="discount"
                             render={(discount) => discount || 0}
@@ -165,7 +160,7 @@ const InvoiceDetailModal = ({ visible, invoiceID, shipMoney, totalMoney, custome
                         </p>
                         <br></br>
                         <p style={{ margin: "0", fontSize: "16px" }}>
-                            <strong>Tổng tiền hóa đơn:</strong> {totalMoney.toLocaleString()} ₫
+                            <strong>Tổng tiền hóa đơn:</strong> {(totalProductCost + shipMoney).toLocaleString()} ₫
                         </p>
                     </div>
                 </div>

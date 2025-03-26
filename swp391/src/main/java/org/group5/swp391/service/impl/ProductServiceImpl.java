@@ -58,23 +58,6 @@ public class ProductServiceImpl implements ProductService {
     private final ZoneRepository zoneRepository;
 
     // Chien
-    @Override
-    public Page<StoreProductDTO> getProducts(String productName, int page, int size, String sortBy, boolean descending) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return null;
-        }
-        String username = authentication.getName();
-        Account account = accountRepository.findByUsername(username).orElseThrow(null);
-        List<Store> stores = storeRepository.findByStoreAccount(account);
-        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        if (productName == null || productName.isEmpty()) {
-            productRepository.findAll(pageable).map(productConverter::toStoreProductDTO);
-        }
-        return productRepository.findByStoreInAndNameContainingIgnoreCase(stores, productName, pageable).map(productConverter::toStoreProductDTO);
-    }
-
     private Product checkProductOfUser(String productID) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -85,7 +68,26 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
     }
 
-    public StoreProductDetailDTO getProduct(String id) {
+    @Override
+    public Page<StoreProductDTO> getStoreProducts(String productID, String productName, Double priceMin, Double priceMax,
+                                                  String categoryName, List<String> storeIds, Integer quantityMin, Integer quantityMax,
+                                                  int page, int size, String sortBy, boolean descending) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+        String username = authentication.getName();
+        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        if (storeIds != null && storeIds.isEmpty()) {
+            storeIds = null;
+        }
+        productID = (productID != null && !productID.trim().isEmpty()) ? productID.trim() : null;
+        Page<Product> list = productRepository.findProducts(productID, productName, priceMin, priceMax, categoryName, storeIds, quantityMin, quantityMax, username, pageable);
+        return list.map(productConverter::toStoreProductDTO);
+    }
+
+    public StoreProductDetailDTO getStoreProduct(String id) {
         Product product = checkProductOfUser(id);
         return productConverter.toStoreProductDetailDTO(product);
     }
@@ -136,7 +138,7 @@ public class ProductServiceImpl implements ProductService {
             checkProductOfUser(productID);
             return cloudinaryService.uploadFile(file);
         } catch (IOException e) {
-            throw new RuntimeException("Không thể tải ảnh lên!");
+            throw new AppException(ErrorCode.CANT_UPLOAD_IMAGE);
         }
     }
 
@@ -158,6 +160,7 @@ public class ProductServiceImpl implements ProductService {
         product.setProductAttributes(null);
         productRepository.delete(product);
     }
+
 
     // Minh Tran
     @Override

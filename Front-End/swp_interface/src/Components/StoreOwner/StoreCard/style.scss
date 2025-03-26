@@ -8,6 +8,11 @@ body {
   margin: 50px auto;
   border-radius: 7px;
   box-shadow: 0px 14px 32px 0px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0px 18px 40px 0px rgba(0, 0, 0, 0.2);
+  }
 
   .product-img {
     float: left;
@@ -16,6 +21,11 @@ body {
 
     img {
       border-radius: 7px 0 0 7px;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.05);
     }
   }
 
@@ -35,6 +45,7 @@ body {
       align-items: center;
       position: relative;
       overflow: hidden;
+      transition: background-color 0.3s ease;
 
       .product-text {
         text-align: center;
@@ -47,6 +58,7 @@ body {
           font-size: 34px;
           color: #474747;
           font-family: 'Bentham', serif;
+          transition: color 0.3s ease;
         }
 
         h2 {
@@ -55,10 +67,57 @@ body {
           font-family: 'Raleway', sans-serif;
           font-weight: 400;
           text-transform: uppercase;
-          color: #d2d2d2;
+          color: #d2d2d2; 
           letter-spacing: 0.2em;
+          transition: color 0.3s ease;
         }
       }
+
+      &:hover {
+        background-color: #dbf3dc;
+
+        .product-text {
+          h1 {
+            color: #388e3c;
+          }
+          h2 {
+            color: #4caf50;
+          }
+        }
+      }
+      &.status-active {
+        .product-text {
+          h2 {
+            color: #388e3c;
+          }
+        }
+         &:hover .product-text h2{
+           color: #4caf50;
+        }
+      }
+
+      &.status-expired {
+        .product-text {
+          h2 {
+            color: #ff4d4f; 
+          }
+        }
+         &:hover .product-text h2{
+          color: #ff7875; 
+        }
+      }
+    }
+  }
+
+  .ant-btn {
+    color: #fff;
+    margin-top: 8px;
+    width: 100%;
+    background-color: #4caf50;
+    border-color: #4caf50;
+    &:hover {
+      background-color: #388e3c;
+      border-color: #388e3c;
     }
   }
 }

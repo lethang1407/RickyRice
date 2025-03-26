@@ -13,7 +13,9 @@ import java.util.List;
 
 @Service
 public interface ProductService {
-    public Page<StoreProductDTO> getProducts(String productName, int page, int size, String sortBy, boolean descending);
+    public Page<StoreProductDTO> getStoreProducts(String productID, String productName, Double priceMin, Double priceMax,
+                                                  String categoryName, List<String> storeIds, Integer quantityMin, Integer quantityMax,
+                                                  int page, int size, String sortBy, boolean descending);
     public Page<EmployeeProductDTO> getProductsByCateID(String CateID, int page, int size, String sortBy, boolean descending);
     public Page<EmployeeProductDTO>getProductBySearch(String name, int page, int size, String sortBy, boolean descending,Long minQuantity, Long maxQuantity,String attributes);
     public List<EmployeeProductDTO>getProductBySearchInList(String name);
@@ -21,7 +23,7 @@ public interface ProductService {
     public Page<CustomerProductDTO> searchProducts(String query, int page, int size);
     public Page<CustomerProductDTO> searchProductsQuery(String querySearchName, Double minPrice, Double maxPrice, int page, int size, String sortBy, boolean descending, String categoryID);
     public StoreProductDetailDTO updateStoreProduct(String productID, StoreProductDetailDTO dto);
-    public StoreProductDetailDTO getProduct(String id);
+    public StoreProductDetailDTO getStoreProduct(String id);
     public String updateStoreProductImage(String productID, MultipartFile file);
     public void deleteProduct(String productId);
     public void deleteProductStore(String productId);
