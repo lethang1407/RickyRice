@@ -8,6 +8,7 @@ import { getToken } from '../../../Utils/UserInfoUtils';
 import { message, Spin, Card, Row, Col, Select, Button } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import API from '../../../Utils/API/API';
+import './style.scss';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -25,9 +26,9 @@ const TypeChart = ({ storeIds }) => {
     const [loading, setLoading] = useState(false);
     const [summary, setSummary] = useState({ totals: {}, transactionCount: 0, totalAmount: 0 });
     const [selectedType, setSelectedType] = useState('all');
+    const [filteredSummary, setFilteredSummary] = useState({ totals: {}, transactionCount: 0, totalAmount: 0 });
     const token = getToken();
-    const apiUrl = API.STORE_OWNER.GET_STORE_STATISTIC_CHART + '/by-type'
-
+    const apiUrl = API.STORE_OWNER.GET_STORE_STATISTIC_CHART + '/by-type';
 
     const selectOptions = [
         { value: 'all', label: 'Tất cả' },
@@ -72,16 +73,43 @@ const TypeChart = ({ storeIds }) => {
         const allTypes = new Set();
         labels.forEach(date => Object.keys(data[date]).forEach(type => allTypes.add(type)));
         let filteredTypes = Array.from(allTypes);
+
         if (selectedType !== 'all') {
             filteredTypes = filteredTypes.filter(type => type === selectedType);
         }
+
         const datasets = filteredTypes.map(type => ({
             label: type,
-            data: labels.map(date => data[date][type] || 0),
+            data: labels.map(date => data[date]?.[type] || 0),
             ...((CHART_COLORS[type] || DEFAULT_COLOR))
         }));
+
         return { labels, datasets };
     }, [selectedType]);
+
+    const filterSummaryData = useCallback((summaryData, selectedType) => {
+        if (selectedType === 'all') {
+            return summaryData;
+        }
+
+        const filteredTotals = {
+            [selectedType]: summaryData.totals[selectedType] || 0,
+        };
+
+        let filteredTransactionCount = 0;
+        let filteredTotalAmount = 0;
+
+        if(summaryData.totals[selectedType]){
+            filteredTransactionCount = 1;
+            filteredTotalAmount = summaryData.totals[selectedType];
+        }
+
+        return {
+            totals: filteredTotals,
+            transactionCount: filteredTransactionCount,
+            totalAmount: filteredTotalAmount,
+        };
+    }, []);
 
     const fetchChartData = useCallback(async () => {
         const { startDate, endDate } = dateRange;
@@ -103,9 +131,16 @@ const TypeChart = ({ storeIds }) => {
         } finally {
             setLoading(false);
         }
-    }, [apiUrl, dateRange, token, prepareChartData, calculateSummary, storeIds, selectedType]);
+    }, [apiUrl, dateRange, token, prepareChartData, calculateSummary, storeIds]);
 
-    useEffect(() => { fetchChartData(); }, [fetchChartData]);
+    useEffect(() => {
+        fetchChartData();
+    }, [fetchChartData]);
+
+    useEffect(() => {
+        const newFilteredSummary = filterSummaryData(summary, selectedType);
+        setFilteredSummary(newFilteredSummary);
+    }, [summary, selectedType, filterSummaryData]);
 
     const handleDateChange = useCallback((type, date) => { setDateRange(prev => ({ ...prev, [type]: date })); }, []);
     const handleTypeChange = useCallback((value) => { setSelectedType(value || 'all'); }, []);
@@ -137,24 +172,24 @@ const TypeChart = ({ storeIds }) => {
                 </div>
             </div>
             <Row gutter={[16, 16]} className="summary-section">
-                {Object.entries(summary.totals).map(([type, amount]) => (
+                {Object.entries(filteredSummary.totals).map(([type, amount]) => (
                     <Col xs={24} sm={12} md={8} lg={6} key={type}>
                         <Card className={`summary-card ${type.toLowerCase()}`}>
                             <div className="summary-type">{type}</div>
-                            <div className="summary-amount">{formatCurrency(amount)}</div> {/* No change here */}
+                            <div className="summary-amount">{formatCurrency(amount)}</div>
                         </Card>
                     </Col>
                 ))}
                 <Col xs={24} sm={12} md={8} lg={6}>
                     <Card className="summary-card total">
                         <div className="summary-type">Tổng giao dịch</div>
-                        <div className="summary-amount">{summary.transactionCount}</div> {/* No change here */}
+                        <div className="summary-amount">{filteredSummary.transactionCount}</div>
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} md={8} lg={6}>
                     <Card className="summary-card total-amount">
                         <div className="summary-type">Tổng tiền</div>
-                        <div className="summary-amount">{formatCurrency(summary.totalAmount)}</div> {/* No change here */}
+                        <div className="summary-amount">{formatCurrency(filteredSummary.totalAmount)}</div>
                     </Card>
                 </Col>
             </Row>
@@ -164,4 +199,5 @@ const TypeChart = ({ storeIds }) => {
         </div>
     );
 }
+
 export default TypeChart;

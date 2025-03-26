@@ -5,9 +5,10 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { getDataWithToken } from '../../../Utils/FetchUtils';
 import { getToken } from '../../../Utils/UserInfoUtils';
-import { message, Spin, Card, Row, Col, Button } from 'antd';
+import { message, Spin, Card, Row, Col, Select, Button } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import API from '../../../Utils/API/API';
+import './style.scss';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -24,9 +25,16 @@ const DebtKHChart = ({ storeIds }) => {
     const [chartData, setChartData] = useState({ labels: [], datasets: [] });
     const [loading, setLoading] = useState(false);
     const [summary, setSummary] = useState({ totals: {}, transactionCount: 0, totalAmount: 0 });
+    const [selectedDebtType, setSelectedDebtType] = useState('all');
+    const [filteredSummary, setFilteredSummary] = useState({ totals: {}, transactionCount: 0, totalAmount: 0 });
     const token = getToken();
-    const apiUrl = API.STORE_OWNER.GET_STORE_STATISTIC_CHART + '/by-debt-kh'; // Updated API endpoint
+    const apiUrl = API.STORE_OWNER.GET_STORE_STATISTIC_CHART + '/by-debt-kh';
 
+    const debtTypeOptions = [
+        { value: 'all', label: 'Tất cả' },
+        { value: 'Khách hàng Trả', label: 'Khách hàng Trả' },
+        { value: 'Khách hàng Vay', label: 'Khách hàng Vay' }
+    ];
 
     const chartOptions = {
         responsive: true,
@@ -62,17 +70,47 @@ const DebtKHChart = ({ storeIds }) => {
 
     const prepareChartData = useCallback((data) => {
         const labels = Object.keys(data).sort();
-        // Ensure the order of types is consistent: "Khách hàng Trả" then "Khách hàng Vay"
-        const types = ["Khách hàng Trả", "Khách hàng Vay"];
+        const allTypes = new Set();
+        labels.forEach(date => Object.keys(data[date]).forEach(type => allTypes.add(type)));
+        let filteredTypes = Array.from(allTypes);
 
-        const datasets = types.map(type => ({
+        if (selectedDebtType !== 'all') {
+            filteredTypes = filteredTypes.filter(type => type === selectedDebtType);
+        }
+
+        const datasets = filteredTypes.map(type => ({
             label: type,
-            data: labels.map(date => data[date]?.[type] || 0), // Use optional chaining to handle missing data
+            data: labels.map(date => data[date]?.[type] || 0),
             ...((CHART_COLORS[type] || DEFAULT_COLOR))
         }));
 
         return { labels, datasets };
+    }, [selectedDebtType]);
+
+    const filterSummaryData = useCallback((summaryData, selectedType) => {
+        if (selectedType === 'all') {
+            return summaryData;
+        }
+
+        const filteredTotals = {
+            [selectedType]: summaryData.totals[selectedType] || 0,
+        };
+
+        let filteredTransactionCount = 0;
+        let filteredTotalAmount = 0;
+
+        if(summaryData.totals[selectedType]){
+            filteredTransactionCount = 1; 
+            filteredTotalAmount = summaryData.totals[selectedType];
+        }
+
+        return {
+            totals: filteredTotals,
+            transactionCount: filteredTransactionCount,
+            totalAmount: filteredTotalAmount,
+        };
     }, []);
+
 
     const fetchChartData = useCallback(async () => {
         const { startDate, endDate } = dateRange;
@@ -86,17 +124,26 @@ const DebtKHChart = ({ storeIds }) => {
             const summaryData = calculateSummary(response);
             setChartData(preparedData);
             setSummary(summaryData);
+
         } catch (error) {
             console.error("Error fetching data:", error);
             message.error(error.response ? `Lỗi: ${error.response.status}` : error.message);
             setChartData({ labels: [], datasets: [] });
             setSummary({ totals: {}, transactionCount: 0, totalAmount: 0 });
+
         } finally {
             setLoading(false);
         }
     }, [apiUrl, dateRange, token, prepareChartData, calculateSummary, storeIds]);
 
-    useEffect(() => { fetchChartData(); }, [fetchChartData]);
+    useEffect(() => {
+        fetchChartData();
+    }, [fetchChartData]);
+
+    useEffect(() => {
+        const newFilteredSummary = filterSummaryData(summary, selectedDebtType);
+        setFilteredSummary(newFilteredSummary);
+    }, [summary, selectedDebtType, filterSummaryData]);
 
     const handleDateChange = useCallback((type, date) => { setDateRange(prev => ({ ...prev, [type]: date })); }, []);
     const handleResetDates = useCallback(() => {
@@ -107,6 +154,11 @@ const DebtKHChart = ({ storeIds }) => {
             endDate: new Date()
         });
     }, []);
+
+    const handleDebtTypeChange = useCallback((value) => {
+        setSelectedDebtType(value || 'all');
+    }, []);
+
 
     return (
         <div className="chart-container">
@@ -122,11 +174,20 @@ const DebtKHChart = ({ storeIds }) => {
                     </div>
                 </div>
                 <div className="chart-controls">
+                    <Select
+                        className="type-select"
+                        placeholder="Chọn loại"
+                        allowClear
+                        options={debtTypeOptions}
+                        onChange={handleDebtTypeChange}
+                        value={selectedDebtType}
+                        style={{ width: 150, marginRight: '10px' }}
+                    />
                     <Button icon={<ReloadOutlined />} onClick={handleResetDates} type="default" className="reset-button">Đặt lại</Button>
                 </div>
             </div>
             <Row gutter={[16, 16]} className="summary-section">
-                {Object.entries(summary.totals).map(([type, amount]) => (
+                {Object.entries(filteredSummary.totals).map(([type, amount]) => (
                     <Col xs={24} sm={12} md={8} lg={6} key={type}>
                         <Card className={`summary-card ${type.toLowerCase().replace(/\s+/g, '-')}`}>
                             <div className="summary-type">{type}</div>
@@ -137,13 +198,13 @@ const DebtKHChart = ({ storeIds }) => {
                 <Col xs={24} sm={12} md={8} lg={6}>
                     <Card className="summary-card total">
                         <div className="summary-type">Tổng giao dịch</div>
-                        <div className="summary-amount">{summary.transactionCount}</div>
+                        <div className="summary-amount">{filteredSummary.transactionCount}</div>
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} md={8} lg={6}>
                     <Card className="summary-card total-amount">
                         <div className="summary-type">Tổng tiền</div>
-                        <div className="summary-amount">{formatCurrency(summary.totalAmount)}</div>
+                        <div className="summary-amount">{formatCurrency(filteredSummary.totalAmount)}</div>
                     </Card>
                 </Col>
             </Row>
