@@ -116,15 +116,22 @@ function Detail(props){
 
   const options = [
     {
-      value: 'POSITIVE',
-      label: 'Positive',
+      value: 'POSITIVE_KH_TRA',
+      label: 'Khách hàng trả cửa hàng',
     },
     {
-      value: 'NEGATIVE',
-      label: 'Negative',
+      value: 'POSITIVE_CH_VAY',
+      label: 'Cửa hàng vay khách hàng',
+    },
+    {
+      value: 'NEGATIVE_KH_VAY',
+      label: 'Khách hàng vay cửa hàng',
+    },
+    {
+      value: 'NEGATIVE_CH_TRA',
+      label: 'Cửa hàng trả khách hàng',
     }
     ];
-
 
   return (
     <>

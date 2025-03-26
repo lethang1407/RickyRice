@@ -62,7 +62,7 @@ public class DebtServiceImpl implements DebtService {
 
         debtRepository.save(debt);
 
-        if(debt.getType().equals(DebtType.POSITIVE)){
+        if(debt.getType().equals(DebtType.POSITIVE_CH_VAY) || debt.getType().equals(DebtType.POSITIVE_KH_TRA)){
             customer.setBalance(customer.getBalance() + debt.getAmount());
         }else{
             customer.setBalance(customer.getBalance() - debt.getAmount());
