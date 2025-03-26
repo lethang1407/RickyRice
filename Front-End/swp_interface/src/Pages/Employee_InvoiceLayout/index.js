@@ -94,6 +94,13 @@ const Employee_Invoices = () => {
                                 Tạo Hóa Đơn Nhập
                             </Menu.Item>
                         </SubMenu>
+                        <Menu.Item
+                            key="5"
+                            icon={<TeamOutlined />}
+                            onClick={() => handleNavigation('/employee/customer-debt')}
+                        >
+                            Quản Lí Nợ 
+                        </Menu.Item>
 
                     </Menu>
                 </Sider>

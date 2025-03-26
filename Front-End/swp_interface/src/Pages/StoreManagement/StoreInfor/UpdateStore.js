@@ -14,9 +14,9 @@ const layout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
 };
-const token = getToken();
 
 const UpdateStore = () => {
+  const token = getToken();
   const { id } = useParams();
   const [form] = Form.useForm();
   const [originalStoreData, setOriginalStoreData] = useState(null);
@@ -36,6 +36,7 @@ const UpdateStore = () => {
         },
       })
       .then((res) => {
+        console.log(res)
         if (res.status === 200 && res.data.data) {
           const storeData = res.data.data; // API trả về object store trong key 'data'
           setOriginalStoreData(storeData);
