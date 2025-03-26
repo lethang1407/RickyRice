@@ -6,6 +6,8 @@ import API from '../../../Utils/API/API';
 import './style.scss';
 import TypeChart from '../../../Components/StoreOwner/ChartComponent/TypeChart';
 import DebtChart from '../../../Components/StoreOwner/ChartComponent/DebtChart';
+import DebtKHChart from '../../../Components/StoreOwner/ChartComponent/DebtKHChart';
+import DebtCHChart from '../../../Components/StoreOwner/ChartComponent/DebtCHChart';
 
 const { Option } = Select;
 
@@ -19,7 +21,8 @@ const StatisticChart = () => {
         totalImport: 0,
         totalExport: 0,
         totalTransactions: 0,
-        totalDebt: 0
+        totalDebtOfKH: 0,
+        totalDebtOfCH: 0
     });
     const [loading, setLoading] = useState(false);
     const [loadingStores, setLoadingStores] = useState(true);
@@ -45,13 +48,16 @@ const StatisticChart = () => {
                         `${API.STORE_OWNER.GET_STORE_TRANSACTIONS}?storeIds=${storeIdsParam}`,
                         token
                     );
+                    console.log(transactionsRes);
+                    
                     setStoreStats({
                         totalEmployees: transactionsRes.totalEmployees,
                         totalProducts: transactionsRes.totalProducts,
                         totalImport: transactionsRes.totalImport || 0,
                         totalExport: transactionsRes.totalExport || 0,
                         totalTransactions: transactionsRes.totalTransactions,
-                        totalDebt: transactionsRes.totalDebt || 0
+                        totalDebtOfKH: transactionsRes.totalDebtOfKH || 0,
+                        totalDebtOfCH: transactionsRes.totalDebtOfCH || 0
                     });
                 }
             } catch (error) {
@@ -82,7 +88,8 @@ const StatisticChart = () => {
                         totalImport: transactionsRes.totalImport || 0,
                         totalExport: transactionsRes.totalExport || 0,
                         totalTransactions: transactionsRes.totalTransactions,
-                        totalDebt: transactionsRes.totalDebt || 0
+                        totalDebtOfKH: transactionsRes.totalDebtOfKH || 0,
+                        totalDebtOfCH: transactionsRes.totalDebtOfCH || 0
                     });
                 }
                 else {
@@ -92,7 +99,8 @@ const StatisticChart = () => {
                         totalImport: 0,
                         totalExport: 0,
                         totalTransactions: 0,
-                        totalDebt: 0
+                        totalDebtOfKH: 0,
+                        totalDebtOfKH: 0
                     });
                 }
             } catch (error) {
@@ -135,14 +143,6 @@ const StatisticChart = () => {
             </div>
             <Row gutter={[16, 16]} className="store-stats">
                 <Col xs={24} sm={12} md={12} lg={6} xl={4}>
-                    <Card className="stat-card employees">
-                        <div className="stat-title">Tổng nhân viên</div>
-                        <div className="stat-value">
-                            {loading ? <Spin /> : storeStats.totalEmployees}
-                        </div>
-                    </Card>
-                </Col>
-                <Col xs={24} sm={12} md={12} lg={6} xl={4}>
                     <Card className="stat-card products">
                         <div className="stat-title">Tổng sản phẩm</div>
                         <div className="stat-value">
@@ -184,12 +184,24 @@ const StatisticChart = () => {
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={6} xl={4}>
                     <Card className="stat-card debt">
-                        <div className="stat-title">Tổng nợ</div>
+                        <div className="stat-title">Tổng Khách Hàng nợ</div>
                         <div className="stat-value">
                             {loading ? (
                                 <Spin />
                             ) : (
-                                storeStats.totalDebt.toLocaleString('vi-VN') + ' ₫'
+                                (storeStats.totalDebtOfKH || 0).toLocaleString('vi-VN') + ' ₫'
+                            )}
+                        </div>
+                    </Card>
+                </Col>
+                <Col xs={24} sm={12} md={12} lg={6} xl={4}>
+                    <Card className="stat-card debt">
+                        <div className="stat-title">Tổng Cửa Hàng nợ</div>
+                        <div className="stat-value">
+                            {loading ? (
+                                <Spin />
+                            ) : (
+                                (storeStats.totalDebtOfCH || 0).toLocaleString('vi-VN') + ' ₫'
                             )}
                         </div>
                     </Card>
@@ -211,12 +223,24 @@ const StatisticChart = () => {
                 </Col>
                 <Col span={24}>
                     <Card
-                        title="Thống kê nợ"
+                        title="Thống kê khách hàng nợ"
                         bordered={false}
                         className="statistic-card"
                         loading={loading}
                     >
-                        <DebtChart
+                        <DebtKHChart
+                            storeIds={selectedStores}
+                        />
+                    </Card>
+                </Col>
+                <Col span={24}>
+                    <Card
+                        title="Thống kê cửa hàng nợ"
+                        bordered={false}
+                        className="statistic-card"
+                        loading={loading}
+                    >
+                        <DebtCHChart
                             storeIds={selectedStores}
                         />
                     </Card>

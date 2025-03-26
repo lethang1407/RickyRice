@@ -45,7 +45,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
     );
 
     @Query("""
-    SELECT e 
+    SELECT e
     FROM Employee e
     JOIN e.store s 
     JOIN s.storeAccount a 
