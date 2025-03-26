@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.group5.swp391.converter.StoreConverter;
 import org.group5.swp391.dto.request.store_request.StoreRequest;
 import org.group5.swp391.dto.response.AdminResponse.ViewStoreResponse;
-import org.group5.swp391.dto.response.account_response.AccountResponse;
 import org.group5.swp391.dto.response.store_response.StoreResponse;
 import org.group5.swp391.dto.store_owner.all_product.StoreInfoIdAndNameDTO;
 import org.group5.swp391.dto.store_owner.all_store.StoreInfoDTO;
@@ -113,7 +112,7 @@ public class StoreServiceImpl implements StoreService {
         Notification notification = new Notification();
         Account account = accountRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         notification.setTargetAccount(account);
-        notification.setCreatedBy("admin");
+        notification.setCreatedBy("System");
         notification.setIsRead(false);
         notification.setMessage(message);
         notificationRepository.save(notification);
@@ -182,7 +181,7 @@ public class StoreServiceImpl implements StoreService {
         // Tạo thông báo thanh toán thành công
         Notification notification = new Notification();
         notification.setTargetAccount(account);
-        notification.setCreatedBy("Hệ thống");
+        notification.setCreatedBy("System");
         notification.setIsRead(false);
         notification.setMessage("Tạo cửa hàng thành công.");
         notificationRepository.save(notification);
@@ -239,7 +238,7 @@ public class StoreServiceImpl implements StoreService {
         // Tạo thông báo thanh toán thành công
         Notification notification = new Notification();
         notification.setTargetAccount(account);
-        notification.setCreatedBy("Hệ thống");
+        notification.setCreatedBy("System");
         notification.setIsRead(false);
         notification.setMessage(message);
         notificationRepository.save(notification);
