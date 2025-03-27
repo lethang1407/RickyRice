@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -40,5 +41,26 @@ public interface ZoneRepository extends JpaRepository<Zone, String> {
     Zone getZoneById(String id);
 
     List<Zone> findByStoreIdAndProductIsNull(String storeId);
+
+    @Query("""
+    SELECT z FROM Zone z
+    WHERE (:storeID IS NULL OR z.store.id = :storeID)
+      AND (:name IS NULL OR TRIM(:name) <> '' AND  LOWER(z.name) LIKE LOWER(CONCAT('%', :name, '%')))
+      AND (:location IS NULL OR TRIM(:location) <> '' AND LOWER(z.location) LIKE LOWER(CONCAT('%', :location, '%')))
+      AND (:productName IS NULL OR TRIM(:productName) <> '' AND  LOWER(z.product.name) LIKE LOWER(CONCAT('%', :productName, '%')))
+      AND (:fromCreatedAt IS NULL OR z.createdAt >= :fromCreatedAt)
+      AND (:toCreatedAt IS NULL OR z.createdAt <= :toCreatedAt)
+      AND (:fromUpdatedAt IS NULL OR z.updatedAt >= :fromUpdatedAt)
+      AND (:toUpdatedAt IS NULL OR z.updatedAt <= :toUpdatedAt)
+    """)
+    Page<Zone> findZonesByFilters(@Param("storeID") String storeID,
+                                  @Param("name") String name,
+                                  @Param("location") String location,
+                                  @Param("productName") String productName,
+                                  @Param("fromCreatedAt") LocalDateTime fromCreatedAt,
+                                  @Param("toCreatedAt") LocalDateTime toCreatedAt,
+                                  @Param("fromUpdatedAt") LocalDateTime fromUpdateAt,
+                                  @Param("toUpdatedAt") LocalDateTime toUpdatedAt,
+                                  Pageable pageable);
 
 }

@@ -9,7 +9,7 @@ const UpdateZone = ({ zone, onClose, fetchZones, onSuccess }) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    fetch(`${API.STORE_DETAIL.GET_STORE_PRODUCTS_BY_STOREID}?storeID=${zone.storeID}`, {
+    fetch(`${API.STORE_DETAIL.GET_STORE_PRODUCTS}?storeID=${zone.storeID}`, {
       headers: { 'Authorization': `Bearer ${token}` },
     })
       .then((response) => {
@@ -38,11 +38,10 @@ const UpdateZone = ({ zone, onClose, fetchZones, onSuccess }) => {
       location: values.location,
       storeID: zone.storeID,
       productID: values.productID,
-    };
-
-    onSuccess(key);
+    };  
 
     try {
+      console.log(zone)
       const response = await fetch(`${API.STORE_DETAIL.GET_STORE_ZONES}/${zone.id}`, {
         method: 'PUT',
         headers: {
@@ -54,6 +53,7 @@ const UpdateZone = ({ zone, onClose, fetchZones, onSuccess }) => {
 
       if (!response.ok) throw new Error('Không thể cập nhật zone');
       message.success('Cập nhật zone thành công!');
+      onSuccess(key);
       fetchZones(); // Cập nhật danh sách zones
       onClose(); // Đóng modal
     } catch (error) {

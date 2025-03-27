@@ -8,6 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import './style.css';
 import CreateProductAttribute from './CreateProductAttribute';
 import UpdateProductAttribute from './UpdateProductAttribute';
+import moment from 'moment';
 
 const { Search } = Input;
 
@@ -98,11 +99,27 @@ const ProductAttribute = () => {
 
     // Table columns
     const columns = [
-        { title: 'Thuộc Tính Sản Phẩm', dataIndex: 'value', key: 'value', width: '65%' },
+        { title: 'Thuộc Tính Sản Phẩm', dataIndex: 'value', key: 'value', width: '35%' },
+        {
+            title: 'Tạo Lúc',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            width: '15%',
+            render: (text) => (text ? moment(text).format('HH:mm DD/MM/YYYY') : 'Chưa có thông tin'),
+            sorter: true,
+        },
+        {
+            title: 'Cập Nhật Lúc',
+            dataIndex: 'updatedAt',
+            key: 'updatedAt',
+            width: '15%',
+            render: (text) => (text ? moment(text).format('HH:mm DD/MM/YYYY') : 'Chưa có thông tin'),
+            sorter: true
+        },
         {
             title: 'Actions',
             key: 'action',
-            width: '35%',
+            width: '15%',
             render: (record) => (
                 <div>
                     <Button
@@ -112,6 +129,7 @@ const ProductAttribute = () => {
                             setIsInfoModalOpen(true);
                         }}
                         title="View Details"
+                        style={{ marginLeft: '10px', marginRight: '10px' }}
                     >
                         <InfoOutlined />
                     </Button>
@@ -121,6 +139,7 @@ const ProductAttribute = () => {
                             setSelectedAttribute(record);
                             setIsUpdateModalOpen(true);
                         }}
+                        style={{ marginRight: '10px' }}
                     >
                         <EditOutlined />
                     </Button>
@@ -207,8 +226,16 @@ const ProductAttribute = () => {
                             <div className="attribute-content">
                                 <table>
                                     <tr>
-                                        <td><strong>Value:</strong></td>
+                                        <td><strong>Thuộc tính sản phẩm:</strong></td>
                                         <td>{selectedAttribute.value}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Tạo bới:</strong></td>
+                                        <td>{selectedAttribute.createdBy || 'Chưa có thông tin về người tạo'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cập nhật bởi:</strong></td>
+                                        <td>{selectedAttribute.updatedBy || 'Chưa có thông tin về người cập nhật'}</td>
                                     </tr>
                                 </table>
                             </div>

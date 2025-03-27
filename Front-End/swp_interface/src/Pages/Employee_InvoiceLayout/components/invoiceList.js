@@ -41,7 +41,7 @@ const InvoiceList = () => {
 
         },
         {
-            title: 'Customer Details',
+            title: 'Khách Hàng',
             key: 'customerDetails',
             render: (_, record) => (
                 <>
@@ -76,7 +76,7 @@ const InvoiceList = () => {
 
         },
         {
-            title: 'MoneyShipping',
+            title: 'Cửu Vạn',
             dataIndex: 'totalShipping',
             render: (totalShipping) => `${(totalShipping || 0).toLocaleString()} đ`,
             key: 'totalShipping',
