@@ -44,6 +44,20 @@ public class StoreController {
         return zoneService.getStoreZones(zoneName.trim(), storeID, page, size, sortBy, descending);
     }
 
+    @PreAuthorize("@securityService.hasAccessToStore(#storeID)")
+    @GetMapping("/zoness")
+    public Page<StoreDetailZoneDTO> getStoreZoness(@RequestParam(value = "zoneName", required = false) String zoneName,
+                                                  @RequestParam(value = "storeID") String storeID,
+                                                  @RequestParam(value = "page", defaultValue = "0") int page,
+                                                  @RequestParam(value = "size", defaultValue = "100") int size,
+                                                  @RequestParam(defaultValue = "createdAt") String sortBy,
+                                                  @RequestParam(defaultValue = "false") boolean descending) throws Exception {
+        if (zoneName == null || zoneName.isEmpty()) {
+            return zoneService.getStoreZones(zoneName, storeID, page, size, sortBy, descending);
+        }
+        return zoneService.getStoreZones(zoneName.trim(), storeID, page, size, sortBy, descending);
+    }
+
     @GetMapping("/get-zone")
     public StoreDetailZoneDTO getZoneById(@RequestParam(value = "zoneID") String zoneID) {
         return zoneService.getZone(zoneID);

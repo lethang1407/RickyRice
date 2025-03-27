@@ -17,6 +17,7 @@ import CustomerDebt from "../Debt/CustomerDebt/customer";
 import { useNavigate, Link } from "react-router-dom";
 import NavbarAccount from "../Account/NavbarAccount";
 import logo from "../../assets/img/logo-no-background.png";
+import { WebSocketProvider } from "../../Utils/Websocket/WebsocketContextProvider";
 const { Header, Sider, Content } = Layout;
 
 const DebtEmploy = () => {
@@ -134,7 +135,7 @@ const DebtEmploy = () => {
               borderRadius: borderRadiusLG,
             }}
           >
-            <CustomerDebt />
+            <WebSocketProvider><CustomerDebt /></WebSocketProvider>
           </Content>
         </Layout>
       </Layout>

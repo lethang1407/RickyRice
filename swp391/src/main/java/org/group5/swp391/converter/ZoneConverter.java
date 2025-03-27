@@ -72,7 +72,9 @@ public class ZoneConverter {
         storeDetailZoneDTO.setUpdatedAt(zone.getUpdatedAt());
         storeDetailZoneDTO.setLocation(zone.getLocation());
         storeDetailZoneDTO.setName(zone.getName());
-        storeDetailZoneDTO.setProductInformation(zone.getProduct().getInformation());
+        if(zone.getProduct()!=null){
+            storeDetailZoneDTO.setProductInformation(zone.getProduct().getInformation());
+        }
         storeDetailZoneDTO.setCreatedBy(zone.getCreatedBy());
         storeDetailZoneDTO.setUpdatedBy(zone.getUpdatedBy());
         storeDetailZoneDTO.setId(zone.getId());
