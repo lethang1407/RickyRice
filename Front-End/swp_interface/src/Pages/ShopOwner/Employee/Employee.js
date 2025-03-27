@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Table, message, Input, Form, Select, Row, Col, Button } from 'antd';
+import { Table, message, Input, Form, Select, Row, Col, Button, Avatar } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import qs from 'qs';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import { getDataWithToken } from '../../../Utils/FetchUtils';
 import API from '../../../Utils/API/API';
-import './style.scss'
+import './style.scss';
 import EmployeeDetailModal from '../../../Components/StoreOwner/EmployeeDetailModal/EmployeeDetailModal';
+import AddEmployeeModal from '../../../Components/StoreOwner/AddEmployeeModal';
 
 const { Option } = Select;
 
@@ -15,7 +17,6 @@ const Employee = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [filters, setFilters] = useState({
-        employeeID: '',
         name: '',
         email: '',
         phoneNumber: '',
@@ -26,17 +27,20 @@ const Employee = () => {
         pagination: {
             current: 1,
             pageSize: 5,
+            total: 0,
         },
         filters: {},
         sortField: null,
         sortOrder: null,
     });
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [selectedEmployeeID, setSelectedEmployeeID] = useState(null);
     const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
     const [searchTimeout, setSearchTimeout] = useState(null);
     const [stores, setStores] = useState([]);
     const [fetchingStores, setFetchingStores] = useState(false);
+
     const columns = [
         {
             title: 'STT',
@@ -55,8 +59,10 @@ const Employee = () => {
             key: 'employeeDetails',
             render: (_, record) => (
                 <>
-                    <div><strong>Tên:</strong> {record.storeAccount?.name || 'N/A'}</div>
-                    <div><strong>Email:</strong> {record.storeAccount?.email || 'N/A'}</div>
+                    <span>
+                        <div><strong>Tên:</strong> {record.storeAccount?.name || 'N/A'}</div>
+                        <div><strong>Email:</strong> {record.storeAccount?.email || 'N/A'}</div>
+                    </span>
                 </>
             ),
             width: '20%',
@@ -73,15 +79,15 @@ const Employee = () => {
             title: 'Giới Tính',
             dataIndex: 'storeAccount',
             key: 'gender',
-            render: (storeAccount) => (
+            render: (storeAccount) => storeAccount?.gender != null ? (
                 <Button
-                    className={`gender-button ${storeAccount?.gender === true ? 'male' : 'female'}`}
+                    className={`gender-button ${storeAccount.gender === true ? 'male' : 'female'}`}
                     type="primary"
                     size="small"
                 >
-                    {storeAccount?.gender === true ? 'Nam' : 'Nữ'}
+                    {storeAccount.gender === true ? 'Nam' : 'Nữ'}
                 </Button>
-            ),
+            ) : 'N/A',
             width: '10%',
             align: 'center'
         },
@@ -100,7 +106,6 @@ const Employee = () => {
             render: (storeAccount) => (
                 <>
                     <div><strong>Tên Đăng Nhập:</strong> {storeAccount?.username || 'N/A'}</div>
-                    <div><strong>SĐT:</strong> {storeAccount?.phoneNumber || 'N/A'}</div>
                 </>
             ),
             width: '25%',
@@ -120,71 +125,107 @@ const Employee = () => {
                             storeID: store.id,
                         }));
                     setStores(cleanedStores);
+                } else if (response && Array.isArray(response.data)) {
+                    const cleanedStores = response.data
+                        .filter(store => store.id != null)
+                        .map((store) => ({
+                            ...store,
+                            storeID: store.id,
+                        }));
+                    setStores(cleanedStores);
                 } else {
                     message.error('Lỗi định dạng dữ liệu cửa hàng');
                     setStores([]);
                 }
             } catch (error) {
-                message.error('Không thể tải dữ liệu cửa hàng.');
+                message.error(`Không thể tải dữ liệu cửa hàng: ${error.message}`);
                 setStores([]);
             } finally {
                 setFetchingStores(false);
             }
         };
-        fetchStores();
+        if (token) {
+            fetchStores();
+        }
     }, [token]);
 
     const fetchEmployees = async () => {
         setLoading(true);
         try {
+            const genderFilterValue = filters.gender === 'all' ? null : filters.gender;
+
             const queryParams = qs.stringify(
                 {
-                    employeeID: filters.employeeID,
-                    name: filters.name,
-                    email: filters.email,
-                    phoneNumber: filters.phoneNumber,
-                    store: filters.store,
-                    gender: filters.gender,
+                    name: filters.name || null,
+                    email: filters.email || null,
+                    phoneNumber: filters.phoneNumber || null,
+                    storeIds: filters.store,
+                    gender: genderFilterValue,
                     page: tableParams.pagination.current - 1,
                     size: tableParams.pagination.pageSize,
                     sortBy: tableParams.sortField || 'createdAt',
-                    descending: tableParams.sortOrder === "descend",
+                    sortOrder: tableParams.sortOrder ? (tableParams.sortOrder === "descend" ? 'desc' : 'asc') : null,
                 },
-                { arrayFormat: 'repeat', encode: true }
+                {
+                    arrayFormat: 'repeat',
+                    encode: false,
+                    skipNulls: true
+                }
             );
 
             const response = await getDataWithToken(`${API.STORE_OWNER.GET_STORE_EMPLOYEES}?${queryParams}`, token);
-            console.log(response);
-            
-            if (Array.isArray(response.content)) {
-                setData(response.content);
+
+            const employees = response?.content || response?.data?.content || (Array.isArray(response) ? response : []);
+            const total = response?.totalElements ?? response?.data?.totalElements ?? 0;
+
+            if (Array.isArray(employees)) {
+                setData(employees);
+                setTableParams((prev) => ({
+                    ...prev,
+                    pagination: {
+                        ...prev.pagination,
+                        total: total,
+                    },
+                }));
             } else {
                 message.error('Lỗi định dạng dữ liệu nhân viên');
                 setData([]);
+                setTableParams((prev) => ({
+                    ...prev,
+                    pagination: {
+                        ...prev.pagination,
+                        total: 0,
+                        current: 1,
+                    },
+                }));
             }
+        } catch (error) {
+            message.error(`Không thể tải danh sách nhân viên: ${error.message}`);
+            setData([]);
             setTableParams((prev) => ({
                 ...prev,
                 pagination: {
                     ...prev.pagination,
-                    total: response.totalElements,
+                    total: 0,
+                    current: 1,
                 },
             }));
-        } catch (error) {
-            message.error('Không thể tải dữ liệu danh sách nhân viên');
-            setData([]);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchEmployees();
+        if (token) {
+            fetchEmployees();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
+        token,
         tableParams.pagination.current,
         tableParams.pagination.pageSize,
         tableParams.sortField,
         tableParams.sortOrder,
-        filters.employeeID,
         filters.name,
         filters.email,
         filters.phoneNumber,
@@ -195,81 +236,75 @@ const Employee = () => {
     const handleTableChange = (pagination, _, sorter) => {
         setTableParams({
             pagination,
-            sortField: sorter?.field || null,
-            sortOrder: sorter?.order || null,
+            filters: {},
+            sortField: sorter.field,
+            sortOrder: sorter.order,
         });
     };
 
     const handleInputChange = (changedValues, allValues) => {
-        if (changedValues.hasOwnProperty('employeeID') || changedValues.hasOwnProperty('name') || changedValues.hasOwnProperty('email') || changedValues.hasOwnProperty('phoneNumber')) {
+        if (changedValues.hasOwnProperty('name') || changedValues.hasOwnProperty('email') || changedValues.hasOwnProperty('phoneNumber')) {
             if (searchTimeout) {
                 clearTimeout(searchTimeout);
             }
             setSearchTimeout(
                 setTimeout(() => {
-                    handleSearch();
-                }, 1000)
+                    setFilters(prev => ({ ...prev, ...allValues }));
+                    setTableParams(prev => ({ ...prev, pagination: { ...prev.pagination, current: 1 } }));
+                }, 500)
             );
         } else {
-            handleSearch();
-        } form.setFieldsValue(allValues);
-    };
-
-
-    const handleSearch = () => {
-        const values = form.getFieldsValue();
-        setFilters({
-            employeeID: values.employeeID || '',
-            name: values.name || '',
-            email: values.email || '',
-            phoneNumber: values.phoneNumber || '',
-            store: values.store || [],
-            gender: values.gender || 'all',
-        });
-        setTableParams((prev) => ({
-            ...prev,
-            pagination: { ...prev.pagination, current: 1 },
-        }));
+            if (searchTimeout) clearTimeout(searchTimeout);
+            setFilters(prev => ({ ...prev, ...allValues }));
+            setTableParams(prev => ({ ...prev, pagination: { ...prev.pagination, current: 1 } }));
+        }
     };
 
     const handleReset = () => {
         form.resetFields();
-        setFilters({
-            employeeID: '',
+        const defaultFilters = {
             name: '',
             email: '',
             phoneNumber: '',
             store: [],
             gender: 'all',
-        });
+        };
+        setFilters(defaultFilters);
         setTableParams((prev) => ({
             ...prev,
             pagination: { ...prev.pagination, current: 1 },
+            sortField: null,
+            sortOrder: null,
         }));
     };
 
     const onRowClick = (record) => {
-        setSelectedEmployeeID(record.employeeID);
+        const idField = record.id || record.employeeID;
+        setSelectedEmployeeID(idField);
         setSelectedEmployeeDetails(record);
-        setIsModalOpen(true);
+        setIsDetailModalOpen(true);
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
+    const closeDetailModal = () => {
+        setIsDetailModalOpen(false);
         setSelectedEmployeeID(null);
         setSelectedEmployeeDetails(null);
     };
 
+    const showAddModal = () => {
+        setIsAddModalOpen(true);
+    };
+
+    const handleAddModalClose = () => {
+        setIsAddModalOpen(false);
+    };
+
+    const handleEmployeeAdded = () => {
+        fetchEmployees();
+    };
+
     const handleEmployeeDeleted = () => {
         fetchEmployees();
-    }
-
-    const handleStoreChange = (value) => {
-        setFilters(prevFilters => ({
-            ...prevFilters,
-            store: value
-        }));
-        form.setFieldsValue({ store: value });
     };
 
     return (
@@ -279,69 +314,81 @@ const Employee = () => {
                 layout="vertical"
                 className="filter-form"
                 onValuesChange={handleInputChange}
+                initialValues={filters}
             >
                 <Row gutter={16} className="filter-form-row">
-                    <Col span={5} className="filter-form-col">
+                    <Col xs={24} sm={12} md={8} lg={5} className="filter-form-col">
                         <Form.Item label="Tên" name="name">
-                            <Input placeholder="Nhập tên" className="filter-form-input" />
+                            <Input placeholder="Nhập tên" allowClear className="filter-form-input" />
                         </Form.Item>
                     </Col>
-                    <Col span={5} className="filter-form-col">
+                    <Col xs={24} sm={12} md={8} lg={5} className="filter-form-col">
                         <Form.Item label="Email" name="email">
-                            <Input placeholder="Nhập email" className="filter-form-input" />
+                            <Input placeholder="Nhập email" allowClear className="filter-form-input" />
                         </Form.Item>
                     </Col>
-                    <Col span={5} className="filter-form-col">
+                    <Col xs={24} sm={12} md={8} lg={5} className="filter-form-col">
                         <Form.Item label="Số Điện Thoại" name="phoneNumber">
-                            <Input placeholder="Nhập số điện thoại" className="filter-form-input" />
+                            <Input placeholder="Nhập SĐT" allowClear className="filter-form-input" />
                         </Form.Item>
                     </Col>
-                    <Col span={4} className="filter-form-col">
+                    <Col xs={24} sm={12} md={8} lg={4} className="filter-form-col">
                         <Form.Item label="Cửa Hàng" name="store">
                             <Select
                                 mode="multiple"
                                 placeholder="Chọn cửa hàng"
                                 allowClear
                                 loading={fetchingStores}
-                                onChange={handleStoreChange}
                                 className="filter-form-select"
+                                maxTagCount="responsive"
                             >
-                                {stores.map((store, index) => (
-                                    <Option
-                                        key={store.storeID != null ? store.storeID : `fallback-${index}`}
-                                        value={store.storeID}
-                                    >
+                                {stores.map((store) => (
+                                    <Option key={store.storeID} value={store.storeID}>
                                         {store.name}
                                     </Option>
                                 ))}
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={4} className="filter-form-col">
+                    <Col xs={24} sm={12} md={8} lg={3} className="filter-form-col">
                         <Form.Item label="Giới Tính" name="gender">
                             <Select placeholder="Chọn giới tính" allowClear className="filter-form-select">
                                 <Option value="all">Tất cả</Option>
-                                <Option value="male">Nam</Option>
-                                <Option value="female">Nữ</Option>
+                                <Option value="true">Nam</Option>
+                                <Option value="false">Nữ</Option>
                             </Select>
                         </Form.Item>
                     </Col>
                 </Row>
-                <Row className="filter-form-row">
-                    <Col span={24} className="filter-form-col" style={{ textAlign: 'right', marginTop: '8px' }}>
-                        <Button onClick={handleReset} className="filter-form-reset-button">Làm Mới</Button>
+                <Row gutter={16} justify="end" className="filter-form-row filter-actions-row">
+                    <Col>
+                        <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            onClick={showAddModal}
+                            className="add-employee-button"
+                        >
+                            Thêm Nhân Viên
+                        </Button>
+                    </Col>
+                    <Col>
+                        <Button onClick={handleReset} className="filter-form-reset-button">
+                            Làm Mới
+                        </Button>
                     </Col>
                 </Row>
             </Form>
+
             <Table
                 className="employee-table"
                 columns={columns}
-                rowKey={(record) => record.id}
+                rowKey={(record) => record.id || record.employeeID || record.key}
                 dataSource={data}
                 pagination={{
                     ...tableParams.pagination,
                     showSizeChanger: true,
                     pageSizeOptions: ['5', '10', '20', '50'],
+                    showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} nhân viên`,
                 }}
                 loading={loading}
                 onChange={handleTableChange}
@@ -349,15 +396,27 @@ const Employee = () => {
                     onClick: () => onRowClick(record),
                     style: { cursor: 'pointer' },
                 })}
+                scroll={{ x: 'max-content' }}
             />
 
-            {isModalOpen && (
+            {isDetailModalOpen && (
                 <EmployeeDetailModal
-                    visible={isModalOpen}
+                    visible={isDetailModalOpen}
                     employeeID={selectedEmployeeID}
                     employeeDetails={selectedEmployeeDetails}
-                    onClose={closeModal}
+                    onClose={closeDetailModal}
                     onEmployeeDeleted={handleEmployeeDeleted}
+                    stores={stores}
+                />
+            )}
+
+            {isAddModalOpen && (
+                <AddEmployeeModal
+                    visible={isAddModalOpen}
+                    onClose={handleAddModalClose}
+                    onSuccess={handleEmployeeAdded}
+                    stores={stores}
+                    token={token}
                 />
             )}
         </div>

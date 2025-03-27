@@ -62,36 +62,36 @@ const StoreOwnerLayout = () => {
               {
                 key: '1',
                 icon: <ShopOutlined />,
-                label: <Link to="/store-owner/store" style={{ textDecoration: 'none' }}>Store</Link>,
+                label: <Link to="/store-owner/store" style={{ textDecoration: 'none' }}>Cửa hàng</Link>,
               },
               {
                 key: '2',
                 icon: <FileTextOutlined />,
-                label: <Link to="/store-owner/invoice" style={{ textDecoration: 'none' }}>Invoice</Link>,
+                label: <Link to="/store-owner/invoice" style={{ textDecoration: 'none' }}>Hóa đơn</Link>,
               },
               {
                 key: '3',
                 icon: <AppstoreOutlined />,
-                label: <Link to="/store-owner/product" style={{ textDecoration: 'none' }}>Product</Link>,
+                label: <Link to="/store-owner/product" style={{ textDecoration: 'none' }}>Sản phẩm</Link>,
               },
               {
                 key: '4',
                 icon: <TeamOutlined />,
-                label: <Link to="/store-owner/employee" style={{ textDecoration: 'none' }}>Employee</Link>,
+                label: <Link to="/store-owner/employee" style={{ textDecoration: 'none' }}>Nhân viên</Link>,
               },
               {
                 icon: <PieChartOutlined />,
-                label: 'Statistic',
+                label: 'Thống kê',
                 children: [
                     {
                         key: '5.1',
                         icon: <TableOutlined />,
-                        label: <Link to="/store-owner/statistic/data" style={{ textDecoration: 'none' }}>Data</Link>,
+                        label: <Link to="/store-owner/statistic/data" style={{ textDecoration: 'none' }}>Dữ liệu</Link>,
                     },
                     {
                         key: '5.2',
                         icon: <BarChartOutlined />,
-                        label: <Link to="/store-owner/statistic/chart" style={{ textDecoration: 'none' }}>Chart</Link>,
+                        label: <Link to="/store-owner/statistic/chart" style={{ textDecoration: 'none' }}>Biểu đồ</Link>,
                     },
                 ],
              }

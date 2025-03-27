@@ -12,5 +12,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Stri
     // Lấy danh sách thông báo theo tài khoản nhận được
     List<Notification> findByTargetAccount_Id(String targetAccountID);
 
+    List<Notification> findByTargetAccount_IdOrSendAccount_Id(String targetAccountId, String sendAccountId);
 
 }
