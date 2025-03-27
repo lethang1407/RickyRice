@@ -4,10 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.converter.EmployeeConverter;
 import org.group5.swp391.dto.store_owner.all_employee.StoreEmployeeDTO;
-import org.group5.swp391.entity.Account;
-import org.group5.swp391.entity.Employee;
-import org.group5.swp391.entity.Product;
-import org.group5.swp391.entity.Store;
+import org.group5.swp391.entity.*;
 import org.group5.swp391.exception.AppException;
 import org.group5.swp391.exception.ErrorCode;
 import org.group5.swp391.repository.*;
@@ -36,6 +33,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeConverter employeeConverter;
     private final EmployeeRepository employeeRepository;
     private final CloudinaryService cloudinaryService;
+    private final NotificationRepository notificationRepository;
 
     @Override
     public Page<StoreEmployeeDTO> getEmployees(String employeeID, String name, String email, String phoneNumber, List<String> store, String strGender,int page, int size, String sortBy, boolean descending){
@@ -114,11 +112,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional
     public void deleteEmployee(String employeeId) {
         Employee employee = checkEmployeeOfUser(employeeId);
+        String accountId = employee.getEmployeeAccount().getId();
+        List<Notification> notifications = notificationRepository.findByTargetAccount_IdOrSendAccount_Id(accountId, accountId);
+        if (!notifications.isEmpty()) {
+            notificationRepository.deleteAll(notifications);
+        }
         employeeRepository.delete(employee);
     }
-
-
-
-
 
 }
