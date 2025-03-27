@@ -79,7 +79,7 @@ const InvoiceDetail = () => {
                                 ...item,
                                 customerPhone: values.phoneNumberNew,
                                 customerName: values.name,
-                            }
+                            } 
                             : item
                     )
                 );

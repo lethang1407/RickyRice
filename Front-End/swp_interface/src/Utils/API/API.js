@@ -6,7 +6,7 @@ const API = {
     GET_ACCOUNT_BY_ID: (id) => `${API_BASE_URL}/admin/account/${id}`,
     UPDATE_ACCOUNT_STATUS: `${API_BASE_URL}/admin/account-active`,
     VIEW_REVENUE: `${API_BASE_URL}/admin/view-revenue`,
-    VIEW_ALL_STORE: `${API_BASE_URL}/admin/view-store`,
+    VIEW_ALL_STORE: `${API_BASE_URL}/admin/view-stores`,
     VIEW_ALL_SUBSCRIPTION_PLAN: `${API_BASE_URL}/admin/subscription-plans`,
     VIEW_SUBSCRIPTION_PLAN_BY_ID: (id) =>
       `${API_BASE_URL}/admin/subscription-plan/${id}`,
@@ -77,6 +77,8 @@ const API = {
     GET_REQUEST_STORE: `${API_BASE_URL}/manage-store/request-store`,
     UPDATE_STORE_INFOR: (storeID) =>
       `${API_BASE_URL}/manage-store/update-store/${storeID}`,
+    GET_STORE_INFO: (storeID) =>
+      `${API_BASE_URL}/manage-store/get-store/${storeID}`,
   },
   STORE_DETAIL: {
     GET_STORE_ZONES: `${API_BASE_URL}/store-detail/zones`,
