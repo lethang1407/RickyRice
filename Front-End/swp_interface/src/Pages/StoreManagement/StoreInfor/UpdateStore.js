@@ -30,13 +30,13 @@ const UpdateStore = () => {
   // Lấy dữ liệu cửa hàng ban đầu
   useEffect(() => {
     axios
-      .get(`http://localhost:9999/manage-store/get-store/${id}`, {
+      .get(API.STORE_OWNER.GET_STORE_INFO(id), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((res) => {
-        console.log(res)
+        console.log(res);
         if (res.status === 200 && res.data.data) {
           const storeData = res.data.data; // API trả về object store trong key 'data'
           setOriginalStoreData(storeData);
@@ -153,7 +153,7 @@ const UpdateStore = () => {
 
     try {
       const res = await axios.patch(
-        `http://localhost:9999/manage-store/update-store/${id}`,
+        API.STORE_OWNER.UPDATE_STORE_INFOR(id),
         payload,
         {
           headers: {
@@ -235,7 +235,13 @@ const UpdateStore = () => {
         <Form.Item
           name="hotline"
           label="Điện thoại liên hệ"
-          rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
+          rules={[
+            { required: true, message: "Vui lòng nhập số điện thoại!" },
+            {
+              pattern: /^0\d{9}$/,
+              message: "Số điện thoại không đúng. Vui lòng nhập lại!",
+            },
+          ]}
         >
           <Input />
         </Form.Item>

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, Input, Select, DatePicker, message } from "antd";
 import API from "../../Utils/API/API.js";
 import { getToken } from "../../Utils/UserInfoUtils";
+import moment from "moment";
+
+const { Option } = Select;
 
 const UpdateProfile = ({
   show,
@@ -17,17 +20,25 @@ const UpdateProfile = ({
     birthDate: account.birthDate || "",
   });
   const [loading, setLoading] = useState(false);
-  const [, setMessage] = useState(null);
-  const [, setMessageType] = useState("success");
   const token = getToken();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (value, name) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // Hàm validate số điện thoại
+  const validatePhoneNumber = (phoneNumber) => {
+    const phoneRegex = /^0\d{9}$/; // Kiểm tra số điện thoại có 10 chữ số và bắt đầu bằng 0
+    return phoneRegex.test(phoneNumber);
+  };
+
+  const handleSubmit = () => {
+    // Kiểm tra validate số điện thoại
+    if (!validatePhoneNumber(formData.phoneNumber)) {
+      message.error("Số điện thoại không hợp lệ! Vui lòng nhập số điện thoại đúng.");
+      return;
+    }
+
     setLoading(true);
     fetch(API.ACCOUNT.UPDATE_ACCOUNT, {
       method: "PATCH",
@@ -40,83 +51,76 @@ const UpdateProfile = ({
       .then((res) => res.json())
       .then((data) => {
         if (data.code === 200) {
-          setMessage("Cập nhật thành công!");
-          setMessageType("success");
+          message.success("Cập nhật thành công!");
           onUpdateSuccess(data.data);
         } else {
-          setMessage("Cập nhật thất bại!");
-          setMessageType("danger");
+          message.error("Cập nhật thất bại!");
           onUpdateFail("Cập nhật thất bại!");
         }
       })
       .catch(() => {
-        setMessage("Có lỗi xảy ra, vui lòng thử lại!");
-        setMessageType("danger");
+        message.error("Có lỗi xảy ra, vui lòng thử lại!");
         onUpdateFail("Có lỗi xảy ra, vui lòng thử lại!");
       })
       .finally(() => setLoading(false));
   };
 
   return (
-    <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Cập nhật thông tin</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3">
-            <Form.Label>Họ tên</Form.Label>
-            <Form.Control
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-            />
-          </Form.Group>
+    <Modal
+      title="Cập nhật thông tin"
+      visible={show}
+      onCancel={handleClose}
+      footer={null}
+      centered
+    >
+      <Form layout="vertical" onFinish={handleSubmit}>
+        <Form.Item label="Họ tên">
+          <Input
+            value={formData.name}
+            onChange={(e) => handleChange(e.target.value, "name")}
+          />
+        </Form.Item>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Số điện thoại</Form.Label>
-            <Form.Control
-              type="text"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-            />
-          </Form.Group>
+        <Form.Item label="Số điện thoại">
+          <Input
+            value={formData.phoneNumber}
+            onChange={(e) => handleChange(e.target.value, "phoneNumber")}
+          />
+        </Form.Item>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Giới tính</Form.Label>
-            <Form.Select
-              name="gender"
-              value={formData.gender ?? ""}
-              onChange={handleChange}
-            >
-              <option value="">Chưa xác định</option>
-              <option value="true">Nam</option>
-              <option value="false">Nữ</option>
-            </Form.Select>
-          </Form.Group>
+        <Form.Item label="Giới tính">
+          <Select
+            value={formData.gender ?? ""}
+            onChange={(value) => handleChange(value, "gender")}
+            placeholder="Chưa xác định"
+          >
+            <Option value="true">Nam</Option>
+            <Option value="false">Nữ</Option>
+          </Select>
+        </Form.Item>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Ngày sinh</Form.Label>
-            <Form.Control
-              type="date"
-              name="birthDate"
-              value={formData.birthDate}
-              onChange={handleChange}
-            />
-          </Form.Group>
+        <Form.Item label="Ngày sinh">
+          <DatePicker
+            value={formData.birthDate ? moment(formData.birthDate) : null}
+            onChange={(date, dateString) => handleChange(dateString, "birthDate")}
+            format="YYYY-MM-DD"
+          />
+        </Form.Item>
 
-          <div className="d-flex justify-content-end">
-            <Button variant="secondary" onClick={handleClose} className="me-2">
-              Hủy
-            </Button>
-            <Button type="submit" variant="primary" disabled={loading}>
-              {loading ? "Đang lưu..." : "Lưu thay đổi"}
-            </Button>
-          </div>
-        </Form>
-      </Modal.Body>
+        <div className="d-flex justify-content-end">
+          <Button onClick={handleClose} className="me-2">
+            Hủy
+          </Button>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loading}
+            disabled={loading}
+          >
+            {loading ? "Đang lưu..." : "Lưu thay đổi"}
+          </Button>
+        </div>
+      </Form>
     </Modal>
   );
 };

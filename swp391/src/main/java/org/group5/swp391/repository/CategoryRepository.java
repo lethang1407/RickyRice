@@ -45,4 +45,6 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
             "AND (LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) " +
             "OR LOWER(c.description) LIKE LOWER(CONCAT('%', :search, '%')))")
     int countAllByStore_IdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String storeId, String search);
+
+    List<Category> findByStore_Id(String storeId);
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, message, Input, Button, Flex, Modal, Tag, Popconfirm } from 'antd';
+import { Table, message, Button, Flex, Modal, Tag, Popconfirm } from 'antd';
 import { InfoOutlined, EditOutlined, DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import API from '../../../Utils/API/API';
 import { getToken } from '../../../Utils/UserInfoUtils';
@@ -9,17 +9,16 @@ import './style.css';
 import moment from 'moment';
 import CreateProduct from './CreateProduct';
 import UpdateProduct from './UpdateProduct';
+import Filter from './filter';
 
-const { Search } = Input;
-const { confirm } = Modal;
 
 const Product = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const token = getToken();
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [searchValue, setSearchValue] = useState('');
     const storeID = useParams();
+    const [params, setParams] = useState(null);
     const navigate = useNavigate();
 
     const colors = ['magenta', 'red', 'volcano', 'orange', 'gold', 'lime', 'green', 'cyan', 'blue', 'geekblue', 'purple'];
@@ -169,6 +168,7 @@ const Product = () => {
                                 });
                         }}
                         title="Thông tin chi tiết"
+                        style={{marginLeft: '10px', marginRight: '10px'}}
                     >
                         <InfoOutlined />
                     </Button>
@@ -192,6 +192,7 @@ const Product = () => {
                                     messageApi.error('Không thể tải thông tin danh mục');
                                 });
                         }}
+                        style={{marginRight: '10px'}}
                     >
                         <EditOutlined />
                     </Button>
@@ -210,18 +211,18 @@ const Product = () => {
         },
     ];
 
-    const getProductParams = (params, searchValue) => {
-        const { pagination, sortBy, descending } = params;
+    const getProductParams = (param) => {
+        const { pagination, sortBy, descending } = param;
         let query = `storeID=${storeID.id}&page=${Math.max(pagination.current - 1, 0)}&size=${pagination.pageSize}`;
         if (sortBy) query += `&sortBy=${sortBy}&descending=${descending}`;
-        if (searchValue) query += `&search=${encodeURIComponent(searchValue)}`;
         return query;
     };
 
     const fetchProducts = async () => {
         setLoading(true);
         try {
-            const queryParams = '?' + getProductParams(tableParams, searchValue);
+            const queryParams = '?' + getProductParams(tableParams) + `&${params}`;
+            console.log(queryParams);
             const response = await getDataWithToken(API.STORE_DETAIL.GET_STORE_PRODUCTS_BY_STOREID + queryParams, token);
             if (!response || !response.content) throw new Error('Dữ liệu trả về không hợp lệ');
             setData(response.content);
@@ -238,7 +239,7 @@ const Product = () => {
 
     useEffect(() => {
         fetchProducts();
-    }, [tableParams.pagination.current, tableParams.pagination.pageSize, tableParams.sortBy, tableParams.descending, searchValue]);
+    }, [tableParams.pagination.current, tableParams.pagination.pageSize, tableParams.sortBy, tableParams.descending, params]);
 
     const handleTableChange = (pagination, filters, sorter) => {
         setTableParams((prev) => ({
@@ -255,18 +256,7 @@ const Product = () => {
             <Button className="btn-create" title="Thêm sản phẩm mới" onClick={() => setIsCreateModalOpen(true)}>
                 Thêm mới
             </Button>
-            <Search
-                placeholder="Nhập tên sản phẩm/mô tả..."
-                value={searchValue}
-                onChange={(e) => {
-                    setSearchValue(e.target.value);
-                    setTableParams((prev) => ({
-                        ...prev,
-                        pagination: { ...prev.pagination, current: 1 },
-                    }));
-                }}
-                enterButton
-            />
+            <Filter params={params} setParams={setParams}/>
             <Table
                 columns={columns}
                 rowKey="id"
@@ -387,6 +377,7 @@ const Product = () => {
                         <UpdateProduct
                             product={selectedProduct}
                             category={category}
+                            storeID={storeID.id}
                             onClose={() => setIsUpdateModalOpen(false)}
                             fetchProducts={fetchProducts}
                             onSuccess={handleUpdateSuccess}

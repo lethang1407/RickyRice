@@ -6,6 +6,7 @@ import org.group5.swp391.dto.store_owner.store_detail.StoreDetailZoneDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -18,7 +19,7 @@ public interface ZoneService {
     public StoreDetailZoneDTO getZone(String zoneID);
     public void addZone(StoreDetailZoneDTO storeZoneDTO) throws Exception;
     public void updateZone(String zoneID, StoreDetailZoneDTO storeZoneDTO) throws Exception;
-    public void deleteZone(String zoneID);
+    public Page<StoreDetailZoneDTO> getZonesByFilter(String storeID, String name, String location, String productName, LocalDate fromCreatedAt, LocalDate toCreatedAt, LocalDate fromUpdateAt, LocalDate toUpdateAt, int page, int size, String sortBy, boolean descending);
     public List<StoreZoneIdAndNameDTO> getEmptyZoneIdAndNameForStore(String storeId);
 
 }

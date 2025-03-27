@@ -8,10 +8,16 @@ import org.group5.swp391.dto.response.*;
 import org.group5.swp391.dto.response.AdminResponse.*;
 import org.group5.swp391.dto.response.account_response.AccountResponse;
 import org.group5.swp391.service.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/admin")
@@ -22,18 +28,6 @@ public class AdminController {
     private final AppStatisticsService appStatisticsService;
     private final StoreService storeService;
     private final SubscriptionPlanService subscriptionPlanService;
-
-    // Xem danh sách tài khoản có role STORE_OWNER
-    @GetMapping("/account-owner")
-    public ApiResponse<List<AccountResponse>> getAccountOwner() {
-        List<AccountResponse> accountResponses = accountService.getAccountsByRole("STORE_OWNER");
-
-        return ApiResponse.<List<AccountResponse>>builder()
-                .code(accountResponses.isEmpty() ? HttpStatus.NO_CONTENT.value() : HttpStatus.OK.value())
-                .message(accountResponses.isEmpty() ? "No store owners found" : "Fetched store owners successfully")
-                .data(accountResponses.isEmpty() ? null : accountResponses)
-                .build();
-    }
 
     // Lấy account theo ID
     @GetMapping("/account/{accountID}")
@@ -53,39 +47,6 @@ public class AdminController {
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
                 .message("Updated active status successfully.")
-                .build();
-    }
-
-    // Xem thống kê các hoạt động dịch vụ của trang web
-    @GetMapping("/view-revenue")
-    public ApiResponse<List<AppStatisticsResponse>> viewRevenue() {
-        List<AppStatisticsResponse> statistics = appStatisticsService.getStatistics();
-        return ApiResponse.<List<AppStatisticsResponse>>builder()
-                .code(HttpStatus.OK.value())
-                .message("Fetched revenue statistics successfully")
-                .data(statistics)
-                .build();
-    }
-
-    // Xem danh sách cửa hàng sử dụng dịch vụ vủa trang web
-    @GetMapping("/view-store")
-    public ApiResponse<List<ViewStoreResponse>> viewStores() {
-        List<ViewStoreResponse> stores = storeService.getAllStores();
-        return ApiResponse.<List<ViewStoreResponse>>builder()
-                .code(HttpStatus.OK.value())
-                .message("Fetched store successfully")
-                .data(stores)
-                .build();
-    }
-
-    // Lấy danh sách các gói dịch vụ đăng kí của trang web
-    @GetMapping("/subscription-plans")
-    public ApiResponse<List<SubscriptionPlanResponse>> getAllSubscriptionPlans() {
-        List<SubscriptionPlanResponse> plans = subscriptionPlanService.getAllSubscriptionPlans();
-        return ApiResponse.<List<SubscriptionPlanResponse>>builder()
-                .code(HttpStatus.OK.value())
-                .message("Fetched subscription plans successfully")
-                .data(plans)
                 .build();
     }
 
@@ -120,6 +81,119 @@ public class AdminController {
                 .code(HttpStatus.OK.value())
                 .message("Updated subscription plan successfully")
                 .data(updatedPlan)
+                .build();
+    }
+
+    // Xem thống kê các hoạt động dịch vụ của trang web
+    @GetMapping("/view-revenue")
+    public ApiResponse<Map<String, Object>> getStatistics(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDirection,
+            @RequestParam(required = false) String subscriptionPlanName,
+            @RequestParam(required = false) String searchQuery) {
+        if (!sortBy.equals("createdAt") && !sortBy.equals("subcriptionPlanPrice")) {
+            sortBy = "createdAt";
+        }
+        sortDirection = sortDirection.equalsIgnoreCase("asc") ? "asc" : "desc";
+        Page<AppStatisticsResponse> statistics = appStatisticsService.getStatistics(
+                page, size, sortBy, sortDirection, subscriptionPlanName, searchQuery);
+
+        List<String> subscriptionPlans = appStatisticsService.getAllSubscriptionPlanNames();
+
+        Double totalRevenue = appStatisticsService.calculateTotalRevenue();
+
+        Map<String, Object> response = Map.of(
+                "statistics", statistics,
+                "subcriptionPlans", subscriptionPlans,
+                "totalRevenue", totalRevenue
+        );
+        return ApiResponse.<Map<String, Object>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Fetched statistics successfully")
+                .data(response)
+                .build();
+    }
+
+    // Xem danh sách tài khoản có role STORE_OWNER
+    @GetMapping("/account-owner")
+    public ApiResponse<Map<String, Object>> getStoreOwners(
+            @RequestParam(required = false) Boolean isActive,
+            @RequestParam(required = false) Boolean gender,
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDirection,
+            @PageableDefault(size = 10) Pageable pageable) {
+
+        // Kiểm tra cột sort hợp lệ
+        Set<String> allowedSortFields = Set.of("createdAt", "birthDate");
+        if (!allowedSortFields.contains(sortBy)) {
+            sortBy = "createdAt";
+        }
+
+        // Xử lý direction
+        Sort.Direction direction = Sort.Direction.fromOptionalString(sortDirection).orElse(Sort.Direction.DESC);
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortBy));
+
+        // Lấy danh sách Store Owners
+        Page<AccountResponse> storeOwners = accountService.getStoreOwner(isActive, gender, search, pageable);
+
+        // Lấy tổng số lượng store owners
+        Long totalStoreOwners = accountService.getTotalStoreOwners();
+
+        // Gói dữ liệu vào Map
+        Map<String, Object> responseData = Map.of(
+                "storeOwners", storeOwners,
+                "totalAccount", totalStoreOwners
+        );
+
+        // Trả về response
+        return ApiResponse.<Map<String, Object>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Fetched store owners successfully")
+                .data(responseData)
+                .build();
+    }
+
+    // Xem danh sách cửa hàng sử dụng dịch vụ vủa trang web
+    @GetMapping("/view-stores")
+    public ApiResponse<Map<String, Object>> getStoreStatistics(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDirection,
+            @RequestParam(required = false) String subscriptionPlanName,
+            @RequestParam(required = false) String searchQuery) {
+
+        Map<String, Object> response = storeService.getStoreStatistics(searchQuery, subscriptionPlanName, sortBy, sortDirection, page, size);
+
+        return ApiResponse.<Map<String, Object>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Fetched store data successfully")
+                .data(response)
+                .build();
+    }
+
+    // Lấy danh sách các gói dịch vụ đăng kí của trang web
+    @GetMapping("/subscription-plans")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<Map<String, Object>> getSubscriptionPlans(
+            @RequestParam(required = false) String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "price") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection
+    ) {
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
+        Map<String, Object> response = subscriptionPlanService.getSubscriptionPlans(name, pageable);
+
+        return ApiResponse.<Map<String, Object>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Fetched subscription plans successfully")
+                .data(response)
                 .build();
     }
 }

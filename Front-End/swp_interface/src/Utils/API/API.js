@@ -6,7 +6,7 @@ const API = {
     GET_ACCOUNT_BY_ID: (id) => `${API_BASE_URL}/admin/account/${id}`,
     UPDATE_ACCOUNT_STATUS: `${API_BASE_URL}/admin/account-active`,
     VIEW_REVENUE: `${API_BASE_URL}/admin/view-revenue`,
-    VIEW_ALL_STORE: `${API_BASE_URL}/admin/view-store`,
+    VIEW_ALL_STORE: `${API_BASE_URL}/admin/view-stores`,
     VIEW_ALL_SUBSCRIPTION_PLAN: `${API_BASE_URL}/admin/subscription-plans`,
     VIEW_SUBSCRIPTION_PLAN_BY_ID: (id) =>
       `${API_BASE_URL}/admin/subscription-plan/${id}`,
@@ -78,13 +78,17 @@ const API = {
     GET_REQUEST_STORE: `${API_BASE_URL}/manage-store/request-store`,
     UPDATE_STORE_INFOR: (storeID) =>
       `${API_BASE_URL}/manage-store/update-store/${storeID}`,
+    GET_STORE_INFO: (storeID) =>
+      `${API_BASE_URL}/manage-store/get-store/${storeID}`,
   },
   STORE_DETAIL: {
     GET_STORE_ZONES: `${API_BASE_URL}/store-detail/zones`,
+    GET_STORE_ZONESS: `${API_BASE_URL}/store-detail/zoness`,
+    GET_STORE_ZONES_BY_STOREID: `${API_BASE_URL}/store-detail/filtered-zones`,
     UPDATE_STORE_ZONE: (id) => `${API_BASE_URL}/store-detail/zones/${id}`,
     GET_ZONE_ID: `${API_BASE_URL}/store-detail/get-zone`,
-    DELETE_STORE_ZONE: (id) => `${API_BASE_URL}/store-detail/zones/${id}`,
-    GET_STORE_PRODUCTS_BY_STOREID: `${API_BASE_URL}/store-detail/products`,
+    GET_STORE_PRODUCTS:  `${API_BASE_URL}/store-detail/products`,
+    GET_STORE_PRODUCTS_BY_STOREID: `${API_BASE_URL}/store-detail/filtered-products`,
     UPDATE_STORE_PRODUCT: (id) => `${API_BASE_URL}/store-detail/products/${id}`,
     DELETE_STORE_PRODUCT: (id) => `${API_BASE_URL}/store-detail/products/${id}`,
     GET_CATEGORY_ID: `${API_BASE_URL}/store-detail/category`,

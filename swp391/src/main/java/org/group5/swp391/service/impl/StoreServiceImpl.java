@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.group5.swp391.converter.StoreConverter;
 import org.group5.swp391.dto.request.store_request.StoreRequest;
 import org.group5.swp391.dto.response.AdminResponse.ViewStoreResponse;
-import org.group5.swp391.dto.response.account_response.AccountResponse;
 import org.group5.swp391.dto.response.store_response.StoreResponse;
 import org.group5.swp391.dto.store_owner.all_product.StoreInfoIdAndNameDTO;
 import org.group5.swp391.dto.store_owner.all_store.StoreInfoDTO;
@@ -19,6 +18,7 @@ import org.group5.swp391.service.SubscriptionPlanService;
 import org.group5.swp391.service.VNPayService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -57,6 +57,7 @@ public class StoreServiceImpl implements StoreService {
         return storeRepository.findByStoreAccountAndStoreNameContainingIgnoreCase(account, storeName, pageRequest).map(storeConverter::toStoreDTO);
     }
 
+    // lấy danh sách tất cả cửa hàng của hệ thống
     public List<ViewStoreResponse> getAllStores() {
         return storeRepository.findAll().stream().map(store ->
                 ViewStoreResponse.builder()
@@ -84,7 +85,7 @@ public class StoreServiceImpl implements StoreService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account account = accountRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         List<Store> storeList = account.getStores();
-        if(account.getStores()!=null){
+        if(account.getStores()==null){
             storeList.add(account.getEmployee().getStore());
         }
         return storeList.stream().map(
@@ -116,7 +117,7 @@ public class StoreServiceImpl implements StoreService {
         Notification notification = new Notification();
         Account account = accountRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         notification.setTargetAccount(account);
-        notification.setCreatedBy("admin");
+        notification.setCreatedBy("System");
         notification.setIsRead(false);
         notification.setMessage(message);
         notificationRepository.save(notification);
@@ -185,7 +186,7 @@ public class StoreServiceImpl implements StoreService {
         // Tạo thông báo thanh toán thành công
         Notification notification = new Notification();
         notification.setTargetAccount(account);
-        notification.setCreatedBy("admin");
+        notification.setCreatedBy("System");
         notification.setIsRead(false);
         notification.setMessage("Tạo cửa hàng thành công.");
         notificationRepository.save(notification);
@@ -242,7 +243,7 @@ public class StoreServiceImpl implements StoreService {
         // Tạo thông báo thanh toán thành công
         Notification notification = new Notification();
         notification.setTargetAccount(account);
-        notification.setCreatedBy("admin");
+        notification.setCreatedBy("System");
         notification.setIsRead(false);
         notification.setMessage(message);
         notificationRepository.save(notification);
@@ -385,6 +386,47 @@ public class StoreServiceImpl implements StoreService {
                 .image(store.getImage())
                 .expireAt(store.getExpireAt())
                 .build();
+    }
+
+    // lấy danh sách tất cả cửa hàng của hệ thống (phân trang, tìm kiếm, sắp xếp)
+    public Map<String, Object> getStoreStatistics(String keyword, String subscriptionPlanName, String sortBy, String sortDirection, int page, int size) {
+        Sort sort = switch (sortBy) {
+            case "expireAt" -> Sort.by(Sort.Direction.fromString(sortDirection), "expireAt");
+            case "createdAt" -> Sort.by(Sort.Direction.fromString(sortDirection), "createdAt");
+            case "updatedAt" -> Sort.by(Sort.Direction.fromString(sortDirection), "updatedAt");
+            case "subscriptionPlanPrice" -> Sort.by(Sort.Direction.fromString(sortDirection), "subscriptionPlan.price");
+            default -> Sort.by(Sort.Direction.fromString(sortDirection), "createdAt");
+        };
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<ViewStoreResponse> stores = storeRepository.searchStores(keyword, subscriptionPlanName, pageable).map(store ->
+                ViewStoreResponse.builder()
+                        .storeID(store.getId())
+                        .storeName(store.getStoreName())
+                        .address(store.getAddress())
+                        .hotline(store.getHotline())
+                        .description(store.getDescription())
+                        .operatingHour(store.getOperatingHour())
+                        .expireAt(store.getExpireAt())
+                        .image(store.getImage())
+                        .accountName(store.getStoreAccount().getUsername())
+                        .subscriptionPlanID(store.getSubscriptionPlan().getId())
+                        .subscriptionPlanName(store.getSubscriptionPlan().getName())
+                        .subscriptionPlanPrice(store.getSubscriptionPlan().getPrice())
+                        .subscriptionTimeOfExpiration(store.getSubscriptionPlan().getTimeOfExpiration())
+                        .createdAt(store.getCreatedAt())
+                        .updateAt(store.getUpdatedAt())
+                        .build()
+        );
+
+        List<String> subscriptionPlans = storeRepository.findAllSubscriptionPlanNames();
+        long totalStores = storeRepository.countTotalStores();
+
+        return Map.of(
+                "stores", stores,
+                "subscriptionPlans", subscriptionPlans,
+                "totalStores", totalStores
+        );
     }
 
 }

@@ -100,8 +100,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     //Hieu
     @Override
-    public List<CustomerCategoryDTO> getAllCustomerCategories() {
-        List<Category> categories = categoryRepository.findAll();
+    public List<CustomerCategoryDTO> getAllCustomerCategories(String storeID) {
+        List<Category> categories = categoryRepository.findByStore_Id(storeID);
         return categories.stream().map(categoryConverter::toCategoryDTO).collect(Collectors.toList());
     }
 

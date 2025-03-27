@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -34,6 +36,20 @@ public class StoreController {
                                                   @RequestParam(value = "storeID") String storeID,
                                                   @RequestParam(value = "page", defaultValue = "0") int page,
                                                   @RequestParam(value = "size", defaultValue = "10") int size,
+                                                  @RequestParam(defaultValue = "createdAt") String sortBy,
+                                                  @RequestParam(defaultValue = "false") boolean descending) throws Exception {
+        if (zoneName == null || zoneName.isEmpty()) {
+            return zoneService.getStoreZones(zoneName, storeID, page, size, sortBy, descending);
+        }
+        return zoneService.getStoreZones(zoneName.trim(), storeID, page, size, sortBy, descending);
+    }
+
+    @PreAuthorize("@securityService.hasAccessToStore(#storeID)")
+    @GetMapping("/zoness")
+    public Page<StoreDetailZoneDTO> getStoreZoness(@RequestParam(value = "zoneName", required = false) String zoneName,
+                                                  @RequestParam(value = "storeID") String storeID,
+                                                  @RequestParam(value = "page", defaultValue = "0") int page,
+                                                  @RequestParam(value = "size", defaultValue = "100") int size,
                                                   @RequestParam(defaultValue = "createdAt") String sortBy,
                                                   @RequestParam(defaultValue = "false") boolean descending) throws Exception {
         if (zoneName == null || zoneName.isEmpty()) {
@@ -67,16 +83,6 @@ public class StoreController {
         }
     }
 
-    @DeleteMapping("/zones/{zoneID}")
-    public ResponseEntity<String> deleteZone(@PathVariable String zoneID) {
-        try {
-            zoneService.deleteZone(zoneID);
-            return ResponseEntity.ok("Xóa zone thành công");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Xóa zone không thành công");
-        }
-    }
-
     @PreAuthorize("@securityService.hasAccessToStore(#storeID)")
     @GetMapping("/products")
     public Page<StoreDetailProductDTO> getProducts(@RequestParam(value = "search", required = false) String search,
@@ -92,28 +98,61 @@ public class StoreController {
     }
 
     @PreAuthorize("@securityService.hasAccessToStore(#storeID)")
+    @GetMapping("/filtered-products")
+    public Page<StoreDetailProductDTO> getFilteredProducts(
+            @RequestParam(value = "storeID", required = false) String storeID,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "fromPrice", required = false) Double fromPrice,
+            @RequestParam(value = "toPrice", required = false) Double toPrice,
+            @RequestParam(value = "information", required = false) String information,
+            @RequestParam(value = "fromCreatedAt", required = false) LocalDate fromCreatedAt,
+            @RequestParam(value = "toCreatedAt", required = false) LocalDate toCreatedAt,
+            @RequestParam(value = "fromUpdatedAt", required = false) LocalDate fromUpdatedAt,
+            @RequestParam(value = "toUpdatedAt", required = false) LocalDate toUpdatedAt,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam(value = "descending", required = false) boolean descending
+    ) {
+        return productService.getProductsByFilter(
+                storeID, name, fromPrice, toPrice, information,
+                fromCreatedAt, toCreatedAt, fromUpdatedAt, toUpdatedAt, page, size, sortBy, descending
+        );
+    }
+
+    @PreAuthorize("@securityService.hasAccessToStore(#storeID)")
+    @GetMapping("/filtered-zones")
+    public Page<StoreDetailZoneDTO> getFilteredZones(
+            @RequestParam(value = "storeID") String storeID,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "location", required = false) String location,
+            @RequestParam(value= "productName", required = false) String productName,
+            @RequestParam(value = "fromCreatedAt", required = false) LocalDate fromCreatedAt,
+            @RequestParam(value = "toCreatedAt", required = false) LocalDate toCreatedAt,
+            @RequestParam(value = "fromUpdatedAt", required = false) LocalDate fromUpdatedAt,
+            @RequestParam(value = "toUpdatedAt", required = false) LocalDate toUpdatedAt,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam(value = "descending", required = false) boolean descending
+    ) {
+        return zoneService.getZonesByFilter(
+                storeID, name, location, productName,
+                fromCreatedAt, toCreatedAt, fromUpdatedAt, toUpdatedAt, page, size, sortBy, descending
+        );
+    }
+
+    @PreAuthorize("@securityService.hasAccessToStore(#storeID)")
     @PostMapping("/products")
     public ResponseEntity<String> createProduct(@RequestParam String storeID, @RequestBody StoreDetailProductDTO productDTO) throws Exception {
-        try {
-            productService.addProduct(storeID, productDTO);
-            return ResponseEntity.ok("Thêm sản phẩm thành công");
-        } catch (AppException appException) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(appException.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Thêm sản phẩm không thành công" + e.getMessage());
-        }
+        productService.addProduct(storeID, productDTO);
+        return ResponseEntity.ok("Thêm sản phẩm thành công");
     }
 
     @PutMapping("/products/{productID}&{storeID}")
-    public ResponseEntity<String> updateProduct(@PathVariable String storeID, @PathVariable String productID, @RequestBody StoreDetailProductDTO updatedProduct) {
-        try {
-            productService.updateProduct(storeID, productID, updatedProduct);
-            return ResponseEntity.ok("Cập nhật sản phẩm thành công");
-        } catch (AppException appException) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(appException.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cập nhật sản phẩm không thành công");
-        }
+    public ResponseEntity<String> updateProduct(@PathVariable String storeID, @PathVariable String productID, @RequestBody StoreDetailProductDTO updatedProduct) throws Exception {
+        productService.updateProduct(storeID, productID, updatedProduct);
+        return ResponseEntity.ok("Cập nhật sản phẩm thành công");
     }
 
     @DeleteMapping("/products/{productID}")

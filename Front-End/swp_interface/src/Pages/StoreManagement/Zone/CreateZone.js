@@ -9,7 +9,7 @@ const CreateZone = ({ onClose, storeID, fetchZones, onSuccess }) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    fetch(`${API.STORE_DETAIL.GET_STORE_PRODUCTS_BY_STOREID}?storeID=${storeID}`, {
+    fetch(`${API.STORE_DETAIL.GET_STORE_PRODUCTS}?storeID=${storeID}`, {
       headers: { 'Authorization': `Bearer ${token}` },
     })
       .then((response) => {
