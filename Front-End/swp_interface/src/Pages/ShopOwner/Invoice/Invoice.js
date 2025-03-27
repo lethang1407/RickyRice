@@ -341,18 +341,6 @@ const Invoice = () => {
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={4} className="filter-form-col">
-                        <Form.Item label="Trạng Thái" name="status">
-                            <Select
-                                className="filter-form-select"
-                                placeholder="Chọn trạng thái"
-                                allowClear
-                            >
-                                <Option value="paid">Đã Thanh Toán</Option>
-                                <Option value="unpaid">Nợ</Option>
-                            </Select>
-                        </Form.Item>
-                    </Col>
                 </Row>
                 <Row>
                     <Col span={24} style={{ textAlign: 'right', marginBottom: '16px' }}>

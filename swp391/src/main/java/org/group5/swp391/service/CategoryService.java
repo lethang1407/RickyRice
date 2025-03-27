@@ -20,7 +20,7 @@ public interface CategoryService {
     public List<StoreCategoryIdAndNameDTO> getAllStoreCategories();
     public Page<EmployeeProductDTO> getProductBySearch(String name, int page, int size, String sortBy, boolean descending);
     //Hieu
-    public List<CustomerCategoryDTO> getAllCustomerCategories();
+    public List<CustomerCategoryDTO> getAllCustomerCategories(String storeID);
     public StoreDetailCategoryDTO getCategoryByID(String categoryID) throws Exception;
     public List<StoreDetailCategoryDTO> getStoreDetailAllCategoriesByStoreID(String storeID);
     public Page<StoreDetailCategoryDTO> getStoreDetailCategory(String search, String storeID,int page, int size, String sortBy, boolean descending);

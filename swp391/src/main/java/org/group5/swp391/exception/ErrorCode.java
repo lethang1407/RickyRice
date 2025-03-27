@@ -27,7 +27,7 @@ public enum ErrorCode {
     INVOICE_INVALID(403,"Tổng tiền hoặc phí vận chuyển không được < 0!",HttpStatus.BAD_REQUEST),
     CANT_GET_INFO(400,"Can't get information",HttpStatus.CONFLICT),
     CANT_UPLOAD_IMAGE(400,"Can't upload image",HttpStatus.CONFLICT),
-    PRODUCT_NAME_EXISTED(400,"Product existed!",HttpStatus.CONFLICT),
+    PRODUCT_NAME_EXISTED(400,"Sản phẩm đã tồn tại!",HttpStatus.CONFLICT),
     ;
     private int code;
     private String message;

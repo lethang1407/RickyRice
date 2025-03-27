@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Table, message, Input, Button, Flex, Modal, Popconfirm } from 'antd';
-import { InfoOutlined, EditOutlined, DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Table, message, Input, Button, Flex, Modal } from 'antd';
+import { InfoOutlined, EditOutlined } from '@ant-design/icons';
 import API from '../../../Utils/API/API';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import { getDataWithToken } from '../../../Utils/FetchUtils';
@@ -9,6 +9,7 @@ import './style.css';
 import moment from 'moment';
 import CreateZone from './CreateZone';
 import UpdateZone from './UpdateZone';
+import Filter from './filter';
 
 const { Search } = Input;
 
@@ -19,8 +20,8 @@ const Zone = () => {
 
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [searchValue, setSearchValue] = useState('');
     const storeID = useParams();
+    const [params, setParams] = useState(null);
 
     const [tableParams, setTableParams] = useState({
         pagination: {
@@ -68,46 +69,15 @@ const Zone = () => {
         }, 1000);
     };
 
-    const handleDelete = (record) => {
-        const key = 'deleteProductKey';
-        messageApi.open({
-            key,
-            type: 'loading',
-            content: 'Đang xóa sản phẩm...',
-        });
-        fetch(`${API.STORE_DETAIL.DELETE_STORE_ZONE(record.id)}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` },
-        })
-            .then((response) => {
-                if (!response.ok) throw new Error('Không thể xóa sản phẩm');
-                messageApi.open({
-                    key,
-                    type: 'success',
-                    content: 'Xóa sản phẩm thành công!',
-                    duration: 2,
-                });
-                fetchZones();
-            })
-            .catch((error) => {
-                messageApi.open({
-                    key,
-                    type: 'error',
-                    content: 'Không thể xóa sản phẩm',
-                });
-            });
-    };
-
     const columns = [
-        { title: 'Tên Khu', dataIndex: 'name', key: 'name', width: '15%' },
+        { title: 'Tên Khu', dataIndex: 'name', key: 'name', width: '20%' },
         { title: 'Phân Khu', dataIndex: 'location', key: 'location', width: '10%', sorter: true },
-        { title: 'Tên Sản Phẩm', dataIndex: 'productName', key: 'productName', width: '15%' },
-        { title: 'Thông Tin Sản Phẩm', dataIndex: 'productInformation', key: 'productInformation', width: '30%' },
+        { title: 'Tên Sản Phẩm', dataIndex: 'productName', key: 'productName', width: '20%' },
         {
             title: 'Tạo Lúc',
             dataIndex: 'createdAt',
             key: 'createdAt',
-            width: '10%',
+            width: '15%',
             render: (text) => (text ? moment(text).format('HH:mm DD/MM/YYYY') : 'Chưa có thông tin'),
             sorter: true,
         },
@@ -115,7 +85,7 @@ const Zone = () => {
             title: 'Cập Nhật Lúc',
             dataIndex: 'updatedAt',
             key: 'updatedAt',
-            width: '10%',
+            width: '15%',
             render: (text) => (text ? moment(text).format('HH:mm DD/MM/YYYY') : 'Chưa có thông tin'),
             sorter: true
         },
@@ -132,6 +102,7 @@ const Zone = () => {
                             setIsInfoModalOpen(true);
                         }}
                         title="Thông tin chi tiết"
+                        style={{marginLeft: '10px', marginRight: '10px'}}
                     >
                         <InfoOutlined />
                     </Button>
@@ -144,34 +115,23 @@ const Zone = () => {
                     >
                         <EditOutlined />
                     </Button>
-                    <Popconfirm
-                        title="Xóa sản phẩm"
-                        description="Bạn có chắc chắn muốn xóa không?"
-                        icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                        onConfirm={() => handleDelete(record)}
-                    >
-                        <Button id="delete-button">
-                            <DeleteOutlined />
-                        </Button>
-                    </Popconfirm>
                 </div>
             ),
         },
     ];
 
-    const getZoneParams = (params, searchValue) => {
-        const { pagination, sortBy, descending } = params;
+    const getZoneParams = (param) => {
+        const { pagination, sortBy, descending } = param;
         let query = `storeID=${storeID.id}&page=${pagination.current - 1}&size=${pagination.pageSize}`;
         if (sortBy) query += `&sortBy=${sortBy}&descending=${descending}`;
-        if (searchValue) query += `&zoneName=${encodeURIComponent(searchValue)}`;
         return query;
     };
 
     const fetchZones = async () => {
         setLoading(true);
         try {
-            const queryParams = '?' + getZoneParams(tableParams, searchValue);
-            const response = await getDataWithToken(API.STORE_DETAIL.GET_STORE_ZONES + queryParams, token);
+            const queryParams = '?' + getZoneParams(tableParams) + `&${params}`;
+            const response = await getDataWithToken(API.STORE_DETAIL.GET_STORE_ZONES_BY_STOREID + queryParams, token);
             if (!response || !response.content) throw new Error('Dữ liệu trả về không hợp lệ');
             setData(response.content);
             setTableParams((prev) => ({
@@ -187,7 +147,7 @@ const Zone = () => {
 
     useEffect(() => {
         fetchZones();
-    }, [tableParams.pagination.current, tableParams.pagination.pageSize, tableParams.sortBy, tableParams.descending, searchValue]);
+    }, [tableParams.pagination.current, tableParams.pagination.pageSize, tableParams.sortBy, tableParams.descending, params]);
 
     const handleTableChange = (pagination, filters, sorter) => {
         setTableParams((prev) => ({
@@ -204,18 +164,7 @@ const Zone = () => {
             <Button className="btn-create" title="Thêm zone mới" onClick={() => setIsCreateModalOpen(true)}>
                 Thêm mới
             </Button>
-            <Search
-                placeholder="Nhập tên khu..."
-                value={searchValue}
-                onChange={(e) => {
-                    setSearchValue(e.target.value);
-                    setTableParams((prev) => ({
-                        ...prev,
-                        pagination: { ...prev.pagination, current: 1 },
-                    }));
-                }}
-                enterButton
-            />
+            <Filter params={params} setParams={setParams}/>
             <Table
                 columns={columns}
                 rowKey="id"
@@ -242,6 +191,14 @@ const Zone = () => {
                                     <tr>
                                         <td><strong>Phân Khu:</strong></td>
                                         <td>{selectedZone.location}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Tên Sản Phẩm:</strong></td>
+                                        <td>{selectedZone.productName}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Thông Tin Sản Phẩm:</strong></td>
+                                        <td>{selectedZone.productInformation}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Tạo Bởi:</strong></td>
