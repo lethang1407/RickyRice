@@ -11,7 +11,8 @@ import org.group5.swp391.exception.AppException;
 import org.group5.swp391.exception.ErrorCode;
 import org.group5.swp391.repository.AccountRepository;
 import org.group5.swp391.service.AccountService;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -57,7 +58,6 @@ public class AccountServiceImpl implements AccountService {
         account.setIsActive(request.getIsActive());
         accountRepository.save(account);
     }
-
 
     // lấy tài khoản theo ID
     public AccountResponse getAccountsByID(String accountID) {
@@ -152,4 +152,28 @@ public class AccountServiceImpl implements AccountService {
         }
         return false;
     }
+
+    // lấy danh sách tài khoản store_owner (phân trang, tìm kiếm, lọc)
+    public Page<AccountResponse> getStoreOwner(Boolean isActive, Boolean gender, String search, Pageable pageable) {
+        return accountRepository.searchStoreOwners(isActive, gender, search, pageable)
+                .map(account -> new AccountResponse(
+                        account.getId(),
+                        account.getUsername(),
+                        account.getName(),
+                        account.getEmail(),
+                        account.getPhoneNumber(),
+                        account.getAvatar(),
+                        account.getCreatedAt(),
+                        account.getUpdatedAt(),
+                        account.getIsActive(),
+                        account.getGender(),
+                        account.getBirthDate()
+                ));
+    }
+
+    // lấy tổng số tài khoản store_owner
+    public Long getTotalStoreOwners() {
+        return accountRepository.countStoreOwners();
+    }
+
 }

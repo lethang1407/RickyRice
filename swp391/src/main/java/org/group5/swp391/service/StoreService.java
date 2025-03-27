@@ -31,4 +31,7 @@ public interface StoreService {
     List<Map<String, Object>> getRequestCreateStores(String username);
 
     StoreResponse getStoreById(String storeID, String username);
+
+    Map<String, Object> getStoreStatistics(String keyword, String subscriptionPlanName, String sortBy, String sortDirection, int page, int size);
+
 }

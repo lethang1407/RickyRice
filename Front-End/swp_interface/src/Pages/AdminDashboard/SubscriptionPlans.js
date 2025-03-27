@@ -1,62 +1,82 @@
-import React, { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import SubscriptionPlanModal from "./components/SubscriptionPlanModal";
-// import "./style.css";
-import axios from "axios";
-import API from "../../Utils/API/API.js";
+import React, { useEffect, useState, useCallback } from "react";
+import {
+  Table,
+  Input,
+  Row,
+  Col,
+  Pagination,
+  Select,
+  Button,
+  Alert,
+} from "antd";
 import { getToken } from "../../Utils/UserInfoUtils";
+import axios from "axios";
+import { debounce } from "lodash";
+import API from "../../Utils/API/API.js";
+import SubscriptionPlanModal from "./components/SubscriptionPlanModal";
+
+const { Option } = Select;
 
 const SubscriptionPlan = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    price: "",
-    timeOfExpiration: "",
-  });
   const [plans, setPlans] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [editPlan, setEditPlan] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [recordsPerPage, setRecordsPerPage] = useState(5);
+  const [totalStores, setTotalStores] = useState(0);
+  const [sortBy, setSortBy] = useState("price");
+  const [sortDirection, setSortDirection] = useState("desc");
+  const [searchName, setSearchName] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingPlan, setEditingPlan] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const token = getToken();
 
-  useEffect(() => {
-    const fetchPlans = async () => {
-      try {
-        const response = await axios.get(API.ADMIN.VIEW_ALL_SUBSCRIPTION_PLAN, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setPlans(Array.isArray(response.data.data) ? response.data.data : []);
-      } catch (error) {
-        console.error("Error fetching subscription plans:", error);
-        setPlans([]);
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${API.ADMIN.VIEW_ALL_SUBSCRIPTION_PLAN}?page=${
+          currentPage - 1
+        }&size=${recordsPerPage}&name=${searchName}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (response.data && response.data.data) {
+        const data = response.data.data.plans;
+        setPlans(data.content);
+        setTotalStores(data.totalElements);
       }
-    };
-    fetchPlans();
-  }, []);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, recordsPerPage, sortBy, sortDirection, searchName, token]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    if (sorter.order) {
+      setSortBy(sorter.columnKey);
+      setSortDirection(sorter.order === "ascend" ? "asc" : "desc");
+    }
   };
 
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
-    if (
-      !formData.name ||
-      !formData.description ||
-      !formData.price ||
-      !formData.timeOfExpiration
-    ) {
-      alert("Tất cả các truờng là bắt buộc!");
-      return;
-    }
+  const debouncedSearch = useCallback(
+    debounce((value) => {
+      setSearchName(value);
+      setCurrentPage(1);
+    }, 500),
+    []
+  );
+
+  const handleCreate = async (values) => {
     try {
       const response = await axios.post(
         API.ADMIN.CREATE_SUBSCRIPTION_PLAN,
-        formData,
+        values,
         {
           headers: {
             "Content-Type": "application/json",
@@ -64,35 +84,28 @@ const SubscriptionPlan = () => {
           },
         }
       );
-      setFormData({
-        name: "",
-        description: "",
-        price: "",
-        timeOfExpiration: "",
-      });
-      setPlans((prevPlans) => [...prevPlans, response.data.data]);
-      setShowModal(false);
-      setSuccessMessage("Gói đăng kí mới được tạo thành công!");
-      setTimeout(() => setSuccessMessage(""), 1000);
+      if (response.status === 201 || response.status === 200) {
+        setSuccessMessage("Tạo gói đăng ký thành công!");
+        setIsModalOpen(false);
+        fetchData();
+        setTimeout(() => setSuccessMessage(""), 1500);
+      }
     } catch (error) {
-      console.error("Lỗi tạo mới gói đăng kí:", error);
-      alert("Tạo mới gói đăng kí thất bại.");
+      setSuccessMessage("Lỗi khi tạo gói đăng ký!");
+      setTimeout(() => setSuccessMessage(""), 1500);
     }
   };
 
   const handleEdit = (plan) => {
-    setEditMode(true);
-    setEditPlan(plan);
-    setFormData({ ...plan });
-    setShowModal(true);
+    setEditingPlan(plan);
+    setIsEditModalOpen(true);
   };
 
-  const handleUpdate = async (e) => {
-    if (e) e.preventDefault();
+  const handleUpdate = async (values) => {
     try {
-      await axios.put(
-        API.ADMIN.UPDATE_SUBSCRIPTION_PLAN(editPlan.subscriptionPlanID),
-        formData,
+      const response = await axios.put(
+        API.ADMIN.UPDATE_SUBSCRIPTION_PLAN(editingPlan.subscriptionPlanID),
+        values,
         {
           headers: {
             "Content-Type": "application/json",
@@ -100,98 +113,125 @@ const SubscriptionPlan = () => {
           },
         }
       );
-      setPlans((prevPlans) =>
-        prevPlans.map((p) =>
-          p.subscriptionPlanID === editPlan.subscriptionPlanID
-            ? { ...p, ...formData }
-            : p
-        )
-      );
-      setShowModal(false);
-      setEditMode(false);
-      setEditPlan(null);
-      setSuccessMessage("Cập nhật thành công!");
-      setTimeout(() => setSuccessMessage(""), 1000);
+      if (response.status === 200) {
+        setSuccessMessage("Cập nhật thành công!");
+        setIsEditModalOpen(false);
+        fetchData();
+        setTimeout(() => setSuccessMessage(""), 2000);
+      }
     } catch (error) {
-      console.error("Lỗi cập nhật gói đăng kí:", error);
-      alert("Cập nhật thất bại.");
+      setSuccessMessage("Lỗi khi cập nhật gói!");
+      setTimeout(() => setSuccessMessage(""), 2000);
     }
   };
 
+  const columns = [
+    { title: "Tên", dataIndex: "name", key: "name", width: 150 },
+    {
+      title: "Mô tả",
+      dataIndex: "description",
+      key: "description",
+      width: 450,
+    },
+    {
+      title: "Giá tiền",
+      dataIndex: "price",
+      key: "price",
+      sorter: true,
+      width: 150,
+    },
+    {
+      title: "Thời hạn sử dụng (tháng)",
+      dataIndex: "timeOfExpiration",
+      key: "timeOfExpiration",
+      width: 150,
+      align: "center",
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "isActive",
+      key: "isActive",
+      width: 120,
+      render: (isActive) => (isActive ? "Hiển thị" : "Ẩn"),
+    },
+    {
+      title: "Hành động",
+      key: "actions",
+      width: 120,
+      render: (_, record) => (
+        <Button type="link" onClick={() => handleEdit(record)}>
+          Sửa
+        </Button>
+      ),
+    },
+  ];
+
   return (
     <div>
-      <div>
-        <div className="container mt-5">
-          <h2 className="mb-4 text-center">Dịch vụ đăng kí</h2>
-          {successMessage && (
-            <div className="alert alert-success">{successMessage}</div>
-          )}
-          <button
-            className="btn btn-primary mb-3"
-            onClick={() => {
-              setShowModal(true);
-              setEditMode(false);
-              setFormData({
-                name: "",
-                description: "",
-                price: "",
-                timeOfExpiration: "",
-              });
+      {successMessage && (
+        <Alert message={successMessage} type="success" showIcon />
+      )}
+      <br />
+      <h2>Subscription Plans</h2>
+      <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
+        <Col>
+          <Input
+            placeholder="Tìm kiếm theo tên"
+            onChange={(e) => debouncedSearch(e.target.value)}
+            style={{ width: "800px" }}
+          />
+        </Col>
+        <Col>
+          <Button type="primary" onClick={() => setIsModalOpen(true)}>
+            Tạo mới
+          </Button>
+        </Col>
+      </Row>
+      <Table
+        rowKey="subscriptionPlanID"
+        columns={columns}
+        dataSource={plans}
+        loading={loading}
+        pagination={false}
+        onChange={handleTableChange}
+      />
+      <Row justify="space-between" align="middle" style={{ marginTop: 16 }}>
+        <Col>
+          <Pagination
+            current={currentPage}
+            total={totalStores}
+            pageSize={recordsPerPage}
+            onChange={(page) => setCurrentPage(page)}
+            showSizeChanger={false}
+          />
+        </Col>
+        <Col>
+          <Select
+            value={recordsPerPage}
+            onChange={(value) => {
+              setRecordsPerPage(value);
+              setCurrentPage(1);
             }}
           >
-            Tạo mới gói đăng kí
-          </button>
-          <SubscriptionPlanModal
-            show={showModal}
-            onClose={() => setShowModal(false)}
-            formData={formData}
-            handleChange={handleChange}
-            handleSubmit={(e) => (editMode ? handleUpdate(e) : handleSubmit(e))}
-            editMode={editMode}
-          />
-          <div className="mt-4">
-            <table className="table table-bordered">
-              <thead className="table-dark">
-                <tr>
-                  <th>#</th>
-                  <th>Tên</th>
-                  <th>Mô tả</th>
-                  <th>Giá (VNĐ)</th>
-                  <th>Thời hạn (Tháng)</th>
-                  <th>Hành động</th>
-                </tr>
-              </thead>
-              <tbody>
-                {plans.length > 0 ? (
-                  plans.map((plan, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{plan.name}</td>
-                      <td>{plan.description}</td>
-                      <td>{plan.price}</td>
-                      <td>{plan.timeOfExpiration}</td>
-                      <td>
-                        <button
-                          className="btn btn-warning btn-sm"
-                          onClick={() => handleEdit(plan)}
-                        >
-                          Chỉnh sửa
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="text-center">
-                      Không có gói đăng kí.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+            <Option value={5}>5 bản ghi</Option>
+            <Option value={10}>10 bản ghi</Option>
+            <Option value={20}>20 bản ghi</Option>
+          </Select>
+        </Col>
+      </Row>
+      <SubscriptionPlanModal
+        visible={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        onFinish={handleCreate}
+        title="Tạo Gói Đăng Ký Mới"
+      />
+      <SubscriptionPlanModal
+        visible={isEditModalOpen}
+        onCancel={() => setIsEditModalOpen(false)}
+        onFinish={handleUpdate}
+        title="Cập nhật Gói Đăng Ký"
+        initialValues={editingPlan}
+      />
     </div>
   );
 };

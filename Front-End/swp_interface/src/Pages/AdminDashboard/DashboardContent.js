@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // import { Card, Row, Col } from "react-bootstrap";
-import { Card, Row, Col, Pagination } from "antd";
+import { Card, Row, Col, } from "antd";
 import axios from "axios";
 import RevenueStatistics from "./RevenueStatistics";
 import API from "../../Utils/API/API.js";
@@ -24,7 +24,7 @@ const DashboardContent = () => {
           },
         });
         if (response.data.code === 200) {
-          setTotalAccounts(response.data.data.length);
+          setTotalAccounts(response.data.data.totalAccount);
         }
       } catch (err) {
         console.error("API Error:", err);
@@ -42,7 +42,7 @@ const DashboardContent = () => {
           },
         });
         if (response.data.code === 200) {
-          setTotalStores(response.data.data.length);
+          setTotalStores(response.data.data.totalStores);
         }
       } catch (err) {
         console.error("API Error:", err);
@@ -60,7 +60,7 @@ const DashboardContent = () => {
           },
         });
         if (response.data.code === 200) {
-          setTotalSubscriptions(response.data.data.length);
+          setTotalSubscriptions(response.data.data.totalSubscription);
         }
       } catch (err) {
         console.error("API Error:", err);

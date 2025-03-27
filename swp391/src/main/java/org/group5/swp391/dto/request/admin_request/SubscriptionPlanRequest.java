@@ -22,4 +22,6 @@ public class SubscriptionPlanRequest {
 
     @Min(value = 1, message = "The expiry date must be at least 1 month")
     Integer timeOfExpiration;
+
+    Boolean isActive;
 }

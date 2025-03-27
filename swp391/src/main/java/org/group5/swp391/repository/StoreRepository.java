@@ -35,4 +35,28 @@ public interface StoreRepository extends JpaRepository<Store, String> {
                 WHERE s.storeAccount.username = :userName
             """)
     List<Store> findByUserName(@Param("userName") String userName);
+
+    // Lấy danh sách tất cả cửa hàng của hệ thống (phân trang, tìm kiếm sắp xếp)
+    @Query("""
+                SELECT s FROM Store s
+                LEFT JOIN FETCH s.storeAccount
+                LEFT JOIN FETCH s.subscriptionPlan
+                WHERE (:keyword IS NULL OR 
+                       LOWER(s.storeName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
+                       LOWER(s.storeAccount.username) LIKE LOWER(CONCAT('%', :keyword, '%')))
+                AND (:subscriptionPlanName IS NULL OR :subscriptionPlanName = '' OR s.subscriptionPlan.name = :subscriptionPlanName)
+            """)
+    Page<Store> searchStores(
+            @Param("keyword") String keyword,
+            @Param("subscriptionPlanName") String subscriptionPlanName,
+            Pageable pageable
+    );
+
+    // Danh sách các gói đăng kí của cửa hàng
+    @Query("SELECT DISTINCT s.subscriptionPlan.name FROM Store s WHERE s.subscriptionPlan IS NOT NULL")
+    List<String> findAllSubscriptionPlanNames();
+
+    // Tổng số cửa hàng
+    @Query("SELECT COUNT(s) FROM Store s")
+    long countTotalStores();
 }

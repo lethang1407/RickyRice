@@ -62,8 +62,6 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
     setSortOrder(sortBy === key && sortOrder === "asc" ? "desc" : "asc");
   };
 
-  const totalPages = Math.ceil(totalRecords / recordsPerPage);
-
   return (
     <div style={{ minHeight: "500px" }}>
       <h3 className="mt-5">Thống kê giao dịch</h3>
@@ -125,6 +123,7 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
           <Table
             pagination={false} 
             dataSource={revenueData}
+            bordered
             columns={[
               {
                 title: "Gói đăng ký",

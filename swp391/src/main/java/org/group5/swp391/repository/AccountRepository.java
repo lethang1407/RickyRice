@@ -1,9 +1,12 @@
 package org.group5.swp391.repository;
 
 import org.group5.swp391.entity.Account;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -34,4 +37,29 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     // Tìm tài khoản theo Account ID
     Optional<Account> findById(String accountID);
+
+    // Lấy danh sách tài khoản store_owner (phân trang, tìm kiếm, lọc)
+    @Query("""
+                SELECT a FROM Account a 
+                WHERE a.role.code = 'STORE_OWNER' 
+                AND (:isActive IS NULL OR a.isActive = :isActive)
+                AND (:gender IS NULL OR a.gender = :gender)
+                AND (
+                    :search IS NULL OR 
+                    LOWER(a.name) LIKE LOWER(CONCAT('%', :search, '%')) OR 
+                    LOWER(a.email) LIKE LOWER(CONCAT('%', :search, '%')) OR 
+                    LOWER(a.phoneNumber) LIKE LOWER(CONCAT('%', :search, '%'))
+                )
+            """)
+    Page<Account> searchStoreOwners(
+            @Param("isActive") Boolean isActive,
+            @Param("gender") Boolean gender,
+            @Param("search") String search,
+            Pageable pageable
+    );
+
+    // Lấy số lượng tài khoản store_owner
+    @Query("SELECT COUNT(a) FROM Account a WHERE a.role.code = 'STORE_OWNER'")
+    Long countStoreOwners();
+
 }

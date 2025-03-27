@@ -19,9 +19,6 @@ import "./style.scss";
 import CustomFooter from "../../Footer";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import NavbarAccount from "../../../Pages/Account/NavbarAccount";
-import { Button, Layout, Menu, theme } from 'antd';
-import './style.scss';
-import CustomFooter from '../../Footer';
 const { Header, Sider, Content } = Layout;
 
 const StoreOwnerLayout = () => {
