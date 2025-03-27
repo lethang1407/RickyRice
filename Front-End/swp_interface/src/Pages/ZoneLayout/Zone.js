@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import logo from '../../assets/img/logo-no-background.png'
-import { Table, Input } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import logo from "../../assets/img/logo-no-background.png";
+import { Table, Input } from "antd";
+import { useNavigate, Link } from "react-router-dom";
 import { Pagination } from "antd";
 import debounce from "lodash.debounce";
 import moment from "moment";
@@ -268,13 +268,28 @@ const ZoneList = () => {
           collapsed={collapsed}
         >
           <div className="demo-logo-vertical" />
-          <div style={{ height: "80px" }}>
-            <img
-              style={{ width: "90px", marginRight: "100px" }}
-              src={logo}
-              alt="logo"
-              class="header__navbar__img"
-            />
+          <div
+            style={{
+              height: "80px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Link to="/">
+              <img
+                src={logo}
+                alt="Logo"
+                style={{
+                  height: "60px",
+                  width: "auto",
+                  maxWidth: collapsed ? "40px" : "120px",
+                  transition: "max-width 0.3s ease",
+                  cursor: "pointer",
+                  visibility: collapsed ? "hidden" : "visible",
+                }}
+              />
+            </Link>
           </div>
           <Menu theme="light" mode="inline" defaultSelectedKeys={["2"]}>
             <Menu.Item
