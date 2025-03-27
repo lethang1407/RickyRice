@@ -44,6 +44,8 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     int countByStoreIdIn(List<String> storeIds);
 
+    Boolean existsByNameAndStoreIn(String name, List<Store> stores);
+
     //minh
     @Query("SELECT p FROM Product p " +
             "WHERE (:name IS NULL OR LOWER(p.name) LIKE %:name%) " +

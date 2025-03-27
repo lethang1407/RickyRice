@@ -175,17 +175,8 @@ public class StoreOwnerController {
     public ResponseEntity<String> updateProduct(
             @PathVariable String id,
             @RequestBody StoreProductDetailDTO product) {
-        try {
-            if (!id.equals(product.getProductID())) {
-                return ResponseEntity.badRequest().body("Cập nhật sản phẩm thất bại");
-            }
-            productService.updateStoreProduct(id, product);
-            return ResponseEntity.ok("Cập nhật sản phẩm thành công");
-
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cập nhật sản phẩm thất bại");
-        }
+        productService.updateStoreProduct(id, product);
+        return ResponseEntity.ok("Cập nhật sản phẩm thành công");
     }
 
 
