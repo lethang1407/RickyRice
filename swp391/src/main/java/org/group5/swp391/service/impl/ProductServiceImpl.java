@@ -403,21 +403,19 @@ public class ProductServiceImpl implements ProductService {
 
             updatingProduct.setProductAttributes(attributes);
         }
-        if(storeDetailProductDTO.getZoneList() != null) {
-            List<Zone> zones = storeDetailProductDTO.getZoneList().stream()
-                    .map(dto -> {
-                        try {
-                            Zone zone = zoneRepository.findById(dto)
-                                    .orElseThrow(() -> new Exception("Zone not found for ID: " + dto));
-                            return new Zone(zone.getName(),
-                                    zone.getLocation(),
-                                    productRepository.findById(productID).orElseThrow(() -> new Exception("không tìm thấy product")),
-                                    storeRepository.findById(storeID).orElseThrow(() -> new Exception("Không tìm thấy store")));
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }).collect(Collectors.toList());
-            updatingProduct.setZones(zones);
+        List<Zone> oldZones = new ArrayList<>(updatingProduct.getZones());
+        updatingProduct.getZones().clear();
+        for (String zoneId : storeDetailProductDTO.getZoneList()) {
+            Zone zone = zoneRepository.findById(zoneId).orElse(new Zone());
+            zone.setName(zone.getName());
+            zone.setProduct(updatingProduct);
+            updatingProduct.getZones().add(zone);
+        }
+        for (Zone oldZone : oldZones) {
+            if (!updatingProduct.getZones().contains(oldZone)) {
+                oldZone.setProduct(null);
+                zoneRepository.save(oldZone);
+            }
         }
         productRepository.save(updatingProduct);
     }

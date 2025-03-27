@@ -1,4 +1,4 @@
-import { Table, Button, Image, Modal } from "antd";
+import { Table, Button, Image, Modal, notification } from "antd";
 import dayjs from 'dayjs';
 import noimg from '../../../assets/img/notavailable.jpg';
 import { useEffect, useState } from 'react';
@@ -10,8 +10,12 @@ import Detail from "./detail";
 import Create from "./Create";
 import Update from "./update";
 import CreateCustomer from "./CreateCustomer";
+import { useWebSocket } from "../../../Utils/Websocket/WebsocketContextProvider";
+import { openNotification } from "../../../Utils/AntdNotification";
 
 function CustomerDebt(){
+  const { messages } = useWebSocket();
+  const [api, contextHolder] = notification.useNotification();
   const token = getToken();
   const [data, setData] = useState(null);
   const [customer, setCustomer] = useState(null);
@@ -32,6 +36,12 @@ function CustomerDebt(){
     showSizeChanger: true,
     pageSizeOptions: ['5', '10', '20']
   });
+
+  useEffect(() => {
+      if (messages) {
+        openNotification(api, messages.message);
+      }
+    }, [messages]);
 
   const getData = async () => {
     const response = await getDataWithToken(`http://localhost:9999/debt/customer-debt?pageNo=${pagination.current ? pagination.current : 1}&pageSize=${pagination.pageSize ? pagination.pageSize : 10}&${params ? params : ''}&sortBy=${sorter ? sorter : ''}`, token);
@@ -78,7 +88,7 @@ function CustomerDebt(){
     getData();
     getStore();
     getCustomer();
-  },[params,pagination.current, pagination.pageSize, sorter, create, setCreate, updateId, setUpdate, setUpdateId, createCustomer, setCreateCustomer])
+  },[params,pagination.current, pagination.pageSize, sorter, create, setCreate, updateId, setUpdate, setUpdateId, createCustomer, setCreateCustomer, messages])
 
   const columns = [
     {
@@ -153,6 +163,7 @@ function CustomerDebt(){
 
   return (
     <>
+      {contextHolder}
       <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'10px'}}>
         <h2>Danh sách người nợ</h2>
         <Button onClick={() => setCreateCustomer(true)} style={{marginRight:'20px'}} type="primary">

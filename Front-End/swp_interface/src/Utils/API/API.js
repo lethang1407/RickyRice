@@ -82,6 +82,7 @@ const API = {
   },
   STORE_DETAIL: {
     GET_STORE_ZONES: `${API_BASE_URL}/store-detail/zones`,
+    GET_STORE_ZONESS: `${API_BASE_URL}/store-detail/zoness`,
     GET_STORE_ZONES_BY_STOREID: `${API_BASE_URL}/store-detail/filtered-zones`,
     UPDATE_STORE_ZONE: (id) => `${API_BASE_URL}/store-detail/zones/${id}`,
     GET_ZONE_ID: `${API_BASE_URL}/store-detail/get-zone`,
