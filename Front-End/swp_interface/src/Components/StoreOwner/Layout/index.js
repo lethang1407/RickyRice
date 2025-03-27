@@ -150,7 +150,7 @@ const StoreOwnerLayout = () => {
                         to="/store-owner/statistic/data"
                         style={{ textDecoration: "none" }}
                       >
-                          Dữ liệu
+                        Dữ liệu
                       </Link>
                     ),
                   },
@@ -181,7 +181,6 @@ const StoreOwnerLayout = () => {
               alignItems: "center",
             }}
           >
-            <div>
             <Button
               type="text"
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}

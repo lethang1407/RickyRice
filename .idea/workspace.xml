@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1eec8c2e-66ba-4a78-9a0d-e4163162dcbd" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Front-End/swp_interface/src/Components/StoreOwner/Layout/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front-End/swp_interface/src/Components/StoreOwner/Layout/index.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;chienht2004&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Regera24/SP25_SWP391_Group5_SE1889VJ.git&quot;,
+    &quot;accountId&quot;: &quot;61e027fa-74a4-4160-9d72-3eca16845859&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2uisbM3Rp0HBBnAPM5mECPCqIqX" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.Swp391Application.executor": "Run",
+    "git-widget-placeholder": "HongChien",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Lenovo/Documents/IntelijiProject/HSF/Main_SWP/swp391",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fdfe4dae3a2d-intellij.indexing.shared.core-IU-243.22562.145" />
+        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-IU-243.22562.145" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1eec8c2e-66ba-4a78-9a0d-e4163162dcbd" name="Changes" comment="" />
+      <created>1742742800027</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1742742800027</updated>
+      <workItem from="1742742801366" duration="5690000" />
+      <workItem from="1742756210153" duration="7773000" />
+      <workItem from="1742790182383" duration="3829000" />
+      <workItem from="1742803921911" duration="2845000" />
+      <workItem from="1742866906452" duration="3468000" />
+      <workItem from="1742882847018" duration="10879000" />
+      <workItem from="1742900670618" duration="10973000" />
+      <workItem from="1742913323239" duration="3570000" />
+      <workItem from="1742919107296" duration="2582000" />
+      <workItem from="1742949627905" duration="32000" />
+      <workItem from="1742949675256" duration="14000" />
+      <workItem from="1742958804186" duration="1327000" />
+      <workItem from="1742978423124" duration="12826000" />
+      <workItem from="1742998877211" duration="142000" />
+      <workItem from="1743000893023" duration="3301000" />
+      <workItem from="1743044845961" duration="6364000" />
+      <workItem from="1743071374013" duration="168000" />
+      <workItem from="1743085577791" duration="11692000" />
+      <workItem from="1743097561520" duration="37000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/EmployeeService.java</url>
+          <line>16</line>
+          <properties class="org.group5.swp391.service.EmployeeService" method="updateStoreEmployeeImage">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

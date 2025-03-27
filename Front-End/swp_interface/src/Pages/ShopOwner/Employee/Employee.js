@@ -106,6 +106,7 @@ const Employee = () => {
             render: (storeAccount) => (
                 <>
                     <div><strong>Tên Đăng Nhập:</strong> {storeAccount?.username || 'N/A'}</div>
+                    <div><strong>SĐT:</strong> {storeAccount?.phoneNumber || 'N/A'}</div>
                 </>
             ),
             width: '25%',
@@ -174,7 +175,7 @@ const Employee = () => {
             );
 
             const response = await getDataWithToken(`${API.STORE_OWNER.GET_STORE_EMPLOYEES}?${queryParams}`, token);
-
+            console.log(response);
             const employees = response?.content || response?.data?.content || (Array.isArray(response) ? response : []);
             const total = response?.totalElements ?? response?.data?.totalElements ?? 0;
 
@@ -354,8 +355,8 @@ const Employee = () => {
                         <Form.Item label="Giới Tính" name="gender">
                             <Select placeholder="Chọn giới tính" allowClear className="filter-form-select">
                                 <Option value="all">Tất cả</Option>
-                                <Option value="true">Nam</Option>
-                                <Option value="false">Nữ</Option>
+                                <Option value="Male">Nam</Option>
+                                <Option value="Female">Nữ</Option>
                             </Select>
                         </Form.Item>
                     </Col>
