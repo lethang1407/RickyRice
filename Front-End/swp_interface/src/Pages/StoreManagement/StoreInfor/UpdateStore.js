@@ -36,7 +36,7 @@ const UpdateStore = () => {
         },
       })
       .then((res) => {
-        console.log(res)
+        console.log(res);
         if (res.status === 200 && res.data.data) {
           const storeData = res.data.data; // API trả về object store trong key 'data'
           setOriginalStoreData(storeData);
@@ -235,7 +235,13 @@ const UpdateStore = () => {
         <Form.Item
           name="hotline"
           label="Điện thoại liên hệ"
-          rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
+          rules={[
+            { required: true, message: "Vui lòng nhập số điện thoại!" },
+            {
+              pattern: /^0\d{9}$/,
+              message: "Số điện thoại không đúng. Vui lòng nhập lại!",
+            },
+          ]}
         >
           <Input />
         </Form.Item>

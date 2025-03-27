@@ -20,7 +20,6 @@ import {
   BellOutlined,
   UserOutlined,
   LogoutOutlined,
-  CheckOutlined,
 } from "@ant-design/icons";
 
 const NavbarAccount = () => {
