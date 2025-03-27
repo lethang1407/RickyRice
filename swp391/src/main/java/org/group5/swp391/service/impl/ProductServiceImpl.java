@@ -94,6 +94,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     public StoreProductDetailDTO updateStoreProduct(String productID, StoreProductDetailDTO dto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+        String username = authentication.getName();
+        List<Store> stores = storeRepository.findByUserName(username);
+        boolean checkExist = productRepository.existsByNameAndStoreIn(dto.getName(), stores);
+        if(checkExist){
+            throw new AppException(ErrorCode.PRODUCT_NAME_EXISTED);
+        }
         Product product = checkProductOfUser(productID);
         product.setName(dto.getName());
         product.setPrice(dto.getPrice());
@@ -101,7 +111,7 @@ public class ProductServiceImpl implements ProductService {
         product.setQuantity(dto.getQuantity());
         product.setProductImage(dto.getProductImage());
         Category category = categoryRepository.findById(dto.getCategory().getId())
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy danh mục với ID: " + dto.getCategory().getId()));
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
         product.setCategory(category);
         List<ProductAttribute> attributes = productAttributeRepository.findAllById(
                 dto.getAttributes().stream()

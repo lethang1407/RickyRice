@@ -78,6 +78,13 @@ const Employee_Customer = () => {
             >
               Hóa Đơn
             </Menu.Item>
+            <Menu.Item
+              key="5"
+              icon={<SolutionOutlined />}
+              onClick={() => handleNavigation('/employee/customer-debt')}
+            >
+              Quản Lí Nợ
+            </Menu.Item>
           </Menu>
         </Sider>
         <Layout>

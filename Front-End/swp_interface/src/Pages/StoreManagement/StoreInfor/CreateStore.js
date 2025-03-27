@@ -13,9 +13,9 @@ const layout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
 };
-const token = getToken();
 
 const CreateStore = () => {
+  const token = getToken();
   const { transactionNo } = useParams();
   const navigate = useNavigate();
   const [imageUrl, setImageUrl] = useState(null);
@@ -95,6 +95,22 @@ const CreateStore = () => {
           content: "Tạo cửa hàng thành công!",
           duration: 3,
         });
+
+        const res = await axios.post(API.AUTH.REFRESH, {token: token},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if(res.data.data.success){
+          if(localStorage.getItem('token')!=null){
+            localStorage.setItem('token', res.data.data.token)
+          }else if(sessionStorage.getItem('token')!=null){
+            sessionStorage.setItem('token', res.data.data.token)
+          }
+        }
 
         setTimeout(() => {
           navigate("/store-owner/store");

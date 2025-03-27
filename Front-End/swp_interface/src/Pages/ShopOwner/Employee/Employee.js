@@ -51,13 +51,6 @@ const Employee = () => {
             align: 'center'
         },
         {
-            title: 'Mã Nhân Viên',
-            dataIndex: 'employeeID',
-            key: 'employeeID',
-            width: '10%',
-            align: 'center'
-        },
-        {
             title: 'Thông Tin Nhân Viên',
             key: 'employeeDetails',
             render: (_, record) => (
@@ -161,6 +154,8 @@ const Employee = () => {
             );
 
             const response = await getDataWithToken(`${API.STORE_OWNER.GET_STORE_EMPLOYEES}?${queryParams}`, token);
+            console.log(response);
+            
             if (Array.isArray(response.content)) {
                 setData(response.content);
             } else {
@@ -286,22 +281,17 @@ const Employee = () => {
                 onValuesChange={handleInputChange}
             >
                 <Row gutter={16} className="filter-form-row">
-                    <Col span={4} className="filter-form-col">
-                        <Form.Item label="Mã Nhân Viên" name="employeeID">
-                            <Input placeholder="Nhập mã nhân viên" className="filter-form-input" />
-                        </Form.Item>
-                    </Col>
-                    <Col span={4} className="filter-form-col">
+                    <Col span={5} className="filter-form-col">
                         <Form.Item label="Tên" name="name">
                             <Input placeholder="Nhập tên" className="filter-form-input" />
                         </Form.Item>
                     </Col>
-                    <Col span={4} className="filter-form-col">
+                    <Col span={5} className="filter-form-col">
                         <Form.Item label="Email" name="email">
                             <Input placeholder="Nhập email" className="filter-form-input" />
                         </Form.Item>
                     </Col>
-                    <Col span={4} className="filter-form-col">
+                    <Col span={5} className="filter-form-col">
                         <Form.Item label="Số Điện Thoại" name="phoneNumber">
                             <Input placeholder="Nhập số điện thoại" className="filter-form-input" />
                         </Form.Item>

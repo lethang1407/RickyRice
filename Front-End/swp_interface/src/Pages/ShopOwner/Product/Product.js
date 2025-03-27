@@ -55,13 +55,6 @@ const Product = () => {
             align: 'center'
         },
         {
-            title: 'Mã Sản Phẩm',
-            dataIndex: 'productID',
-            key: 'productID',
-            width: '10%',
-            align: 'center'
-        },
-        {
             title: 'Tên',
             dataIndex: 'name',
             key: 'name',
@@ -302,12 +295,7 @@ const Product = () => {
                 onValuesChange={handleInputChange}
             >
                 <Row gutter={16} className="filter-form-row">
-                    <Col span={3} className="filter-form-col">
-                        <Form.Item label="Mã Sản Phẩm" name="productID">
-                            <Input placeholder="Nhập mã sản phẩm" className="filter-form-input" />
-                        </Form.Item>
-                    </Col>
-                    <Col span={3} className="filter-form-col">
+                    <Col span={4} className="filter-form-col">
                         <Form.Item label="Tên" name="name">
                             <Input placeholder="Nhập tên" className="filter-form-input" />
                         </Form.Item>

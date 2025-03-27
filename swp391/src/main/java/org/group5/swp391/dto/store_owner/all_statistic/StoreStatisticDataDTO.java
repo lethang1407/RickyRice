@@ -16,5 +16,6 @@ public class StoreStatisticDataDTO {
     int totalTransactions;
     double totalExport;
     double totalImport;
-    double totalDebt;
+    double totalDebtOfKH;
+    double totalDebtOfCH;
 }
