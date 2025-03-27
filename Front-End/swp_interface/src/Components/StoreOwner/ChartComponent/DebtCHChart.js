@@ -13,27 +13,27 @@ import './style.scss';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const CHART_COLORS = {
-    'Import': { backgroundColor: 'rgba(255, 99, 132, 0.5)', borderColor: 'rgb(255, 99, 132)' },
-    'Export': { backgroundColor: 'rgba(53, 162, 235, 0.5)', borderColor: 'rgb(53, 162, 235)' }
+    'Cửa hàng Trả': { backgroundColor: 'rgba(144, 238, 144, 0.5)', borderColor: 'rgb(144, 238, 144)' },
+    'Cửa hàng Vay': { backgroundColor: 'rgba(255, 215, 0, 0.5)', borderColor: 'rgb(255, 215, 0)' }
 };
 const DEFAULT_COLOR = { backgroundColor: 'rgba(153, 102, 255, 0.5)', borderColor: 'rgb(153, 102, 255)' };
 
 const formatCurrency = (value) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
 
-const TypeChart = ({ storeIds }) => {
+const DebtCHChart = ({ storeIds }) => {
     const [dateRange, setDateRange] = useState({ startDate: new Date(new Date().setDate(new Date().getDate() - 7)), endDate: new Date() });
     const [chartData, setChartData] = useState({ labels: [], datasets: [] });
     const [loading, setLoading] = useState(false);
     const [summary, setSummary] = useState({ totals: {}, transactionCount: 0, totalAmount: 0 });
-    const [selectedType, setSelectedType] = useState('all');
+    const [selectedDebtType, setSelectedDebtType] = useState('all');
     const [filteredSummary, setFilteredSummary] = useState({ totals: {}, transactionCount: 0, totalAmount: 0 });
     const token = getToken();
-    const apiUrl = API.STORE_OWNER.GET_STORE_STATISTIC_CHART + '/by-type';
+    const apiUrl = API.STORE_OWNER.GET_STORE_STATISTIC_CHART + '/by-debt-ch';
 
-    const selectOptions = [
+    const debtTypeOptions = [
         { value: 'all', label: 'Tất cả' },
-        { value: 'Import', label: 'Nhập Khẩu' },
-        { value: 'Export', label: 'Xuất Khẩu' }
+        { value: 'Cửa hàng Trả', label: 'Cửa hàng Trả' },
+        { value: 'Cửa hàng Vay', label: 'Cửa hàng Vay' }
     ];
 
     const chartOptions = {
@@ -41,7 +41,7 @@ const TypeChart = ({ storeIds }) => {
         maintainAspectRatio: false,
         plugins: {
             legend: { position: 'top' },
-            title: { display: true, text: 'Thống kê Import/Export', font: { size: 16 } },
+            title: { display: true, text: 'Thống kê Nợ Cửa Hàng', font: { size: 16 } },
             tooltip: { callbacks: { label: (context) => `${context.dataset.label}: ${formatCurrency(context.raw)}` } }
         },
         scales: {
@@ -74,8 +74,8 @@ const TypeChart = ({ storeIds }) => {
         labels.forEach(date => Object.keys(data[date]).forEach(type => allTypes.add(type)));
         let filteredTypes = Array.from(allTypes);
 
-        if (selectedType !== 'all') {
-            filteredTypes = filteredTypes.filter(type => type === selectedType);
+        if (selectedDebtType !== 'all') {
+            filteredTypes = filteredTypes.filter(type => type === selectedDebtType);
         }
 
         const datasets = filteredTypes.map(type => ({
@@ -85,7 +85,7 @@ const TypeChart = ({ storeIds }) => {
         }));
 
         return { labels, datasets };
-    }, [selectedType]);
+    }, [selectedDebtType]);
 
     const filterSummaryData = useCallback((summaryData, selectedType) => {
         if (selectedType === 'all') {
@@ -138,12 +138,11 @@ const TypeChart = ({ storeIds }) => {
     }, [fetchChartData]);
 
     useEffect(() => {
-        const newFilteredSummary = filterSummaryData(summary, selectedType);
+        const newFilteredSummary = filterSummaryData(summary, selectedDebtType);
         setFilteredSummary(newFilteredSummary);
-    }, [summary, selectedType, filterSummaryData]);
+    }, [summary, selectedDebtType, filterSummaryData]);
 
     const handleDateChange = useCallback((type, date) => { setDateRange(prev => ({ ...prev, [type]: date })); }, []);
-    const handleTypeChange = useCallback((value) => { setSelectedType(value || 'all'); }, []);
     const handleResetDates = useCallback(() => {
         const today = new Date();
         const sevenDaysAgo = new Date(today.setDate(today.getDate() - 7));
@@ -151,6 +150,10 @@ const TypeChart = ({ storeIds }) => {
             startDate: sevenDaysAgo,
             endDate: new Date()
         });
+    }, []);
+
+    const handleDebtTypeChange = useCallback((value) => {
+        setSelectedDebtType(value || 'all');
     }, []);
 
     return (
@@ -167,14 +170,22 @@ const TypeChart = ({ storeIds }) => {
                     </div>
                 </div>
                 <div className="chart-controls">
-                    <Select className="type-select" placeholder="Chọn loại" allowClear options={selectOptions} onChange={handleTypeChange} value={selectedType} style={{ width: 120 }} />
+                    <Select
+                        className="type-select"
+                        placeholder="Chọn loại"
+                        allowClear
+                        options={debtTypeOptions}
+                        onChange={handleDebtTypeChange}
+                        value={selectedDebtType}
+                        style={{ width: 150, marginRight: '10px' }}
+                    />
                     <Button icon={<ReloadOutlined />} onClick={handleResetDates} type="default" className="reset-button">Đặt lại</Button>
                 </div>
             </div>
             <Row gutter={[16, 16]} className="summary-section">
                 {Object.entries(filteredSummary.totals).map(([type, amount]) => (
                     <Col xs={24} sm={12} md={8} lg={6} key={type}>
-                        <Card className={`summary-card ${type.toLowerCase()}`}>
+                        <Card className={`summary-card ${type.toLowerCase().replace(/\s+/g, '-')}`}>
                             <div className="summary-type">{type}</div>
                             <div className="summary-amount">{formatCurrency(amount)}</div>
                         </Card>
@@ -200,4 +211,4 @@ const TypeChart = ({ storeIds }) => {
     );
 }
 
-export default TypeChart;
+export default DebtCHChart;

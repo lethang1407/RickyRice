@@ -9,6 +9,7 @@ import org.group5.swp391.entity.Account;
 import org.group5.swp391.entity.Debt;
 import org.group5.swp391.entity.Statistics;
 import org.group5.swp391.entity.Store;
+import org.group5.swp391.enums.DebtType;
 import org.group5.swp391.repository.*;
 import org.group5.swp391.service.StatisticsService;
 import org.group5.swp391.utils.CurrentUserDetails;
@@ -95,7 +96,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public Map<String, Double> getStatisticByDebt(LocalDate createdAtStart, LocalDate createdAtEnd, List<String> storeIds) {
+    public Map<String, Map<String, Double>> getStatisticsByDebtOfKH(LocalDate createdAtStart, LocalDate createdAtEnd, List<String> storeIds) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AccessDeniedException("Bạn chưa đăng nhập!");
@@ -106,21 +107,62 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
         LocalDateTime startDateTime = createdAtStart != null ? createdAtStart.atStartOfDay() : null;
         LocalDateTime endDateTime = createdAtEnd != null ? createdAtEnd.atTime(LocalTime.MAX) : null;
-        List<Debt> debtList = debtRepository.findDebtByTime(storeIds, startDateTime, endDateTime);
+        List<Debt> debtList = debtRepository.findDebtOfKHByTime(storeIds, startDateTime, endDateTime);
         return debtList.stream()
+                .filter(debt -> debt.getType() == DebtType.POSITIVE_KH_TRA || debt.getType() == DebtType.NEGATIVE_KH_VAY)
                 .collect(Collectors.groupingBy(
                         stat -> stat.getCreatedAt().toLocalDate().toString(),
+                        Collectors.groupingBy(
+                                stat -> stat.getType() == DebtType.POSITIVE_KH_TRA ? "Khách hàng Trả" : "Khách hàng Vay",
                                 Collectors.summingDouble(Debt::getAmount)
+                        )
                 ));
     }
 
-    public StoreStatisticDataDTO getStatisticTransactionsByStores(List<String> storeIds){
-        int totalEmployees = employeeRepository.countByStoreIdIn(storeIds);
-        int totalProducts = productRepository.countByStoreIdIn(storeIds);
-        int totalTransactions = statisticsRepository.countByStoreIdIn(storeIds);
-        double totalImport = statisticsRepository.getTotalImport(storeIds);
-        double totalExport = statisticsRepository.getTotalExport(storeIds);
-        double totalDebt = debtRepository.getTotalDebt(storeIds);
-        return new StoreStatisticDataDTO(totalEmployees,totalProducts, totalTransactions, totalImport, totalExport, totalDebt);
+    @Override
+    public Map<String, Map<String, Double>> getStatisticsByDebtOfCH(LocalDate createdAtStart, LocalDate createdAtEnd, List<String> storeIds) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Bạn chưa đăng nhập!");
+        }
+        String username = authentication.getName();
+        if (storeIds == null || storeIds.isEmpty() || storeIds.contains("all")) {
+            storeIds = storeRepository.findIdsByUserName(username);
+        }
+        LocalDateTime startDateTime = createdAtStart != null ? createdAtStart.atStartOfDay() : null;
+        LocalDateTime endDateTime = createdAtEnd != null ? createdAtEnd.atTime(LocalTime.MAX) : null;
+        List<Debt> debtList = debtRepository.findDebtOfCHByTime(storeIds, startDateTime, endDateTime);
+
+        return debtList.stream()
+                .filter(debt -> debt.getType() == DebtType.NEGATIVE_CH_TRA || debt.getType() == DebtType.POSITIVE_CH_VAY)
+                .collect(Collectors.groupingBy(
+                        stat -> stat.getCreatedAt().toLocalDate().toString(),
+                        Collectors.groupingBy(
+                                stat -> stat.getType() == DebtType.NEGATIVE_CH_TRA ? "Cửa hàng Trả" : "Cửa hàng Vay",
+                                Collectors.summingDouble(Debt::getAmount)
+                        )
+                ));
+    }
+
+    public StoreStatisticDataDTO getStatisticTransactionsByStores(List<String> storeIds) {
+        int totalEmployees = 0;
+        int totalProducts = 0;
+        int totalTransactions = 0;
+        double totalImport = 0;
+        double totalExport = 0;
+        double totalDebtOfKH = 0;
+        double totalDebtOfCH = 0;
+        try {
+            totalEmployees = employeeRepository.countByStoreIdIn(storeIds);
+            totalProducts = productRepository.countByStoreIdIn(storeIds);
+            totalTransactions = statisticsRepository.countByStoreIdIn(storeIds);
+            totalImport = statisticsRepository.getTotalImport(storeIds);
+            totalExport = statisticsRepository.getTotalExport(storeIds);
+            totalDebtOfKH = debtRepository.getTotalDebtByKH_NO(storeIds);
+            totalDebtOfCH = debtRepository.getTotalDebtByCH_NO(storeIds);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return new StoreStatisticDataDTO(totalEmployees, totalProducts, totalTransactions, totalImport, totalExport, totalDebtOfKH, totalDebtOfCH);
     }
 }

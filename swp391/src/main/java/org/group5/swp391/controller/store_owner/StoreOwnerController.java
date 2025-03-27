@@ -299,13 +299,23 @@ public class StoreOwnerController {
         return ResponseEntity.ok(data);
     }
 
-    @GetMapping("/statistics/chart/by-debt")
-    public ResponseEntity<Map<String, Double>> getStatisticsByDebt(
+    @GetMapping("/statistics/chart/by-debt-kh")
+    public ResponseEntity<Map<String, Map<String, Double>>> getStatisticsByDebtOfKH(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(required = false) List<String> storeIds
     ) {
-        Map<String, Double> data = statisticsService.getStatisticByDebt(startDate, endDate, storeIds);
+        Map<String, Map<String, Double>> data = statisticsService.getStatisticsByDebtOfKH(startDate, endDate, storeIds);
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/statistics/chart/by-debt-ch")
+    public ResponseEntity<Map<String, Map<String, Double>>> getStatisticsByDebtOfCH(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) List<String> storeIds
+    ) {
+        Map<String, Map<String, Double>> data = statisticsService.getStatisticsByDebtOfCH(startDate, endDate, storeIds);
         return ResponseEntity.ok(data);
     }
 
