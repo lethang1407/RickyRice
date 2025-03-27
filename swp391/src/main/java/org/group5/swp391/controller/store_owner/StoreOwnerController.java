@@ -175,17 +175,8 @@ public class StoreOwnerController {
     public ResponseEntity<String> updateProduct(
             @PathVariable String id,
             @RequestBody StoreProductDetailDTO product) {
-        try {
-            if (!id.equals(product.getProductID())) {
-                return ResponseEntity.badRequest().body("Cập nhật sản phẩm thất bại");
-            }
-            productService.updateStoreProduct(id, product);
-            return ResponseEntity.ok("Cập nhật sản phẩm thành công");
-
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cập nhật sản phẩm thất bại");
-        }
+        productService.updateStoreProduct(id, product);
+        return ResponseEntity.ok("Cập nhật sản phẩm thành công");
     }
 
 
@@ -299,13 +290,23 @@ public class StoreOwnerController {
         return ResponseEntity.ok(data);
     }
 
-    @GetMapping("/statistics/chart/by-debt")
-    public ResponseEntity<Map<String, Double>> getStatisticsByDebt(
+    @GetMapping("/statistics/chart/by-debt-kh")
+    public ResponseEntity<Map<String, Map<String, Double>>> getStatisticsByDebtOfKH(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(required = false) List<String> storeIds
     ) {
-        Map<String, Double> data = statisticsService.getStatisticByDebt(startDate, endDate, storeIds);
+        Map<String, Map<String, Double>> data = statisticsService.getStatisticsByDebtOfKH(startDate, endDate, storeIds);
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/statistics/chart/by-debt-ch")
+    public ResponseEntity<Map<String, Map<String, Double>>> getStatisticsByDebtOfCH(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) List<String> storeIds
+    ) {
+        Map<String, Map<String, Double>> data = statisticsService.getStatisticsByDebtOfCH(startDate, endDate, storeIds);
         return ResponseEntity.ok(data);
     }
 

@@ -45,6 +45,7 @@ import Authenticate from "./Pages/Login/authenticate.js";
 import CreateStore from "./Pages/StoreManagement/StoreInfor/CreateStore.js";
 import UpdateStore from "./Pages/StoreManagement/StoreInfor/UpdateStore.js";
 import StatisticChart from "./Pages/ShopOwner/StatisticChart/StatisticChart.js";
+import DebtEmploy from "./Pages/Employee_DebtLayout/index.js";
 
 function App() {
   return (
@@ -108,6 +109,8 @@ function App() {
               path="/employee/customers/create"
               element={<CustomerIN4Create />}
             ></Route>
+            <Route path="/employee/debt" element={<Debt />}></Route>
+            <Route path="/employee/customer-debt" element={<DebtEmploy />}></Route>
           </Route>
           <Route element={<StoreOwnerProtected />}>
             <Route path="/store-owner" element={<StoreOwnerLayout />}>
@@ -121,6 +124,7 @@ function App() {
               <Route path="product/update" element={<ProductUpdate />} />
               <Route path="employee/update" element={<EmployeeUpdate />} />
               <Route path="debt" element={<Debt />}></Route>
+              <Route path="customer-debt" element={<CustomerDebt />}></Route>
               <Route
                 path="create-store/:transactionNo"
                 element={<CreateStore />}

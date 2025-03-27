@@ -19,4 +19,5 @@ public interface AuthenticationService {
     public CheckOTPResponse checkOTP(OTPCheckRequest request);
     public void changePassword(ChangePasswordRequest request);
     public AuthenticationResponse outboundAuthenticate(String code);
+    public AuthenticationResponse refresh(IntrospectRequest request);
 }

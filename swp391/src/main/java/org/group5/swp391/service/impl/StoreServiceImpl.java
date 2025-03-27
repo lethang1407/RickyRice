@@ -85,6 +85,9 @@ public class StoreServiceImpl implements StoreService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account account = accountRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         List<Store> storeList = account.getStores();
+        if(account.getStores()!=null){
+            storeList.add(account.getEmployee().getStore());
+        }
         return storeList.stream().map(
                         item -> StoreInfoDTO.builder()
                                 .storeID(item.getId())

@@ -74,19 +74,46 @@ public interface DebtRepository extends JpaRepository<Debt, String> {
     WHERE d.store.id IN :storeIds
     AND (:createdAtStart IS NULL OR d.createdAt >= :createdAtStart)
     AND (:createdAtEnd IS NULL OR d.createdAt <= :createdAtEnd)
+    AND (d.type = 'NEGATIVE_CH_TRA' OR d.type = 'POSITIVE_CH_VAY')
 """)
-    List<Debt> findDebtByTime(
+    List<Debt> findDebtOfCHByTime(
             @Param("storeIds") List<String> storeIds,
             @Param("createdAtStart") LocalDateTime createdAtStart,
             @Param("createdAtEnd") LocalDateTime createdAtEnd
     );
 
     @Query("""
+    SELECT d
+    FROM Debt d
+    WHERE d.store.id IN :storeIds
+    AND (:createdAtStart IS NULL OR d.createdAt >= :createdAtStart)
+    AND (:createdAtEnd IS NULL OR d.createdAt <= :createdAtEnd)
+    AND (d.type = 'POSITIVE_KH_TRA' OR d.type = 'NEGATIVE_KH_VAY')
+""")
+    List<Debt> findDebtOfKHByTime(
+            @Param("storeIds") List<String> storeIds,
+            @Param("createdAtStart") LocalDateTime createdAtStart,
+            @Param("createdAtEnd") LocalDateTime createdAtEnd
+    );
+
+
+    @Query("""
     SELECT SUM(d.amount)
     FROM Debt d
     WHERE d.store.id IN :storeIds
+    AND d.type = 'NEGATIVE_KH_VAY'
 """)
-    Double getTotalDebt(
+    Double getTotalDebtByKH_NO(
+            @Param("storeIds") List<String> storeIds
+    );
+
+    @Query("""
+    SELECT SUM(d.amount)
+    FROM Debt d
+    WHERE d.store.id IN :storeIds
+    AND d.type = 'POSITIVE_CH_VAY'
+""")
+    Double getTotalDebtByCH_NO(
             @Param("storeIds") List<String> storeIds
     );
 }

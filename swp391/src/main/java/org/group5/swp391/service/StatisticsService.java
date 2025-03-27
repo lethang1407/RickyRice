@@ -21,5 +21,8 @@ public interface StatisticsService {
 
     public StoreStatisticDataDTO getStatisticTransactionsByStores(List<String> storeIds);
 
-    public Map<String, Double> getStatisticByDebt(LocalDate createdAtStart, LocalDate createdAtEnd, List<String> storeIds);
+    public Map<String, Map<String, Double>> getStatisticsByDebtOfKH(LocalDate createdAtStart, LocalDate createdAtEnd, List<String> storeIds);
+
+    public Map<String, Map<String, Double>> getStatisticsByDebtOfCH(LocalDate createdAtStart, LocalDate createdAtEnd, List<String> storeIds);
+
 }

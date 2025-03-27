@@ -99,6 +99,7 @@ const API = {
   },
   AUTH: {
     LOGIN: `${API_BASE_URL}/auth/login`,
+    REFRESH: `${API_BASE_URL}/debt/refresh`,
     REGISTER: `${API_BASE_URL}/auth/register`,
     CHANGE_PASSWORD: `${API_BASE_URL}/auth/change-password`,
     LOGOUT: `${API_BASE_URL}/auth/logout`,

@@ -21,6 +21,7 @@ import org.group5.swp391.utils.Mail;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -229,6 +230,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String token = jwt.generateToken(account);
 
         return AuthenticationResponse.builder().token(token).success(true).build();
+    }
+
+    @Override
+    public AuthenticationResponse refresh(IntrospectRequest request) {
+        try{
+            jwt.verifyToken(request.getToken());
+        }catch(AppException | JOSEException | ParseException e){
+            return AuthenticationResponse.builder()
+                    .success(false)
+                    .build();
+        }
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account account = accountRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        String newToken = jwt.generateToken(account);
+        return AuthenticationResponse.builder()
+                .success(true)
+                .token(newToken)
+                .build();
     }
 
     private void scheduleTokenDeletion(String accountID) {
