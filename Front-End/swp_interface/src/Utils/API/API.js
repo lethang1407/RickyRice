@@ -72,6 +72,7 @@ const API = {
     GET_STORE_STATISTIC_CHART: `${API_BASE_URL}/store-owner/statistics/chart`,
     GET_STORE_TRANSACTIONS: `${API_BASE_URL}/store-owner/statistic-transactions`,
     GET_ALL_STORES: `${API_BASE_URL}/store-owner/all/stores`,
+    CREATE_STORE_EMPLOYEE: `${API_BASE_URL}/store-owner/employee/create`,
     CREATE_NEW_STORE: (transaction) =>
       `${API_BASE_URL}/manage-store/create-store/${transaction}`,
     GET_REQUEST_STORE: `${API_BASE_URL}/manage-store/request-store`,
