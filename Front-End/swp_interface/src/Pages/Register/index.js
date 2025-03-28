@@ -60,7 +60,7 @@ function Register(){
       if(file){
         const res = await handleUpload(API.PUBLIC.UPLOAD_IMG, file[0].originFileObj);
         if(res && res.code===200){
-          const response = await register(API.AUTH.REGISTER,{...acc, avatar: res.data})
+          const response = await register(API.AUTH.REGISTER,{...acc, avatar: res.data, role: 'STORE_OWNER'})
           if(response && response.code === 201){
             setTimeout(()=>{
               setLoading(false);
@@ -198,19 +198,17 @@ function Register(){
                   </Form.Item>
 
                   <Form.Item
-                    initialValue={acc.role ? acc.role : null}
+                    hidden={true} 
                     name="role"
                     className='register__form__item'
                     rules={[
                       {
-                        required: true,
                         message: 'Please select your role!',
                       }
                     ]}
                   >
                     <Radio.Group className='register__form__item__checkbox' options={[
                         { label: 'Store Owner', value:'STORE_OWNER' },
-                        { label: 'Employee', value: 'EMPLOYEE' }
                     ]} />
                   </Form.Item>
 

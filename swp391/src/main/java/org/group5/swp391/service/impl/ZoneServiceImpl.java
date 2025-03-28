@@ -128,13 +128,14 @@ public class ZoneServiceImpl implements ZoneService {
         Store existingStore = storeRepository
                 .findById(storeZoneDTO.getStoreID())
                 .orElseThrow(() -> new Exception("Store not found"));
-        Product existingProduct = productRepository
-                .findById(storeZoneDTO.getProductID())
-                .orElseThrow(() -> new Exception("Product not found"));
+        if(storeZoneDTO.getProductID() != null) {
+            Product existingProduct = productRepository
+                    .findById(storeZoneDTO.getProductID())
+                    .orElseThrow(() -> new Exception("Product not found"));
+            newZone.setProduct(existingProduct);
+        }
         newZone.setName(storeZoneDTO.getName());
         newZone.setStore(existingStore);
-        newZone.setProduct(existingProduct);
-
         newZone.setLocation(storeZoneDTO.getLocation());
         zoneRepository.save(newZone);
     }
@@ -145,8 +146,10 @@ public class ZoneServiceImpl implements ZoneService {
         updatingZone.setName(updatedZone.getName());
         updatingZone.setUpdatedAt(LocalDateTime.now());
         updatingZone.setLocation(updatedZone.getLocation());
-        Product foundProductByID = productRepository.findById(updatedZone.getProductID()).orElseThrow(() -> new Exception());
-        updatingZone.setProduct(foundProductByID);
+        if(updatedZone.getProductID() != null) {
+            Product foundProductByID = productRepository.findById(updatedZone.getProductID()).orElseThrow(() -> new Exception());
+            updatingZone.setProduct(foundProductByID);
+        }
         zoneRepository.save(updatingZone);
     }
 
