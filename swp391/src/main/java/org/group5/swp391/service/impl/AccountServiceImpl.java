@@ -175,5 +175,4 @@ public class AccountServiceImpl implements AccountService {
     public Long getTotalStoreOwners() {
         return accountRepository.countStoreOwners();
     }
-
 }

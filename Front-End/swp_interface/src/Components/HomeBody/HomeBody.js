@@ -14,6 +14,9 @@ import {MessageOutlined, RocketOutlined} from '@ant-design/icons';
 import { scroller } from "react-scroll";
 import { Element } from "react-scroll";
 import { Button, Form, Input } from 'antd';
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
+
 
 function HomeBody(){
   const { TextArea } = Input;
@@ -26,13 +29,24 @@ function HomeBody(){
         });
       }
 
+      const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      const element = document.getElementById(location.state.scrollTo);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location]);
+
   return (
     <>
       <div class="section-one">
         <div class="container">
           <div class="row">
             <div class="col-xl-12">
-              <Element name='head'>
+              <Element name='head' id="home">
                 <div class="section-one__text">
                   <h2 class="section-one__text__h2">Chúng tôi cung cấp chiến lược <b>tốt nhất</b> để phát triển <b>doanh nghiệp</b></h2>
                   <h4 class="section-one__text__h4">Ricky Rice là nền tảng cuối cùng để thuê các trang web chuyên nghiệp bán gạo và quản lý các sản phẩm nông nghiệp</h4>
@@ -47,7 +61,7 @@ function HomeBody(){
           <div class="container">
             <div class="row">
               <div class="section-one__block">
-                <Element name='introduction'>
+                <Element name='introduction' id="introduction">
                 <div class="row">
                     <div class="section-one__block__item col-xl-4">
                       <LeftLeft>
@@ -149,7 +163,7 @@ function HomeBody(){
         <div class="container">
           <div class="row">
             <div class="col-xl-12">
-              <Element name='feedback'>
+              <Element name='feedback' id="feedback">
                 <div class="section-four__inner">
                   <Down>
                     <h2 class="section-four__inner__title">
@@ -217,7 +231,7 @@ function HomeBody(){
         </div>
       </div>
 
-      <div class="section-five">
+      {/* <div class="section-five">
         <div class="container">
           <div class="row">
             <div class="col-xl-12">
@@ -292,13 +306,13 @@ function HomeBody(){
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div class="section-four">
         <div class="container">
           <div class="row">
             <div class="col-xl-12">
-              <Element name='lienhe'>
+              <Element name='lienhe' id="lienhe">
                 <div class="section-four__inner">
                   <Down>
                     <h2 class="section-four__inner__title">

@@ -2,6 +2,8 @@ package org.group5.swp391.controller.store_owner;
 
 
 import lombok.RequiredArgsConstructor;
+import org.group5.swp391.dto.response.AdminResponse.AppStatisticsResponse;
+import org.group5.swp391.dto.response.ApiResponse;
 import org.group5.swp391.dto.store_owner.all_employee.StoreEmployeeDTO;
 import org.group5.swp391.dto.store_owner.all_invoice.StoreInvoiceDTO;
 import org.group5.swp391.dto.store_owner.all_invoice.StoreInvoiceDetailDTO;
@@ -18,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,7 +43,7 @@ public class StoreOwnerController {
     private final CategoryService categoryService;
     private final ProductAttributeService productAttributeService;
     private final ZoneService zoneService;
-
+    private final AppStatisticsService appStatisticsService;
 
     @GetMapping("/invoices")
     public Page<StoreInvoiceDTO> getInvoices(
@@ -317,5 +320,34 @@ public class StoreOwnerController {
         } catch (Exception e) {
             throw new AppException(ErrorCode.CANT_GET_INFO);
         }
+    }
+
+    // Lấy lịch sử giao dịch của 1 store_owner
+    @GetMapping("/payment-transaction")
+    public ApiResponse<Map<String, Object>> getStatistics(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDirection,
+            @RequestParam(required = false) String subscriptionPlanName) {
+        if (!sortBy.equals("createdAt") && !sortBy.equals("subcriptionPlanPrice")) {
+            sortBy = "createdAt";
+        }
+        sortDirection = sortDirection.equalsIgnoreCase("asc") ? "asc" : "desc";
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Page<AppStatisticsResponse> statistics = appStatisticsService.getStatistics(
+                page, size, sortBy, sortDirection, subscriptionPlanName, username);
+
+        List<String> subscriptionPlans = appStatisticsService.getAllSubscriptionPlanNames();
+
+        Map<String, Object> response = Map.of(
+                "statistics", statistics,
+                "subcriptionPlans", subscriptionPlans
+        );
+        return ApiResponse.<Map<String, Object>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Fetched transaction history successfully")
+                .data(response)
+                .build();
     }
 }

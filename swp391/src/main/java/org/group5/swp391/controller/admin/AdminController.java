@@ -177,7 +177,6 @@ public class AdminController {
 
     // Lấy danh sách các gói dịch vụ đăng kí của trang web
     @GetMapping("/subscription-plans")
-    @ResponseStatus(HttpStatus.OK)
     public ApiResponse<Map<String, Object>> getSubscriptionPlans(
             @RequestParam(required = false) String name,
             @RequestParam(defaultValue = "0") int page,
