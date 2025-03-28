@@ -47,7 +47,11 @@ public interface ZoneRepository extends JpaRepository<Zone, String> {
     WHERE (:storeID IS NULL OR z.store.id = :storeID)
       AND (:name IS NULL OR TRIM(:name) <> '' AND  LOWER(z.name) LIKE LOWER(CONCAT('%', :name, '%')))
       AND (:location IS NULL OR TRIM(:location) <> '' AND LOWER(z.location) LIKE LOWER(CONCAT('%', :location, '%')))
-      AND (:productName IS NULL OR TRIM(:productName) <> '' AND  LOWER(z.product.name) LIKE LOWER(CONCAT('%', :productName, '%')))
+      AND (
+         :productName IS NULL
+         OR TRIM(:productName) = ''
+         OR (z.product IS NOT NULL AND LOWER(z.product.name) LIKE LOWER(CONCAT('%', :productName, '%')))
+       )
       AND (:fromCreatedAt IS NULL OR z.createdAt >= :fromCreatedAt)
       AND (:toCreatedAt IS NULL OR z.createdAt <= :toCreatedAt)
       AND (:fromUpdatedAt IS NULL OR z.updatedAt >= :fromUpdatedAt)
@@ -62,5 +66,4 @@ public interface ZoneRepository extends JpaRepository<Zone, String> {
                                   @Param("fromUpdatedAt") LocalDateTime fromUpdateAt,
                                   @Param("toUpdatedAt") LocalDateTime toUpdatedAt,
                                   Pageable pageable);
-
 }
