@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Form, Button, Alert, Spinner } from "react-bootstrap";
+import { Form, Input, Button, Alert, Spin, Row, Col } from "antd";
 import { getToken } from "../../Utils/UserInfoUtils";
 import API from "../../Utils/API/API.js";
 
@@ -17,20 +17,21 @@ const ChangePassword = () => {
 
   const validateNewPassword = (password) => {
     const errors = [];
-    if (password.length < 8) {
-      errors.push("Mật khẩu phải có ít nhất 8 ký tự.");
+
+    if (password.length < 6) {
+      errors.push("Mật khẩu phải có ít nhất 6 ký tự.");
     }
-    if (!/[A-Z]/.test(password)) {
-      errors.push("Mật khẩu phải chứa ít nhất một chữ cái in hoa.");
+
+    if (!/[A-Za-z]/.test(password)) {
+      errors.push("Mật khẩu phải chứa ít nhất một chữ cái.");
     }
-    if (!/[a-z]/.test(password)) {
-      errors.push("Mật khẩu phải chứa ít nhất một chữ cái thường.");
-    }
+
     if (!/[0-9]/.test(password)) {
       errors.push("Mật khẩu phải chứa ít nhất một chữ số.");
     }
-    if (!/[!@#$%^&*]/.test(password)) {
-      errors.push("Mật khẩu phải chứa ít nhất một ký tự đặc biệt (!@#$%^&*).");
+
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      errors.push("Mật khẩu không được chứa ký tự đặc biệt.");
     }
     return errors;
   };
@@ -59,7 +60,7 @@ const ChangePassword = () => {
     const errors = validateFields();
     if (errors.length > 0) {
       setMessage(errors.join(" "));
-      setMessageType("danger");
+      setMessageType("error");
       return;
     }
 
@@ -82,12 +83,12 @@ const ChangePassword = () => {
         setMessageType("success");
       } else {
         setMessage(data.message || "Cập nhật mật khẩu thất bại.");
-        setMessageType("danger");
+        setMessageType("error");
       }
     } catch (error) {
       console.error("Error changing password:", error);
       setMessage("Có lỗi xảy ra, vui lòng thử lại.");
-      setMessageType("danger");
+      setMessageType("error");
     } finally {
       setLoading(false);
       setTimeout(() => setMessage(""), 3000);
@@ -95,54 +96,86 @@ const ChangePassword = () => {
   };
 
   return (
-    <Container className="mt-5" style={{ maxWidth: "500px" }}>
-      <h2 className="mb-4">Thay đổi mật khẩu</h2>
-      {message && <Alert variant={messageType}>{message}</Alert>}
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3" controlId="oldPassword">
-          <Form.Label>Mật khẩu hiện tại</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Nhập mật khẩu hiện tại"
-            value={oldPassword}
-            onChange={(e) => setOldPassword(e.target.value)}
-            required
-          />
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="newPassword">
-          <Form.Label>Mật khẩu mới</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Nhập mật khẩu mới"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-          />
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="confirmPassword">
-          <Form.Label>Xác nhận mật khẩu mới</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Xác nhận mật khẩu mới"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </Form.Group>
-        <div className="d-flex justify-content-between">
-          <Button variant="secondary" onClick={() => navigate(-1)}>
-            Quay lại
-          </Button>
-          <Button variant="primary" type="submit" disabled={loading}>
-            {loading ? (
-              <Spinner animation="border" size="sm" />
-            ) : (
-              "Thay đổi mật khẩu"
-            )}
-          </Button>
-        </div>
-      </Form>
-    </Container>
+    <Row justify="center" className="mt-5">
+      <Col xs={24} sm={22} md={16} lg={12} xl={10}>
+        <h2 className="mb-4">Thay đổi mật khẩu</h2>
+        {message && <Alert message={message} type={messageType} />}
+        <Form onFinish={handleSubmit} layout="vertical">
+          <Form.Item
+            label="Mật khẩu hiện tại"
+            name="oldPassword"
+            rules={[
+              {
+                required: true,
+                message: "Mật khẩu hiện tại không được để trống.",
+              },
+            ]}
+          >
+            <Input.Password
+              placeholder="Nhập mật khẩu hiện tại"
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Mật khẩu mới"
+            name="newPassword"
+            rules={[
+              { required: true, message: "Mật khẩu mới không được để trống." },
+              () => ({
+                validator(_, value) {
+                  const errors = validateNewPassword(value);
+                  if (errors.length > 0) {
+                    return Promise.reject(new Error(errors.join(" ")));
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
+          >
+            <Input.Password
+              placeholder="Nhập mật khẩu mới"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Xác nhận mật khẩu mới"
+            name="confirmPassword"
+            rules={[
+              {
+                required: true,
+                message: "Xác nhận mật khẩu không được để trống.",
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (value && value !== getFieldValue("newPassword")) {
+                    return Promise.reject(
+                      new Error("Mật khẩu mới và xác nhận mật khẩu không khớp.")
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
+          >
+            <Input.Password
+              placeholder="Xác nhận mật khẩu mới"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </Form.Item>
+          <div className="d-flex justify-content-between">
+            <Button variant="secondary" onClick={() => navigate(-1)}>
+              Quay lại
+            </Button>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              Thay đổi mật khẩu
+            </Button>
+          </div>
+        </Form>
+      </Col>
+    </Row>
   );
 };
 

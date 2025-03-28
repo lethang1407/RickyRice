@@ -19,7 +19,7 @@ const DropDown = ({ refreshData }) => {
                     type="link"
                     onClick={openModal} // Gọi hàm mở Modal
                 >
-                    Tạo Mới Customer
+                    Tạo Mới Khách Hàng
                 </Button>
             ),
         },

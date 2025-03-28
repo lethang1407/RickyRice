@@ -5,7 +5,8 @@ import Login from "./Pages/Login";
 import StoreHome from "./Pages/StoreHome";
 import Register from "./Pages/Register";
 import ForgetPassword from "./Pages/ForgetPassword";
-import AdminDashboard from "./Pages/AdminDashboard";
+import AdminLayout from "./Pages/AdminDashboard/index.js";
+import AdminDashboard from "./Pages/AdminDashboard/DashboardContent";
 import AccountOwner from "./Pages/AdminDashboard/AccountOwner";
 import AdminViewStores from "./Pages/AdminDashboard/AdminViewStores";
 import SubscriptionPlans from "./Pages/AdminDashboard/SubscriptionPlans";
@@ -24,7 +25,7 @@ import CustomerIN4Edit from "./Pages/Employee_CustomerLayout/components/customeE
 import CustomerIN4Create from "./Pages/Employee_CustomerLayout/components/customerCreate";
 import Employee from "./Pages/ShopOwner/Employee/Employee";
 import Employee_Products from "./Pages/Employee_ProductLayout/components/productsList";
-import Statistic from "./Pages/ShopOwner/Statistic/Statistic";
+import StatisticData from "./Pages/ShopOwner/StatisticData/StatisticData.js";
 import Debt from "./Pages/Debt";
 import Employee_Invoices from "./Pages/Employee_InvoiceLayout";
 import ProductUpdate from "./Pages/ShopOwner/ProductUpdate/ProductUpdate";
@@ -38,11 +39,13 @@ import Zone from "./Pages/StoreManagement/Zone/Zone.js";
 import StoreDetailCategory from "./Pages/StoreManagement/Category/Category.js";
 import StoreDetailProductAttribute from "./Pages/StoreManagement/ProductAttribute/ProductAttribute.js";
 import StoreProduct from "./Pages/StoreManagement/Product/Product.js";
-import { WebSocketProvider } from "./Utils/Websocket/WebsocketContextProvider.js"
+import { WebSocketProvider } from "./Utils/Websocket/WebsocketContextProvider.js";
 import CustomerDebt from "./Pages/Debt/CustomerDebt/customer.js";
 import Authenticate from "./Pages/Login/authenticate.js";
 import CreateStore from "./Pages/StoreManagement/StoreInfor/CreateStore.js";
 import UpdateStore from "./Pages/StoreManagement/StoreInfor/UpdateStore.js";
+import StatisticChart from "./Pages/ShopOwner/StatisticChart/StatisticChart.js";
+import DebtEmploy from "./Pages/Employee_DebtLayout/index.js";
 
 function App() {
   return (
@@ -52,30 +55,25 @@ function App() {
         <Route path="/login" element={<Login />}></Route>
         <Route path="/forgot-password" element={<ForgetPassword />}></Route>
         <Route path="/register" element={<Register />}></Route>
-        <Route path='/authenticate' element={<Authenticate />}></Route>
+        <Route path="/authenticate" element={<Authenticate />}></Route>
         <Route path="/unauthorized" element={<Unauthorized />}></Route>
         <Route path="/storehome" element={<StoreHome />}></Route>
         <Route path="/storehome" element={<StoreHome />}></Route>
         <Route path="/service/:storeID?" element={<SubscriptionPlan />} />
         <Route element={<CommonProtected />}>
           <Route element={<AdminProtected />}>
-            <Route path="/admin" element={<AdminDashboard />}></Route>
-            <Route
-              path="/admin/account_owner"
-              element={<AccountOwner />}
-            ></Route>
-            <Route
-              path="/admin/view_stores"
-              element={<AdminViewStores />}
-            ></Route>
-            <Route
-              path="/admin/subscription_plans"
-              element={<SubscriptionPlans />}
-            ></Route>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route path="statistic" element={<AdminDashboard />}></Route>
+              <Route path="account_owner" element={<AccountOwner />}></Route>
+              <Route path="view_stores" element={<AdminViewStores />}></Route>
+              <Route path="subscription_plans" element={<SubscriptionPlans />}></Route>
+            </Route>
           </Route>
           <Route element={<EmployeeProtected />}>
-            <Route path="/employee/products" element={<Employee_Products />}>
-            </Route>
+            <Route
+              path="/employee/products"
+              element={<Employee_Products />}
+            ></Route>
             <Route path="/employee/ricezone" element={<ZoneList />}></Route>
             <Route
               path="/employee/customers/edit"
@@ -111,6 +109,8 @@ function App() {
               path="/employee/customers/create"
               element={<CustomerIN4Create />}
             ></Route>
+            <Route path="/employee/debt" element={<Debt />}></Route>
+            <Route path="/employee/customer-debt" element={<DebtEmploy />}></Route>
           </Route>
           <Route element={<StoreOwnerProtected />}>
             <Route path="/store-owner" element={<StoreOwnerLayout />}>
@@ -118,11 +118,13 @@ function App() {
               <Route path="invoice" element={<Invoice />}></Route>
               <Route path="product" element={<Product />}></Route>
               <Route path="employee" element={<Employee />}></Route>
-              <Route path="statistic" element={<Statistic />}></Route>
+              <Route path="statistic/data" element={<StatisticData />}></Route>
+              <Route path="statistic/chart" element={<StatisticChart />}></Route>
               <Route path="debt" element={<Debt />}></Route>
               <Route path="product/update" element={<ProductUpdate />} />
               <Route path="employee/update" element={<EmployeeUpdate />} />
               <Route path="debt" element={<Debt />}></Route>
+              <Route path="customer-debt" element={<WebSocketProvider><CustomerDebt /></WebSocketProvider>}></Route>
               <Route
                 path="create-store/:transactionNo"
                 element={<CreateStore />}

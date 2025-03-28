@@ -1,17 +1,21 @@
 package org.group5.swp391.controller;
 
 import com.cloudinary.Api;
+import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.dto.debt.*;
 import org.group5.swp391.dto.employee.CustomerUpdateRequest;
 import org.group5.swp391.dto.employee.EmployeeCustomerDTO;
+import org.group5.swp391.dto.request.authentication_request.IntrospectRequest;
 import org.group5.swp391.dto.response.ApiResponse;
+import org.group5.swp391.dto.response.AuthenticationResponse.AuthenticationResponse;
 import org.group5.swp391.dto.response.PageResponse;
 import org.group5.swp391.dto.store_owner.all_store.StoreInfoDTO;
 import org.group5.swp391.entity.Customer;
 import org.group5.swp391.enums.DebtType;
 import org.group5.swp391.repository.CustomerRepository;
+import org.group5.swp391.service.AuthenticationService;
 import org.group5.swp391.service.CustomerService;
 import org.group5.swp391.service.DebtService;
 import org.group5.swp391.service.StoreService;
@@ -23,6 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +40,7 @@ public class DebtController {
     private final DebtService debtService;
     private final StoreService storeService;
     private final CustomerService customerService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("")
     public ApiResponse<String> createDebt(@RequestBody @Valid DebtCreationRequest request){
@@ -67,7 +73,6 @@ public class DebtController {
                                                        @RequestParam(required = false) Double fromAmount,
                                                        @RequestParam(required = false) Double toAmount,
                                                        @RequestParam(required = false) String createdBy){
-
         PageResponse<DebtDTO> response = debtService.searchForDebt(pageNo, pageSize, sortBy, storeId, number, type, startCreatedAt, endCreatedAt,
                 customerName, phoneNumber, email, address, fromAmount, toAmount, createdBy);
 
@@ -85,6 +90,16 @@ public class DebtController {
                 .data(res)
                 .message("Get stores successfully")
                 .code(200)
+                .build();
+    }
+
+    @PostMapping(value = "/refresh")
+    public ApiResponse<AuthenticationResponse> refresh(@RequestBody @Valid IntrospectRequest request) throws ParseException, JOSEException {
+        AuthenticationResponse response = authenticationService.refresh(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .code(200)
+                .data(response)
+                .message("Success")
                 .build();
     }
 

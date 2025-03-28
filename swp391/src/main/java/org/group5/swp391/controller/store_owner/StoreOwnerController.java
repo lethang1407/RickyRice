@@ -1,17 +1,20 @@
 package org.group5.swp391.controller.store_owner;
 
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.group5.swp391.converter.ZoneConverter;
+import org.group5.swp391.dto.store_owner.all_employee.StoreAddEmployeeDTO;
 import org.group5.swp391.dto.store_owner.all_employee.StoreEmployeeDTO;
 import org.group5.swp391.dto.store_owner.all_invoice.StoreInvoiceDTO;
 import org.group5.swp391.dto.store_owner.all_invoice.StoreInvoiceDetailDTO;
 import org.group5.swp391.dto.store_owner.all_product.*;
 import org.group5.swp391.dto.store_owner.all_statistic.StoreStatisticDTO;
+import org.group5.swp391.dto.store_owner.all_statistic.StoreStatisticDataDTO;
 import org.group5.swp391.dto.store_owner.all_store.StoreInfoDTO;
+import org.group5.swp391.exception.AppException;
+import org.group5.swp391.exception.ErrorCode;
 import org.group5.swp391.service.*;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -40,21 +45,33 @@ public class StoreOwnerController {
 
     @GetMapping("/invoices")
     public Page<StoreInvoiceDTO> getInvoices(
-            @RequestParam String phoneNumber,
+            @RequestParam(required = false) String phoneNumber,
+            @RequestParam(required = false) List<String> store,
+            @RequestParam(required = false) String invoiceNumber,
+            @RequestParam(required = false) Double totalMoneyMin,
+            @RequestParam(required = false) Double totalMoneyMax,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "false") boolean descending,
-            @RequestParam(defaultValue = "false") String type,
-            @RequestParam(defaultValue = "false") String status
+            @RequestParam(defaultValue = "false") boolean descending
     ) {
-        return invoiceService.getInvoices(phoneNumber, page, size, sortBy, descending, type, status);
+        try {
+            return invoiceService.getInvoices(invoiceNumber, phoneNumber, store, totalMoneyMin, totalMoneyMax, type, status, page, size, sortBy, descending);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CANT_GET_INFO);
+        }
     }
 
 
     @GetMapping("/invoice-details")
     public List<StoreInvoiceDetailDTO> getInvoiceDetails(@RequestParam String invoiceId) {
-        return invoiceDetailService.getInvoiceDetailsByInvoice(invoiceId);
+        try {
+            return invoiceDetailService.getInvoiceDetailsByInvoice(invoiceId);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CANT_GET_INFO);
+        }
     }
 
 
@@ -66,70 +83,101 @@ public class StoreOwnerController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "false") boolean descending
     ) {
-        return storeService.getStores(storeName, page, size, sortBy, descending);
+        try {
+            return storeService.getStores(storeName, page, size, sortBy, descending);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CANT_GET_INFO);
+        }
     }
 
+    @GetMapping("/all/stores")
+    public List<StoreInfoIdAndNameDTO> getAllStores() {
+        try {
+            return storeService.getStoresInfoIdAndName();
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CANT_GET_INFO);
+        }
+    }
 
     @GetMapping("/products")
     public Page<StoreProductDTO> getProducts(
-            @RequestParam String productName,
+            @RequestParam(required = false) String productID,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Double priceMin,
+            @RequestParam(required = false) Double priceMax,
+            @RequestParam(required = false) String categoryName,
+            @RequestParam(required = false) List<String> store,
+            @RequestParam(required = false) Integer quantityMin,
+            @RequestParam(required = false) Integer quantityMax,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "false") boolean descending
     ) {
-        return productService.getProducts(productName, page, size, sortBy, descending);
+        try {
+            return productService.getStoreProducts(productID, name, priceMin, priceMax, categoryName, store, quantityMin, quantityMax, page, size, sortBy, descending);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CANT_GET_INFO);
+        }
     }
-
 
     @GetMapping("/product-detail")
     public StoreProductDetailDTO getProduct(@RequestParam String id) {
-        return productService.getProduct(id);
+        try {
+            return productService.getStoreProduct(id);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CANT_GET_INFO);
+        }
     }
 
 
     @GetMapping("/all/category")
     public List<StoreCategoryIdAndNameDTO> getCategory() {
-        return categoryService.getAllStoreCategories();
+        try {
+            return categoryService.getAllStoreCategories();
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CANT_GET_INFO);
+        }
     }
 
 
     @GetMapping("/all/attribute")
     public List<StoreProductAttributeDTO> getAttribute() {
-        return productAttributeService.getProductAttributes();
+        try {
+            return productAttributeService.getProductAttributes();
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CANT_GET_INFO);
+        }
     }
 
 
     @PreAuthorize("@securityService.hasAccessToStore(#storeId)")
     @GetMapping("/store/zone")
     public List<StoreZoneIdAndNameDTO> getZonesForStore(@RequestParam String storeId) {
-        return zoneService.getZoneIdAndNameForStore(storeId);
+        try {
+            return zoneService.getZoneIdAndNameForStore(storeId);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CANT_GET_INFO);
+        }
     }
 
 
     @PreAuthorize("@securityService.hasAccessToStore(#storeId)")
     @GetMapping("/store/empty-zone")
     public List<StoreZoneIdAndNameDTO> getEmptyZonesForStore(@RequestParam String storeId) {
-        return zoneService.getEmptyZoneIdAndNameForStore(storeId);
+        try {
+            return zoneService.getEmptyZoneIdAndNameForStore(storeId);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CANT_GET_INFO);
+        }
     }
-
-
 
     @PutMapping(value = "/product/update/{id}")
     public ResponseEntity<String> updateProduct(
             @PathVariable String id,
             @RequestBody StoreProductDetailDTO product) {
-        try {
-            if (!id.equals(product.getProductID())) {
-                return ResponseEntity.badRequest().body("Cập nhật sản phẩm thất bại");
-            }
-            productService.updateStoreProduct(id, product);
-            return ResponseEntity.ok("Cập nhật sản phẩm thành công");
-
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cập nhật sản phẩm thất bại");
-        }
+        productService.updateStoreProduct(id, product);
+        return ResponseEntity.ok("Cập nhật sản phẩm thành công");
     }
 
 
@@ -156,29 +204,46 @@ public class StoreOwnerController {
 
     @GetMapping("/employees")
     public Page<StoreEmployeeDTO> getEmployees(
-            @RequestParam(defaultValue = "") String employeeName,
+            @RequestParam(defaultValue = "") String employeeID,
+            @RequestParam(defaultValue = "") String name,
+            @RequestParam(defaultValue = "") String email,
+            @RequestParam(defaultValue = "") String phoneNumber,
+            @RequestParam(defaultValue = "") List<String> store,
+            @RequestParam(defaultValue = "all") String gender,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "employeeID") String sortBy,
-            @RequestParam(defaultValue = "false") boolean descending,
-            @RequestParam(defaultValue = "all") String gender
+            @RequestParam(defaultValue = "false") boolean descending
     ) {
-        return employeeService.getEmployees(employeeName, page, size, sortBy, descending, gender);
+        try {
+            return employeeService.getEmployees(employeeID, name, email, phoneNumber, store, gender, page, size, sortBy, descending);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CANT_GET_INFO);
+        }
     }
 
 
     @GetMapping("/employee-detail")
     public StoreEmployeeDTO getEmployee(@RequestParam String id) {
-        return employeeService.getEmployee(id);
+        try {
+            return employeeService.getEmployee(id);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CANT_GET_INFO);
+        }
     }
 
+    @PostMapping(value = "/employee/create")
+    public ResponseEntity<String> createEmployee(
+            @RequestBody StoreAddEmployeeDTO employee) {
+        employeeService.createEmployee(employee);
+        return ResponseEntity.ok("Thêm nhân viên thành công");
+    }
 
-    @PutMapping(value = "/employee/upload-image/{employeeId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/employee/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadEmployeeImage(
-            @PathVariable String employeeId,
             @RequestPart("file") MultipartFile file
     ) {
-        String url = employeeService.updateStoreEmployeeImage(employeeId, file);
+        String url = employeeService.updateStoreEmployeeImage(file);
         return ResponseEntity.ok(url);
     }
 
@@ -193,7 +258,6 @@ public class StoreOwnerController {
         }
     }
 
-
     @PutMapping(value = "/employee/update/{id}")
     public ResponseEntity<String> updateEmployee(
             @PathVariable String id,
@@ -202,16 +266,61 @@ public class StoreOwnerController {
         return ResponseEntity.ok("Cập nhật sản phẩm thành công");
     }
 
-
-    @GetMapping("/statistics")
+    @GetMapping("/statistics/data")
     public Page<StoreStatisticDTO> getStatistics(
-            @RequestParam String storeName,
+            @RequestParam(defaultValue = "") List<String> store,
+            @RequestParam(required = false) Double totalMoneyMin,
+            @RequestParam(required = false) Double totalMoneyMax,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate createdAtStart,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate createdAtEnd,
+            @RequestParam(required = false) String createdBy,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "false") boolean descending
     ) {
-        return statisticsService.getStatistics(storeName, page, size, sortBy, descending);
+        return statisticsService.getStatistics(store, totalMoneyMin, totalMoneyMax,
+                type, createdAtStart, createdAtEnd, createdBy,
+                page, size, sortBy, descending);
+    }
+
+    @GetMapping("/statistics/chart/by-type")
+    public ResponseEntity<Map<String, Map<String, Double>>> getStatisticsByType(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) List<String> storeIds
+    ) {
+        Map<String, Map<String, Double>> data = statisticsService.getStatisticsByType(startDate, endDate, storeIds);
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/statistics/chart/by-debt-kh")
+    public ResponseEntity<Map<String, Map<String, Double>>> getStatisticsByDebtOfKH(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) List<String> storeIds
+    ) {
+        Map<String, Map<String, Double>> data = statisticsService.getStatisticsByDebtOfKH(startDate, endDate, storeIds);
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/statistics/chart/by-debt-ch")
+    public ResponseEntity<Map<String, Map<String, Double>>> getStatisticsByDebtOfCH(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) List<String> storeIds
+    ) {
+        Map<String, Map<String, Double>> data = statisticsService.getStatisticsByDebtOfCH(startDate, endDate, storeIds);
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/statistic-transactions")
+    public StoreStatisticDataDTO getTransactionsByStores(@RequestParam List<String> storeIds) {
+        try {
+            return statisticsService.getStatisticTransactionsByStores(storeIds);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CANT_GET_INFO);
+        }
     }
 }
-

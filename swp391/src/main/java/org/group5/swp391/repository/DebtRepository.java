@@ -1,6 +1,7 @@
 package org.group5.swp391.repository;
 
 import org.group5.swp391.entity.Debt;
+import org.group5.swp391.entity.Statistics;
 import org.group5.swp391.enums.DebtType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -66,4 +67,53 @@ public interface DebtRepository extends JpaRepository<Debt, String> {
             Pageable pageable
     );
 
+    //Chien
+    @Query("""
+    SELECT d
+    FROM Debt d
+    WHERE d.store.id IN :storeIds
+    AND (:createdAtStart IS NULL OR d.createdAt >= :createdAtStart)
+    AND (:createdAtEnd IS NULL OR d.createdAt <= :createdAtEnd)
+    AND (d.type = 'NEGATIVE_CH_TRA' OR d.type = 'POSITIVE_CH_VAY')
+""")
+    List<Debt> findDebtOfCHByTime(
+            @Param("storeIds") List<String> storeIds,
+            @Param("createdAtStart") LocalDateTime createdAtStart,
+            @Param("createdAtEnd") LocalDateTime createdAtEnd
+    );
+
+    @Query("""
+    SELECT d
+    FROM Debt d
+    WHERE d.store.id IN :storeIds
+    AND (:createdAtStart IS NULL OR d.createdAt >= :createdAtStart)
+    AND (:createdAtEnd IS NULL OR d.createdAt <= :createdAtEnd)
+    AND (d.type = 'POSITIVE_KH_TRA' OR d.type = 'NEGATIVE_KH_VAY')
+""")
+    List<Debt> findDebtOfKHByTime(
+            @Param("storeIds") List<String> storeIds,
+            @Param("createdAtStart") LocalDateTime createdAtStart,
+            @Param("createdAtEnd") LocalDateTime createdAtEnd
+    );
+
+
+    @Query("""
+    SELECT SUM(d.amount)
+    FROM Debt d
+    WHERE d.store.id IN :storeIds
+    AND d.type = 'NEGATIVE_KH_VAY'
+""")
+    Double getTotalDebtByKH_NO(
+            @Param("storeIds") List<String> storeIds
+    );
+
+    @Query("""
+    SELECT SUM(d.amount)
+    FROM Debt d
+    WHERE d.store.id IN :storeIds
+    AND d.type = 'POSITIVE_CH_VAY'
+""")
+    Double getTotalDebtByCH_NO(
+            @Param("storeIds") List<String> storeIds
+    );
 }

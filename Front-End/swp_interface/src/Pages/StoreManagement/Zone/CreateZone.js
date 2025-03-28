@@ -9,7 +9,7 @@ const CreateZone = ({ onClose, storeID, fetchZones, onSuccess }) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    fetch(`${API.STORE_DETAIL.GET_STORE_PRODUCTS_BY_STOREID}?storeID=${storeID}`, {
+    fetch(`${API.STORE_DETAIL.GET_STORE_PRODUCTS}?storeID=${storeID}`, {
       headers: { 'Authorization': `Bearer ${token}` },
     })
       .then((response) => {
@@ -65,7 +65,7 @@ const CreateZone = ({ onClose, storeID, fetchZones, onSuccess }) => {
       <Form.Item label="Phân Khu" name="location" rules={[{ required: true, message: <i>Vui lòng nhập phân khu!</i> }]}>
         <Input placeholder="Nhập phân khu" />
       </Form.Item>
-      <Form.Item label="Sản phẩm" name="productID" rules={[{ required: true, message: <i>Vui lòng chọn sản phẩm!</i> }]}>
+      <Form.Item label="Sản phẩm" name="productID" rules={[{ message: <i>Vui lòng chọn sản phẩm!</i> }]}>
         <Select placeholder="Chọn sản phẩm">
           {products.map((product) => (
             <Select.Option key={product.id} value={product.id}>

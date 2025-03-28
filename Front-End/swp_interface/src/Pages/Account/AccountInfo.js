@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import API from "../../Utils/API/API.js";
 import { getToken } from "../../Utils/UserInfoUtils";
 import { useNavigate } from "react-router-dom";
-import { Container, Card, Button, Spinner, Alert, Form } from "react-bootstrap";
+import { Row, Col, Card, Button, Spin, Alert, Form, Upload } from "antd";
+import { UserOutlined, UploadOutlined } from "@ant-design/icons";
+import { Avatar, Space } from "antd";
 import avt_default from "../../assets/img/avt_default.jpg";
 import UpdateProfile from "./UpdateProfile";
-import Navbar from "./NavbarAccount.js";
-import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Space } from "antd";
 
 const AccountInfo = () => {
   const [account, setAccount] = useState(null);
@@ -49,8 +48,7 @@ const AccountInfo = () => {
     setTimeout(() => setMessage(null), 3000);
   };
 
-  const handleAvatarChange = async (event) => {
-    const file = event.target.files[0];
+  const handleAvatarChange = async (file) => {
     if (!file) return;
 
     setUploading(true);
@@ -100,93 +98,118 @@ const AccountInfo = () => {
 
   return (
     <>
-      {/* <div className="mt-5">
-        <Navbar />
-      </div> */}
-      <Container className="mt-5">
-        <h2 className="mb-4">Thông tin tài khoản</h2>
-        {message && <Alert variant={messageType}>{message}</Alert>}
-        {loading ? (
-          <div className="text-center">
-            <Spinner animation="border" />
-          </div>
-        ) : account ? (
-          <Card className="p-4 shadow">
-            <div className="d-flex justify-content-between align-items-center">
+      <div className="mt-5">
+        <Row justify="center" className="mt-5">
+          <Col span={16}>
+            <h2 className="mb-4">Thông tin tài khoản</h2>
+            {message && <Alert message={message} type={messageType} />}
+            {loading ? (
               <div className="text-center">
-                <Space direction="vertical" size={20}>
-                  <Space wrap size={20}>
-                    <Avatar
-                      size={64}
-                      src={account.avatar || avt_default}
-                      icon={!account.avatar && <UserOutlined />}
-                    />
-                  </Space>
-                </Space>
-                
-                <Form.Group>
-                  <Form.Label className="btn btn-link">
-                    {uploading ? "Đang tải lên..." : "Thay đổi ảnh"}
-                    <Form.Control
-                      type="file"
-                      accept="image/*"
-                      hidden
-                      onChange={handleAvatarChange}
-                    />
-                  </Form.Label>
-                </Form.Group>
+                <Spin size="large" />
               </div>
-              <div className="d-flex">
-                <Button variant="primary" onClick={() => setShowUpdate(true)}>
-                  Chỉnh sửa
-                </Button>
-                <Button
-                  variant="warning"
-                  className="ms-2"
-                  onClick={() => navigate("/account-change-password")}
-                >
-                  Thay đổi mật khẩu
-                </Button>
-              </div>
-            </div>
-            <Card.Body>
-              <p>
-                <strong>Tên đăng nhập:</strong> {account.username}
-              </p>
-              <p>
-                <strong>Họ Tên:</strong> {account.name}
-              </p>
-              <p>
-                <strong>Email:</strong> {account.email}
-              </p>
-              <p>
-                <strong>Số điện thoại:</strong> {account.phoneNumber}
-              </p>
-              <p>
-                <strong>Giới tính:</strong> {account.gender ? "Nam" : "Nữ"}
-              </p>
-              <p>
-                <strong>Ngày sinh:</strong> {account.birthDate}
-              </p>
-            </Card.Body>
-            <Button variant="secondary" onClick={() => navigate(-1)}>
-              Quay lại
-            </Button>
-          </Card>
-        ) : (
-          <p className="text-danger">Không thể tải thông tin tài khoản</p>
-        )}
+            ) : account ? (
+              <Card className="p-4 shadow">
+                <Row gutter={[16, 16]} align="middle">
+                  <Col span={6} className="text-center">
+                    <Space direction="vertical" size={20}>
+                      <Space wrap size={20}>
+                        <Avatar
+                          size={100}
+                          src={account.avatar || avt_default}
+                          icon={!account.avatar && <UserOutlined />}
+                        />
+                      </Space>
+                    </Space>
 
-        {account && (
-          <UpdateProfile
-            show={showUpdate}
-            handleClose={() => setShowUpdate(false)}
-            account={account}
-            onUpdateSuccess={handleUpdateSuccess}
-            onUpdateFail={handleUpdateFail}
-          />
-        )}
-      </Container>
+                    <Form>
+                      <Form.Item>
+                        <label className="btn btn-link">
+                          {uploading ? "Đang tải lên..." : "Thay đổi ảnh"}
+                          <Upload
+                            accept="image/*"
+                            showUploadList={false}
+                            customRequest={({ file }) =>
+                              handleAvatarChange(file)
+                            }
+                          ></Upload>
+                        </label>
+                      </Form.Item>
+                    </Form>
+                  </Col>
+                  <Col span={18}>
+                    <Row>
+                      <Col span={24}>
+                        <p>
+                          <strong>Tên đăng nhập:</strong> {account.username}
+                        </p>
+                      </Col>
+                      <Col span={24}>
+                        <p>
+                          <strong>Họ Tên:</strong> {account.name}
+                        </p>
+                      </Col>
+                      <Col span={24}>
+                        <p>
+                          <strong>Email:</strong> {account.email}
+                        </p>
+                      </Col>
+                      <Col span={24}>
+                        <p>
+                          <strong>Số điện thoại:</strong> {account.phoneNumber}
+                        </p>
+                      </Col>
+                      <Col span={24}>
+                        <p>
+                          <strong>Giới tính:</strong>{" "}
+                          {account.gender ? "Nam" : "Nữ"}
+                        </p>
+                      </Col>
+                      <Col span={24}>
+                        <p>
+                          <strong>Ngày sinh:</strong> {account.birthDate}
+                        </p>
+                      </Col>
+                    </Row>
+                  </Col>
+                </Row>
+                <Row justify="space-between" gutter={[8, 8]}>
+                  <Col>
+                    <Button onClick={() => navigate(-1)} type="default">
+                      Quay lại
+                    </Button>
+                  </Col>
+                  <Col style={{ textAlign: "right" }}>
+                    <Button
+                      type="primary"
+                      onClick={() => setShowUpdate(true)}
+                      style={{ marginRight: 8 }}
+                    >
+                      Chỉnh sửa
+                    </Button>
+                    <Button
+                      type="warning"
+                      onClick={() => navigate("/account-change-password")}
+                    >
+                      Thay đổi mật khẩu
+                    </Button>
+                  </Col>
+                </Row>
+              </Card>
+            ) : (
+              <p className="text-danger">Không thể tải thông tin tài khoản</p>
+            )}
+            {account && (
+              <UpdateProfile
+                show={showUpdate}
+                handleClose={() => setShowUpdate(false)}
+                account={account}
+                onUpdateSuccess={handleUpdateSuccess}
+                onUpdateFail={handleUpdateFail}
+              />
+            )}
+          </Col>
+        </Row>
+      </div>
     </>
   );
 };

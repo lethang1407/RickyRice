@@ -37,7 +37,7 @@ function HomeHeader() {
       setLoading(true);
       setTimeout(() => {
         setLoading(false);
-        navigate("/admin");
+        navigate("/admin/statistic");
       }, 1000);
     } else if (role == "EMPLOYEE") {
       setLoading(true);
@@ -62,6 +62,10 @@ function HomeHeader() {
       });
     }
 
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
   return (
     <>
       {contextHolder}
@@ -79,7 +83,7 @@ function HomeHeader() {
                     class="header__navbar__img"
                   />
                   <div style={{padding:'10px 0px'}} class="header__navbar__menu">
-                    <div onClick={() => scrollToSection("head")} class="header__navbar__menu__item">Trang chủ</div>
+                    <div onClick={() => scrollToTop()} class="header__navbar__menu__item">Trang chủ</div>
                     <div onClick={() => scrollToSection("introduction")} class="header__navbar__menu__item">Giới thiệu</div>
                     <div
                       className="header__navbar__menu__item"

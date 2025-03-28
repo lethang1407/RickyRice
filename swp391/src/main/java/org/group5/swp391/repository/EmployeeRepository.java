@@ -15,30 +15,37 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, String> {
-    Page<Employee> findByEmployeeAccountIn(Collection<Account> employeeAccount,Pageable pageable);
-    Page<Employee> findByStoreIn(Collection<Store> stores, Pageable pageable);
 
     @Query("SELECT s " +
             "FROM Employee s " +
             "WHERE s.employeeAccount.id= :accountId")
+
     Employee findStoreIdByAccountEmpId(@Param("accountId") String accountId);
-    @Query("""
-    SELECT e 
-    FROM Employee e 
-    JOIN e.employeeAccount a 
-    WHERE e.store IN :stores
-      AND (:name IS NULL OR LOWER(a.name) LIKE LOWER(CONCAT('%', :name, '%')))
-      AND (:gender IS NULL OR a.gender = :gender)
-""")
-    Page<Employee> findByStoreInAndNameAndGender(
-            @Param("stores") List<Store> stores,
+
+    @Query("SELECT e FROM Employee e " +
+            "JOIN e.store s " +
+            "JOIN e.employeeAccount ea " +
+            "JOIN s.storeAccount a " +
+            "WHERE a.username = :username " +
+            "AND (:employeeID IS NULL OR e.id = :employeeID) " +
+            "AND (:name IS NULL OR LOWER(ea.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
+            "AND (:email IS NULL OR LOWER(ea.email) LIKE LOWER(CONCAT('%', :email, '%'))) " +
+            "AND (:phoneNumber IS NULL OR ea.phoneNumber LIKE %:phoneNumber%) " +
+            "AND ((:store) IS NULL OR s.id IN (:store))" +
+            "AND (:gender IS NULL OR ea.gender = :gender)")
+    Page<Employee> findStoreEmployees(
+            @Param("username") String username,
+            @Param("employeeID") String employeeID,
             @Param("name") String name,
+            @Param("email") String email,
+            @Param("phoneNumber") String phoneNumber,
+            @Param("store") List<String> store,
             @Param("gender") Boolean gender,
             Pageable pageable
     );
 
     @Query("""
-    SELECT e 
+    SELECT e
     FROM Employee e
     JOIN e.store s 
     JOIN s.storeAccount a 
@@ -46,4 +53,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
     AND e.id = :employeeId
 """)
     Optional<Employee> findEmployeeForUser(@Param("username") String username, @Param("employeeId") String employeeId);
+
+    int countByStoreIdIn(List<String> storeIds);
+
 }

@@ -2,17 +2,19 @@ package org.group5.swp391.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.group5.swp391.converter.AccountConverter;
 import org.group5.swp391.converter.EmployeeConverter;
+import org.group5.swp391.dto.request.authentication_request.AccountCreationRequest;
+import org.group5.swp391.dto.response.AuthenticationResponse.AccountCreationResponse;
+import org.group5.swp391.dto.store_owner.all_employee.StoreAddEmployeeDTO;
 import org.group5.swp391.dto.store_owner.all_employee.StoreEmployeeDTO;
-import org.group5.swp391.entity.Account;
-import org.group5.swp391.entity.Employee;
-import org.group5.swp391.entity.Product;
-import org.group5.swp391.entity.Store;
+import org.group5.swp391.entity.*;
 import org.group5.swp391.exception.AppException;
 import org.group5.swp391.exception.ErrorCode;
 import org.group5.swp391.repository.*;
 import org.group5.swp391.service.EmployeeService;
 import org.group5.swp391.utils.CloudinaryService;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -36,31 +39,30 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeConverter employeeConverter;
     private final EmployeeRepository employeeRepository;
     private final CloudinaryService cloudinaryService;
+    private final NotificationRepository notificationRepository;
+    private final AccountConverter accountConverter;
 
     @Override
-    public Page<StoreEmployeeDTO> getEmployees(String employeeName, int page, int size, String sortBy, boolean descending, String genderStr) {
+    public Page<StoreEmployeeDTO> getEmployees(String employeeID, String name, String email, String phoneNumber, List<String> store, String strGender, int page, int size, String sortBy, boolean descending) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AccessDeniedException("Bạn chưa đăng nhập!");
         }
         String username = authentication.getName();
-        Account account = accountRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tài khoản không tồn tại"));
-        List<Store> stores = storeRepository.findByStoreAccount(account);
-        if (stores.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Bạn không quản lý cửa hàng nào.");
-        }
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         Boolean gender = null;
-        if (!genderStr.equalsIgnoreCase("all")) {
-            gender = genderStr.equalsIgnoreCase("Male");
+        if (!strGender.equalsIgnoreCase("all")) {
+            gender = strGender.equalsIgnoreCase("Male");
         }
-        Page<Employee> employees = employeeRepository.findByStoreInAndNameAndGender(
-                stores,
-                (employeeName == null || employeeName.isEmpty()) ? null : employeeName,
-                gender,
-                pageable
+        employeeID = (employeeID != null && !employeeID.trim().isEmpty()) ? employeeID.trim() : null;
+        name = (name != null && !name.trim().isEmpty()) ? name.trim() : null;
+        phoneNumber = (phoneNumber != null && !phoneNumber.trim().isEmpty()) ? phoneNumber.trim() : null;
+        if (store != null && store.isEmpty()) {
+            store = null;
+        }
+        Page<Employee> employees = employeeRepository.findStoreEmployees(
+                username, employeeID, name, email, phoneNumber, store, gender, pageable
         );
         return employees.map(employeeConverter::toStoreEmployeeDTO);
     }
@@ -82,12 +84,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Transactional
-    public String updateStoreEmployeeImage(String employeeId, MultipartFile file) {
-        checkEmployeeOfUser(employeeId);
+    public String updateStoreEmployeeImage(MultipartFile file) {
         try {
             return cloudinaryService.uploadFile(file);
         } catch (IOException e) {
-            throw new RuntimeException("Không thể tải ảnh lên!");
+            throw new AppException(ErrorCode.CANT_UPLOAD_IMAGE);
         }
     }
 
@@ -96,11 +97,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = checkEmployeeOfUser(employeeId);
         Account account = employee.getEmployeeAccount();
         boolean a = account.getEmail().equals(storeEmployeeDTO.getStoreAccount().getEmail());
-        if(accountRepository.existsByEmail(storeEmployeeDTO.getStoreAccount().getEmail())&&!a) {
+        if (accountRepository.existsByEmail(storeEmployeeDTO.getStoreAccount().getEmail()) && !a) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
         boolean b = account.getPhoneNumber().equals(storeEmployeeDTO.getStoreAccount().getPhoneNumber());
-        if(accountRepository.existsByPhoneNumber(storeEmployeeDTO.getStoreAccount().getPhoneNumber()) && !b) {
+        if (accountRepository.existsByPhoneNumber(storeEmployeeDTO.getStoreAccount().getPhoneNumber()) && !b) {
             throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
         }
         account.setName(storeEmployeeDTO.getStoreAccount().getName());
@@ -113,10 +114,42 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeConverter.toStoreEmployeeDTO(employee);
     }
 
+    @Transactional
+    public void createEmployee(StoreAddEmployeeDTO storeEmployeeDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Bạn chưa đăng nhập!");
+        }
+        String username = authentication.getName();
+        boolean c = accountRepository.existsByUsername(storeEmployeeDTO.getUsername());
+        if (c) {
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
+        }
+        boolean a = accountRepository.existsByEmailAndStore(storeEmployeeDTO.getEmail(), storeEmployeeDTO.getStoreId());
+        if (a) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
+        boolean b = accountRepository.existsByPhoneNumberAndStore(storeEmployeeDTO.getPhoneNumber(), storeEmployeeDTO.getStoreId());
+        if (b) {
+            throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
+        }
+        AccountCreationRequest accountCreated = new AccountCreationRequest(storeEmployeeDTO.getUsername(), storeEmployeeDTO.getPassword(), storeEmployeeDTO.getName(), storeEmployeeDTO.getEmail(), storeEmployeeDTO.getPhoneNumber(), storeEmployeeDTO.getAvatar(), storeEmployeeDTO.getBirthDate(), storeEmployeeDTO.getGender(), "EMPLOYEE");
+        Account account = accountConverter.toAccountEntity(accountCreated);
+        Account a1 = accountRepository.save(account);
+        Employee employee = new Employee(a1, storeRepository.findById(storeEmployeeDTO.getStoreId()).orElse(null));
+        employee.setCreatedAt(LocalDateTime.now());
+        employee.setCreatedBy(username);
+        employeeRepository.save(employee);
+    }
 
     @Transactional
     public void deleteEmployee(String employeeId) {
         Employee employee = checkEmployeeOfUser(employeeId);
+        String accountId = employee.getEmployeeAccount().getId();
+        List<Notification> notifications = notificationRepository.findByTargetAccount_IdOrSendAccount_Id(accountId, accountId);
+        if (!notifications.isEmpty()) {
+            notificationRepository.deleteAll(notifications);
+        }
         employeeRepository.delete(employee);
     }
 

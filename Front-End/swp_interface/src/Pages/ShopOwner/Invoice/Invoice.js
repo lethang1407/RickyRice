@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Table, message, Input, Button } from 'antd';
+import { Table, message, Input, Form, Select, Row, Col, Button, InputNumber } from 'antd';
 import qs from 'qs';
 import InvoiceDetailModal from '../../../Components/StoreOwner/InvoiceDetailModal/InvoiceDetailModal';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import { getDataWithToken } from '../../../Utils/FetchUtils';
 import API from '../../../Utils/API/API';
-import './style.scss'
+import './style.scss';
 
-const { Search } = Input;
+const { Option } = Select;
 
 const Invoice = () => {
+    const [form] = Form.useForm();
     const token = getToken();
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [searchValue, setSearchValue] = useState("");
-    const [timeoutId, setTimeoutId] = useState(null);
+    const [stores, setStores] = useState([]);
+    const [fetchingStores, setFetchingStores] = useState(false);
+    const [searchTimeout, setSearchTimeout] = useState(null);
     const [tableParams, setTableParams] = useState({
         pagination: {
             current: 1,
@@ -24,133 +26,162 @@ const Invoice = () => {
         sortField: null,
         sortOrder: null,
     });
+    const [filters, setFilters] = useState({
+        phoneNumber: '',
+        invoiceNumber: '',
+        store: [],
+        totalMoneyMin: null,
+        totalMoneyMax: null,
+        type: null,
+        status: null
+    });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedInvoiceID, setSelectedInvoiceID] = useState(null);
 
     const columns = [
         {
-            title: 'ID',
+            title: 'STT',
             key: 'id',
             render: (_, __, index) => {
-                const id =
-                    (tableParams.pagination.current - 1) * tableParams.pagination.pageSize +
-                    index + 1;
-                return id;
+                return (tableParams.pagination.current - 1) * tableParams.pagination.pageSize + index + 1;
             },
             width: '5%',
+            align: 'center',
         },
         {
-            title: 'Invoice Number',
+            title: 'Mã HĐ',
             dataIndex: 'invoiceID',
             key: 'invoiceID',
-            width: '5%',
+            width: '6%',
+            align: 'center',
         },
         {
-            title: 'Customer Details',
+            title: 'Chi Tiết Khách Hàng',
             key: 'customerDetails',
             render: (_, record) => (
                 <>
-                    <div><strong>Name:</strong> {record.customerName}</div>
-                    <div><strong>Phone:</strong> {record.customerPhoneNumber}</div>
+                    <div><strong>Tên:</strong> {record.customerName}</div>
+                    <div><strong>SĐT:</strong> {record.customerPhoneNumber}</div>
                 </>
             ),
             width: '15%',
+            align: 'center',
         },
         {
-            title: 'Store Name',
+            title: 'Tên Cửa Hàng',
             dataIndex: 'storeName',
             key: 'storeName',
             width: '10%',
+            align: 'center',
         },
         {
-            title: 'Product Money',
+            title: 'Tiền Hàng (VNĐ)',
             dataIndex: 'productMoney',
             key: 'productMoney',
             sorter: true,
-            render: (productMoney) => `${(productMoney || 0).toLocaleString()} đ`,
-            width: '13%',
+            render: (productMoney) => `${(productMoney || 0).toLocaleString()}`,
+            width: '10%',
+            align: 'center',
         },
         {
-            title: 'Ship Money',
+            title: 'Tiền Ship (VNĐ)',
             dataIndex: 'shipMoney',
             key: 'shipMoney',
             sorter: true,
-            render: (shipMoney) => `${(shipMoney || 0).toLocaleString()} đ`,
-            width: '12%',
+            render: (shipMoney) => `${(shipMoney || 0).toLocaleString()}`,
+            width: '10%',
+            align: 'center',
         },
         {
-            title: 'Total Money',
+            title: 'Tổng Tiền (VNĐ)',
             key: 'totalMoney',
             dataIndex: 'totalMoney',
-            render: (totalMoney) => `${(totalMoney || 0).toLocaleString()} đ`,
-            sorter: true,
-            width: '8%',
+            render: (totalMoney) => `${(totalMoney || 0).toLocaleString()}`,
+            width: '10%',
+            align: 'center',
         },
         {
-            title: 'Type',
+            title: 'Loại',
             dataIndex: 'type',
             key: 'type',
-            filters: [
-                { text: 'Xuất Khẩu', value: true },
-                { text: 'Nhập Khẩu', value: false }
-            ],
-            filterMultiple: false,
-            onFilter: (value, record) => record.type === value,
+            width: '9%',
+            align: 'center',
             render: (type) => (
-                <span style={{ color: type ? 'green' : 'red' }}>
-                    {type ? 'Xuất Khẩu' : 'Nhập Khẩu'}
-                </span>
+                <Button
+                    className={`status-button ${type === true ? 'export' : 'import'}`}
+                    type="primary"
+                    size="small"
+                >
+                    {type === true ? 'Xuất' : 'Nhập'}
+                </Button>
             ),
-            width: '9%',
         },
         {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            filters: [
-                { text: 'Thanh toán', value: true },
-                { text: 'Nợ', value: false }
-            ],
-            filterMultiple: false,
-            onFilter: (value, record) => record.status === value,
-            render: (status) => (
-                <span style={{ color: status ? 'green' : 'red' }}>
-                    {status ? 'Thanh toán' : 'Nợ'}
-                </span>
-            ),
-            width: '9%',
-        },
-        {
-            title: 'Description',
+            title: 'Mô Tả',
             dataIndex: 'description',
             key: 'description',
             width: '30%',
+            align: 'center',
         },
     ];
 
-    const getInvoiceParam = (params) => {
-        const { pagination, sortField, sortOrder, filters } = params;
-        const typeFilter = filters?.type?.[0] === true ? "export" : filters?.type?.[0] === false ? "import" : "all";
-        console.log(typeFilter)
-        const statusFilter = filters?.status?.[0] === true ? "paid" : filters?.status?.[0] === false ? "unpaid" : "all";
-        console.log(statusFilter)
+    useEffect(() => {
+        const fetchStores = async () => {
+            setFetchingStores(true);
+            try {
+                const response = await getDataWithToken(API.STORE_OWNER.GET_ALL_STORES, token);
+                if (Array.isArray(response)) {
+                    const cleanedStores = response
+                        .filter(store => store.id != null)
+                        .map((store) => ({
+                            ...store,
+                            storeID: store.id,
+                        }));
+                    setStores(cleanedStores);
+                } else {
+                    message.error('Lỗi định dạng dữ liệu cửa hàng');
+                    setStores([]);
+                }
+            } catch (error) {
+                message.error('Không thể tải dữ liệu cửa hàng.');
+                setStores([]);
+            } finally {
+                setFetchingStores(false);
+            }
+        };
+        fetchStores();
+    }, [token]);
+
+    const getInvoiceParam = () => {
+        const { pagination, sortField, sortOrder } = tableParams;
         return qs.stringify({
+            phoneNumber: filters.phoneNumber,
+            invoiceNumber: filters.invoiceNumber,
+            store: filters.store,
+            totalMoneyMin: filters.totalMoneyMin,
+            totalMoneyMax: filters.totalMoneyMax,
+            type: filters.type || 'all',
+            status: filters.status || 'all',
             page: pagination.current - 1,
             size: pagination.pageSize,
             sortBy: sortField,
             descending: sortOrder === "descend",
-            type: typeFilter,
-            status: statusFilter,
-        });
+        }, { arrayFormat: 'repeat' });
     };
 
     const fetchInvoice = async () => {
         setLoading(true);
         try {
-            const queryParams = `?phoneNumber=${encodeURIComponent(searchValue)}&` + getInvoiceParam(tableParams);
-            const response = await getDataWithToken(API.STORE_OWNER.GET_INVOICES + queryParams, token);
-            console.log(response)
-            setData(response.content);
+            const queryParams = getInvoiceParam();
+            console.log(queryParams);
+
+            const response = await getDataWithToken(API.STORE_OWNER.GET_INVOICES + '?' + queryParams, token);
+            if (response && response.content) {
+                setData(response.content);
+            }
+            else {
+                setData([])
+            }
             setTableParams((prev) => ({
                 ...prev,
                 pagination: {
@@ -159,7 +190,8 @@ const Invoice = () => {
                 },
             }));
         } catch (error) {
-            message.error('Không thể tải dữ liệu danh sách invoices');
+            message.error('Không thể tải dữ liệu hóa đơn');
+            setData([]);
         } finally {
             setLoading(false);
         }
@@ -172,35 +204,59 @@ const Invoice = () => {
         tableParams.pagination.pageSize,
         tableParams.sortField,
         tableParams.sortOrder,
-        tableParams.filters,
-        searchValue
+        filters
     ]);
 
-    const handleTableChange = (pagination, filters, sorter) => {
-        setTableParams({
-            pagination,
-            filters: {
-                type: filters.type || [],
-                status: filters.status || [],
-            },
-            sortField: sorter?.field || null,
-            sortOrder: sorter?.order || null
-        });
+    const handleInputChange = (changedValues, allValues) => {
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        setSearchTimeout(
+            setTimeout(() => {
+                handleSearch(allValues);
+            }, 1000)
+        );
     };
 
-    const handleSearch = (e) => {
-        const value = e.target.value;
-        if (timeoutId) {
-            clearTimeout(timeoutId);
-        }
-        const newTimeoutId = setTimeout(() => {
-            setSearchValue(value);
-            setTableParams((prev) => ({
-                ...prev,
-                pagination: { ...prev.pagination, current: 1 },
-            }));
-        }, 1000);
-        setTimeoutId(newTimeoutId);
+    const handleSearch = (values = form.getFieldsValue()) => {
+        setFilters({
+            phoneNumber: values.phoneNumber || '',
+            invoiceNumber: values.invoiceNumber || '',
+            store: values.store || [],
+            totalMoneyMin: values.totalMoneyMin || null,
+            totalMoneyMax: values.totalMoneyMax || null,
+            type: values.type || null,
+            status: values.status || null
+        });
+        setTableParams((prev) => ({
+            ...prev,
+            pagination: { ...prev.pagination, current: 1 },
+        }));
+    };
+
+    const handleReset = () => {
+        form.resetFields();
+        setFilters({
+            phoneNumber: '',
+            invoiceNumber: '',
+            store: [],
+            totalMoneyMin: null,
+            totalMoneyMax: null,
+            type: null,
+            status: null
+        });
+        setTableParams((prev) => ({
+            ...prev,
+            pagination: { ...prev.pagination, current: 1 },
+        }));
+    };
+
+    const handleTableChange = (pagination, _, sorter) => {
+        setTableParams({
+            pagination,
+            sortField: sorter?.field || null,
+            sortOrder: sorter?.order || null,
+        });
     };
 
     const onRowClick = (record) => {
@@ -213,36 +269,97 @@ const Invoice = () => {
         setSelectedInvoiceID(null);
     };
 
-    const handleCreate = () => {
-
-        message.info('Create button clicked');
-    };
     return (
-        <div>
-            {/* Container for search and button */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-                <Search
-                    placeholder="Enter Phone Number"
-                    onChange={handleSearch}
-                    enterButton
-                    loading={loading}
-                    style={{ maxWidth: '90%' }}
-                />
-                <Button type="primary" onClick={handleCreate}
-                    style={{ marginRight: '30px' }}
-                >
-                    Create
-                </Button>
-            </div>
+        <div className="invoice-list-container">
+            <Form
+                form={form}
+                layout="vertical"
+                className="filter-form"
+                onValuesChange={handleInputChange}
+            >
+                <Row gutter={16} className="filter-form-row">
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Mã Hóa Đơn" name="invoiceNumber">
+                            <Input placeholder="Nhập mã hóa đơn" className="filter-form-input" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Số Điện Thoại" name="phoneNumber">
+                            <Input placeholder="Nhập số điện thoại" className="filter-form-input" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Cửa Hàng" name="store">
+                            <Select
+                                className="filter-form-select"
+                                mode="multiple"
+                                placeholder="Chọn cửa hàng"
+                                allowClear
+                                loading={fetchingStores}
+                            >
+                                {stores.map((store) => (
+                                    <Option key={store.storeID} value={store.storeID}>
+                                        {store.name}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Tiền Tối Thiểu" name="totalMoneyMin">
+                            <InputNumber
+                                className="filter-form-input-number"
+                                placeholder="Tối thiểu"
+                                style={{ width: '100%' }}
+                                formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                step={1000}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Tiền Tối Đa" name="totalMoneyMax">
+                            <InputNumber
+                                className="filter-form-input-number"
+                                placeholder="Tối đa"
+                                style={{ width: '100%' }}
+                                formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                step={1000}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Loại" name="type">
+                            <Select
+                                className="filter-form-select"
+                                placeholder="Chọn loại"
+                                allowClear
+                            >
+                                <Option value="export">Xuất</Option>
+                                <Option value="import">Nhập</Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={24} style={{ textAlign: 'right', marginBottom: '16px' }}>
+                        <Button onClick={handleReset} style={{ marginRight: '8px' }}>
+                            Làm Mới
+                        </Button>
+                    </Col>
+                </Row>
+            </Form>
 
             <Table
+                className="invoice-table"
                 columns={columns}
                 rowKey="invoiceID"
                 dataSource={data}
                 pagination={{
                     ...tableParams.pagination,
                     showSizeChanger: true,
-                    pageSizeOptions: ['1', '2', '3', '4', '5'],
+                    pageSizeOptions: ['5', '10', '20', '50'],
                 }}
                 loading={loading}
                 onChange={handleTableChange}
@@ -256,18 +373,10 @@ const Invoice = () => {
                 <InvoiceDetailModal
                     visible={isModalOpen}
                     invoiceID={selectedInvoiceID}
-                    shipMoney={
-                        data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.shipMoney || 0
-                    }
-                    totalMoney={
-                        data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.totalMoney || 0
-                    }
-                    customerName={
-                        data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.customerName || 0
-                    }
-                    customerPhoneNumber={
-                        data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.customerPhoneNumber || 0
-                    }
+                    shipMoney={data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.shipMoney || 0}
+                    totalMoney={data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.totalMoney || 0}
+                    customerName={data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.customerName || ''}
+                    customerPhoneNumber={data.find(invoice => invoice.invoiceID === selectedInvoiceID)?.customerPhoneNumber || ''}
                     onClose={closeModal}
                 />
             )}

@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +19,33 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, String> {
     Page<Product> findAll(Pageable pageable);
 
-    Page<Product> findByStoreInAndNameContainingIgnoreCase(Collection<Store> stores, String name, Pageable pageable);
+    @Query("SELECT p FROM Product p " +
+            "JOIN p.store s " +
+            "JOIN s.storeAccount sa " +
+            "JOIN p.category c " +
+            "WHERE (:productID IS NULL OR p.id = :productID) " +
+            "AND (:productName IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :productName, '%'))) " +
+            "AND (:priceMin IS NULL OR p.price >= :priceMin) " +
+            "AND (:priceMax IS NULL OR p.price <= :priceMax) " +
+            "AND (:categoryName IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))) " +
+            "AND (:quantityMin IS NULL OR p.quantity >= :quantityMin) " +
+            "AND (:quantityMax IS NULL OR p.quantity <= :quantityMax) " +
+            "AND ((:storeIds) IS NULL OR s.id IN (:storeIds))" +
+            "AND sa.username = :username")
+    Page<Product> findProducts(String productID,
+                               String productName,
+                               Double priceMin,
+                               Double priceMax,
+                               String categoryName,
+                               List<String> storeIds,
+                               Integer quantityMin,
+                               Integer quantityMax,
+                               String username,
+                               Pageable pageable);
+
+    int countByStoreIdIn(List<String> storeIds);
+
+    Boolean existsByNameAndStoreIn(String name, List<Store> stores);
 
     //minh
     @Query("SELECT p FROM Product p " +
@@ -87,4 +114,36 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     boolean existsProductByNameAndStore_Id(String name, String storeId);
 
     boolean existsProductByNameAndStore_IdAndIdNot(String name, String storeId, String id);
+
+    @Query("SELECT p FROM Product p " +
+            "WHERE p.store.id = :storeId " +
+            "AND LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
+            "AND (p.price >= :priceAfter) " +
+            "AND (p.price <= :priceBefore)")
+    Page<Product> findByNameContainingAndPriceBetweenInStoreID(String name, String storeId, Double priceAfter, Double priceBefore, Pageable pageable);
+
+    @Query("Select s from Product  s where s.category.id = :categoryId AND s.store.id = :storeID")
+    Page<Product> findAllProductStoreByCategoryId(String storeID, String categoryId, Pageable pageable);
+
+    @Query("SELECT p FROM Product p\n" +
+            "WHERE (:storeID IS NULL OR p.store.id = :storeID)\n" +
+            " AND (:name IS NULL OR TRIM(:name) <> '' AND LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))\n" +
+            " AND (:fromPrice IS NULL OR p.price >= :fromPrice)\n" +
+            " AND (:toPrice IS NULL OR p.price <= :toPrice)\n" +
+            " AND (:information IS NULL OR TRIM(:information) <> '' AND LOWER(p.information) LIKE LOWER(CONCAT('%', :information, '%')))\n" +
+            " AND (:fromCreatedAt IS NULL OR p.createdAt >= :fromCreatedAt)\n" +
+            " AND (:toCreatedAt IS NULL OR p.createdAt <= :toCreatedAt)\n" +
+            " AND (:fromUpdatedAt IS NULL OR p.updatedAt >= :fromUpdatedAt)\n" +
+            " AND (:toUpdatedAt IS NULL OR p.updatedAt <= :toUpdatedAt)")
+    Page<Product> findProducts(@Param("storeID") String storeID,
+                               @Param("name") String name,
+                               @Param("fromPrice") Double fromPrice,
+                               @Param("toPrice") Double toPrice,
+                               @Param("information") String information,
+                               @Param("fromCreatedAt") LocalDateTime fromCreatedAt,
+                               @Param("toCreatedAt") LocalDateTime toCreatedAt,
+                               @Param("fromUpdatedAt") LocalDateTime fromUpdateAt,
+                               @Param("toUpdatedAt") LocalDateTime toUpdatedAt,
+                               Pageable pageable
+    );
 }

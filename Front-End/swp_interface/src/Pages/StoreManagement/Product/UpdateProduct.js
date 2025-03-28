@@ -37,7 +37,7 @@ const UpdateProduct = ({ product, onClose, fetchProducts, onSuccess}) => {
 
   // Fetch thuộc tính sản phẩm theo storeID
   useEffect(() => {
-    fetch(`${API.STORE_DETAIL.GET_STORE_PRODUCT_ATTRIBUTES}?storeID=${storeID}`, {
+    fetch(`${API.STORE_DETAIL.GET_STORE_PRODUCT_ATTRIBUTES}?storeID=${storeID}&size=100`, {
       headers: { 'Authorization': `Bearer ${token}` },
     })
       .then((response) => {
@@ -55,7 +55,7 @@ const UpdateProduct = ({ product, onClose, fetchProducts, onSuccess}) => {
 
   //Lấy thông tin zone
   useEffect(() => {
-    fetch(`${API.STORE_DETAIL.GET_STORE_ZONES}?storeID=${storeID}`, {
+    fetch(`${API.STORE_DETAIL.GET_STORE_ZONES}?storeID=${storeID}&size=100`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {

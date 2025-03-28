@@ -1,3 +1,197 @@
-.ant-table {
-    user-select: none; /* Ngăn chặn bôi đen */
+.product-list-container {
+    padding: 20px;
+    background-color: #fff;
+
+    .filter-form {
+        margin-bottom: 24px;
+        background-color: #f5f5dc;
+        padding: 16px;
+        border-radius: 8px;
+        border: 1px solid #d9d9d9;
+
+        .ant-form-item {
+            margin-bottom: 16px;
+        }
+
+        &-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+
+            .filter-form-col {
+                flex: 1;
+                min-width: 120px;
+
+                .ant-form-item {
+                    label {
+                        font-weight: bold;
+                        color: #388e3c;
+                        display: block;
+                        margin-bottom: 4px;
+                    }
+
+                    .filter-form-input,
+                    .filter-form-input-number,
+                    .filter-form-select {
+                        width: 100%;
+                        border-radius: 4px;
+                        border-color: #388e3c;
+
+                        &:hover {
+                            border-color: #4caf50;
+                        }
+
+                        &:focus,
+                        &.ant-select-focused {
+                            border-color: #4caf50;
+                            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+                        }
+
+                        & .ant-input-number-handler-wrap {
+                            border-color: #388e3c;
+                        }
+
+                        & .ant-input-number-handler-up .ant-input-number-handler-up-inner,
+                        .ant-input-number-handler-down .ant-input-number-handler-down-inner {
+                            color: #388e3c;
+                        }
+                    }
+
+                    .filter-form-select {
+                        &.ant-select {
+                            &.ant-select-multiple {
+                                .ant-select-selection-item {
+                                    background-color: #c8e6c9;
+                                    border: 1px solid #388e3c;
+                                    color: #388e3c;
+                                }
+                            }
+
+                            & .ant-select-arrow .anticon {
+                                color: #388e3c;
+                            }
+                        }
+                    }
+
+                    .ant-input[disabled],
+                    .ant-input-number[disabled],
+                    .filter-form-select.ant-select-disabled {
+                        background-color: #f5f5f5;
+                        color: #bfbfbf;
+                        cursor: not-allowed;
+
+                        &:hover {
+                            border-color: #d9d9d9;
+                        }
+                    }
+                }
+            }
+        }
+
+        &-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-form-reset-button {
+            background-color: #4caf50;
+            color: #fff;
+            border-color: #4caf50;
+
+            &:hover {
+                background-color: #388e3c;
+                border-color: #388e3c;
+            }
+        }
+    }
+
+    .product-table {
+        user-select: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+
+        .ant-table-thead>tr>th {
+            background-color: #388e3c;
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: center;
+
+            &:not(:last-child)::after {
+                background-color: #fff !important;
+            }
+        }
+
+        .ant-table-thead>tr>th.ant-table-column-sort {
+            background-color: #388e3c;
+        }
+
+        .ant-table-tbody>tr {
+            &:nth-child(odd) {
+                background-color: #fff;
+            }
+
+            &:nth-child(even) {
+                background-color: #f0f8ff;
+            }
+
+            td {
+                text-align: center;
+            }
+        }
+
+        .ant-table-tbody>tr:hover>td {
+            background: #e6f7ff;
+        }
+
+        .ant-table-pagination.ant-pagination {
+            margin-top: 16px;
+        }
+
+        .ant-spin-nested-loading>div>.ant-spin {
+            max-height: 100%;
+        }
+
+    }
+
+    .ant-pagination-item-active {
+        background-color: #388e3c;
+        border-color: #388e3c;
+
+        a {
+            color: #ffffff;
+        }
+    }
+
+    .ant-pagination-next,
+    .ant-pagination-prev {
+        .ant-pagination-item-link {
+            color: #388e3c;
+            border-color: #388e3c;
+            background-color: #fff;
+            border-radius: 4px;
+
+            &:hover {
+                color: #fff;
+                background-color: #388e3c;
+                border-color: #388e3c;
+            }
+        }
+    }
+
+    .ant-pagination-options .ant-select-selector {
+        border-color: #388e3c !important;
+
+        &:hover {
+            border-color: #4caf50 !important;
+        }
+
+        .ant-select-selection-item {
+            color: #388e3c;
+        }
+    }
+
+    .ant-select-arrow .anticon {
+        color: #388e3c
+    }
 }

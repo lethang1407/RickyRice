@@ -79,10 +79,8 @@ const EmployeeUpdate = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
 
-
-    const UPLOAD_AVATAR_URL = `${API.STORE_OWNER.UPLOAD_EMPLOYEE_AVATAR}/${employeeID}`;
+    const UPLOAD_AVATAR_URL = `${API.STORE_OWNER.UPLOAD_EMPLOYEE_AVATAR}`;
     const UPDATE_EMPLOYEE_URL = `${API.STORE_OWNER.UPDATE_STORE_EMPLOYEE}/${employeeID}`;
-
 
     useEffect(() => {
         const fetchData = async () => {

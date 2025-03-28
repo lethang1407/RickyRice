@@ -148,7 +148,7 @@ const InvoiceDetail2 = () => {
     };
     const columns = [
         {
-            title: 'Lựa chọn',
+            title: 'Lựa Chọn',
             key: 'option',
             render: (text, record) => (
                 <Button type="link" danger onClick={() => handleDeleteRow(record.key)}>
@@ -157,17 +157,12 @@ const InvoiceDetail2 = () => {
             ),
         },
         {
-            title: 'Mã Sản Phẩm',
-            dataIndex: 'productID',
-            key: 'productID',
-        },
-        {
-            title: 'Tên sản phẩm',
+            title: 'Tên Sản Phẩm',
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: 'Discount/Kg ',
+            title: 'Giảm Giá/Kg ',
             key: 'discount',
             render: (text, record) => (
                 <InputNumber
@@ -181,7 +176,7 @@ const InvoiceDetail2 = () => {
             ),
         },
         {
-            title: 'Số lượng',
+            title: 'Số Lượng',
             dataIndex: 'quantity',
             key: 'quantity',
             render: (text, record) => (
@@ -209,7 +204,7 @@ const InvoiceDetail2 = () => {
             ),
         },
         {
-            title: 'Giá nhập/kg',
+            title: 'Giá Nhập/kg',
             dataIndex: 'pricePay',
             key: 'pricePay',
             render: (text, record) => (
@@ -224,7 +219,7 @@ const InvoiceDetail2 = () => {
             ),
         },
         {
-            title: 'Thành tiền(VND)',
+            title: 'Thành Tiền(VND)',
             dataIndex: 'total',
             key: 'total',
             render: (text) => (text || 0).toLocaleString(),
@@ -433,7 +428,7 @@ const InvoiceDetail2 = () => {
         setItems([
             ...(items || []),
             {
-                label: `New Tab`,
+                label: `Trang Mới`,
                 key: newKey,
                 customerPhone: '',
                 customerName: '',
@@ -737,7 +732,7 @@ const InvoiceDetail2 = () => {
             customerName: activeTab.customerName,
             amount: finalDebtAmount,
             description: autoDescription || "Không có sản phẩm mua",
-            type: "POSITIVE",
+            type: "POSITIVE_CH_VAY",
         };
         axios.post(API.EMPLOYEE.CREATE_DEBT,
             invoiceData, {

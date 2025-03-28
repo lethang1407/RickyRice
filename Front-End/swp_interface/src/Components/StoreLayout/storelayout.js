@@ -18,6 +18,8 @@ import {
   useNavigate,
 } from "react-router-dom";
 import CustomFooter from "../../Components/Footer";
+import NavbarAccount from "../../Pages/Account/NavbarAccount";
+import logo from "../../assets/img/logo-no-background.png";
 
 const { Header, Sider, Content } = Layout;
 
@@ -32,14 +34,14 @@ const StoreLayout = () => {
   const selectedKey = location.pathname.startsWith(`/store/${storeID.id}/zone`)
     ? "1"
     : location.pathname.startsWith(`/store/${storeID.id}/productattribute`)
-      ? '4'
-      : location.pathname.startsWith(`/store/${storeID.id}/product`)
-        ? "2"
-        : location.pathname.startsWith(`/store/${storeID.id}/update-info`)
-          ? "3"
-          : location.pathname.startsWith(`/store/${storeID.id}/category`)
-            ? '5'
-            : "";
+    ? "4"
+    : location.pathname.startsWith(`/store/${storeID.id}/product`)
+    ? "2"
+    : location.pathname.startsWith(`/store/${storeID.id}/update-info`)
+    ? "3"
+    : location.pathname.startsWith(`/store/${storeID.id}/category`)
+    ? "5"
+    : "";
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
@@ -54,7 +56,29 @@ const StoreLayout = () => {
           collapsed={collapsed}
         >
           <div className="demo-logo-vertical" />
-          <div style={{ height: "80px" }}>Logo</div>
+          <div
+            style={{
+              height: "80px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Link to="/">
+              <img
+                src={logo}
+                alt="Logo"
+                style={{
+                  height: "60px",
+                  width: "auto",
+                  maxWidth: collapsed ? "40px" : "120px",
+                  transition: "max-width 0.3s ease",
+                  cursor: "pointer",
+                  visibility: collapsed ? "hidden" : "visible",
+                }}
+              />
+            </Link>
+          </div>
           <Menu
             theme="light"
             mode="inline"
@@ -63,31 +87,62 @@ const StoreLayout = () => {
               {
                 key: "1",
                 icon: <ShopOutlined />,
-                label: <Link to={`/store/${storeID.id}/zone`}  style={{ textDecoration: 'none' }}>Khu vực</Link>,
+                label: (
+                  <Link
+                    to={`/store/${storeID.id}/zone`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    Khu vực
+                  </Link>
+                ),
               },
               {
                 key: "2",
                 icon: <AppstoreOutlined />,
-                label: <Link to={`/store/${storeID.id}/product`}  style={{ textDecoration: 'none' }}>Sản phẩm</Link>,
+                label: (
+                  <Link
+                    to={`/store/${storeID.id}/product`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    Sản phẩm
+                  </Link>
+                ),
               },
               {
                 key: "3",
                 icon: <IdcardOutlined />,
                 label: (
-                  <Link to={`/store/${storeID.id}/update-info`}  style={{ textDecoration: 'none' }}>
+                  <Link
+                    to={`/store/${storeID.id}/update-info`}
+                    style={{ textDecoration: "none" }}
+                  >
                     Cập nhật cửa hàng
                   </Link>
                 ),
               },
               {
-                key: '4',
+                key: "4",
                 icon: <FileTextOutlined />,
-                label: <Link to={`/store/${storeID.id}/productattribute`} style={{ textDecoration: 'none' }}>Thuộc tính sản phẩm</Link>,
+                label: (
+                  <Link
+                    to={`/store/${storeID.id}/productattribute`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    Thuộc tính sản phẩm
+                  </Link>
+                ),
               },
               {
-                key: '5',
+                key: "5",
                 icon: <FileTextOutlined />,
-                label: <Link to={`/store/${storeID.id}/category`} style={{ textDecoration: 'none' }}>Loại</Link>,
+                label: (
+                  <Link
+                    to={`/store/${storeID.id}/category`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    Loại
+                  </Link>
+                ),
               },
             ]}
           />
@@ -95,8 +150,11 @@ const StoreLayout = () => {
         <Layout>
           <Header
             style={{
-              padding: 0,
+              padding: "0 16px",
               background: colorBgContainer,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <Button
@@ -109,6 +167,7 @@ const StoreLayout = () => {
                 height: 64,
               }}
             />
+            <NavbarAccount />
           </Header>
           <Content
             style={{

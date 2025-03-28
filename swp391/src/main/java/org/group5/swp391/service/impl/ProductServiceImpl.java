@@ -36,6 +36,9 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -58,23 +61,6 @@ public class ProductServiceImpl implements ProductService {
     private final ZoneRepository zoneRepository;
 
     // Chien
-    @Override
-    public Page<StoreProductDTO> getProducts(String productName, int page, int size, String sortBy, boolean descending) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return null;
-        }
-        String username = authentication.getName();
-        Account account = accountRepository.findByUsername(username).orElseThrow(null);
-        List<Store> stores = storeRepository.findByStoreAccount(account);
-        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        if (productName == null || productName.isEmpty()) {
-            productRepository.findAll(pageable).map(productConverter::toStoreProductDTO);
-        }
-        return productRepository.findByStoreInAndNameContainingIgnoreCase(stores, productName, pageable).map(productConverter::toStoreProductDTO);
-    }
-
     private Product checkProductOfUser(String productID) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -85,13 +71,42 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
     }
 
-    public StoreProductDetailDTO getProduct(String id) {
+    @Override
+    public Page<StoreProductDTO> getStoreProducts(String productID, String productName, Double priceMin, Double priceMax,
+                                                  String categoryName, List<String> storeIds, Integer quantityMin, Integer quantityMax,
+                                                  int page, int size, String sortBy, boolean descending) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+        String username = authentication.getName();
+        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        if (storeIds != null && storeIds.isEmpty()) {
+            storeIds = null;
+        }
+        productID = (productID != null && !productID.trim().isEmpty()) ? productID.trim() : null;
+        Page<Product> list = productRepository.findProducts(productID, productName, priceMin, priceMax, categoryName, storeIds, quantityMin, quantityMax, username, pageable);
+        return list.map(productConverter::toStoreProductDTO);
+    }
+
+    public StoreProductDetailDTO getStoreProduct(String id) {
         Product product = checkProductOfUser(id);
         return productConverter.toStoreProductDetailDTO(product);
     }
 
     @Transactional
     public StoreProductDetailDTO updateStoreProduct(String productID, StoreProductDetailDTO dto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+        String username = authentication.getName();
+        List<Store> stores = storeRepository.findByUserName(username);
+        boolean checkExist = productRepository.existsByNameAndStoreIn(dto.getName(), stores);
+        if(checkExist){
+            throw new AppException(ErrorCode.PRODUCT_NAME_EXISTED);
+        }
         Product product = checkProductOfUser(productID);
         product.setName(dto.getName());
         product.setPrice(dto.getPrice());
@@ -99,7 +114,7 @@ public class ProductServiceImpl implements ProductService {
         product.setQuantity(dto.getQuantity());
         product.setProductImage(dto.getProductImage());
         Category category = categoryRepository.findById(dto.getCategory().getId())
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy danh mục với ID: " + dto.getCategory().getId()));
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
         product.setCategory(category);
         List<ProductAttribute> attributes = productAttributeRepository.findAllById(
                 dto.getAttributes().stream()
@@ -136,7 +151,7 @@ public class ProductServiceImpl implements ProductService {
             checkProductOfUser(productID);
             return cloudinaryService.uploadFile(file);
         } catch (IOException e) {
-            throw new RuntimeException("Không thể tải ảnh lên!");
+            throw new AppException(ErrorCode.CANT_UPLOAD_IMAGE);
         }
     }
 
@@ -152,12 +167,40 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Page<StoreDetailProductDTO> getProductsByFilter(String storeID,
+                                                           String name,
+                                                           Double fromPrice,
+                                                           Double toPrice,
+                                                           String information,
+                                                           LocalDate fromCreatedAt,
+                                                           LocalDate toCreatedAt,
+                                                           LocalDate fromUpdatedAt,
+                                                           LocalDate toUpdatedAt,
+                                                           int page,
+                                                           int size,
+                                                           String sortBy,
+                                                           boolean descending
+    ) {
+        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        LocalDateTime startCreatedDateTime = fromCreatedAt != null ? fromCreatedAt.atStartOfDay() : null;
+        LocalDateTime endCreatedDateTime = toCreatedAt != null ? toCreatedAt.atTime(LocalTime.MAX) : null;
+        LocalDateTime startUpdatedDateTime = fromUpdatedAt != null ? fromUpdatedAt.atStartOfDay() : null;
+        LocalDateTime endUpdatedDateTime = toUpdatedAt != null ? toUpdatedAt.atTime(LocalTime.MAX) : null;
+        Page<Product> products = productRepository.findProducts(
+                storeID, name, fromPrice, toPrice, information,
+                startCreatedDateTime, endCreatedDateTime, startUpdatedDateTime, endUpdatedDateTime, pageable);
+        return products.map(productConverter::toStoreDetailProductDTO);
+    }
+
+    @Override
     public void deleteProductStore(String productId) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
         product.setZones(null);
         product.setProductAttributes(null);
         productRepository.delete(product);
     }
+
 
     // Minh Tran
     @Override
@@ -256,20 +299,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<CustomerProductDTO> searchProductsQuery(String querySearchName, Double minPrice, Double maxPrice, int page, int size, String sortBy, boolean descending, String categoryID) {
+    public Page<CustomerProductDTO> searchProductsQuery(String querySearchName, String storeID, Double minPrice, Double maxPrice, int page, int size, String sortBy, boolean descending, String categoryID) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        List<Product> products = productRepository
-                .findByNameContainingAndPriceBetween(querySearchName, minPrice, maxPrice, pageable);
-        List<CustomerProductDTO> productPages;
+        Page<Product> products = productRepository
+                .findByNameContainingAndPriceBetweenInStoreID(querySearchName, storeID, minPrice, maxPrice, pageable);
+        Page<CustomerProductDTO> productPages;
         if (categoryID != null && !categoryID.isEmpty()) {
-            productPages = productRepository.findAllByCategoryId(categoryID).stream()
-                    .map(productConverter::toCustomerProductDTO).collect(Collectors.toList());
+            productPages = productRepository.findAllProductStoreByCategoryId(storeID, categoryID, pageable)
+                    .map(productConverter::toCustomerProductDTO);
         } else {
-            productPages = products.stream()
-                    .map(productConverter::toCustomerProductDTO).collect(Collectors.toList());
+            productPages = products.map(productConverter::toCustomerProductDTO);
         }
-        return new PageImpl<>(productPages, pageable, (products.size() + 1));
+        return productPages;
     }
 
     @Override
@@ -361,21 +403,19 @@ public class ProductServiceImpl implements ProductService {
 
             updatingProduct.setProductAttributes(attributes);
         }
-        if(storeDetailProductDTO.getZoneList() != null) {
-            List<Zone> zones = storeDetailProductDTO.getZoneList().stream()
-                    .map(dto -> {
-                        try {
-                            Zone zone = zoneRepository.findById(dto)
-                                    .orElseThrow(() -> new Exception("Zone not found for ID: " + dto));
-                            return new Zone(zone.getName(),
-                                    zone.getLocation(),
-                                    productRepository.findById(productID).orElseThrow(() -> new Exception("không tìm thấy product")),
-                                    storeRepository.findById(storeID).orElseThrow(() -> new Exception("Không tìm thấy store")));
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }).collect(Collectors.toList());
-            updatingProduct.setZones(zones);
+        List<Zone> oldZones = new ArrayList<>(updatingProduct.getZones());
+        updatingProduct.getZones().clear();
+        for (String zoneId : storeDetailProductDTO.getZoneList()) {
+            Zone zone = zoneRepository.findById(zoneId).orElse(new Zone());
+            zone.setName(zone.getName());
+            zone.setProduct(updatingProduct);
+            updatingProduct.getZones().add(zone);
+        }
+        for (Zone oldZone : oldZones) {
+            if (!updatingProduct.getZones().contains(oldZone)) {
+                oldZone.setProduct(null);
+                zoneRepository.save(oldZone);
+            }
         }
         productRepository.save(updatingProduct);
     }

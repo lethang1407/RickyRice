@@ -13,9 +13,9 @@ const layout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
 };
-const token = getToken();
 
 const CreateStore = () => {
+  const token = getToken();
   const { transactionNo } = useParams();
   const navigate = useNavigate();
   const [imageUrl, setImageUrl] = useState(null);
@@ -96,6 +96,24 @@ const CreateStore = () => {
           duration: 3,
         });
 
+        const res = await axios.post(
+          API.AUTH.REFRESH,
+          { token: token },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (res.data.data.success) {
+          if (localStorage.getItem("token") != null) {
+            localStorage.setItem("token", res.data.data.token);
+          } else if (sessionStorage.getItem("token") != null) {
+            sessionStorage.setItem("token", res.data.data.token);
+          }
+        }
+
         setTimeout(() => {
           navigate("/store-owner/store");
         }, 3000);
@@ -143,10 +161,17 @@ const CreateStore = () => {
         <Form.Item
           name="hotline"
           label="Điện thoại liên hệ"
-          rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
+          rules={[
+            { required: true, message: "Vui lòng nhập số điện thoại!" },
+            {
+              pattern: /^0\d{9}$/,
+              message: "Số điện thoại không đúng. Vui lòng nhập lại!",
+            },
+          ]}
         >
           <Input />
         </Form.Item>
+
         <Form.Item
           name="operatingHour"
           label="Giờ hoạt động"

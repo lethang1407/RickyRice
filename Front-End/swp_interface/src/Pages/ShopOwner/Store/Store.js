@@ -1,182 +1,124 @@
-import React, { useEffect, useState } from "react";
-import {
-  message,
-  Input,
-  Spin,
-  Pagination,
-  Button,
-  Row,
-  Col,
-  Dropdown,
-  Menu,
-} from "antd";
+import React, { useEffect, useState, useCallback } from "react";
+import { message, Input, Spin, Pagination, Button, Row, Col, Dropdown, Menu } from "antd";
 import StoreCard from "../../../Components/StoreOwner/StoreCard";
-import qs from "qs";
-import "./style.scss";
 import { getToken } from "../../../Utils/UserInfoUtils";
 import API from "../../../Utils/API/API";
 import { getDataWithToken } from "../../../Utils/FetchUtils";
 import { useNavigate } from "react-router-dom";
+import './style.scss';
 
 const { Search } = Input;
 
 const Store = () => {
   const token = getToken();
-  const [data, setData] = useState([]);
+  const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [timeoutId, setTimeoutId] = useState(null);
   const [storeRequests, setStoreRequests] = useState([]);
   const navigate = useNavigate();
-
-  // Quản lý trạng thái phân trang
   const [pagination, setPagination] = useState({
-    current: 1, // Trang hiện tại (thường bắt đầu từ 1)
-    pageSize: 5, // Số lượng item mỗi trang
-    total: 0, // Tổng số item (lấy từ response API)
+    current: 1,
+    pageSize: 5,
+    total: 0,
   });
 
-  const getStoreParams = () => {
-    return qs.stringify({
-      storeName: searchValue,
-      page: pagination.current - 1, // Backend thường nhận page bắt đầu từ 0
-      size: pagination.pageSize, // Số item mỗi trang
-    });
-  };
-
-  const fetchStores = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const queryParams = `?${getStoreParams()}`;
-      const response = await getDataWithToken(
-        API.STORE_OWNER.GET_STORE + queryParams,
-        token
-      );
-      // Update data và thông tin pagination
-      setData(response.content);
-      setPagination((prev) => ({
-        ...prev,
-        total: response.totalElements, // Tổng số lượng item từ API
-      }));
+      const storeParams = {
+        storeName: searchValue,
+        page: pagination.current - 1,
+        size: pagination.pageSize,
+      };
+      const storeResponse = await getDataWithToken(`${API.STORE_OWNER.GET_STORE}?${new URLSearchParams(storeParams)}`, token);
+      setStores(storeResponse.content);
+      setPagination(prev => ({ ...prev, total: storeResponse.totalElements }));
+
+      const requestResponse = await getDataWithToken(API.STORE_OWNER.GET_REQUEST_STORE, token);
+      setStoreRequests(requestResponse.data || []);
+
     } catch (error) {
-      message.error("Không thể tải dữ liệu danh sách stores");
+      message.error("Đã xảy ra lỗi khi tải dữ liệu.");
     } finally {
       setLoading(false);
     }
-  };
-
-  const fetchStoreRequests = async () => {
-    try {
-      const response = await getDataWithToken(
-        API.STORE_OWNER.GET_REQUEST_STORE,
-        token
-      );
-      if (response.code === 200) {
-        setStoreRequests(response.data);
-      } else {
-        message.error("Không thể tải danh sách cửa hàng mới");
-      }
-    } catch (error) {
-      message.error("Lỗi khi tải danh sách cửa hàng mới");
-    }
-  };
+  }, [searchValue, pagination.current, pagination.pageSize, token]);
 
   useEffect(() => {
-    fetchStores();
-    fetchStoreRequests();
-  }, [searchValue, pagination.current, pagination.pageSize]);
+    fetchData();
+  }, [fetchData]);
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    const newTimeoutId = setTimeout(() => {
-      setSearchValue(value);
-
-      // Reset về trang đầu tiên khi tìm kiếm
-      setPagination((prev) => ({
-        ...prev,
-        current: 1,
-      }));
-    }, 1000);
-
-    setTimeoutId(newTimeoutId);
-  };
+  const handleSearch = useCallback((e) => {
+     const value = e.target.value;
+    setSearchValue(value);
+    setPagination(prev => ({ ...prev, current: 1 }));
+  }, []);
 
   const handlePaginationChange = (page, pageSize) => {
-    // Cập nhật thông tin phân trang (trang hiện tại & số item/trang)
-    setPagination((prev) => ({
-      ...prev,
-      current: page,
-      pageSize,
-    }));
+    setPagination({ current: page, pageSize });
   };
 
   const storeMenu = (
-    <Menu style={{ maxHeight: "300px", overflowY: "auto" }}>
+    <Menu className="store-menu">
       {storeRequests.length > 0 ? (
-        storeRequests.map((store, index) => (
+        storeRequests.map((store) => (
           <Menu.Item
             key={store.transactionNo}
-            onClick={() =>
-              navigate(`/store-owner/create-store/${store.transactionNo}`)
-            }
+            onClick={() => navigate(`/store-owner/create-store/${store.transactionNo}`)}
+            className="store-menu-item"
           >
-            Cửa hàng {index + 1} - {store.subcriptionTimeOfExpiration} tháng
+             Cửa hàng {store.subcriptionTimeOfExpiration} tháng
           </Menu.Item>
         ))
       ) : (
-        <Menu.Item disabled>Không có cửa hàng mới</Menu.Item>
+        <Menu.Item disabled className="store-menu-item">Không có cửa hàng mới</Menu.Item>
       )}
     </Menu>
   );
 
   return (
-    <div>
-      <Row gutter={16} align="middle" justify="space-between">
+    <div className="store-page">
+      <Row gutter={16} align="middle" justify="space-between" className="store-header">
         <Col>
           <Dropdown overlay={storeMenu} trigger={["click"]}>
-            <Button type="primary" style={{ marginBottom: 16, width: "100%" }}>
+            <Button type="primary" className="create-store-button">
               Tạo cửa hàng mới ({storeRequests.length})
             </Button>
           </Dropdown>
         </Col>
         <Col flex="auto">
           <Search
-            placeholder="Enter Store Name"
+            placeholder="Nhập Tên Cửa Hàng"
             onChange={handleSearch}
             enterButton
-            style={{ marginBottom: 16, width: "100%" }}
+            className="store-search"
             loading={loading}
           />
         </Col>
       </Row>
       <Spin spinning={loading}>
-        <div className="product-card-container">
-          {data &&
-            data.map((store) => (
-              <StoreCard
-                key={store.storeID}
-                urlStore={`/store/${store.storeID}/zone`}
-                storeName={store.storeName}
-                storeStatus={store.status === "ACTIVE" ? "Active" : "Inactive"}
-                urlImg={store.imageUrl || "https://via.placeholder.com/150"}
-                onUpdateExpiration={() => navigate(`/service/${store.storeID}`)}
-              />
-            ))}
+        <div className="store-card-container">
+          {stores.map((store) => (
+            <StoreCard
+              key={store.storeID}
+              urlStore={`/store/${store.storeID}/zone`}
+              storeName={store.storeName}
+              expireAt={store.expireAt}
+              urlImg={store.imageUrl || "http://res.cloudinary.com/do9tp2bph/image/upload/v1742791281/cfljln3xgjvt82cmu39t.png"}
+              onUpdateExpiration={() => navigate(`/service/${store.storeID}`)}
+            />
+          ))}
         </div>
       </Spin>
 
-      {/* Ant Design Pagination */}
-      <div className="pagination-container">
+      <div className="store-pagination">
         <Pagination
           current={pagination.current}
           pageSize={pagination.pageSize}
           total={pagination.total}
           onChange={handlePaginationChange}
           showSizeChanger
-          pageSizeOptions={["1", "2", "3", "4", "5"]}
+          pageSizeOptions={["5", "10", "20", "50"]}
         />
       </div>
     </div>

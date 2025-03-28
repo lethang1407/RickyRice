@@ -16,6 +16,7 @@ import org.group5.swp391.service.NotificationService;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,9 +38,10 @@ public class NotificationServiceImpl implements NotificationService {
                         .isRead(notification.getIsRead())
                         .createdAt(notification.getCreatedAt())
                         .createdBy(notification.getCreatedBy())
-                        .accountId(notification.getSendAccount().getId())
+                        .accountId(notification.getSendAccount() != null ? notification.getSendAccount().getId() : null)
                         .targetAccountId(notification.getTargetAccount().getId())
                         .build())
+                .sorted(Comparator.comparing(NotificationResponse::getCreatedAt).reversed())
                 .collect(Collectors.toList());
     }
 

@@ -86,7 +86,7 @@ public class ProductConverter {
         employeeProductDTO.setInformation(product.getInformation());
         employeeProductDTO.setProductImage(product.getProductImage());
 //        employeeProductDTO.setCreated_at(product.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-        employeeProductDTO.setUpdated_at(product.getUpdatedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        employeeProductDTO.setUpdated_at(product.getUpdatedAt()!=null?product.getUpdatedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli():0L);
         employeeProductDTO.setCreated_by(product.getCreatedBy());
 
         if (product.getCategory() != null) {

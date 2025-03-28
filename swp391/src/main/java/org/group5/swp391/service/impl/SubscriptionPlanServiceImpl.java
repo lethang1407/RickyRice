@@ -6,9 +6,12 @@ import org.group5.swp391.dto.response.AdminResponse.SubscriptionPlanResponse;
 import org.group5.swp391.entity.SubscriptionPlan;
 import org.group5.swp391.repository.SubscriptionPlanRepository;
 import org.group5.swp391.service.SubscriptionPlanService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,19 +19,6 @@ import java.util.stream.Collectors;
 public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
 
     private final SubscriptionPlanRepository subscriptionPlanRepository;
-
-    // lấy danh sách các gói dịch vụ đăng kí của trang web
-    public List<SubscriptionPlanResponse> getAllSubscriptionPlans() {
-        return subscriptionPlanRepository.findAll().stream()
-                .map(plan -> SubscriptionPlanResponse.builder()
-                        .subscriptionPlanID(plan.getId())
-                        .name(plan.getName())
-                        .description(plan.getDescription())
-                        .price(plan.getPrice())
-                        .timeOfExpiration(plan.getTimeOfExpiration())
-                        .build())
-                .collect(Collectors.toList());
-    }
 
     // tìm gói dịch vụ đăng kí của trang web theo ID
     public SubscriptionPlanResponse getSubscriptionPlanById(String id) {
@@ -40,6 +30,7 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
                 .description(plan.getDescription())
                 .price(plan.getPrice())
                 .timeOfExpiration(plan.getTimeOfExpiration())
+                .isActive(plan.getIsActive())
                 .build();
     }
 
@@ -50,6 +41,7 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
         plan.setDescription(request.getDescription());
         plan.setPrice(request.getPrice());
         plan.setTimeOfExpiration(request.getTimeOfExpiration());
+        plan.setIsActive(request.getIsActive());
 
         SubscriptionPlan savedPlan = subscriptionPlanRepository.save(plan);
         return SubscriptionPlanResponse.builder()
@@ -58,6 +50,7 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
                 .description(savedPlan.getDescription())
                 .price(savedPlan.getPrice())
                 .timeOfExpiration(savedPlan.getTimeOfExpiration())
+                .isActive(savedPlan.getIsActive())
                 .build();
     }
 
@@ -70,6 +63,7 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
         plan.setDescription(request.getDescription());
         plan.setPrice(request.getPrice());
         plan.setTimeOfExpiration(request.getTimeOfExpiration());
+        plan.setIsActive(request.getIsActive());
 
         SubscriptionPlan updatedPlan = subscriptionPlanRepository.save(plan);
         return SubscriptionPlanResponse.builder()
@@ -78,6 +72,7 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
                 .description(updatedPlan.getDescription())
                 .price(updatedPlan.getPrice())
                 .timeOfExpiration(updatedPlan.getTimeOfExpiration())
+                .isActive(updatedPlan.getIsActive())
                 .build();
     }
 
@@ -99,4 +94,30 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
     public SubscriptionPlan getSubscriptionPlanByPrice(double price) {
         return subscriptionPlanRepository.findByPrice(price);
     }
+
+    // lấy danh sách các gói dịch vụ đăng kí của trang web (phân trang, tìm kiếm sắp xếp)
+    @Override
+    public Map<String, Object> getSubscriptionPlans(String name, Pageable pageable) {
+        Page<SubscriptionPlan> plans = (name == null || name.isEmpty()) ?
+                subscriptionPlanRepository.findAll(pageable) :
+                subscriptionPlanRepository.findByNameContainingIgnoreCase(name, pageable);
+
+        long totalCount = subscriptionPlanRepository.count();
+
+        Map<String, Object> response = Map.of(
+                "totalSubscription", totalCount,
+                "plans", plans.map(plan -> SubscriptionPlanResponse.builder()
+                        .subscriptionPlanID(plan.getId())
+                        .name(plan.getName())
+                        .description(plan.getDescription())
+                        .price(plan.getPrice())
+                        .timeOfExpiration(plan.getTimeOfExpiration())
+                        .isActive(plan.getIsActive())
+                        .build())
+        );
+
+        return response;
+    }
+
+
 }
