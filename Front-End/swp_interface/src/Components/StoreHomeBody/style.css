@@ -79,12 +79,23 @@ body {
   width: 100%;
 }
 
-.sortBy p:hover {
-  cursor: pointer;
-  color: #198754;
+.sortBy p:hover,
+.sortBy p.active-sort {
+  color: #1890ff;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  padding: 5px; 
 }
 
-.categoryFilter p:hover {
+.categoryFilter p {
   cursor: pointer;
-  color: #198754;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.categoryFilter p:hover,
+.categoryFilter p.active-category {
+  color: #1890ff;
+  background-color: #f0f0f0;
+  border-radius: 5px; 
+  padding: 5px; 
 }

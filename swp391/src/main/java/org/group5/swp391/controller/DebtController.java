@@ -73,7 +73,6 @@ public class DebtController {
                                                        @RequestParam(required = false) Double fromAmount,
                                                        @RequestParam(required = false) Double toAmount,
                                                        @RequestParam(required = false) String createdBy){
-
         PageResponse<DebtDTO> response = debtService.searchForDebt(pageNo, pageSize, sortBy, storeId, number, type, startCreatedAt, endCreatedAt,
                 customerName, phoneNumber, email, address, fromAmount, toAmount, createdBy);
 

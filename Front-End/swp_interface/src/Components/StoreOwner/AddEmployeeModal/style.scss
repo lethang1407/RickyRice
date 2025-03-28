@@ -1,0 +1,53 @@
+// src/Components/StoreOwner/AddEmployeeModal/style.scss
+
+.add-employee-form {
+    .form-columns-modal {
+        display: flex;
+        gap: 20px; // Space between columns
+
+        .form-column-modal {
+            flex: 1; // Each column takes equal space
+        }
+    }
+
+     // Center avatar upload if desired
+    .avatar-uploader-item-modal {
+        display: flex;
+        justify-content: center; // Center the upload button/avatar horizontally
+        margin-bottom: 24px; // Add space below avatar
+
+        .ant-form-item-control-input-content {
+           text-align: center; // Ensure content inside aligns center if needed by AntD version
+        }
+
+        .avatar-uploader > .ant-upload {
+            width: 104px; // Match size used in EmployeeUpdate for consistency
+            height: 104px;
+        }
+         .uploaded-avatar {
+             width: 100%;
+             height: 100%;
+             object-fit: cover;
+         }
+    }
+
+
+    .gender-radio-group {
+        margin-top: 5px; // Align radios slightly better
+    }
+
+    .full-width-datepicker {
+        width: 100%;
+    }
+
+    .form-actions-modal {
+        text-align: right; // Align buttons to the right
+        margin-top: 24px;
+        margin-bottom: 0; // Remove default bottom margin if it's the last item
+    }
+
+     // Add styles for preview modal if needed, can reuse from EmployeeUpdate's style
+     .preview-modal .ant-modal-body {
+         padding: 10px; // Example style
+     }
+}

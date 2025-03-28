@@ -130,6 +130,7 @@ const Category = () => {
                             setIsInfoModalOpen(true);
                         }}
                         title="Thông tin chi tiết"
+                        style={{marginLeft: '10px', marginRight: '10px'}}
                     >
                         <InfoOutlined />
                     </Button>
@@ -139,6 +140,7 @@ const Category = () => {
                             setSelectedCategory(record);
                             setIsUpdateModalOpen(true);
                         }}
+                        style={{marginRight: '10px'}}
                     >
                         <EditOutlined />
                     </Button>

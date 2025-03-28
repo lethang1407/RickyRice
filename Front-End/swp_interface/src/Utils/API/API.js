@@ -72,6 +72,7 @@ const API = {
     GET_STORE_STATISTIC_CHART: `${API_BASE_URL}/store-owner/statistics/chart`,
     GET_STORE_TRANSACTIONS: `${API_BASE_URL}/store-owner/statistic-transactions`,
     GET_ALL_STORES: `${API_BASE_URL}/store-owner/all/stores`,
+    CREATE_STORE_EMPLOYEE: `${API_BASE_URL}/store-owner/employee/create`,
     CREATE_NEW_STORE: (transaction) =>
       `${API_BASE_URL}/manage-store/create-store/${transaction}`,
     GET_REQUEST_STORE: `${API_BASE_URL}/manage-store/request-store`,
@@ -82,10 +83,12 @@ const API = {
   },
   STORE_DETAIL: {
     GET_STORE_ZONES: `${API_BASE_URL}/store-detail/zones`,
+    GET_STORE_ZONESS: `${API_BASE_URL}/store-detail/zoness`,
+    GET_STORE_ZONES_BY_STOREID: `${API_BASE_URL}/store-detail/filtered-zones`,
     UPDATE_STORE_ZONE: (id) => `${API_BASE_URL}/store-detail/zones/${id}`,
     GET_ZONE_ID: `${API_BASE_URL}/store-detail/get-zone`,
-    DELETE_STORE_ZONE: (id) => `${API_BASE_URL}/store-detail/zones/${id}`,
-    GET_STORE_PRODUCTS_BY_STOREID: `${API_BASE_URL}/store-detail/products`,
+    GET_STORE_PRODUCTS:  `${API_BASE_URL}/store-detail/products`,
+    GET_STORE_PRODUCTS_BY_STOREID: `${API_BASE_URL}/store-detail/filtered-products`,
     UPDATE_STORE_PRODUCT: (id) => `${API_BASE_URL}/store-detail/products/${id}`,
     DELETE_STORE_PRODUCT: (id) => `${API_BASE_URL}/store-detail/products/${id}`,
     GET_CATEGORY_ID: `${API_BASE_URL}/store-detail/category`,

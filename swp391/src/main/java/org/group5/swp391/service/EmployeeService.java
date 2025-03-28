@@ -1,5 +1,6 @@
 package org.group5.swp391.service;
 
+import org.group5.swp391.dto.store_owner.all_employee.StoreAddEmployeeDTO;
 import org.group5.swp391.dto.store_owner.all_employee.StoreEmployeeDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -13,9 +14,11 @@ public interface EmployeeService {
 
     public StoreEmployeeDTO getEmployee(String employeeId);
 
-    public String updateStoreEmployeeImage(String employeeId, MultipartFile file);
+    public String updateStoreEmployeeImage(MultipartFile file);
 
     public StoreEmployeeDTO updateStoreEmployee(String employeeId, StoreEmployeeDTO storeEmployeeDTO);
 
     public void deleteEmployee(String employeeId);
+
+    public void createEmployee(StoreAddEmployeeDTO storeEmployeeDTO);
     }

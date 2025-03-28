@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StoreAccountOfEmployeeDTO {
     String accountID;
+    String username;
     String name;
     String email;
     String phoneNumber;

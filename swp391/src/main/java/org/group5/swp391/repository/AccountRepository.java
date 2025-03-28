@@ -26,6 +26,18 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     boolean existsByPhoneNumber(String phoneNumber);
 
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END " +
+            "FROM Account a " +
+            "JOIN Employee e ON a.id = e.employeeAccount.id " +
+            "WHERE a.email = :email AND e.store.id = :storeId")
+    boolean existsByEmailAndStore(String email, String storeId);
+
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END " +
+            "FROM Account a " +
+            "JOIN Employee e ON a.id = e.employeeAccount.id " +
+            "WHERE a.phoneNumber = :phoneNumber AND e.store.id = :storeId")
+    boolean existsByPhoneNumberAndStore(String phoneNumber, String storeId);
+
     @Transactional
     @Modifying
     @Query("UPDATE Account a SET a.otp = NULL WHERE a.id = :accountID")

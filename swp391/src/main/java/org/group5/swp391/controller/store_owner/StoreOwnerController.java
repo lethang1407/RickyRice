@@ -234,13 +234,18 @@ public class StoreOwnerController {
         }
     }
 
+    @PostMapping(value = "/employee/create")
+    public ResponseEntity<String> createEmployee(
+            @RequestBody StoreAddEmployeeDTO employee) {
+        employeeService.createEmployee(employee);
+        return ResponseEntity.ok("Thêm nhân viên thành công");
+    }
 
-    @PutMapping(value = "/employee/upload-image/{employeeId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/employee/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadEmployeeImage(
-            @PathVariable String employeeId,
             @RequestPart("file") MultipartFile file
     ) {
-        String url = employeeService.updateStoreEmployeeImage(employeeId, file);
+        String url = employeeService.updateStoreEmployeeImage(file);
         return ResponseEntity.ok(url);
     }
 
@@ -254,7 +259,6 @@ public class StoreOwnerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Xóa sản phẩm thất bại");
         }
     }
-
 
     @PutMapping(value = "/employee/update/{id}")
     public ResponseEntity<String> updateEmployee(

@@ -124,7 +124,7 @@ function App() {
               <Route path="product/update" element={<ProductUpdate />} />
               <Route path="employee/update" element={<EmployeeUpdate />} />
               <Route path="debt" element={<Debt />}></Route>
-              <Route path="customer-debt" element={<CustomerDebt />}></Route>
+              <Route path="customer-debt" element={<WebSocketProvider><CustomerDebt /></WebSocketProvider>}></Route>
               <Route
                 path="create-store/:transactionNo"
                 element={<CreateStore />}

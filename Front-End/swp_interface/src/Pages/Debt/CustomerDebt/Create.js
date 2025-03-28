@@ -1,19 +1,61 @@
-import { Form, Input, Button, InputNumber, Select, notification  } from "antd";
-import { addNewResource } from "../../../Utils/FetchUtils";
+import { Form, Input, Button, InputNumber, Select, notification, Upload, message  } from "antd";
+import { addNewResource, handleUpload } from "../../../Utils/FetchUtils";
 import { getToken } from "../../../Utils/UserInfoUtils";
+import { useState } from "react";
+import { UploadOutlined } from "@ant-design/icons";
+import { error } from "../../../Utils/AntdNotification";
+import Loading from "../../Loading/Loading";
+import API from "../../../Utils/API/API";
+
 
 function Create(props){
+  const [messageApi, contextHolder] = message.useMessage();
+  const [file,setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
   const token = getToken();
   const { customer, id, setCreate, setCreateId } = props;
   const [form] = Form.useForm();
   const handleFinish = async (values) =>{
-    const response = await addNewResource('http://localhost:9999/debt', {...values, customerId: id}, token);
-    if(response){
-      form.resetFields();
-      setCreateId(null);
-      setCreate(false);
+    if(file){
+      setLoading(true);
+      const res = await handleUpload(API.PUBLIC.UPLOAD_IMG, file[0].originFileObj);
+      if(res && res.code===200){
+        const response = await addNewResource('http://localhost:9999/debt', {...values, customerId: id, image: res.data}, token);
+        if(response){
+          form.resetFields();
+          setCreateId(null);
+          setCreate(false);
+          setLoading(false);
+        }
+      }
+    }else{
+      setLoading(true);
+      const response = await addNewResource('http://localhost:9999/debt', {...values, customerId: id}, token);
+        if(response){
+          form.resetFields();
+          setCreateId(null);
+          setCreate(false);
+          setLoading(false);
+        }
     }
   }
+
+  const handleChangeFile = async (info) =>{
+        if(info.fileList.length > 0){
+          if(!info.fileList[0].originFileObj.type.startsWith('image/')){
+            error('Only accept image file!', messageApi);
+            return;
+          }
+          const fileSize = info.fileList[0].originFileObj.size / 1024 / 1024 < 10
+          if(!fileSize){
+            error('Image file size over 10MB!', messageApi);
+            return;
+          }
+          setFile(info.fileList);
+        }else{
+          setFile(null);
+        }
+      }
 
   const handleCancel = () => {
     form.resetFields();
@@ -41,7 +83,9 @@ function Create(props){
     ];
     
   return (
-    <>
+    <> 
+      {loading && <Loading />}
+      {contextHolder}
       <Form form={form} layout="vertical" onFinish={handleFinish}>
         <Form.Item
           label="Số tiền"
@@ -66,8 +110,13 @@ function Create(props){
           <Input.TextArea placeholder="Nhập mô tả (nếu có)" />
         </Form.Item>
 
-        <Form.Item label="Hình ảnh" name="image">
-          <Input placeholder="Nhập URL hình ảnh (nếu có)" />
+        <Form.Item
+          name="image"
+          className='register__form__item'
+        >
+          <Upload beforeUpload={() => false} fileList={file} onChange={handleChangeFile} maxCount={1} listType="picture">
+            <Button icon={<UploadOutlined />}>Click to Upload Image</Button>
+          </Upload>
         </Form.Item>
 
         <div style={{display:'flex', alignItems:'center', justifyContent:'center'}}>

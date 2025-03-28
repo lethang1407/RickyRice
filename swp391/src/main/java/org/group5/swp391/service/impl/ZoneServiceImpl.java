@@ -21,7 +21,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -126,13 +128,14 @@ public class ZoneServiceImpl implements ZoneService {
         Store existingStore = storeRepository
                 .findById(storeZoneDTO.getStoreID())
                 .orElseThrow(() -> new Exception("Store not found"));
-        Product existingProduct = productRepository
-                .findById(storeZoneDTO.getProductID())
-                .orElseThrow(() -> new Exception("Product not found"));
+        if(storeZoneDTO.getProductID() != null) {
+            Product existingProduct = productRepository
+                    .findById(storeZoneDTO.getProductID())
+                    .orElseThrow(() -> new Exception("Product not found"));
+            newZone.setProduct(existingProduct);
+        }
         newZone.setName(storeZoneDTO.getName());
         newZone.setStore(existingStore);
-        newZone.setProduct(existingProduct);
-
         newZone.setLocation(storeZoneDTO.getLocation());
         zoneRepository.save(newZone);
     }
@@ -143,15 +146,26 @@ public class ZoneServiceImpl implements ZoneService {
         updatingZone.setName(updatedZone.getName());
         updatingZone.setUpdatedAt(LocalDateTime.now());
         updatingZone.setLocation(updatedZone.getLocation());
-        Product foundProductByID = productRepository.findById(updatedZone.getProductID()).orElseThrow(() -> new Exception());
-        updatingZone.setProduct(foundProductByID);
+        if(updatedZone.getProductID() != null) {
+            Product foundProductByID = productRepository.findById(updatedZone.getProductID()).orElseThrow(() -> new Exception());
+            updatingZone.setProduct(foundProductByID);
+        }
         zoneRepository.save(updatingZone);
     }
 
     @Override
-    public void deleteZone(String zoneID) {
-        Zone zone = zoneRepository.findZoneById(zoneID);
-        zoneRepository.delete(zone);
+    public Page<StoreDetailZoneDTO> getZonesByFilter(
+            String storeID, String name, String location, String productName, LocalDate fromCreatedAt,
+            LocalDate toCreatedAt, LocalDate fromUpdateAt, LocalDate toUpdateAt,
+            int page, int size, String sortBy, boolean descending) {
+        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        LocalDateTime startCreatedDateTime = fromCreatedAt != null ? fromCreatedAt.atStartOfDay() : null;
+        LocalDateTime endCreatedDateTime = toCreatedAt != null ? toCreatedAt.atTime(LocalTime.MAX) : null;
+        LocalDateTime startUpdatedDateTime = fromUpdateAt != null ? fromUpdateAt.atStartOfDay() : null;
+        LocalDateTime endUpdatedDateTime = toUpdateAt != null ? toUpdateAt.atTime(LocalTime.MAX) : null;
+        Page<Zone> zones = zoneRepository.findZonesByFilters(storeID, name, location, productName, startCreatedDateTime, endCreatedDateTime, startUpdatedDateTime, endUpdatedDateTime, pageable);
+        return zones.map(zoneConverter::toStoreZoneDTO);
     }
 
     @Override

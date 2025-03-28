@@ -148,7 +148,7 @@ const InvoiceDetail = () => {
     };
     const columns = [
         {
-            title: 'Lựa chọn',
+            title: 'Lựa Chọn',
             key: 'option',
             render: (text, record) => (
                 <Button type="link" danger onClick={() => handleDeleteRow(record.key)}>
@@ -157,17 +157,12 @@ const InvoiceDetail = () => {
             ),
         },
         {
-            title: 'Mã Sản Phẩm',
-            dataIndex: 'productID',
-            key: 'productID',
-        },
-        {
-            title: 'Tên sản phẩm',
+            title: 'Tên Sản Phẩm',
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: 'Discount/Kg ',
+            title: 'Giảm Giá/Kg ',
             key: 'discount',
             render: (text, record) => (
                 <InputNumber
@@ -181,7 +176,7 @@ const InvoiceDetail = () => {
             ),
         },
         {
-            title: 'Số lượng',
+            title: 'Số Lượng',
             dataIndex: 'quantity',
             key: 'quantity',
             render: (text, record) => (
@@ -230,7 +225,7 @@ const InvoiceDetail = () => {
             ),
         },
         {
-            title: 'Thành tiền(VND)',
+            title: 'Thành Tiền(VND)',
             dataIndex: 'total',
             key: 'total',
             render: (text) => (text || 0).toLocaleString(),
@@ -453,7 +448,7 @@ const InvoiceDetail = () => {
         setItems([
             ...(items || []),
             {
-                label: `New Tab`,
+                label: `Trang Mới`,
                 key: newKey,
                 customerPhone: '',
                 customerName: '',
@@ -775,7 +770,7 @@ const InvoiceDetail = () => {
             customerName: activeTab.customerName,
             amount: finalDebtAmount,
             description: autoDescription || "Không có sản phẩm mua",
-            type: "NEGATIVE",
+            type: "NEGATIVE_KH_VAY",
         };
         axios.post(API.EMPLOYEE.CREATE_DEBT,
             invoiceData, {

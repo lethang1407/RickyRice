@@ -77,26 +77,26 @@ const AdminDashboard = () => {
               {
                 key: "1",
                 icon: <AreaChartOutlined />,
-                label: <Link to={`/admin/statistic`}>Thống kê</Link>,
+                label: <Link style={{textDecoration:'none'}} to={`/admin/statistic`}>Thống kê</Link>,
               },
               {
                 key: "2",
                 icon: <UserOutlined />,
                 label: (
-                  <Link to={`/admin/account_owner`}>Danh sách tài khoản</Link>
+                  <Link style={{textDecoration:'none'}} to={`/admin/account_owner`}>Danh sách tài khoản</Link>
                 ),
               },
               {
                 key: "3",
                 icon: <ShopOutlined />,
                 label: (
-                  <Link to={`/admin/view_stores`}>Danh sách cửa hàng</Link>
+                  <Link style={{textDecoration:'none'}} to={`/admin/view_stores`}>Danh sách cửa hàng</Link>
                 ),
               },
               {
                 key: "4",
                 icon: <ApartmentOutlined />,
-                label: <Link to={`/admin/subscription_plans`}>Dịch vụ</Link>,
+                label: <Link style={{textDecoration:'none'}} to={`/admin/subscription_plans`}>Dịch vụ</Link>,
               },
             ]}
           />

@@ -98,7 +98,7 @@ const StoreOwnerLayout = () => {
                     to="/store-owner/store"
                     style={{ textDecoration: "none" }}
                   >
-                    Store
+                    Cửa hàng
                   </Link>
                 ),
               },
@@ -110,7 +110,7 @@ const StoreOwnerLayout = () => {
                     to="/store-owner/invoice"
                     style={{ textDecoration: "none" }}
                   >
-                    Invoice
+                    Hóa đơn
                   </Link>
                 ),
               },
@@ -122,7 +122,7 @@ const StoreOwnerLayout = () => {
                     to="/store-owner/product"
                     style={{ textDecoration: "none" }}
                   >
-                    Product
+                    Sản phẩm
                   </Link>
                 ),
               },
@@ -134,13 +134,13 @@ const StoreOwnerLayout = () => {
                     to="/store-owner/employee"
                     style={{ textDecoration: "none" }}
                   >
-                    Employee
+                    Nhân viên
                   </Link>
                 ),
               },
               {
                 icon: <PieChartOutlined />,
-                label: "Statistic",
+                label: "Thống kê",
                 children: [
                   {
                     key: "5.1",
@@ -150,7 +150,7 @@ const StoreOwnerLayout = () => {
                         to="/store-owner/statistic/data"
                         style={{ textDecoration: "none" }}
                       >
-                        Data
+                        Dữ liệu
                       </Link>
                     ),
                   },
@@ -162,7 +162,7 @@ const StoreOwnerLayout = () => {
                         to="/store-owner/statistic/chart"
                         style={{ textDecoration: "none" }}
                       >
-                        Chart
+                        Biểu đồ
                       </Link>
                     ),
                   },

@@ -36,6 +36,9 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -164,6 +167,33 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Page<StoreDetailProductDTO> getProductsByFilter(String storeID,
+                                                           String name,
+                                                           Double fromPrice,
+                                                           Double toPrice,
+                                                           String information,
+                                                           LocalDate fromCreatedAt,
+                                                           LocalDate toCreatedAt,
+                                                           LocalDate fromUpdatedAt,
+                                                           LocalDate toUpdatedAt,
+                                                           int page,
+                                                           int size,
+                                                           String sortBy,
+                                                           boolean descending
+    ) {
+        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        LocalDateTime startCreatedDateTime = fromCreatedAt != null ? fromCreatedAt.atStartOfDay() : null;
+        LocalDateTime endCreatedDateTime = toCreatedAt != null ? toCreatedAt.atTime(LocalTime.MAX) : null;
+        LocalDateTime startUpdatedDateTime = fromUpdatedAt != null ? fromUpdatedAt.atStartOfDay() : null;
+        LocalDateTime endUpdatedDateTime = toUpdatedAt != null ? toUpdatedAt.atTime(LocalTime.MAX) : null;
+        Page<Product> products = productRepository.findProducts(
+                storeID, name, fromPrice, toPrice, information,
+                startCreatedDateTime, endCreatedDateTime, startUpdatedDateTime, endUpdatedDateTime, pageable);
+        return products.map(productConverter::toStoreDetailProductDTO);
+    }
+
+    @Override
     public void deleteProductStore(String productId) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
         product.setZones(null);
@@ -269,20 +299,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<CustomerProductDTO> searchProductsQuery(String querySearchName, Double minPrice, Double maxPrice, int page, int size, String sortBy, boolean descending, String categoryID) {
+    public Page<CustomerProductDTO> searchProductsQuery(String querySearchName, String storeID, Double minPrice, Double maxPrice, int page, int size, String sortBy, boolean descending, String categoryID) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        List<Product> products = productRepository
-                .findByNameContainingAndPriceBetween(querySearchName, minPrice, maxPrice, pageable);
-        List<CustomerProductDTO> productPages;
+        Page<Product> products = productRepository
+                .findByNameContainingAndPriceBetweenInStoreID(querySearchName, storeID, minPrice, maxPrice, pageable);
+        Page<CustomerProductDTO> productPages;
         if (categoryID != null && !categoryID.isEmpty()) {
-            productPages = productRepository.findAllByCategoryId(categoryID).stream()
-                    .map(productConverter::toCustomerProductDTO).collect(Collectors.toList());
+            productPages = productRepository.findAllProductStoreByCategoryId(storeID, categoryID, pageable)
+                    .map(productConverter::toCustomerProductDTO);
         } else {
-            productPages = products.stream()
-                    .map(productConverter::toCustomerProductDTO).collect(Collectors.toList());
+            productPages = products.map(productConverter::toCustomerProductDTO);
         }
-        return new PageImpl<>(productPages, pageable, (products.size() + 1));
+        return productPages;
     }
 
     @Override
@@ -374,21 +403,19 @@ public class ProductServiceImpl implements ProductService {
 
             updatingProduct.setProductAttributes(attributes);
         }
-        if(storeDetailProductDTO.getZoneList() != null) {
-            List<Zone> zones = storeDetailProductDTO.getZoneList().stream()
-                    .map(dto -> {
-                        try {
-                            Zone zone = zoneRepository.findById(dto)
-                                    .orElseThrow(() -> new Exception("Zone not found for ID: " + dto));
-                            return new Zone(zone.getName(),
-                                    zone.getLocation(),
-                                    productRepository.findById(productID).orElseThrow(() -> new Exception("không tìm thấy product")),
-                                    storeRepository.findById(storeID).orElseThrow(() -> new Exception("Không tìm thấy store")));
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }).collect(Collectors.toList());
-            updatingProduct.setZones(zones);
+        List<Zone> oldZones = new ArrayList<>(updatingProduct.getZones());
+        updatingProduct.getZones().clear();
+        for (String zoneId : storeDetailProductDTO.getZoneList()) {
+            Zone zone = zoneRepository.findById(zoneId).orElse(new Zone());
+            zone.setName(zone.getName());
+            zone.setProduct(updatingProduct);
+            updatingProduct.getZones().add(zone);
+        }
+        for (Zone oldZone : oldZones) {
+            if (!updatingProduct.getZones().contains(oldZone)) {
+                oldZone.setProduct(null);
+                zoneRepository.save(oldZone);
+            }
         }
         productRepository.save(updatingProduct);
     }

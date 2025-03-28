@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Form, Input, InputNumber, Button, message, Select, Upload } from 'antd';
 import API from '../../../Utils/API/API';
@@ -112,7 +111,7 @@ const CreateProduct = ({ onClose, storeID, fetchProducts, onSuccess }) => {
 
       onSuccess(key);
 
-      const response = await fetch(API.STORE_DETAIL.GET_STORE_PRODUCTS_BY_STOREID + '?storeID=' + storeID, {
+      const response = await fetch(API.STORE_DETAIL.GET_STORE_PRODUCTS + '?storeID=' + storeID, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
