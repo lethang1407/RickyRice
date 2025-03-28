@@ -111,7 +111,7 @@ const CreateProduct = ({ onClose, storeID, fetchProducts, onSuccess }) => {
 
       onSuccess(key);
 
-      const response = await fetch(API.STORE_DETAIL.GET_STORE_PRODUCTS_BY_STOREID + '?storeID=' + storeID, {
+      const response = await fetch(API.STORE_DETAIL.GET_STORE_PRODUCTS + '?storeID=' + storeID, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
