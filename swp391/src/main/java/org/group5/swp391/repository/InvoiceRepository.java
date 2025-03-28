@@ -22,6 +22,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, String> {
     JOIN i.store s
     JOIN s.storeAccount sa
     WHERE (:invoiceId IS NULL OR i.id = :invoiceId)
+      AND (:customerName IS NULL OR LOWER(i.customer.name) LIKE LOWER(CONCAT('%', :customerName, '%')))
       AND (:phoneNumber IS NULL OR LOWER(i.customer.phoneNumber) LIKE LOWER(CONCAT('%', :phoneNumber, '%')))
       AND (:totalMoneyMin IS NULL OR (i.shipMoney + i.productMoney) >= :totalMoneyMin)
       AND (:totalMoneyMax IS NULL OR (i.shipMoney + i.productMoney) <= :totalMoneyMax)
@@ -32,6 +33,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, String> {
 """)
     Page<Invoice> findInvoices(
             @Param("invoiceId") String invoiceId,
+            @Param("customerName") String customerName,
             @Param("phoneNumber") String phoneNumber,
             @Param("totalMoneyMin") Double totalMoneyMin,
             @Param("totalMoneyMax") Double totalMoneyMax,
