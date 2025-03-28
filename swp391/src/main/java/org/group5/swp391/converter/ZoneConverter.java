@@ -12,6 +12,8 @@ import org.group5.swp391.repository.StoreRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.time.ZoneId;
+
 @Component
 @RequiredArgsConstructor
 public class ZoneConverter {
@@ -28,9 +30,17 @@ public class ZoneConverter {
         EmployeeZoneDTO.setZoneID(zone.getId());
         EmployeeZoneDTO.setName(zone.getName());
         EmployeeZoneDTO.setCreated_by(zone.getCreatedBy());
-        EmployeeZoneDTO.setCreated_at(zone.getCreatedAt());
+        EmployeeZoneDTO.setCreated_at(
+                zone.getCreatedAt() != null
+                        ? zone.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        : 0L
+        );
         EmployeeZoneDTO.setLocation(zone.getLocation());
-        EmployeeZoneDTO.setUpdated_at(zone.getUpdatedAt());
+        EmployeeZoneDTO.setUpdated_at(
+                zone.getUpdatedAt() != null
+                        ? zone.getUpdatedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        : 0L
+        );
 
         if (zone.getStore() != null) {
             EmployeeStoreDTO employeeStoreDTO = new EmployeeStoreDTO();
