@@ -68,12 +68,14 @@ const Employee_Products = () => {
       key: "stt",
       render: (text, record, index) => index + 1,
       width: "5%",
+      align: 'center'
     },
     {
       title: "Ảnh Sản Phẩm",
       dataIndex: "productImage",
       key: "productImage",
       width: "12%",
+      align: 'center',
       render: (productImage) =>
         productImage ? (
           <Image width={100} height={70} src={productImage} />
@@ -98,6 +100,7 @@ AEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaA
       dataIndex: "quantity",
       key: "quantity",
       width: "7%",
+      align: 'center',
     },
     {
       title: "Mô Tả",
@@ -112,6 +115,7 @@ AEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaA
       render: (price) => `${price.toLocaleString()} đ`,
       key: "price",
       width: "8%",
+      align: 'center',
     },
     {
       title: "Tính Chất",
@@ -143,6 +147,7 @@ AEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaA
       title: "Loại Gạo",
       key: "categoryname",
       width: "10%",
+      align: 'center',
       render: (text, record) => (
         <span>{record.employeeCategoryDTO?.name || "N/A"}</span>
       ),

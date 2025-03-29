@@ -38,7 +38,7 @@ const InvoiceList = () => {
             title: 'STT',
             key: 'stt',
             render: (text, record, index) => (currentPage - 1) * pageSize + index + 1,
-
+            with: "5%"
         },
         {
             title: 'Khách Hàng',
@@ -55,6 +55,8 @@ const InvoiceList = () => {
             title: 'Trạng Thái',
             dataIndex: 'type',
             key: 'type',
+            align: "center",
+            width: '10%',
             render: (type) => (
                 <Tag color={type ? 'green' : 'red'}>
                     {type ? 'Nhập gạo' : 'Xuất gạo'}
@@ -72,7 +74,8 @@ const InvoiceList = () => {
             render: (totalAmount) => `${(totalAmount || 0).toLocaleString()} đ`,
             key: 'totalAmount',
             sorter: true,
-
+            align: "center",
+            width: '10%',
 
         },
         {
@@ -81,12 +84,16 @@ const InvoiceList = () => {
             render: (totalShipping) => `${(totalShipping || 0).toLocaleString()} đ`,
             key: 'totalShipping',
             sorter: true,
+            align: "center",
+            width: '10%',
 
         },
         {
             title: 'Tạo Ra Lúc',
             dataIndex: 'created_at',
             key: 'created_at',
+            width: '13%',
+            align: "center",
             sorter: true,
             render: (text) => text ? moment(Number(text)).format('DD/MM/YYYY HH:mm:ss') : 'N/A'
         },
@@ -94,13 +101,15 @@ const InvoiceList = () => {
             title: 'Chỉnh Sửa Lúc',
             dataIndex: 'updated_at',
             key: 'updated_at',
+            align: "center",
+            width: '13%',
             render: (text) => text ? moment(Number(text)).format('DD/MM/YYYY HH:mm:ss') : 'N/A'
         },
         {
             title: 'Mô Tả ',
             dataIndex: 'description',
             key: 'description',
-
+            width: '29%',
         },
 
 
