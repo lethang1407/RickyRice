@@ -4,6 +4,7 @@ package org.group5.swp391.controller.store_owner;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.dto.response.AdminResponse.AppStatisticsResponse;
 import org.group5.swp391.dto.response.ApiResponse;
+import org.group5.swp391.dto.store_owner.all_employee.StoreAddEmployeeDTO;
 import org.group5.swp391.dto.store_owner.all_employee.StoreEmployeeDTO;
 import org.group5.swp391.dto.store_owner.all_invoice.StoreInvoiceDTO;
 import org.group5.swp391.dto.store_owner.all_invoice.StoreInvoiceDetailDTO;
@@ -131,7 +132,6 @@ public class StoreOwnerController {
             throw new AppException(ErrorCode.CANT_GET_INFO);
         }
     }
-
 
     @GetMapping("/all/category")
     public List<StoreCategoryIdAndNameDTO> getCategory() {
