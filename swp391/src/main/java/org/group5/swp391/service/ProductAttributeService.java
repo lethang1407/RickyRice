@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public interface ProductAttributeService {
-    public List<StoreProductAttributeDTO> getProductAttributes();
+    public List<StoreProductAttributeDTO> getProductAttributes(String storeId);
     public Page<StoreDetailProductAttributeDTO> getProductAttributeByStoreID(String storeID, int page, int size, String sortBy, boolean descending);
     public void addProductAttribute(StoreDetailProductAttributeDTO storeProductAttributeDTO) throws Exception;
     public void updateProductAttribute(String productAttributeID, StoreDetailProductAttributeDTO storeProductAttributeDTO) throws Exception;

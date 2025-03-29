@@ -17,7 +17,7 @@ public interface CategoryService {
     public List<EmployeeCategoryDTO> getAllCategories();
     public Page<EmployeeCategoryDTO> getAllCategories(int page, int size, String sortBy, boolean descending);
     public Page<EmployeeCategoryDTO> getCategoryBySearch(String name, int page, int size, String sortBy, boolean descending);
-    public List<StoreCategoryIdAndNameDTO> getAllStoreCategories();
+    public List<StoreCategoryIdAndNameDTO> getAllStoreCategories(String storeId);
     public Page<EmployeeProductDTO> getProductBySearch(String name, int page, int size, String sortBy, boolean descending);
     //Hieu
     public List<CustomerCategoryDTO> getAllCustomerCategories(String storeID);

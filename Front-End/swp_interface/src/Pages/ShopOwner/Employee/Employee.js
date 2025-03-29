@@ -118,6 +118,8 @@ const Employee = () => {
             setFetchingStores(true);
             try {
                 const response = await getDataWithToken(API.STORE_OWNER.GET_ALL_STORES, token);
+                console.log(response);
+                
                 if (Array.isArray(response)) {
                     const cleanedStores = response
                         .filter(store => store.id != null)
@@ -173,7 +175,7 @@ const Employee = () => {
                     skipNulls: true
                 }
             );
-
+            console.log(filters.store);
             const response = await getDataWithToken(`${API.STORE_OWNER.GET_STORE_EMPLOYEES}?${queryParams}`, token);
             console.log(response);
             const employees = response?.content || response?.data?.content || (Array.isArray(response) ? response : []);

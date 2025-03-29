@@ -13,8 +13,9 @@ public interface ProductAttributeRepository extends JpaRepository<ProductAttribu
             "JOIN attr.products p " +
             "JOIN p.store s " +
             "JOIN s.storeAccount a " +
-            "WHERE a.username = :username")
-    List<ProductAttribute> findProductAttributeForUser(@Param("username") String username);
+            "WHERE a.username = :username" +
+            " AND s.id = :storeId")
+    List<ProductAttribute> findProductAttributeForUser(@Param("username") String username, @Param("storeId") String storeId);
     Long countAllByStore_Id(String storeId);
 
     List<ProductAttribute> findAllByStore_Id(String storeId);

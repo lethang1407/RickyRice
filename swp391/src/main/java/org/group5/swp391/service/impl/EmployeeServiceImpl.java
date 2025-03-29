@@ -55,6 +55,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (!strGender.equalsIgnoreCase("all")) {
             gender = strGender.equalsIgnoreCase("Male");
         }
+        if (store != null && store.isEmpty()) {
+            store = null;
+        }
         employeeID = (employeeID != null && !employeeID.trim().isEmpty()) ? employeeID.trim() : null;
         name = (name != null && !name.trim().isEmpty()) ? name.trim() : null;
         phoneNumber = (phoneNumber != null && !phoneNumber.trim().isEmpty()) ? phoneNumber.trim() : null;

@@ -79,7 +79,6 @@ public class StoreOwnerController {
         }
     }
 
-
     @GetMapping("/stores")
     public Page<StoreInfoDTO> getStores(
             @RequestParam String storeName,
@@ -136,19 +135,18 @@ public class StoreOwnerController {
     }
 
     @GetMapping("/all/category")
-    public List<StoreCategoryIdAndNameDTO> getCategory() {
+    public List<StoreCategoryIdAndNameDTO> getCategory(@RequestParam String storeId) {
         try {
-            return categoryService.getAllStoreCategories();
+            return categoryService.getAllStoreCategories(storeId);
         } catch (Exception e) {
             throw new AppException(ErrorCode.CANT_GET_INFO);
         }
     }
 
-
     @GetMapping("/all/attribute")
-    public List<StoreProductAttributeDTO> getAttribute() {
+    public List<StoreProductAttributeDTO> getAttribute(@RequestParam String storeId) {
         try {
-            return productAttributeService.getProductAttributes();
+            return productAttributeService.getProductAttributes(storeId);
         } catch (Exception e) {
             throw new AppException(ErrorCode.CANT_GET_INFO);
         }
@@ -212,7 +210,7 @@ public class StoreOwnerController {
             @RequestParam(defaultValue = "") String name,
             @RequestParam(defaultValue = "") String email,
             @RequestParam(defaultValue = "") String phoneNumber,
-            @RequestParam(defaultValue = "") List<String> store,
+            @RequestParam(defaultValue = "") List<String> storeIds,
             @RequestParam(defaultValue = "all") String gender,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
@@ -220,7 +218,7 @@ public class StoreOwnerController {
             @RequestParam(defaultValue = "false") boolean descending
     ) {
         try {
-            return employeeService.getEmployees(employeeID, name, email, phoneNumber, store, gender, page, size, sortBy, descending);
+            return employeeService.getEmployees(employeeID, name, email, phoneNumber, storeIds, gender, page, size, sortBy, descending);
         } catch (Exception e) {
             throw new AppException(ErrorCode.CANT_GET_INFO);
         }

@@ -7,9 +7,7 @@ import API from '../../../Utils/API/API';
 import { success, error } from '../../../Utils/AntdNotification';
 import './style.scss';
 
-
 const { Option } = Select;
-
 
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -18,7 +16,6 @@ const getBase64 = (file) =>
         reader.onload = () => resolve(reader.result);
         reader.onerror = reject;
     });
-
 
 const uploadImageAPI = async (url, token, file) => {
     try {
@@ -41,7 +38,6 @@ const uploadImageAPI = async (url, token, file) => {
     }
 };
 
-
 const createEmployeeAPI = async (url, token, employeeData) => {
     try {
         const response = await axios.post(url, employeeData, {
@@ -60,7 +56,6 @@ const createEmployeeAPI = async (url, token, employeeData) => {
     }
 };
 
-
 const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
     const [form] = Form.useForm();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,11 +65,8 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
     const [previewTitle, setPreviewTitle] = useState('');
     const [messageApi, contextHolder] = message.useMessage();
 
-
     const UPLOAD_URL = `${API.STORE_OWNER.UPLOAD_EMPLOYEE_AVATAR}`;
     const CREATE_URL = `${API.STORE_OWNER.CREATE_STORE_EMPLOYEE}`;
-
-
 
 
     useEffect(() => {
@@ -84,11 +76,9 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
         }
     }, [visible, form]);
 
-
     const handleAddEmployee = async (values) => {
         setIsSubmitting(true);
         let avatarUrl = null;
-
 
         try {
             if (fileList.length > 0 && fileList[0].originFileObj) {
@@ -97,7 +87,6 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                     throw new Error("Không nhận được URL ảnh sau khi tải lên.");
                 }
             }
-
 
             const employeePayload = {
                 username: values.username,
@@ -111,12 +100,9 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                 storeId: values.storeId ? String(values.storeId) : null,
             };
 
-
             await createEmployeeAPI(CREATE_URL, token, employeePayload);
 
-
             success('Thêm nhân viên thành công!', messageApi);
-
 
             setTimeout(() => {
                 form.resetFields();
@@ -125,20 +111,17 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                 onClose();
             }, 1500);
 
-
         } catch (err) {
             error(err.message || "Thêm nhân viên thất bại", messageApi);
             setTimeout(() => {
                 setIsSubmitting(false);
             }, 1500);
 
-
             return;
         } finally {
             setIsSubmitting(false);
         }
     };
-
 
     const handlePreview = async (file) => {
         if (!file.url && !file.preview) {
@@ -148,7 +131,6 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
         setPreviewVisible(true);
         setPreviewTitle(file.name || (file.url && file.url.substring(file.url.lastIndexOf('/') + 1)) || 'Preview');
     };
-
 
     const handleAvatarChange = async ({ file, fileList: newFileList }) => {
         if (file.status === 'removed') {
@@ -170,14 +152,12 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
         }
     };
 
-
     const uploadButton = (
         <div>
             <PlusOutlined />
             <div style={{ marginTop: 8 }}>Tải lên</div>
         </div>
     );
-
 
     return (
         <Modal
@@ -205,7 +185,6 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                             {fileList.length < 1 && uploadButton}
                         </Upload>
                     </Form.Item>
-
 
                     <div className="form-columns-modal">
                         <div className="form-column-modal">
@@ -330,7 +309,6 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                         </div>
                     </div>
 
-
                     <Form.Item className="form-actions-modal">
                         <Button onClick={onClose} style={{ marginRight: 8 }} disabled={isSubmitting}>
                             Hủy
@@ -342,7 +320,6 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                 </Form>
             </Spin>
 
-
             <Modal open={previewVisible} title={previewTitle} footer={null} onCancel={() => setPreviewVisible(false)} className="preview-modal">
                 <img alt="preview" style={{ width: "100%" }} src={previewImage} />
             </Modal>
@@ -350,6 +327,4 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
     );
 };
 
-
 export default AddEmployeeModal;
-

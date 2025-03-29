@@ -10,7 +10,6 @@ import "./style.scss";
 import { success, error } from '../../../Utils/AntdNotification';
 import moment from 'moment';
 
-
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -19,12 +18,10 @@ const getBase64 = (file) =>
         reader.onerror = reject;
     });
 
-
 const uploadAvatarAPI = async (url, token, file) => {
     try {
         const formData = new FormData();
         formData.append("file", file);
-
 
         const response = await axios.put(url, formData, {
             headers: {
@@ -32,7 +29,6 @@ const uploadAvatarAPI = async (url, token, file) => {
                 'Content-Type': 'multipart/form-data',
             },
         });
-
 
         if (response.data) {
             if (typeof response.data === 'string' && response.data.startsWith('http')) {
@@ -59,7 +55,6 @@ const uploadAvatarAPI = async (url, token, file) => {
     }
 };
 
-
 const updateEmployeeAPI = async (url, token, employee) => {
     try {
         const response = await axios.put(url, employee, {
@@ -78,7 +73,6 @@ const updateEmployeeAPI = async (url, token, employee) => {
     }
 };
 
-
 const EmployeeUpdate = () => {
     const location = useLocation();
     const { employeeID } = location.state || {};
@@ -93,11 +87,9 @@ const EmployeeUpdate = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
 
-
     const UPLOAD_AVATAR_URL = `${API.STORE_OWNER.UPLOAD_EMPLOYEE_AVATAR}`;
     const UPDATE_EMPLOYEE_URL = `${API.STORE_OWNER.UPDATE_STORE_EMPLOYEE}/${employeeID}`;
     const GET_EMPLOYEE_DETAIL_URL = `${API.STORE_OWNER.GET_STORE_EMPLOYEE_DETAIL}?id=${employeeID}`;
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -110,20 +102,16 @@ const EmployeeUpdate = () => {
             try {
                 const response = await getDataWithToken(GET_EMPLOYEE_DETAIL_URL, token);
 
-
                 if (!response || !response.storeAccount) {
                     throw new Error("Dữ liệu nhân viên không hợp lệ trả về từ API.");
                 }
 
-
                 const { storeAccount, storeInfo } = response;
-
 
                 const initialFileList = storeAccount.avatar
                     ? [{ uid: '-1', name: 'avatar.png', status: 'done', url: storeAccount.avatar }]
                     : [];
                 setFileList(initialFileList);
-
 
                 form.setFieldsValue({
                     name: storeAccount.name,
@@ -136,7 +124,6 @@ const EmployeeUpdate = () => {
                     storeID: storeInfo?.storeID,
                 });
 
-
             } catch (err) {
                 console.error("Error fetching employee details:", err);
                 error(err.message || "Không thể tải chi tiết nhân viên", messageApi);
@@ -145,17 +132,13 @@ const EmployeeUpdate = () => {
             }
         };
 
-
         fetchData();
     }, [employeeID, token, navigate, form, messageApi, GET_EMPLOYEE_DETAIL_URL]);
-
-
 
 
     const handleUpdate = async (values) => {
         setIsSubmitting(true);
         let avatarUrl = null;
-
 
         try {
             if (fileList.length > 0 && fileList[0].originFileObj) {
@@ -178,7 +161,6 @@ const EmployeeUpdate = () => {
                 avatarUrl = "";
             }
 
-
             const employeeUpdatePayload = {
                 employeeID: employeeID,
                 storeAccount: {
@@ -192,7 +174,6 @@ const EmployeeUpdate = () => {
                     ...(values.password && { password: values.password }),
                 },
             };
-
 
             messageApi.open({ type: 'loading', content: 'Đang cập nhật thông tin nhân viên...', duration: 0 });
             await updateEmployeeAPI(UPDATE_EMPLOYEE_URL, token, employeeUpdatePayload);
@@ -212,8 +193,6 @@ const EmployeeUpdate = () => {
     };
 
 
-
-
     const handlePreview = async (file) => {
         if (!file.url && !file.preview) {
             try {
@@ -227,7 +206,6 @@ const EmployeeUpdate = () => {
         setPreviewVisible(true);
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
-
 
     const handleAvatarChange = ({ file, fileList: newFileList }) => {
         if (file.originFileObj && file.status !== 'error' && file.status !== 'uploading') {
@@ -251,15 +229,12 @@ const EmployeeUpdate = () => {
     };
 
 
-
-
     const uploadButton = (
         <div>
             <PlusOutlined />
             <div style={{ marginTop: 8 }}>Tải lên</div>
         </div>
     );
-
 
     return (
         <div className="update-employee-container">
@@ -299,8 +274,6 @@ const EmployeeUpdate = () => {
                                     }
 
 
-
-
                                     try {
                                         const preview = await getBase64(file);
                                         setFileList([{
@@ -329,7 +302,6 @@ const EmployeeUpdate = () => {
                             </Upload>
                         </Form.Item>
 
-
                         <div className="form-columns">
                             <div className="form-column">
                                 <Form.Item
@@ -343,7 +315,6 @@ const EmployeeUpdate = () => {
                                 >
                                     <Input prefix={<UserOutlined />} placeholder="Nguyễn Văn A" />
                                 </Form.Item>
-
 
                                 <Form.Item
                                     name="username"
@@ -362,7 +333,6 @@ const EmployeeUpdate = () => {
                                     <Input prefix={<UserOutlined />} placeholder="tendangnhap" />
                                 </Form.Item>
 
-
                                 <Form.Item
                                     name="email"
                                     label="Email"
@@ -370,7 +340,7 @@ const EmployeeUpdate = () => {
                                         {
                                           required: true,
                                           message: 'Vui lòng điền email!',
-                                        },{
+                                        },{ 
                                           pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                                           message: 'Email không đúng định dạng!'
                                         }
@@ -378,7 +348,6 @@ const EmployeeUpdate = () => {
                                 >
                                     <Input placeholder="example@email.com" />
                                 </Form.Item>
-
 
                                 <Form.Item
                                     name="phoneNumber"
@@ -391,7 +360,6 @@ const EmployeeUpdate = () => {
                                     <Input placeholder="0912345678" maxLength={10} />
                                 </Form.Item>
                             </div>
-
 
                             <div className="form-column">
                                 <Form.Item
@@ -408,7 +376,6 @@ const EmployeeUpdate = () => {
                                     <Input.Password prefix={<LockOutlined />} placeholder="Nhập mật khẩu mới" />
                                 </Form.Item>
 
-
                                 <Form.Item
                                     name="gender"
                                     label="Giới tính"
@@ -419,7 +386,6 @@ const EmployeeUpdate = () => {
                                     </Radio.Group>
                                 </Form.Item>
 
-
                                 <Form.Item
                                     name="birthDate"
                                     label="Ngày sinh"
@@ -427,18 +393,15 @@ const EmployeeUpdate = () => {
                                     <DatePicker className="full-width-datepicker" format="DD/MM/YYYY" placeholder="Chọn ngày" />
                                 </Form.Item>
 
-
                                 <Form.Item name="storeName" label="Cửa hàng">
                                     <Input disabled />
                                 </Form.Item>
                             </div>
                         </div>
 
-
                         <Form.Item name="storeID" hidden>
                             <Input />
                         </Form.Item>
-
 
                         <div className="update-employee-actions">
                             <Button type="primary" htmlType="submit" loading={isSubmitting} disabled={isSubmitting}>
@@ -449,7 +412,6 @@ const EmployeeUpdate = () => {
                             </Button>
                         </div>
                     </Form>
-
 
                     <Modal
                         open={previewVisible}
@@ -466,6 +428,4 @@ const EmployeeUpdate = () => {
     );
 };
 
-
 export default EmployeeUpdate;
-

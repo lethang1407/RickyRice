@@ -89,13 +89,13 @@ public class CategoryServiceImpl implements CategoryService {
         return null;
     }
 
-    public List<StoreCategoryIdAndNameDTO> getAllStoreCategories(){
+    public List<StoreCategoryIdAndNameDTO> getAllStoreCategories(String storeID) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
         }
         String username = authentication.getName();
-        return CategoryRepository.findCategoriesForUser(username).stream().map(categoryConverter::toStoreCategoryIdAndName).collect(Collectors.toList());
+        return CategoryRepository.findCategoriesForUser(username, storeID).stream().map(categoryConverter::toStoreCategoryIdAndName).collect(Collectors.toList());
     }
 
     //Hieu
