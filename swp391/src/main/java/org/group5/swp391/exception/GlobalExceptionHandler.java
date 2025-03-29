@@ -27,6 +27,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(e.getErrorCode().getHttpStatusCode()).body(apiResponse);
     }
 
+
     @ExceptionHandler(ParseException.class)
     public ResponseEntity<ApiResponse> hanldeParseException(ParseException e) {
         ApiResponse apiResponse = new ApiResponse<>();

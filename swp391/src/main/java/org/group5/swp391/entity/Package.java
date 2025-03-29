@@ -14,8 +14,14 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Package extends AbstractEntity{
+    @Column(name = "name")
+    String name;
+
     @Column(name = "description")
     String description;
+
+    @Column(name = "quantity")
+    Long quantity;
 
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinColumn(name = "StoreID")

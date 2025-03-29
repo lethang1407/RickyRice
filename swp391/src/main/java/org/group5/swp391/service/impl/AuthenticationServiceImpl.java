@@ -175,8 +175,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public CheckOTPResponse checkOTP(OTPCheckRequest request) {
-        Account account = accountRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        Account account = accountRepository.findByUsername(request.getUsername()).orElse(null);
+        if(account==null){
+            account = accountRepository.findByUsername(request.getUsername())
+                    .orElse(accountRepository.findByEmail(request.getUsername()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+        }
         String otpReal = account.getOtp().substring(0,6);
         String number = account.getOtp().substring(6,7);
         int num = Integer.parseInt(number);
@@ -201,8 +204,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void changePassword(ChangePasswordRequest request) {
-        Account account = accountRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        Account account = accountRepository.findByUsername(request.getUsername()).orElse(null);
+        if(account==null){
+            account = accountRepository.findByUsername(request.getUsername())
+                    .orElse(accountRepository.findByEmail(request.getUsername()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+        }
         if(account.getOtp().substring(0,6).equals(request.getOTP())) {
             account.setPassword(request.getNewPassword());
         }else{

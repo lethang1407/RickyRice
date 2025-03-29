@@ -60,8 +60,8 @@ function Login(){
       {contextHolder}
       <div className='login__overlay'></div>
       <div className='login__form'>
-        <h2 className='login__title'>LOGIN</h2>
-        <h5 className='login__slogan'>Join Us Today and Start Your Journey to Success!</h5>
+        <h2 className='login__title'>ĐĂNG NHẬP</h2>
+        <h5 className='login__slogan'>Tham gia cùng chúng tôi và bắt đầu hành trình của bạn!</h5>
         <div className='login__icon'>
           <GoogleOutlined onClick={handleLoginGoogle} className='login__icon__i'/>
         </div>
@@ -97,8 +97,8 @@ function Login(){
 
             <Input.Password size='large' className='login__form__item__input login__form__item__input__pass' placeholder='Input password'/>
           </Form.Item>
-          <h5 className='login__form__text'>Don't have an account. <span onClick={naviRegister} className='login__form__text__bold'>Register here!</span></h5>
-          <h5 style={{margin:'5px 0px'}} className='login__form__text'> <span onClick={naviForgetPassword} className='login__form__text__bold'> Forget Password?</span></h5>
+          <h5 className='login__form__text'>Chưa có tài khoản. <span onClick={naviRegister} className='login__form__text__bold'>Đăng kí ngay!</span></h5>
+          <h5 style={{margin:'5px 0px'}} className='login__form__text'> <span onClick={naviForgetPassword} className='login__form__text__bold'> Quên mật khẩu?</span></h5>
           <Form.Item
               labelAlign='center'
               valuePropName="checked"
@@ -108,7 +108,7 @@ function Login(){
               <Checkbox>Remember me</Checkbox>
           </Form.Item>
           <Form.Item className='login__form__b'>
-            <Button className='login__form__b__button' htmlType="submit">Login
+            <Button className='login__form__b__button' htmlType="submit">Đăng nhập
             </Button>
           </Form.Item>
         </Form>
