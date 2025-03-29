@@ -15,7 +15,7 @@ public class Zone extends AbstractEntity {
     @Column(name = "Name", nullable = false, columnDefinition = "NVARCHAR(255)")
     String name;
 
-    @Column(name = "Location", nullable = false, columnDefinition = "NVARCHAR(255)")
+    @Column(name = "Location", nullable = false, columnDefinition = "NVARCHAR(1000)")
     String location;
 
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, fetch = FetchType.LAZY)

@@ -107,8 +107,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public StoreDetailCategoryDTO getCategoryByID(String categoryID) throws Exception {
-        Category category = categoryRepository.findById(categoryID).orElseThrow(() -> new Exception("Không tìm được category"));
-        return categoryConverter.toStoreDetailCategoryDTO(category);
+        Category category = categoryRepository.findById(categoryID).orElse(null);
+        return category!=null ? categoryConverter.toStoreDetailCategoryDTO(category) : null;
     }
 
     @Override
@@ -158,8 +158,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(String categoryId) {
         Category category = categoryRepository.getReferenceById(categoryId);
-        category.setStore(null);
-        category.setProducts(null);
+        List<Product> products = category.getProducts();
+        for(Product product : products){
+            product.setCategory(null);
+            productRepository.save(product);
+        }
         categoryRepository.delete(category);
     }
 }

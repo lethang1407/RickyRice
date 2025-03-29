@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "StoreStatistics")
 public class Statistics extends AbstractEntity {
-    @Column(name = "Description", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "Description", columnDefinition = "NVARCHAR(1000)")
     String description;
 
     @Column(name = "Type")

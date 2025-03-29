@@ -32,7 +32,7 @@ public class Account extends AbstractEntity {
     @Column(name = "PhoneNumber", unique = true, nullable = false)
     String phoneNumber;
 
-    @Column(name = "Avatar", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "Avatar", columnDefinition = "NVARCHAR(1000)")
     String avatar;
 
     @Column(name = "IsActive")

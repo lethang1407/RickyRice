@@ -53,7 +53,7 @@ public class Invoice {
     @Column(name = "ShipMoney", nullable = false)
     Double shipMoney;
 
-    @Column(name = "Description", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "Description", columnDefinition = "NVARCHAR(1000)")
     String description;
 
     @Column(name = "Type", nullable = false)
@@ -66,7 +66,7 @@ public class Invoice {
     @JoinColumn(name = "CustomerID")
     Customer customer;
 
-    @Column(name = "CustomerName")
+    @Column(name = "CustomerName", columnDefinition = "NVARCHAR(255)")
     String customerName;
 
     @Column(name = "CustomerPhoneNumber")

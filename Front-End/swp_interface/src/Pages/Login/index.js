@@ -23,12 +23,12 @@ function Login(){
       else{
         sessionStorage.setItem('token',login.data.token)
       }
-      successWSmile('Hello Friend!', messageApi);
+      successWSmile('Xin chào!', messageApi);
       setTimeout(()=>{
         navigate('/');
       },1000)
     }else{
-      error('Wrong username or password!', messageApi);
+      error('Tên đăng nhập hoặc mật khẩu không đúng!', messageApi);
     }
   }
 
@@ -77,7 +77,7 @@ function Login(){
             rules={[
               {
                 required: true,
-                message: 'Please input your username!',
+                message: 'Vui lòng điền tên đăng nhập!',
               }
             ]}
           >
@@ -90,7 +90,7 @@ function Login(){
             rules={[
               {
                 required: true,
-                message: 'Please input your password!',
+                message: 'Vui lòng điền mật khẩu!',
               }
             ]}
           >

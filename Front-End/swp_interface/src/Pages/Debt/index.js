@@ -1,6 +1,6 @@
 import { Table, Input, Button, Modal, notification, message, Image } from 'antd';
 import { useEffect, useState } from 'react';
-import { getToken, getUsername } from '../../Utils/UserInfoUtils';
+import { formatNumberVN, getToken, getUsername } from '../../Utils/UserInfoUtils';
 import { getDataWithToken } from '../../Utils/FetchUtils';
 import Filter from './filter';
 import Create from './create';
@@ -126,7 +126,9 @@ function Debt(){
       title: 'Số tiền',
       dataIndex: 'amount',
       key: 'amount',
-      sorter: true
+      sorter: true,
+      align: 'right',
+      render: (balance) => formatNumberVN(balance)
     },
     {
       title: 'Mô tả',

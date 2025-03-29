@@ -43,12 +43,12 @@ function Create(props){
   const handleChangeFile = async (info) =>{
       if(info.fileList.length > 0){
         if(!info.fileList[0].originFileObj.type.startsWith('image/')){
-          error('Only accept image file!', messageApi);
+          error('Trường chỉ chấp nhận file ảnh!', messageApi);
           return;
         }
         const fileSize = info.fileList[0].originFileObj.size / 1024 / 1024 < 10
         if(!fileSize){
-          error('Image file size over 10MB!', messageApi);
+          error('File không được quá 10MB!', messageApi);
           return;
         }
         setFile(info.fileList);
@@ -90,7 +90,8 @@ function Create(props){
           name="amount"
           rules={[
             { required: true, message: "Vui lòng nhập số tiền!" },
-            { type: "number", min: 1, message: "Số tiền phải lớn hơn 0!" },
+            { type: "number", min: 1, message: "Số tiền phải lớn hơn 0 đ!" },
+            { type: "number", max: 1000000000, message: "Số tiền phải nhỏ hơn 1.000.000.000 đ!" },
           ]}
         >
           <InputNumber style={{ width: "100%" }} placeholder="Nhập số tiền" />
@@ -114,7 +115,19 @@ function Create(props){
             options={customer} showSearch placeholder="Nhập mã khách hàng" />
         </Form.Item>
 
-        <Form.Item label="Mô tả" name="description">
+        <Form.Item label="Mô tả" name="description"
+          rules={[
+            { max: 1000, message: 'Mô tả không được vượt quá 1000 ký tự!' },
+            {
+              validator: (_, value) => {
+                if (value && value.trim().length === 0) {
+                  return Promise.reject(new Error('Mô tả không được chỉ chứa khoảng trắng!'));
+                }
+                return Promise.resolve();
+              },
+            }
+          ]}
+        >
           <Input.TextArea placeholder="Nhập mô tả (nếu có)" />
         </Form.Item>
 

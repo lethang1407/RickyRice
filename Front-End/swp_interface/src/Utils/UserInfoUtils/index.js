@@ -29,3 +29,7 @@ export const logout = () => {
     localStorage.removeItem('token');
   }
 }
+
+export const formatNumberVN = (number) => {
+  return new Intl.NumberFormat('vi-VN').format(number) + ' đ';
+}
