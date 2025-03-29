@@ -244,30 +244,61 @@ const EmployeeUpdate = () => {
             ) : (
                 <Card title="Cập nhật thông tin nhân viên" className="update-employee-card">
                     <Form form={form} layout="vertical" onFinish={handleUpdate} className="update-employee-form">
-                        <Form.Item
+                    <Form.Item
+                            name="avatar"
                             label="Ảnh đại diện"
                             className="avatar-uploader-item"
                         >
                             <Upload
                                 listType="picture-card"
                                 className="avatar-uploader"
-                                fileList={fileList}
+                                showUploadList={false}
                                 beforeUpload={(file) => {
                                     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
                                     if (!isJpgOrPng) {
                                         messageApi.error('Bạn chỉ có thể tải lên file JPG/PNG!');
+                                        return Upload.LIST_IGNORE;
                                     }
                                     const isLt2M = file.size / 1024 / 1024 < 2;
                                     if (!isLt2M) {
                                         messageApi.error('Ảnh phải nhỏ hơn 2MB!');
+                                        return Upload.LIST_IGNORE;
                                     }
-                                    return isJpgOrPng && isLt2M ? false : Upload.LIST_IGNORE;
+                                    return false;
                                 }}
                                 onPreview={handlePreview}
-                                onChange={handleAvatarChange}
+                                onChange={async ({ file, fileList }) => {
+                                    if (file.status === 'removed') {
+                                        setFileList([]);
+                                        return;
+                                    }
+
+
+                                    try {
+                                        const preview = await getBase64(file);
+                                        setFileList([{
+                                            uid: file.uid,
+                                            name: file.name,
+                                            status: 'done',
+                                            originFileObj: file,
+                                            url: preview
+                                        }]);
+                                    } catch (error) {
+                                        messageApi.error('Không thể tải ảnh lên');
+                                    }
+                                }}
                                 maxCount={1}
                             >
-                                {fileList.length < 1 && uploadButton}
+                                {fileList.length > 0 ? (
+                                    <Avatar
+                                        size={100}
+                                        src={fileList[0].url}
+                                        icon={<UserOutlined />}
+                                        className="uploaded-avatar"
+                                    />
+                                ) : (
+                                    uploadButton
+                                )}
                             </Upload>
                         </Form.Item>
 
@@ -289,10 +320,15 @@ const EmployeeUpdate = () => {
                                     name="username"
                                     label="Tên đăng nhập"
                                     rules={[
-                                        { required: true, message: "Vui lòng nhập tên đăng nhập" },
-                                        { min: 3, message: "Tên đăng nhập phải có ít nhất 3 ký tự" },
-                                        { max: 50, message: "Tên đăng nhập không được vượt quá 50 ký tự" }
-                                    ]}
+                                        {
+                                          required: true,
+                                          message: 'Vui lòng điền tên đăng nhập!',
+                                        },
+                                        {
+                                          pattern: /^(?=.*[a-zA-Z])[a-zA-Z0-9]{3,20}$/,
+                                          message: 'Tên đăng nhập phải có ít nhất 1 chữ cái, chỉ chứa chữ và số, từ 3 đến 20 ký tự!',
+                                        }
+                                      ]}
                                 >
                                     <Input prefix={<UserOutlined />} placeholder="tendangnhap" />
                                 </Form.Item>
@@ -301,10 +337,14 @@ const EmployeeUpdate = () => {
                                     name="email"
                                     label="Email"
                                     rules={[
-                                        { required: true, message: 'Vui lòng nhập Email' },
-                                        { type: 'email', message: 'Email không hợp lệ' },
-                                        { max: 100, message: "Email không được vượt quá 100 ký tự" }
-                                    ]}
+                                        {
+                                          required: true,
+                                          message: 'Vui lòng điền email!',
+                                        },{ 
+                                          pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                                          message: 'Email không đúng định dạng!'
+                                        }
+                                      ]}
                                 >
                                     <Input placeholder="example@email.com" />
                                 </Form.Item>
@@ -327,8 +367,10 @@ const EmployeeUpdate = () => {
                                     label="Mật khẩu mới"
                                     tooltip="Để trống nếu không muốn thay đổi mật khẩu"
                                     rules={[
-                                        { min: 6, message: 'Mật khẩu mới phải có ít nhất 6 ký tự' },
-                                        { max: 100, message: 'Mật khẩu mới không được vượt quá 100 ký tự' },
+                                        {
+                                            pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+                                            message: 'Mật khẩu phải có ít nhất 6 ký tự, bao gồm ít nhất 1 chữ cái, 1 số và 1 ký tự đặc biệt!',
+                                        }
                                     ]}
                                 >
                                     <Input.Password prefix={<LockOutlined />} placeholder="Nhập mật khẩu mới" />

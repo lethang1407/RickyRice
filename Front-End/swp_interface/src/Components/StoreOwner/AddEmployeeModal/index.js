@@ -103,7 +103,7 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
             await createEmployeeAPI(CREATE_URL, token, employeePayload);
 
             success('Thêm nhân viên thành công!', messageApi);
-            
+
             setTimeout(() => {
                 form.resetFields();
                 setFileList([]);
@@ -116,7 +116,7 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
             setTimeout(() => {
                 setIsSubmitting(false);
             }, 1500);
-            
+
             return;
         } finally {
             setIsSubmitting(false);
@@ -132,7 +132,7 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
         setPreviewTitle(file.name || (file.url && file.url.substring(file.url.lastIndexOf('/') + 1)) || 'Preview');
     };
 
-     const handleAvatarChange = async ({ file, fileList: newFileList }) => {
+    const handleAvatarChange = async ({ file, fileList: newFileList }) => {
         if (file.status === 'removed') {
             setFileList([]);
             return;
@@ -172,11 +172,11 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
             <Spin spinning={isSubmitting}>
                 <Form form={form} layout="vertical" onFinish={handleAddEmployee} className="add-employee-form">
                     <Form.Item name="avatar_display" label="Ảnh đại diện" className="avatar-uploader-item-modal">
-                         <Upload
+                        <Upload
                             listType="picture-card"
                             className="avatar-uploader"
                             fileList={fileList}
-                            beforeUpload={() => false} 
+                            beforeUpload={() => false}
                             onPreview={handlePreview}
                             onChange={handleAvatarChange}
                             onRemove={() => { setFileList([]); return true; }}
@@ -196,10 +196,10 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                                     { min: 2, message: "Họ tên phải có ít nhất 2 ký tự" },
                                     { max: 100, message: "Họ tên không được vượt quá 100 ký tự" }
                                 ]}
-                             >
+                            >
                                 <Input prefix={<UserOutlined />} placeholder="Nhập họ tên" />
                             </Form.Item>
-                             <Form.Item
+                            <Form.Item
                                 name="email"
                                 label="Email"
                                 rules={[
@@ -207,7 +207,7 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                                     { type: 'email', message: 'Email không hợp lệ!' },
                                     { max: 100, message: "Email không được vượt quá 100 ký tự" }
                                 ]}
-                              >
+                            >
                                 <Input prefix={<MailOutlined />} placeholder="example@email.com" />
                             </Form.Item>
                             <Form.Item
@@ -218,9 +218,9 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                                     { pattern: /^(0[3|5|7|8|9])(\d{8})$/, message: 'Số điện thoại không hợp lệ' }
                                 ]}
                             >
-                                <Input prefix={<PhoneOutlined />} placeholder="0xxxxxxxxx" maxLength={10}/>
+                                <Input prefix={<PhoneOutlined />} placeholder="0xxxxxxxxx" maxLength={10} />
                             </Form.Item>
-                             <Form.Item
+                            <Form.Item
                                 name="username"
                                 label="Tên đăng nhập"
                                 rules={[
@@ -228,19 +228,24 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                                     { min: 3, message: "Tên đăng nhập phải có ít nhất 3 ký tự" },
                                     { max: 50, message: "Tên đăng nhập không được vượt quá 50 ký tự" }
                                 ]}
-                             >
+                            >
                                 <Input prefix={<UserOutlined />} placeholder="Tên đăng nhập" />
                             </Form.Item>
                             <Form.Item
                                 name="password"
                                 label="Mật khẩu"
                                 rules={[
-                                    { required: true, message: "Vui lòng nhập mật khẩu" },
-                                    { min: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' },
-                                    { max: 100, message: 'Mật khẩu không được vượt quá 100 ký tự' },
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng điền mật khẩu!',
+                                    },
+                                    {
+                                        pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+                                        message: 'Mật khẩu phải có ít nhất 6 ký tự, bao gồm ít nhất 1 chữ cái, 1 số và 1 ký tự đặc biệt!',
+                                    }
                                 ]}
                                 hasFeedback
-                             >
+                            >
                                 <Input.Password prefix={<LockOutlined />} placeholder="Mật khẩu" />
                             </Form.Item>
                             <Form.Item
@@ -259,7 +264,7 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                                         },
                                     }),
                                 ]}
-                             >
+                            >
                                 <Input.Password prefix={<LockOutlined />} placeholder="Nhập lại mật khẩu" />
                             </Form.Item>
                         </div>
@@ -268,7 +273,7 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                                 name="storeId"
                                 label="Cửa Hàng"
                                 rules={[{ required: true, message: "Vui lòng chọn cửa hàng" }]}
-                             >
+                            >
                                 <Select
                                     placeholder="Chọn cửa hàng"
                                     allowClear
@@ -281,10 +286,10 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                                     ))}
                                 </Select>
                             </Form.Item>
-                             <Form.Item
+                            <Form.Item
                                 name="gender"
                                 label="Giới tính"
-                              >
+                            >
                                 <Radio.Group className="gender-radio-group">
                                     <Radio value={true}>Nam</Radio>
                                     <Radio value={false}>Nữ</Radio>
@@ -293,7 +298,7 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                             <Form.Item
                                 name="birthDate"
                                 label="Ngày sinh"
-                             >
+                            >
                                 <DatePicker
                                     className="full-width-datepicker"
                                     format="DD/MM/YYYY"

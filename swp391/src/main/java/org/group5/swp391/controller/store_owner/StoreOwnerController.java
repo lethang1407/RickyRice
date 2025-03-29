@@ -210,7 +210,7 @@ public class StoreOwnerController {
             @RequestParam(defaultValue = "") String name,
             @RequestParam(defaultValue = "") String email,
             @RequestParam(defaultValue = "") String phoneNumber,
-            @RequestParam(defaultValue = "") List<String> store,
+            @RequestParam(defaultValue = "") List<String> storeIds,
             @RequestParam(defaultValue = "all") String gender,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
@@ -218,7 +218,7 @@ public class StoreOwnerController {
             @RequestParam(defaultValue = "false") boolean descending
     ) {
         try {
-            return employeeService.getEmployees(employeeID, name, email, phoneNumber, store, gender, page, size, sortBy, descending);
+            return employeeService.getEmployees(employeeID, name, email, phoneNumber, storeIds, gender, page, size, sortBy, descending);
         } catch (Exception e) {
             throw new AppException(ErrorCode.CANT_GET_INFO);
         }

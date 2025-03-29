@@ -110,7 +110,6 @@ const ProductUpdate = () => {
                     storeId ? getDataWithToken(`${API.STORE_OWNER.GET_EMPTY_ZONES}?storeId=${storeId}`, token) : Promise.resolve([])
                 ]);
 
-
                 setCategories(categoriesResponse);
                 setAttributes(attributesResponse);
                 setZone(zonesResponse);
