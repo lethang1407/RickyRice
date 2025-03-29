@@ -83,7 +83,7 @@ const CustomerList = () => {
             key: 'created_at',
             width: "10%",
             align: 'center',
-            render: (text) => text ? moment(Number(text)).format('DD/MM/YYYY HH:mm:ss') : 'N/A'
+            render: (text) => text ? moment(Number(text)).format('HH:mm:ss DD/MM/YYYY') : 'N/A'
         },
         {
             title: 'Chỉnh Sửa Lúc',
@@ -91,7 +91,7 @@ const CustomerList = () => {
             key: 'updated_at',
             width: "10%",
             align: 'center',
-            render: (text) => text ? moment(Number(text)).format('DD/MM/YYYY HH:mm:ss') : 'N/A'
+            render: (text) => text ? moment(Number(text)).format('HH:mm:ss DD/MM/YYYY') : 'N/A'
         },
         {
             title: 'Tạo Bởi ',

@@ -97,14 +97,7 @@ const InvoiceList = () => {
             sorter: true,
             render: (text) => text ? moment(Number(text)).format('DD/MM/YYYY HH:mm:ss') : 'N/A'
         },
-        {
-            title: 'Chỉnh Sửa Lúc',
-            dataIndex: 'updated_at',
-            key: 'updated_at',
-            align: "center",
-            width: '13%',
-            render: (text) => text ? moment(Number(text)).format('DD/MM/YYYY HH:mm:ss') : 'N/A'
-        },
+
         {
             title: 'Mô Tả ',
             dataIndex: 'description',
@@ -343,7 +336,7 @@ const InvoiceList = () => {
                         <span>Tiền Tối Thiểu :</span>
                         <Input
                             type="number"
-                            placeholder="Nhập min"
+                            placeholder="Nhập tối thiểu"
                             style={{ width: 100 }}
                             onChange={(e) => handleDynamicFilterChange('minAmount', e.target.value)}
 
@@ -353,7 +346,7 @@ const InvoiceList = () => {
                         <span>Tiền Tối Đa :</span>
                         <Input
                             type="number"
-                            placeholder="Nhập min"
+                            placeholder="Nhập tối đa"
                             style={{ width: 100 }}
                             onChange={(e) => handleDynamicFilterChange('maxAmount', e.target.value)}
                         />
@@ -362,7 +355,7 @@ const InvoiceList = () => {
                         <span>Tiền Ship Tối Thiểu :</span>
                         <Input
                             type="number"
-                            placeholder="Nhập min"
+                            placeholder="Nhập tôi thiểu"
                             style={{ width: 100 }}
                             onChange={(e) => handleDynamicFilterChange('minShipping', e.target.value)}
                         />
@@ -371,7 +364,7 @@ const InvoiceList = () => {
                         <span>Tiền Ship Tối Đa :</span>
                         <Input
                             type="number"
-                            placeholder="Nhập min"
+                            placeholder="Nhập tối đa"
                             style={{ width: 100 }}
                             onChange={(e) => handleDynamicFilterChange('maxShipping', e.target.value)}
                         />
@@ -380,8 +373,8 @@ const InvoiceList = () => {
                         <span> Ngày Bắt Đầu:</span>
                         <Input
                             type="datetime-local"
-                            placeholder="Nhập min"
-                            style={{ width: 100 }}
+                            placeholder="ngày tạo bắt đầu"
+                            style={{ width: 130 }}
                             onChange={(e) => handleDynamicFilterChange('startDate', e.target.value)}
                         />
                     </div>
@@ -389,8 +382,8 @@ const InvoiceList = () => {
                         <span>Ngày Kết Thúc:</span>
                         <Input
                             type="datetime-local"
-                            placeholder="Nhập min"
-                            style={{ width: 100 }}
+                            placeholder="Nhập tạo kết thúc"
+                            style={{ width: 130 }}
                             onChange={(e) => handleDynamicFilterChange('endDate', e.target.value)}
                         />
                     </div>

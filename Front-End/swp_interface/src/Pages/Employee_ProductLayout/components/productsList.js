@@ -165,7 +165,7 @@ AEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaA
       dataIndex: "updated_at",
       key: "updated_at",
       render: (text) =>
-        text ? moment(Number(text)).format("DD/MM/YYYY HH:mm:ss") : "N/A",
+        text ? moment(Number(text)).format("HH:mm:ss DD/MM/YYYY") : "N/A",
       width: "15%",
     },
   ];
