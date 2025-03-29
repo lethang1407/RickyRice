@@ -6,6 +6,19 @@
   <component name="ChangeListManager">
     <list default="true" id="1eec8c2e-66ba-4a78-9a0d-e4163162dcbd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Front-End/swp_interface/src/Pages/ShopOwner/ProductUpdate/ProductUpdate.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front-End/swp_interface/src/Pages/ShopOwner/ProductUpdate/ProductUpdate.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/controller/store_owner/StoreOwnerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/controller/store_owner/StoreOwnerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/entity/AppStatistics.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/entity/AppStatistics.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/entity/Invoice.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/entity/Invoice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/entity/InvoiceDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/entity/InvoiceDetail.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/entity/Store.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/entity/Store.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/repository/CategoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/repository/CategoryRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/repository/ProductAttributeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/repository/ProductAttributeRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/CategoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/CategoryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/ProductAttributeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/ProductAttributeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/impl/AppStatisticsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/impl/AppStatisticsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/impl/CategoryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/impl/CategoryServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/impl/ProductAttributeServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/impl/ProductAttributeServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/swp391/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -123,7 +136,8 @@
       <workItem from="1743233360070" duration="5689000" />
       <workItem from="1743239097932" duration="2516000" />
       <workItem from="1743245837309" duration="78000" />
-      <workItem from="1743255901248" duration="3168000" />
+      <workItem from="1743255901248" duration="3857000" />
+      <workItem from="1743261990752" duration="7493000" />
     </task>
     <servers />
   </component>
@@ -152,6 +166,24 @@
             <option name="WATCH_EXIT" value="false" />
           </properties>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/ProductAttributeService.java</url>
+          <line>12</line>
+          <properties class="org.group5.swp391.service.ProductAttributeService" method="getProductAttributes">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/ZoneService.java</url>
+          <line>22</line>
+          <properties class="org.group5.swp391.service.ZoneService" method="getEmptyZoneIdAndNameForStore">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

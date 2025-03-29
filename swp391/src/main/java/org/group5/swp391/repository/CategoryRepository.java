@@ -25,8 +25,9 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
                 FROM Category c
                 JOIN c.store s
                 WHERE s.storeAccount.username = :username
+                AND s.id = :storeId
             """)
-    List<Category> findCategoriesForUser(@Param("username") String username);
+    List<Category> findCategoriesForUser(@Param("username") String username, @Param("storeId") String storeId);
 
     Category findCategoryById(String id);
 

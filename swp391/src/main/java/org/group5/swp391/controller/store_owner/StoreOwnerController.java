@@ -79,7 +79,6 @@ public class StoreOwnerController {
         }
     }
 
-
     @GetMapping("/stores")
     public Page<StoreInfoDTO> getStores(
             @RequestParam String storeName,
@@ -136,19 +135,18 @@ public class StoreOwnerController {
     }
 
     @GetMapping("/all/category")
-    public List<StoreCategoryIdAndNameDTO> getCategory() {
+    public List<StoreCategoryIdAndNameDTO> getCategory(@RequestParam String storeId) {
         try {
-            return categoryService.getAllStoreCategories();
+            return categoryService.getAllStoreCategories(storeId);
         } catch (Exception e) {
             throw new AppException(ErrorCode.CANT_GET_INFO);
         }
     }
 
-
     @GetMapping("/all/attribute")
-    public List<StoreProductAttributeDTO> getAttribute() {
+    public List<StoreProductAttributeDTO> getAttribute(@RequestParam String storeId) {
         try {
-            return productAttributeService.getProductAttributes();
+            return productAttributeService.getProductAttributes(storeId);
         } catch (Exception e) {
             throw new AppException(ErrorCode.CANT_GET_INFO);
         }

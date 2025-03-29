@@ -105,8 +105,8 @@ const ProductUpdate = () => {
 
 
                 const [categoriesResponse, attributesResponse, zonesResponse] = await Promise.all([
-                    getDataWithToken(API.STORE_OWNER.GET_CATEGORIES, token),
-                    getDataWithToken(API.STORE_OWNER.GET_ATTRIBUTES, token),
+                    getDataWithToken(`${API.STORE_OWNER.GET_CATEGORIES}?storeId=${storeId}`, token),
+                    getDataWithToken(`${API.STORE_OWNER.GET_ATTRIBUTES}?storeId=${storeId}`, token),
                     storeId ? getDataWithToken(`${API.STORE_OWNER.GET_EMPTY_ZONES}?storeId=${storeId}`, token) : Promise.resolve([])
                 ]);
 

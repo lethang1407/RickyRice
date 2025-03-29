@@ -31,10 +31,10 @@ public class InvoiceDetail {
     @JoinColumn(name = "packageId")
     Package packageType;
 
-    @Column(name = "ProductName")
+    @Column(name = "ProductName", columnDefinition = "NVARCHAR(255)")
     String productName;
 
-    @Column(name = "ProductInformation")
+    @Column(name = "ProductInformation", columnDefinition = "NVARCHAR(255)")
     String productInformation;
 
     @Column(name = "ProductImage")

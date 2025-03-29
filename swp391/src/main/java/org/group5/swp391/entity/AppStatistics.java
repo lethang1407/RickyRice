@@ -16,7 +16,7 @@ public class AppStatistics extends AbstractEntity {
     @JoinColumn(name = "StoreID")
     Store store;
 
-    @Column(name = "SubcriptionPlanName")
+    @Column(name = "SubcriptionPlanName", columnDefinition = "NVARCHAR(255)")
     String subcriptionPlanName;
 
     @Column(name = "SubcriptionPlanPrice")

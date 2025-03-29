@@ -34,7 +34,7 @@ public class Store extends AbstractEntity{
     @Column(name = "ExpireAt")
     LocalDateTime expireAt;
 
-    @Column(name = "Image", nullable = false)
+    @Column(name = "Image")
     String image;
 
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, fetch = FetchType.LAZY)

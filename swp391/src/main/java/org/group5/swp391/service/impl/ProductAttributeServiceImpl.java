@@ -28,13 +28,13 @@ public class ProductAttributeServiceImpl implements ProductAttributeService {
     private final ZoneRepository zoneRepository;
 
     @Override
-    public List<StoreProductAttributeDTO> getProductAttributes() {
+    public List<StoreProductAttributeDTO> getProductAttributes(String storeID) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new RuntimeException("Người dùng chưa đăng nhập!");
         }
         String username = authentication.getName();
-        return productAttributeRepository.findProductAttributeForUser(username).stream().map(productAttributeConverter::toStoreProductAttributeDTO).toList();
+        return productAttributeRepository.findProductAttributeForUser(username, storeID).stream().map(productAttributeConverter::toStoreProductAttributeDTO).toList();
     }
     @Override
     public List<EmployeeProductAttributeDTO> getALLProductAttributes2() {

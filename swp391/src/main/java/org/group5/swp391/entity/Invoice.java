@@ -66,7 +66,7 @@ public class Invoice {
     @JoinColumn(name = "CustomerID")
     Customer customer;
 
-    @Column(name = "CustomerName")
+    @Column(name = "CustomerName", columnDefinition = "NVARCHAR(255)")
     String customerName;
 
     @Column(name = "CustomerPhoneNumber")
