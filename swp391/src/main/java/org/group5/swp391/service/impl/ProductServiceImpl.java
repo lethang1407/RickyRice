@@ -196,8 +196,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProductStore(String productId) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
-        product.setZones(null);
-        product.setProductAttributes(null);
+        List<Zone> zones = product.getZones();
+        zones.forEach(zone -> {
+            zone.setProduct(null);
+            zoneRepository.save(zone);
+        });
         productRepository.delete(product);
     }
 
@@ -379,7 +382,7 @@ public class ProductServiceImpl implements ProductService {
         updatingProduct.setName(storeDetailProductDTO.getName());
         updatingProduct.setPrice(storeDetailProductDTO.getPrice());
         updatingProduct.setInformation(storeDetailProductDTO.getInformation());
-        updatingProduct.setQuantity(storeDetailProductDTO.getQuantity());
+        updatingProduct.setQuantity(updatingProduct.getQuantity());
         updatingProduct.setProductImage(storeDetailProductDTO.getProductImage());
         Category cateExisting = categoryRepository
                 .findById(storeDetailProductDTO.getCategoryID())

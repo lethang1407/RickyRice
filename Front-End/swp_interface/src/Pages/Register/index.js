@@ -18,12 +18,12 @@ function Register(){
   const handleChangeFile = async (info) =>{
     if(info.fileList.length > 0){
       if(!info.fileList[0].originFileObj.type.startsWith('image/')){
-        error('Only accept image file!', messageApi);
+        error('Trường chỉ chấp nhận file ảnh!', messageApi);
         return;
       }
       const fileSize = info.fileList[0].originFileObj.size / 1024 / 1024 < 10
       if(!fileSize){
-        error('Image file size over 10MB!', messageApi);
+        error('File ảnh không được quá 10MB!', messageApi);
         return;
       }
       setFile(info.fileList);
@@ -51,9 +51,9 @@ function Register(){
         if(!res.data.emailValid){
           str += ', '
         }
-        str += 'Phone Number'
+        str += 'Số điện thoại'
       }
-      str += ' is not Valid!';
+      str += ' không khả dụng!';
       error(str, messageApi);
     }else{
       setLoading(true);
@@ -64,32 +64,32 @@ function Register(){
           if(response && response.code === 201){
             setTimeout(()=>{
               setLoading(false);
-              success('Register Successful!',messageApi);
+              success('Đăng kí thành công!',messageApi);
               setTimeout(()=>{
                 naviLogin();
               },700)
             },2000)
           }else{
             setLoading(false);
-            error('Register Failed!',messageApi);
+            error('Đăng kí thất bại!',messageApi);
           }
         }else{
           setLoading(false);
-          error('Upload Failed!', messageApi);
+          error('Upload không thành công!', messageApi);
         }
       }else{
         const response = await register(API.AUTH.REGISTER, {...acc, role: 'STORE_OWNER'})
         if(response && response.code === 201){
           setTimeout(()=>{
             setLoading(false);
-            success('Register Successful!',messageApi);
+            success('Đăng kí thành công!',messageApi);
             setTimeout(()=>{
               naviLogin();
             },700)
           },2000)
         }else{
           setLoading(false);
-          error('Register Failed!',messageApi);
+          error('Đăng kí thất bại!',messageApi);
         }
       }
     }
@@ -119,7 +119,7 @@ function Register(){
       });
       setNext(true);
     }else{
-      error('Username has existed!',messageApi);
+      error('Tên đăng nhập đã tổn tại!',messageApi);
     }
   }
 
@@ -155,6 +155,19 @@ function Register(){
                       {
                         required: true,
                         message: 'Vui lòng điền tên!',
+                        
+                      },
+                      {
+                        pattern: /^[A-Za-zÀ-ỹà-ỹ\s']{2,50}$/,
+                        message: 'Tên chỉ được chứa chữ cái và khoảng trắng (2–50 ký tự)!',
+                      },
+                      {
+                        validator: (_, value) => {
+                          if (value && value.trim().length === 0) {
+                            return Promise.reject(new Error('Tên không được chỉ chứa khoảng trắng!'));
+                          }
+                          return Promise.resolve();
+                        },
                       }
                     ]}
                   >
@@ -278,6 +291,10 @@ function Register(){
                     {
                       required: true,
                       message: 'Vui lòng điền tên đăng nhập!',
+                    },
+                    {
+                      pattern: /^(?=.*[a-zA-Z])[a-zA-Z0-9]{3,20}$/,
+                      message: 'Tên đăng nhập phải có ít nhất 1 chữ cái, chỉ chứa chữ và số, từ 3 đến 20 ký tự!',
                     }
                   ]}
                 >
@@ -292,6 +309,10 @@ function Register(){
                     {
                       required: true,
                       message: 'Vui lòng điền mật khẩu!',
+                    },
+                    {
+                      pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+                      message: 'Mật khẩu phải có ít nhất 6 ký tự, bao gồm ít nhất 1 chữ cái, 1 số và 1 ký tự đặc biệt!',
                     }
                   ]}
                 >

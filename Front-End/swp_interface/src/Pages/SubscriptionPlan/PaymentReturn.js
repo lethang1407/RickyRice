@@ -52,9 +52,9 @@ const PaymentResult = () => {
           <Button
             type="primary"
             key="home"
-            onClick={() => (window.location.href = "/")}
+            onClick={() => (window.location.href = "/store-owner/store")}
           >
-            Quay lại trang chủ
+            Quay lại
           </Button>
         ]
       }

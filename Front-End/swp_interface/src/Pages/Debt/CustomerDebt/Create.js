@@ -93,6 +93,7 @@ function Create(props){
           rules={[
             { required: true, message: "Vui lòng nhập số tiền!" },
             { type: "number", min: 1, message: "Số tiền phải lớn hơn 0!" },
+            { type: "number", max: 1000000000, message: "Số tiền phải nhỏ hơn 1.000.000.000 đ!" },
           ]}
         >
           <InputNumber style={{ width: "100%" }} placeholder="Nhập số tiền" />
@@ -106,7 +107,19 @@ function Create(props){
           <Select options={options}/>
         </Form.Item>
 
-        <Form.Item label="Mô tả" name="description">
+        <Form.Item label="Mô tả" name="description"
+          rules={[
+            { max: 1000, message: 'Mô tả không được vượt quá 1000 ký tự!' },
+            {
+              validator: (_, value) => {
+                if (value && value.trim().length === 0) {
+                  return Promise.reject(new Error('Mô tả không được chỉ chứa khoảng trắng!'));
+                }
+                return Promise.resolve();
+              },
+            }
+          ]}
+        >
           <Input.TextArea placeholder="Nhập mô tả (nếu có)" />
         </Form.Item>
 

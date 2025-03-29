@@ -15,7 +15,7 @@ public class SubscriptionPlan extends AbstractEntity {
     @Column(name = "Name", columnDefinition = "NVARCHAR(255)")
     String name;
 
-    @Column(name = "Description", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "Description", columnDefinition = "NVARCHAR(1000)")
     String description;
 
     @Column(name = "Price")

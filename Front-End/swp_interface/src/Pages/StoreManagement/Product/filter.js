@@ -17,13 +17,6 @@ function Filter(props) {
             )
         );
 
-        // if (filterParams.name) {
-        //     filterParams.name = encodeURIComponent(filterParams.name); 
-        // }
-        // if (filterParams.information) {
-        //     filterParams.information = encodeURIComponent(filterParams.information);
-        // }
-        // Định dạng ngày tháng nếu có
         if (filterParams.fromCreatedAt) {
             filterParams.fromCreatedAt = dayjs(filterParams.fromCreatedAt).format('YYYY-MM-DD');
         }
@@ -37,10 +30,8 @@ function Filter(props) {
             filterParams.toUpdatedAt = dayjs(filterParams.toUpdatedAt).format('YYYY-MM-DD');
         }
 
-        // Tạo chuỗi query string từ các tham số lọc
         const queryString = new URLSearchParams(filterParams).toString();
-        console.log(queryString); // Kiểm tra chuỗi query
-        setParams(queryString); // Cập nhật params cho component cha
+        setParams(queryString); 
     };
 
     return (

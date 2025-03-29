@@ -136,6 +136,10 @@ function ForgetPassword(){
                       {
                         required: true,
                         message: 'Vui lòng điền mật khẩu mới!',
+                      },
+                      {
+                        pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+                        message: 'Mật khẩu phải có ít nhất 6 ký tự, bao gồm ít nhất 1 chữ cái, 1 số và 1 ký tự đặc biệt!',
                       }
                     ]}
                   >

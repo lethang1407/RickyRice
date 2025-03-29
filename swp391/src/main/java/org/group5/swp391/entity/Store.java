@@ -25,7 +25,7 @@ public class Store extends AbstractEntity{
     @Column(name = "Hotline", nullable = false)
     String hotline;
 
-    @Column(name = "Description", nullable = false, columnDefinition = "NVARCHAR(255)")
+    @Column(name = "Description", nullable = false, columnDefinition = "NVARCHAR(1000)")
     String description;
 
     @Column(name = "OperatingHour", nullable = false)
@@ -34,7 +34,7 @@ public class Store extends AbstractEntity{
     @Column(name = "ExpireAt")
     LocalDateTime expireAt;
 
-    @Column(name = "Image", nullable = false)
+    @Column(name = "Image")
     String image;
 
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, fetch = FetchType.LAZY)

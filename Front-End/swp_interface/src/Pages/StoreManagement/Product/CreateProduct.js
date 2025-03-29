@@ -4,6 +4,8 @@ import API from '../../../Utils/API/API';
 import { getToken } from '../../../Utils/UserInfoUtils';
 import { handleUpload } from '../../../Utils/FetchUtils';
 import { UploadOutlined } from '@ant-design/icons';
+import { error } from "../../../Utils/AntdNotification";
+import axios from 'axios';
 
 
 const CreateProduct = ({ onClose, storeID, fetchProducts, onSuccess }) => {
@@ -91,60 +93,45 @@ const CreateProduct = ({ onClose, storeID, fetchProducts, onSuccess }) => {
   const handleCreateProduct = async (values) => {
     setLoading(true); // Start loading
     const key = 'createProductKey'
+    let imageUrl = null;
+    if (file) {
+      const uploadResult = await handleUpload(API.PUBLIC.UPLOAD_IMG, file[0].originFileObj);
+      imageUrl = uploadResult.data; // Assuming the URL is in uploadResult.data
+    }
+    const newProductData = {
+      name: values.name,
+      price: values.price,
+      information: values.information,
+      productImage: imageUrl,  // Use the uploaded image URL
+      categoryID: values.categoryID,
+      storeID: storeID,
+      productAttributeList: values.productAttributeList ? values.productAttributeList : [],
+      zoneList: values.zoneList ? values.zoneList : []
+    };
+
     try {
-      let imageUrl = null;
-      if (file) {
-        const uploadResult = await handleUpload(API.PUBLIC.UPLOAD_IMG, file[0].originFileObj);
-        imageUrl = uploadResult.data; // Assuming the URL is in uploadResult.data
-      }
-      const newProductData = {
-        name: values.name,
-        price: values.price,
-        information: values.information,
-        quantity: values.quantity,
-        productImage: imageUrl,  // Use the uploaded image URL
-        categoryID: values.categoryID,
-        storeID: storeID,
-        productAttributeList: values.productAttributeList ? values.productAttributeList : [],
-        zoneList: values.zoneList ? values.zoneList : []
-      };
-
-      onSuccess(key);
-
-      const response = await fetch(API.STORE_DETAIL.GET_STORE_PRODUCTS + '?storeID=' + storeID, {
-        method: 'POST',
+      const response = await axios.post(API.STORE_DETAIL.GET_STORE_PRODUCTS + '?storeID=' + storeID, newProductData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(newProductData),
       });
-      const errorData = await response.text();
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Không thể tạo sản phẩm mới');
-      } else if (errorData.status === 400){
-        messageApi.open({
-          key,
-          type: 'error',
-          content: 'Tên sản phẩm đã tồn tại.',
-          duration: 3,
-      });
+      if (response) {
+        onSuccess(key);
+        fetchProducts();
+        onClose();
+        form.resetFields();
       }
-      fetchProducts();
-      onClose();
-      form.resetFields();
+      setLoading(false);
     } catch (err) {
-      console.error('Lỗi khi tạo sản phẩm mới: ', err);
-      message.error(err.message || 'Có lỗi xảy ra khi tạo sản phẩm mới');
-    } finally {
-      setLoading(false); // Stop loading, regardless of success or failure
+      error(err.response.data.message, messageApi);
+      setLoading(false);
     }
   };
 
   return (
     <>
-    {contextHolder}
+      {contextHolder}
       {
         productAttributes != null && (
           <Form style={{ width: '100%' }} form={form} layout="vertical" onFinish={handleCreateProduct}>
@@ -170,14 +157,6 @@ const CreateProduct = ({ onClose, storeID, fetchProducts, onSuccess }) => {
               rules={[{ required: true, message: 'Vui lòng nhập mô tả!' }]}
             >
               <Input placeholder="Nhập mô tả" />
-            </Form.Item>
-
-            <Form.Item
-              label="Số Lượng"
-              name="quantity"
-              rules={[{ required: true, message: 'Vui lòng nhập số lượng!' }]}
-            >
-              <InputNumber min={0} placeholder="Nhập số lượng" style={{ width: '100%' }} />
             </Form.Item>
 
             <Form.Item

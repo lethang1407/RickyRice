@@ -5,10 +5,12 @@ import org.group5.swp391.converter.ProductAttributeConverter;
 import org.group5.swp391.dto.employee.EmployeeProductAttributeDTO;
 import org.group5.swp391.dto.store_owner.all_product.StoreProductAttributeDTO;
 import org.group5.swp391.dto.store_owner.store_detail.StoreDetailProductAttributeDTO;
+import org.group5.swp391.entity.Product;
 import org.group5.swp391.entity.ProductAttribute;
 import org.group5.swp391.exception.AppException;
 import org.group5.swp391.exception.ErrorCode;
 import org.group5.swp391.repository.ProductAttributeRepository;
+import org.group5.swp391.repository.ProductRepository;
 import org.group5.swp391.repository.StoreRepository;
 import org.group5.swp391.repository.ZoneRepository;
 import org.group5.swp391.service.ProductAttributeService;
@@ -18,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class ProductAttributeServiceImpl implements ProductAttributeService {
     private final ProductAttributeConverter productAttributeConverter;
     private final StoreRepository storeRepository;
     private final ZoneRepository zoneRepository;
+    private final ProductRepository productRepository;
 
     @Override
     public List<StoreProductAttributeDTO> getProductAttributes() {
@@ -73,6 +77,11 @@ public class ProductAttributeServiceImpl implements ProductAttributeService {
     @Override
     public void deleteProductAttribute(String id) {
         ProductAttribute productAttribute = productAttributeRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        Set<Product> productSet = productAttribute.getProducts();
+        for(Product product : productSet){
+            product.getProductAttributes().remove(productAttribute);
+            productRepository.save(product);
+        }
         productAttributeRepository.delete(productAttribute);
     }
 }
