@@ -21,6 +21,7 @@ import CustomFooter from "../../Footer";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import NavbarAccount from "../../../Pages/Account/NavbarAccount";
 import logo from "../../../assets/img/logo-no-background.png";
+import { WebSocketProvider } from "../../../Utils/Websocket/WebsocketContextProvider";
 const { Header, Sider, Content } = Layout;
 
 const StoreOwnerLayout = () => {
@@ -206,7 +207,7 @@ const StoreOwnerLayout = () => {
                 height: 64,
               }}
             />
-            <NavbarAccount />
+            <WebSocketProvider><NavbarAccount /></WebSocketProvider>
           </Header>
           <Content
             style={{

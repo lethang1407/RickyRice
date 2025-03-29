@@ -46,6 +46,7 @@ import CreateStore from "./Pages/StoreManagement/StoreInfor/CreateStore.js";
 import UpdateStore from "./Pages/StoreManagement/StoreInfor/UpdateStore.js";
 import StatisticChart from "./Pages/ShopOwner/StatisticChart/StatisticChart.js";
 import DebtEmploy from "./Pages/Employee_DebtLayout/index.js";
+import Package from "./Pages/Package/index.js";
 import Transactions from "./Pages/ShopOwner/TransactionOwner/Transaction.js";
 
 function App() {
@@ -137,6 +138,7 @@ function App() {
           <Route element={<StoreOwnerProtected />}>
             <Route path="/store/:id" element={<StoreLayout />}>
               <Route path="zone" element={<Zone />}></Route>
+              <Route path="package" element={<Package />}></Route>
               <Route path="product" element={<StoreProduct />}></Route>
               <Route path="update-info" element={<UpdateStore />}></Route>
               <Route path="category" element={<StoreDetailCategory />}></Route>

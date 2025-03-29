@@ -28,6 +28,7 @@ public enum ErrorCode {
     CANT_GET_INFO(400,"Can't get information",HttpStatus.CONFLICT),
     CANT_UPLOAD_IMAGE(400,"Can't upload image",HttpStatus.CONFLICT),
     PRODUCT_NAME_EXISTED(400,"Sản phẩm đã tồn tại!",HttpStatus.CONFLICT),
+    PACKAGE_EXISTED(400, "Quy cách đóng gói đã tồn tại!", HttpStatus.BAD_REQUEST);
     ;
     private int code;
     private String message;

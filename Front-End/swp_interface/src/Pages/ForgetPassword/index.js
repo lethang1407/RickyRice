@@ -40,9 +40,9 @@ function ForgetPassword(){
           setNext(true);
         }else{
           if(res.data.times < 3){
-            error('OTP is Invalid! Please try again', messageApi);
+            error('OTP không tồn tại, Hãy thử lại', messageApi);
           }else{
-            error('You has exceeded number of time try OTP. Please try again!', messageApi);
+            error('Vượt quá số lần điền OTP! Hãy thử lại sau', messageApi);
             setTimeout(()=>{
               navigate('/login');
             },1000)
@@ -50,7 +50,7 @@ function ForgetPassword(){
         }
       }
     }else{
-      error('OTP is required!', messageApi);
+      error('Vui lòng điền OTP!', messageApi);
     }
   }
 
@@ -64,9 +64,9 @@ function ForgetPassword(){
     const res = await checkValid(API.AUTH.CHANGE_PASSWORD,data);
     setTimeout(()=>{
       if(res && res.code===200){
-        success('Password has been changed! Please login again.', messageApi);
+        success('Mật khẩu đã được thay đổi! Hãy đăng nhập.', messageApi);
       }else{
-        error('Failed to change password!', messageApi);
+        error('Đổi mật khẩu thất bại', messageApi);
       }
       setTimeout(()=>{
         setLoading(false);
@@ -81,24 +81,24 @@ function ForgetPassword(){
     setLoading(false);
     if(res && res.code===200){
       if(res.data.isValid){
-        success('OTP has been sent! Please check your Mail', messageApi);
+        success('OTP đã được gửi! Vui lòng kiểm tra Email', messageApi);
         setAcc(res.data);
         setCheckOTP(true);
         setDeadline(Date.now() + 1000*300);
       }else if(res.data.otpNotExpired){
-        error('Your OTP has been sent! Please check your Mail', messageApi);
+        error('OTP đã được gửi! Vui lòng kiểm tra Email', messageApi);
       }
       else{
-        error('Username or Email is invalid!', messageApi);
+        error('Tên đăng nhập hoặc Email không tồn tạitại!', messageApi);
       }
     }else{
-      error('Failed to send email!', messageApi);
+      error('Gửi email thất bại!', messageApi);
     }
   }
 
   const handleCountDown = () => {
     setCheckOTP(false);
-    error('OTP has expired! Please try again.', messageApi);
+    error('OTP đã hết hạn! Hãy thử lại.', messageApi);
   }
 
   const handleBack = () =>{
@@ -126,8 +126,8 @@ function ForgetPassword(){
           <>
             <div className='forgot__overlay'></div>
             <div className='forgot__form'>
-              <h2 className='forgot__title'>Change Password</h2>
-              <h5 className='forgot__slogan'>Join Us Today and Start Your Journey to Success!</h5>
+              <h2 className='forgot__title'>ĐỔI MẬT KHẨU</h2>
+              <h5 className='forgot__slogan'>Tham gia cùng chúng tôi và bắt đầu hành trình của bạn!</h5>
               <Form onFinish={handleChangePassword}>
                 <Form.Item
                     name="password"
@@ -135,12 +135,12 @@ function ForgetPassword(){
                     rules={[
                       {
                         required: true,
-                        message: 'Please input your new password!',
+                        message: 'Vui lòng điền mật khẩu mới!',
                       }
                     ]}
                   >
 
-                    <Input.Password size='large' className='register__form__item__input register__form__item__input__pass' placeholder='Input new password'/>
+                    <Input.Password size='large' className='register__form__item__input register__form__item__input__pass' placeholder='Vui lòng điền mật khẩu'/>
                 </Form.Item>
 
                 <Form.Item
@@ -149,27 +149,27 @@ function ForgetPassword(){
                   rules={[
                     {
                       required: true,
-                      message: 'Please input your new password again!',
+                      message: 'Kiểm tra mật khẩu!',
                     },({ getFieldValue }) => ({
                       validator(_, value) {
                         if (!value || getFieldValue('password') === value) {
                           return Promise.resolve();
                         }
-                        return Promise.reject(new Error('Passwords do not match!'));
+                        return Promise.reject(new Error('Mật khẩu không trùng khớp!'));
                       },
                     })
                   ]}
                 >
-                  <Input.Password size='large' className='register__form__item__input register__form__item__input__pass' placeholder='Input password new again'/>
+                  <Input.Password size='large' className='register__form__item__input register__form__item__input__pass' placeholder='Điền mật khẩu mới'/>
                 </Form.Item>
                   
                 <div style={{display:'flex', alignItems:'center',justifyContent:'center'}}>
                   <Form.Item style={{margin:'20px 5px 20px 5px'}} className='forgot__form__b'>
-                    <Button className='forgot__form__b__button' onClick={handleBack} >Try again
+                    <Button className='forgot__form__b__button' onClick={handleBack} >Thử lại
                     </Button>
                   </Form.Item>
                   <Form.Item style={{margin:'20px 5px 20px 5px'}} className='forgot__form__b'>
-                    <Button className='forgot__form__b__button'  htmlType="submit" >Change
+                    <Button className='forgot__form__b__button'  htmlType="submit" >Thay đổi
                     </Button>
                   </Form.Item>
                 </div>
@@ -180,8 +180,8 @@ function ForgetPassword(){
           <>
             <div className='forgot__overlay'></div>
             <div className='forgot__form'>
-              <h2 className='forgot__title'>Forgot Password</h2>
-              <h5 className='forgot__slogan'>Join Us Today and Start Your Journey to Success!</h5>
+              <h2 className='forgot__title'>QUÊN MẬT KHẨU</h2>
+              <h5 className='forgot__slogan'>Tham gia cùng chúng tôi và bắt đầu hành trình của bạn!</h5>
               <Form 
                 onValuesChange={handleChangeValues}
                 initialValues={{
@@ -195,12 +195,12 @@ function ForgetPassword(){
                   rules={[
                     {
                       required: true,
-                      message: 'Please input your username or email!',
+                      message: 'Vui lòng điền tên đăng nhập hoặc email!',
                     }
                   ]}
                   style={{marginTop:'20px'}}
                 >
-                  <Input disabled={checkOTP} size='large' placeholder='Input your Username or Email' className='forgot__form__item__input forgot__form__item__input__mail' addonAfter={<UserOutlined />}/>
+                  <Input disabled={checkOTP} size='large' placeholder='Điền tên đăng nhập hoặc email' className='forgot__form__item__input forgot__form__item__input__mail' addonAfter={<UserOutlined />}/>
                 </Form.Item>
 
                 <Form.Item
@@ -216,24 +216,24 @@ function ForgetPassword(){
                   { checkOTP  && 
                     <>
                       <div style={{display:'flex',alignItems:'center',justifyContent:'center'}}>
-                        <p style={{color:'orangered', margin:'0px'}}>OTP has been sent. OTP will be invalidated in:  </p><Countdown onFinish={handleCountDown} value={deadline}/>
+                        <p style={{color:'orangered', margin:'0px'}}>OTP đã được gửi. OTP sẽ hết hạn trong:  </p><Countdown onFinish={handleCountDown} value={deadline}/>
                       </div>
                     </>
                   }
                   { !checkOTP && 
                     <>
-                      <h5 className='forgot__form__text'>Don't have an account. <span onClick={naviRegister} className='forgot__form__text__bold'>Register here!</span></h5>
-                      <h5 style={{margin:'5px 0px'}} className='forgot__form__text'>Remember your password. <span onClick={naviLogin} className='forgot__form__text__bold'> Login here!</span></h5>
+                      <h5 className='forgot__form__text'>Không có tài khoản. <span onClick={naviRegister} className='forgot__form__text__bold'>Đăng kí!</span></h5>
+                      <h5 style={{margin:'5px 0px'}} className='forgot__form__text'>Đã nhớ mật khẩu. <span onClick={naviLogin} className='forgot__form__text__bold'> Đăng nhập!</span></h5>
                     </>
                   }
                   
                 <div style={{display:'flex', alignItems:'center',justifyContent:'center'}}>
                   <Form.Item style={{margin:'20px 5px 20px 5px'}} className='forgot__form__b'>
-                    <Button className='forgot__form__b__button' htmlType="submit">Send OTP
+                    <Button className='forgot__form__b__button' htmlType="submit">Gửi OTP
                     </Button>
                   </Form.Item>
                   <Form.Item style={{margin:'20px 5px 20px 5px'}} className='forgot__form__b'>
-                    <Button className='forgot__form__b__button' onClick={handleNextToChange} >Submit
+                    <Button className='forgot__form__b__button' onClick={handleNextToChange} >Gửi
                     </Button>
                   </Form.Item>
                 </div>

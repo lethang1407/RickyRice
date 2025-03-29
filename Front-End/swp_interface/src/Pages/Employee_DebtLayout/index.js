@@ -124,7 +124,7 @@ const DebtEmploy = () => {
                 height: 64,
               }}
             />
-            <NavbarAccount />
+            <WebSocketProvider><NavbarAccount /></WebSocketProvider>
           </Header>
           <Content
             style={{
