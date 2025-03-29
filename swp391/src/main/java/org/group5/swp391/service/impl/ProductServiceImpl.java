@@ -196,8 +196,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProductStore(String productId) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
-        product.setZones(null);
-        product.setProductAttributes(null);
+        List<Zone> zones = product.getZones();
+        zones.forEach(zone -> {
+            zone.setProduct(null);
+            zoneRepository.save(zone);
+        });
         productRepository.delete(product);
     }
 

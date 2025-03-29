@@ -18,7 +18,7 @@ public class Category extends AbstractEntity {
     @Column(name = "Name", nullable = false,columnDefinition = "NVARCHAR(255)")
     String name;
 
-    @Column(name = "Description" ,columnDefinition = "NVARCHAR(255)")
+    @Column(name = "Description" ,columnDefinition = "NVARCHAR(1000)")
     String description;
 
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "category", fetch = FetchType.LAZY)

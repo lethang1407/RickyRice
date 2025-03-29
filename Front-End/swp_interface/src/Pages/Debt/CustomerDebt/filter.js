@@ -132,12 +132,6 @@ function Filter(props){
                   onChange={(date, dateString) => console.log(dateString)}  />
             </Form.Item>
           </Col>
-
-          <Col span={3}>
-            <Form.Item label="Cập nhật bởi" name="updatedBy">
-              <Input />
-            </Form.Item>
-          </Col>
         </Row>
       </Form>
     </>

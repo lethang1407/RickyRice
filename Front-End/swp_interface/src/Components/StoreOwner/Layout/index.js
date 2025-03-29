@@ -14,6 +14,8 @@ import {
   ArrowLeftOutlined,
   BarChartOutlined,
   CreditCardOutlined,
+  SolutionOutlined,
+  DollarOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import "./style.scss";
@@ -47,6 +49,10 @@ const StoreOwnerLayout = () => {
     ? "5.2"
     : location.pathname.startsWith("/store-owner/transaction-history")
     ? "6"
+    : location.pathname.startsWith("/store-owner/customer-debt")
+    ? "7"
+    : location.pathname.startsWith("/store-owner/debt")
+    ? "8"
     : "";
 
   return (
@@ -181,6 +187,30 @@ const StoreOwnerLayout = () => {
                     style={{ textDecoration: "none" }}
                   >
                     Lịch sử thanh toán
+                  </Link>
+                ),
+              },
+              {
+                key: "7",
+                icon: <SolutionOutlined />,
+                label: (
+                  <Link
+                    to="/store-owner/customer-debt"
+                    style={{ textDecoration: "none" }}
+                  >
+                    Quản lý khách hàng
+                  </Link>
+                ),
+              },
+              {
+                key: "8",
+                icon: <DollarOutlined />,
+                label: (
+                  <Link
+                    to="/store-owner/debt"
+                    style={{ textDecoration: "none" }}
+                  >
+                    Danh sách phiếu nợ
                   </Link>
                 ),
               },

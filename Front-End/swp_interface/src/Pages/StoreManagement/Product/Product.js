@@ -154,10 +154,22 @@ const Product = () => {
                             fetch(`${API.STORE_DETAIL.GET_CATEGORY_ID}?categoryID=${record.categoryID}`, {
                                 headers: { 'Authorization': `Bearer ${token}` },
                             })
-                                .then((response) => {
-                                    if (!response.ok) throw new Error('Không thể lấy thông tin danh mục');
-                                    return response.json();
-                                })
+                            .then(async (response) => {
+                                if (!response.ok) throw new Error('Không thể lấy thông tin danh mục');
+                            
+                                const text = await response.text(); 
+                                console.log('Raw response:', text);
+                            
+                                if (!text) {
+                                    return null; 
+                                }
+                            
+                                try {
+                                    return JSON.parse(text); 
+                                } catch (err) {
+                                    throw new Error('Phản hồi không phải JSON hợp lệ: ' + err.message);
+                                }
+                            })
                                 .then((data) => {
                                     setCategory(data);
                                     setSelectedProduct(record);
@@ -179,9 +191,21 @@ const Product = () => {
                             fetch(`${API.STORE_DETAIL.GET_CATEGORY_ID}?categoryID=${record.categoryID}`, {
                                 headers: { 'Authorization': `Bearer ${token}` },
                             })
-                                .then((response) => {
+                                .then(async(response) => {
                                     if (!response.ok) throw new Error('Không thể lấy thông tin danh mục');
-                                    return response.json();
+
+                                    const text = await response.text();
+                                    console.log('Raw response:', text);
+                                
+                                    if (!text) {
+                                        return null;
+                                    }
+                                
+                                    try {
+                                        return JSON.parse(text);
+                                    } catch (err) {
+                                        throw new Error('Phản hồi không phải JSON hợp lệ: ' + err.message);
+                                    }
                                 })
                                 .then((data) => {
                                     setCategory(data);
@@ -327,11 +351,11 @@ const Product = () => {
                                             </tr>
                                             <tr>
                                                 <td><strong>Danh mục:</strong></td>
-                                                <td>{category.name || 'Chưa có thông tin'}</td>
+                                                <td>{category!=null ? category.name : 'Chưa có thông tin'}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Mô Tả:</strong></td>
-                                                <td>{category.description || 'Chưa có thông tin'}</td>
+                                                <td>{category!=null ? category.description : 'Chưa có thông tin'}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Thông Tin Sản Phẩm:</strong></td>

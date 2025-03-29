@@ -21,7 +21,7 @@ export default function Authenticate() {
         try{
           const res = await axios.post(`http://localhost:9999/auth/outbound/authenticate?code=${code}`);
           sessionStorage.setItem('token',res.data.data.token)
-          successWSmile("Hello friend!", messageApi);
+          successWSmile("Xin chào!", messageApi);
           setTimeout(() => {
             setIsLoggedin(true);
           },1000)
