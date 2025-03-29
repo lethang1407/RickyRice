@@ -63,9 +63,9 @@ public class ZoneConverter {
 
     public StoreDetailZoneDTO toStoreZoneDTO(Zone zone){
         StoreDetailZoneDTO storeDetailZoneDTO = new StoreDetailZoneDTO();
+        storeDetailZoneDTO.setStoreID(zone.getStore().getId());
         if(zone.getProduct() != null){
             storeDetailZoneDTO.setProductID(zone.getProduct().getId());
-            storeDetailZoneDTO.setStoreID(zone.getStore().getId());
             storeDetailZoneDTO.setProductName(zone.getProduct().getName());
         }
         storeDetailZoneDTO.setCreatedAt(zone.getCreatedAt());
