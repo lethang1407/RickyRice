@@ -331,6 +331,7 @@ public class ProductServiceImpl implements ProductService {
             if (cateExisting == null) {
                 throw new Exception("Category does not exist");
             }
+            
             newProduct.setName(storeDetailProductDTO.getName());
             newProduct.setPrice(storeDetailProductDTO.getPrice());
             newProduct.setInformation(storeDetailProductDTO.getInformation());

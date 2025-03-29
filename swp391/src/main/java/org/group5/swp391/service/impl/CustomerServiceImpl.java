@@ -78,12 +78,10 @@ public class CustomerServiceImpl implements CustomerService {
         if (phonesearch.equals("")) {
             phonesearch = null;
         } else {
-            phonesearch = phonesearch.toLowerCase();
-            phonesearch = capitalizeFirstLetters(phonesearch);
+            phonesearch = phonesearch.trim();
         }
 
         Page<Customer> customerPage = customerRepository.findAllWithPhoneNumber(pageable, phonesearch, a.getStore().getId());
-        log.info("heeh" + customerPage.getContent().get(0).getStore().getId());
         return customerPage.map(CustomerConverter::toEmployeeCustomerDTO);
     }
 
