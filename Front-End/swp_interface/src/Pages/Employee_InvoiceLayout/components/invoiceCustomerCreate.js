@@ -121,9 +121,19 @@ const InvoiceCustomerCreate = ({ onCustomerCreated }) => {
                                         required: true,
                                         message: 'Nhập tên khách hàng di',
                                     },
-                                ]}
+                                    {
+                                        validator: (_, value) => {
+                                            if (!value || value.trim() === '') {
+                                                return Promise.reject(new Error('Tên không được chỉ chứa khoảng trắng!'));
+                                            }
+                                            if (value.length > 50) {
+                                                return Promise.reject(new Error('Tên không được vượt quá 50 ký tự!'));
+                                            }
+                                            return Promise.resolve();
+                                        },
+                                    }]}
                             >
-                                <Input placeholder="Nhập Tên Khách Hàng" />
+                                <Input maxLength={50} placeholder="Nhập Tên Khách Hàng" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -175,11 +185,11 @@ const InvoiceCustomerCreate = ({ onCustomerCreated }) => {
                                 rules={[
                                     {
                                         required: false,
-                                        message: 'Vui lòng nhập mô tả',
+                                        message: 'Vui lòng nhập địa chỉ',
                                     },
                                 ]}
                             >
-                                <Input.TextArea rows={4} placeholder="Nhập mô tả về khách hàng" />
+                                <Input.TextArea maxLength={100} rows={4} placeholder="Nhập mô tả địa chỉ khách hàng" />
                             </Form.Item>
                         </Col>
                     </Row>

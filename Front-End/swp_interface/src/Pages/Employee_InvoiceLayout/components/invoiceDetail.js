@@ -959,9 +959,20 @@ const InvoiceDetail = () => {
                                 <Form.Item
                                     name="name"
                                     label="Tên khách hàng"
-                                    rules={[{ required: true, message: 'Vui lòng nhập tên!' }]}
+                                    rules={[{ required: true, message: 'Vui lòng nhập tên!' },
+                                    {
+                                        validator: (_, value) => {
+                                            if (!value || value.trim() === '') {
+                                                return Promise.reject(new Error('Tên không được chỉ chứa khoảng trắng!'));
+                                            }
+                                            if (value.length > 50) {
+                                                return Promise.reject(new Error('Tên không được vượt quá 50 ký tự!'));
+                                            }
+                                            return Promise.resolve();
+                                        },
+                                    }]}
                                 >
-                                    <Input placeholder="Nhập tên khách hàng" />
+                                    <Input maxLength={50} placeholder="Nhập tên khách hàng" />
                                 </Form.Item>
                                 <Form.Item
                                     name="phoneNumber"
@@ -1039,6 +1050,7 @@ const InvoiceDetail = () => {
                             <div className="description_content">
                                 <label><h6><i>Ghi chú :</i></h6></label>
                                 <TextArea
+                                    maxLength={100}
                                     rows={5}
                                     value={currentTab.description || ''}
                                     onChange={handleDescriptionChange}

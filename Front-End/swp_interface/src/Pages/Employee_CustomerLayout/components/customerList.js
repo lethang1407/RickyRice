@@ -113,13 +113,8 @@ const CustomerList = () => {
                         title="Customer Settings"
                         onClick={() => showEditModal(record)}
                     />
-                    <Button
-                        type="danger"
-                        icon={<DisconnectOutlined />}
-                        style={{ backgroundColor: "#ff4d4f", borderColor: "#ff4d4f" }}
-                        title="Customer Disconnect"
-                    />
                 </div>
+
             ),
         }
 
@@ -387,9 +382,20 @@ const CustomerList = () => {
                     <Form.Item
                         label="Tên"
                         name="name"
-                        rules={[{ required: true, message: 'Vui lòng nhập tên!' }]}
+                        rules={[{ required: true, message: 'Vui lòng nhập tên!' },
+                        {
+                            validator: (_, value) => {
+                                if (!value || value.trim() === '') {
+                                    return Promise.reject(new Error('Tên không được chỉ chứa khoảng trắng!'));
+                                }
+                                if (value.length > 50) {
+                                    return Promise.reject(new Error('Tên không được vượt quá 50 ký tự!'));
+                                }
+                                return Promise.resolve();
+                            },
+                        }]}
                     >
-                        <Input placeholder="Nhập tên khách hàng" />
+                        <Input maxLength={50} placeholder="Nhập tên khách hàng" />
                     </Form.Item>
                     <Form.Item
                         label="SĐT"
@@ -399,7 +405,7 @@ const CustomerList = () => {
                             { pattern: /^0\d{9}$/, message: 'Vui lòng nhập 10 số và bắt đầu từ 0' },
                         ]}
                     >
-                        <Input placeholder="Nhập số điện thoại" />
+                        <Input maxLength={50} placeholder="Nhập số điện thoại" />
                     </Form.Item>
                     <Form.Item
                         label="Email"
@@ -409,7 +415,7 @@ const CustomerList = () => {
                         <Input placeholder="Nhập Email của khách hàng" />
                     </Form.Item>
                     <Form.Item label="Địa chỉ" name="address">
-                        <TextArea rows={3} placeholder="Nhập địa chỉ" />
+                        <TextArea maxLength={100} rows={3} placeholder="Nhập địa chỉ" />
                     </Form.Item>
                 </Form>
             </Modal>

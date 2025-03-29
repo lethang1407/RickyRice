@@ -123,7 +123,7 @@ public class CustomerServiceImpl implements CustomerService {
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
         System.out.println("tai sao nhi" + a.getEmployeeAccount().getName());
         Customer existingCustomer = customerRepository.findById(customerId).orElseThrow();
-        if(existingCustomer!=null) {
+        if (existingCustomer != null) {
             List<Customer> existingCustomerPhone = customerRepository.findByPhoneNumberContainingIgnoreCase(updatedCustomer.getPhoneNumber());
             for (Customer c : existingCustomerPhone) {
                 if (c.getPhoneNumber().equals(updatedCustomer.getPhoneNumber())) {
@@ -148,7 +148,13 @@ public class CustomerServiceImpl implements CustomerService {
         existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
         existingCustomer.setEmail(updatedCustomer.getEmail());
-        existingCustomer.setAddress(updatedCustomer.getAddress());
+        String add = "";
+        if(updatedCustomer.getAddress()!=null){
+            add=updatedCustomer.getAddress().trim();
+        }else{
+            add=updatedCustomer.getAddress();
+        }
+        existingCustomer.setAddress(add);
         existingCustomer.setUpdatedAt(LocalDateTime.now());
         return customerRepository.save(existingCustomer);
     }
@@ -166,8 +172,8 @@ public class CustomerServiceImpl implements CustomerService {
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
         Customer existingCustomer = customerRepository.findByPhoneNumber(phoneNumber);
         Customer existingCustomerByNewPhone = customerRepository.findByPhoneNumber(updatedCustomer.getPhoneNumberNew());
-        if(existingCustomerByNewPhone!=null && !existingCustomerByNewPhone.getId().equals(existingCustomer.getId())) {
-                throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
+        if (existingCustomerByNewPhone != null && !existingCustomerByNewPhone.getId().equals(existingCustomer.getId())) {
+            throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
         }
         validatePhoneNumber(updatedCustomer.getPhoneNumberNew());
         existingCustomer.setBalance(existingCustomer.getBalance());
@@ -175,7 +181,7 @@ public class CustomerServiceImpl implements CustomerService {
         existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumberNew());
         existingCustomer.setEmail(existingCustomer.getEmail());
-        existingCustomer.setAddress(existingCustomer.getAddress());
+        existingCustomer.setAddress(existingCustomer.getAddress().trim());
         existingCustomer.setUpdatedAt(LocalDateTime.now());
         return customerRepository.save(existingCustomer);
     }
@@ -192,35 +198,40 @@ public class CustomerServiceImpl implements CustomerService {
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
-            validatePhoneNumber(customerDTO.getPhoneNumber());
-            if (customerDTO.getEmail() != null) {
-                validateEmail(customerDTO.getEmail());
-            }
-            Customer customer = new Customer();
-            customer.setName(capitalizeFirstLetters(customerDTO.getName()));
-            Customer existingCustomer = customerRepository.findByPhoneNumber(customerDTO.getPhoneNumber());
-            List<Customer> existingCustomerEmail = customerRepository.findByEmail(customerDTO.getEmail());
-            if(existingCustomer!=null) {
-                throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
-            }
-            if(customerDTO.getEmail() !=null) {
-                for (Customer c : existingCustomerEmail){
-                    if(c.getEmail().equals(customerDTO.getEmail())) {
-                        throw new AppException(ErrorCode.EMAIL_EXISTED);
-                    }
+        validatePhoneNumber(customerDTO.getPhoneNumber());
+        if (customerDTO.getEmail() != null) {
+            validateEmail(customerDTO.getEmail());
+        }
+        Customer customer = new Customer();
+        customer.setName(capitalizeFirstLetters(customerDTO.getName()));
+        Customer existingCustomer = customerRepository.findByPhoneNumber(customerDTO.getPhoneNumber());
+        List<Customer> existingCustomerEmail = customerRepository.findByEmail(customerDTO.getEmail());
+        if (existingCustomer != null) {
+            throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
+        }
+        if (customerDTO.getEmail() != null) {
+            for (Customer c : existingCustomerEmail) {
+                if (c.getEmail().equals(customerDTO.getEmail())) {
+                    throw new AppException(ErrorCode.EMAIL_EXISTED);
                 }
             }
-            customer.setBalance(0.0);
-            customer.setPhoneNumber(customerDTO.getPhoneNumber());
-            customer.setEmail(customerDTO.getEmail());
-            customer.setAddress(customerDTO.getAddress());
-            customer.setCreatedBy(username);
-            log.info("haha " + a.getStore().getId());
-            Store store = storeRepository.findById(a.getStore().getId()).orElseThrow();
-            System.out.println(store.getStoreName());
-            customer.setStore(store);
-            log.info("Saving customer thanh cong : {}", customer);
-            return customerRepository.save(customer);
+        }
+        customer.setBalance(0.0);
+        customer.setPhoneNumber(customerDTO.getPhoneNumber());
+        customer.setEmail(customerDTO.getEmail());
+        String add = "";
+        if(customerDTO.getAddress()!=null){
+           add=customerDTO.getAddress().trim();
+        }else{
+            add=customerDTO.getAddress();
+        }
+        customer.setAddress(add);
+        customer.setCreatedBy(username);
+        Store store = storeRepository.findById(a.getStore().getId()).orElseThrow();
+        System.out.println(store.getStoreName());
+        customer.setStore(store);
+        log.info("Saving customer thanh cong : {}", customer);
+        return customerRepository.save(customer);
     }
 
     @Override
@@ -238,7 +249,7 @@ public class CustomerServiceImpl implements CustomerService {
         Sort sort = Sort.by("createdAt").descending();
 
         int p = 0;
-        if(pageNo >= 0){
+        if (pageNo >= 0) {
             p = pageNo - 1;
         }
 
@@ -256,18 +267,18 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         List<String> storeList;
-        if(!StringUtils.hasLength(storeId)){
+        if (!StringUtils.hasLength(storeId)) {
             storeList = CurrentUserDetails.getCurrentStores();
-        }else{
+        } else {
             String[] list = storeId.split(" ");
             storeList = Arrays.stream(list).toList();
         }
 
         Pageable pageable = PageRequest.of(p, pageSize, sort);
 
-        Page<Customer> listCustomer = customerRepository.searchForDebtCustomer(storeList, startCreatedAt!=null ? startCreatedAt.atStartOfDay() : null,
-                endCreatedAt!=null ? endCreatedAt.atTime(23, 59, 59) : null, startUpdatedAt!=null ? startUpdatedAt.atStartOfDay() : null,
-                endUpdatedAt!=null ? endUpdatedAt.atTime(23, 59, 59) : null, customerName, phoneNumber,
+        Page<Customer> listCustomer = customerRepository.searchForDebtCustomer(storeList, startCreatedAt != null ? startCreatedAt.atStartOfDay() : null,
+                endCreatedAt != null ? endCreatedAt.atTime(23, 59, 59) : null, startUpdatedAt != null ? startUpdatedAt.atStartOfDay() : null,
+                endUpdatedAt != null ? endUpdatedAt.atTime(23, 59, 59) : null, customerName, phoneNumber,
                 email, address, fromAmount, toAmount, createdBy, pageable);
 
         List<DebtCustomerDTO> dtos = listCustomer.stream().map(customerConverter::debtCustomerDTO).toList();
@@ -284,36 +295,36 @@ public class CustomerServiceImpl implements CustomerService {
     public void updateCustomerDebt(String id, CustomerDebtUpdateRequest request) {
         Customer update = customerConverter.toCustomerEntity(request);
         Customer now = customerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        if(request.getPhoneNumber()!=null){
-            if(!request.getPhoneNumber().equals(now.getPhoneNumber()) && customerRepository.existsByPhoneNumber(request.getPhoneNumber())){
+        if (request.getPhoneNumber() != null) {
+            if (!request.getPhoneNumber().equals(now.getPhoneNumber()) && customerRepository.existsByPhoneNumber(request.getPhoneNumber())) {
                 throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
             }
         }
-        if(request.getEmail()!=null){
-            if(!request.getEmail().equals(now.getEmail()) && customerRepository.existsByEmail(request.getEmail())){
+        if (request.getEmail() != null) {
+            if (!request.getEmail().equals(now.getEmail()) && customerRepository.existsByEmail(request.getEmail())) {
                 throw new AppException(ErrorCode.EMAIL_EXISTED);
             }
         }
-        try{
+        try {
             Field[] fields = Customer.class.getDeclaredFields();
-            for(Field field : fields){
+            for (Field field : fields) {
                 field.setAccessible(true);
-                if(field.get(update)!=null){
-                    field.set(now,field.get(update));
+                if (field.get(update) != null) {
+                    field.set(now, field.get(update));
                 }
             }
             customerRepository.save(now);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new AppException(ErrorCode.UNCATEGORIZED);
         }
     }
 
     @Override
     public void createCustomerDebt(CustomerCreationRequest request) {
-        if(customerRepository.existsByPhoneNumber(request.getPhoneNumber())){
+        if (customerRepository.existsByPhoneNumber(request.getPhoneNumber())) {
             throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
         }
-        if(request.getEmail()!=null && customerRepository.existsByEmail(request.getEmail())){
+        if (request.getEmail() != null && customerRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
         Customer customer = customerConverter.toCustomerEntity(request);
