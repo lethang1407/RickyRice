@@ -27,6 +27,7 @@ public class EmployeeCustomerController {
                                                      @RequestParam(value = "sortOrder", required = false, defaultValue = "false")boolean sortOrder,
                                                      @RequestParam(value = "phonesearch", required = false, defaultValue = "") String phonesearch )
     {
+        System.out.println(phonesearch);
         return customerService.EmployeeGetAllCustomer(page, size, sortBy, sortOrder,phonesearch);
     }
     @GetMapping("/customersList")

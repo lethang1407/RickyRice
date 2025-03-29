@@ -220,10 +220,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoiceRequest.getInvoice().getCustomerName() == null || invoiceRequest.getInvoice().getCustomerName().isEmpty()) {
             throw new IllegalArgumentException("Tên khách hàng không được để trống!");
         }
-        Customer customer = customerRepository.findByPhoneNumber(invoiceRequest.getInvoice().getCustomerPhone());
-        if (!customer.getName().equals(invoiceRequest.getInvoice().getCustomerName())) {
-            throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
-        }
         if (invoiceRequest.getInvoice().getTotalAmount() < 0 || invoiceRequest.getInvoice().getTotalShipping() < 0) {
             notificationService.sendNotification(SendNotificationRequest.builder()
                     .message("Xử lý hóa đơn thất bại, không thể tạo hóa đơn âm ")
