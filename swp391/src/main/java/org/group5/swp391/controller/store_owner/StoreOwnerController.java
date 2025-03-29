@@ -1,6 +1,7 @@
 package org.group5.swp391.controller.store_owner;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.dto.response.AdminResponse.AppStatisticsResponse;
 import org.group5.swp391.dto.response.ApiResponse;
@@ -48,6 +49,7 @@ public class StoreOwnerController {
 
     @GetMapping("/invoices")
     public Page<StoreInvoiceDTO> getInvoices(
+            @RequestParam(required = false) String customerName,
             @RequestParam(required = false) String phoneNumber,
             @RequestParam(required = false) List<String> store,
             @RequestParam(required = false) String invoiceNumber,
@@ -61,7 +63,7 @@ public class StoreOwnerController {
             @RequestParam(defaultValue = "false") boolean descending
     ) {
         try {
-            return invoiceService.getInvoices(invoiceNumber, phoneNumber, store, totalMoneyMin, totalMoneyMax, type, status, page, size, sortBy, descending);
+            return invoiceService.getInvoices(invoiceNumber, customerName, phoneNumber, store, totalMoneyMin, totalMoneyMax, type, status, page, size, sortBy, descending);
         } catch (Exception e) {
             throw new AppException(ErrorCode.CANT_GET_INFO);
         }
@@ -263,7 +265,7 @@ public class StoreOwnerController {
     @PutMapping(value = "/employee/update/{id}")
     public ResponseEntity<String> updateEmployee(
             @PathVariable String id,
-            @RequestBody StoreEmployeeDTO employee) {
+            @Valid @RequestBody StoreEmployeeDTO employee) {
         employeeService.updateStoreEmployee(id, employee);
         return ResponseEntity.ok("Cập nhật sản phẩm thành công");
     }

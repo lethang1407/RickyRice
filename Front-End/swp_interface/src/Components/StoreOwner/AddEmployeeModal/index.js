@@ -188,43 +188,118 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
 
                     <div className="form-columns-modal">
                         <div className="form-column-modal">
-                            <Form.Item name="name" label="Họ và tên" rules={[{ required: true, message: "Vui lòng nhập họ và tên" }]}>
+                            <Form.Item
+                                name="name"
+                                label="Họ và tên"
+                                rules={[
+                                    { required: true, message: "Vui lòng nhập họ và tên" },
+                                    { min: 2, message: "Họ tên phải có ít nhất 2 ký tự" },
+                                    { max: 100, message: "Họ tên không được vượt quá 100 ký tự" }
+                                ]}
+                             >
                                 <Input prefix={<UserOutlined />} placeholder="Nhập họ tên" />
                             </Form.Item>
-                             <Form.Item name="email" label="Email" rules={[{ required: true, message: 'Vui lòng nhập Email!' }, { type: 'email', message: 'Email không hợp lệ!' }]}>
+                             <Form.Item
+                                name="email"
+                                label="Email"
+                                rules={[
+                                    { required: true, message: 'Vui lòng nhập Email!' },
+                                    { type: 'email', message: 'Email không hợp lệ!' },
+                                    { max: 100, message: "Email không được vượt quá 100 ký tự" }
+                                ]}
+                              >
                                 <Input prefix={<MailOutlined />} placeholder="example@email.com" />
                             </Form.Item>
-                            <Form.Item name="phoneNumber" label="Số điện thoại" rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }, { pattern: /^(0[3|5|7|8|9])(\d{8})$/, message: 'Số điện thoại không hợp lệ!' }]}>
-                                <Input prefix={<PhoneOutlined />} placeholder="0xxxxxxxxx" />
+                            <Form.Item
+                                name="phoneNumber"
+                                label="Số điện thoại"
+                                rules={[
+                                    { required: true, message: 'Vui lòng nhập số điện thoại!' },
+                                    { pattern: /^(0[3|5|7|8|9])(\d{8})$/, message: 'Số điện thoại không hợp lệ' }
+                                ]}
+                            >
+                                <Input prefix={<PhoneOutlined />} placeholder="0xxxxxxxxx" maxLength={10}/>
                             </Form.Item>
-                            <Form.Item name="username" label="Tên đăng nhập" rules={[{ required: true, message: "Vui lòng nhập tên đăng nhập" }]}>
+                             <Form.Item
+                                name="username"
+                                label="Tên đăng nhập"
+                                rules={[
+                                    { required: true, message: "Vui lòng nhập tên đăng nhập" },
+                                    { min: 3, message: "Tên đăng nhập phải có ít nhất 3 ký tự" },
+                                    { max: 50, message: "Tên đăng nhập không được vượt quá 50 ký tự" }
+                                ]}
+                             >
                                 <Input prefix={<UserOutlined />} placeholder="Tên đăng nhập" />
                             </Form.Item>
-                            <Form.Item name="password" label="Mật khẩu" rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]} hasFeedback>
+                            <Form.Item
+                                name="password"
+                                label="Mật khẩu"
+                                rules={[
+                                    { required: true, message: "Vui lòng nhập mật khẩu" },
+                                    { min: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' },
+                                    { max: 100, message: 'Mật khẩu không được vượt quá 100 ký tự' },
+                                ]}
+                                hasFeedback
+                             >
                                 <Input.Password prefix={<LockOutlined />} placeholder="Mật khẩu" />
                             </Form.Item>
-                            <Form.Item name="confirm" label="Xác nhận Mật khẩu" dependencies={['password']} hasFeedback rules={[{ required: true, message: 'Vui lòng xác nhận mật khẩu!', }, ({ getFieldValue }) => ({ validator(_, value) { if (!value || getFieldValue('password') === value) { return Promise.resolve(); } return Promise.reject(new Error('Mật khẩu xác nhận không khớp!')); }, }),]}>
+                            <Form.Item
+                                name="confirm"
+                                label="Xác nhận Mật khẩu"
+                                dependencies={['password']}
+                                hasFeedback
+                                rules={[
+                                    { required: true, message: 'Vui lòng xác nhận mật khẩu!' },
+                                    ({ getFieldValue }) => ({
+                                        validator(_, value) {
+                                            if (!value || getFieldValue('password') === value) {
+                                                return Promise.resolve();
+                                            }
+                                            return Promise.reject(new Error('Mật khẩu xác nhận không khớp!'));
+                                        },
+                                    }),
+                                ]}
+                             >
                                 <Input.Password prefix={<LockOutlined />} placeholder="Nhập lại mật khẩu" />
                             </Form.Item>
                         </div>
                         <div className="form-column-modal">
-                            <Form.Item name="storeId" label="Cửa Hàng" rules={[{ required: true, message: "Vui lòng chọn cửa hàng" }]}>
-                                <Select placeholder="Chọn cửa hàng" allowClear loading={!stores || stores.length === 0}>
-                                    {stores?.map((store) => ( // Optional chaining for safety
+                            <Form.Item
+                                name="storeId"
+                                label="Cửa Hàng"
+                                rules={[{ required: true, message: "Vui lòng chọn cửa hàng" }]}
+                             >
+                                <Select
+                                    placeholder="Chọn cửa hàng"
+                                    allowClear
+                                    loading={!stores || stores.length === 0}
+                                >
+                                    {stores?.map((store) => (
                                         <Option key={store.storeID} value={store.storeID}>
-                                            {store.name}
+                                            {store.name || `Cửa hàng ID: ${store.storeID}`}
                                         </Option>
                                     ))}
                                 </Select>
                             </Form.Item>
-                             <Form.Item name="gender" label="Giới tính" rules={[{ required: true, message: "Vui lòng chọn giới tính" }]}>
+                             <Form.Item
+                                name="gender"
+                                label="Giới tính"
+                              >
                                 <Radio.Group className="gender-radio-group">
                                     <Radio value={true}>Nam</Radio>
                                     <Radio value={false}>Nữ</Radio>
                                 </Radio.Group>
                             </Form.Item>
-                            <Form.Item name="birthDate" label="Ngày sinh" rules={[{ required: true, message: "Vui lòng chọn ngày sinh" }]}>
-                                <DatePicker className="full-width-datepicker" format="DD/MM/YYYY" placeholder="Chọn ngày sinh" disabledDate={(current) => current && current > moment().endOf('day')} />
+                            <Form.Item
+                                name="birthDate"
+                                label="Ngày sinh"
+                             >
+                                <DatePicker
+                                    className="full-width-datepicker"
+                                    format="DD/MM/YYYY"
+                                    placeholder="Chọn ngày sinh"
+                                    disabledDate={(current) => current && current > moment().endOf('day')}
+                                />
                             </Form.Item>
                         </div>
                     </div>

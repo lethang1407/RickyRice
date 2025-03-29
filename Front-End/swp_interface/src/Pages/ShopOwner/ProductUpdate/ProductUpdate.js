@@ -213,7 +213,7 @@ const ProductUpdate = () => {
                         <Form.Item
                             name="name"
                             label="Tên sản phẩm"
-                            rules={[{ required: true, message: "Vui lòng nhập tên sản phẩm" }]}
+                            rules={[{ required: true, message: "Vui lòng nhập tên sản phẩm", maxLength: 200}]}
                         >
                             <Input />
                         </Form.Item>
@@ -222,7 +222,7 @@ const ProductUpdate = () => {
                             label="Giá"
                             rules={[
                                 { required: true, message: "Vui lòng nhập giá" },
-                                { type: 'number', min: 0, message: 'Giá phải là số không âm' },
+                                { type: 'number', min: 0, message: 'Giá phải là số không âm', max: 1000000000},
                             ]}
                         >
                             <InputNumber style={{ width: '100%' }} step={1000} />
@@ -256,16 +256,6 @@ const ProductUpdate = () => {
                                     value: attr.value,
                                 }))}
                             />
-                        </Form.Item>
-                        <Form.Item
-                            name="quantity"
-                            label="Số lượng"
-                            rules={[
-                                { required: true, message: "Vui lòng nhập số lượng" },
-                                { type: 'number', min: 0, message: 'Số lượng phải là số không âm' },
-                            ]}
-                        >
-                            <InputNumber step={1} />
                         </Form.Item>
                         <Form.Item name="storeName" label="Cửa hàng">
                             <Input disabled />

@@ -48,6 +48,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final NotificationService notificationService;
 
     public Page<StoreInvoiceDTO> getInvoices(String invoiceId,
+                                             String customerName,
                                              String phoneNumber,
                                              List<String> storeIds,
                                              Double totalMoneyMin,
@@ -68,11 +69,12 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (storeIds != null && storeIds.isEmpty()) {
             storeIds = null;
         }
+        customerName = (customerName != null && !customerName.trim().isEmpty()) ? customerName.trim() : null;
         phoneNumber = (phoneNumber != null && !phoneNumber.trim().isEmpty()) ? phoneNumber.trim() : null;
         invoiceId = (invoiceId != null && !invoiceId.trim().isEmpty()) ? invoiceId.trim() : null;
         Boolean type = typeStr.equals("all") ? null : typeStr.equals("export");
         Boolean status = statusStr.equals("all") ? null : statusStr.equals("paid");
-        return invoiceRepository.findInvoices(invoiceId, phoneNumber, totalMoneyMin, totalMoneyMax, type, status, storeIds, username, pageable).map(invoiceConverter::toStoreInvoiceDTO);
+        return invoiceRepository.findInvoices(invoiceId, customerName, phoneNumber, totalMoneyMin, totalMoneyMax, type, status, storeIds, username, pageable).map(invoiceConverter::toStoreInvoiceDTO);
     }
 
     @Override

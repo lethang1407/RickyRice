@@ -96,6 +96,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     public StoreEmployeeDTO updateStoreEmployee(String employeeId, StoreEmployeeDTO storeEmployeeDTO) {
         Employee employee = checkEmployeeOfUser(employeeId);
         Account account = employee.getEmployeeAccount();
+        boolean c = account.getUsername().equals(storeEmployeeDTO.getStoreAccount().getUsername());
+        if (accountRepository.existsByUsername(storeEmployeeDTO.getStoreAccount().getUsername()) && !c) {
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
+        }
         boolean a = account.getEmail().equals(storeEmployeeDTO.getStoreAccount().getEmail());
         if (accountRepository.existsByEmail(storeEmployeeDTO.getStoreAccount().getEmail()) && !a) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
@@ -104,6 +108,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (accountRepository.existsByPhoneNumber(storeEmployeeDTO.getStoreAccount().getPhoneNumber()) && !b) {
             throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
         }
+        account.setUsername(storeEmployeeDTO.getStoreAccount().getUsername());
+        account.setPassword(storeEmployeeDTO.getStoreAccount().getPassword() != null ? storeEmployeeDTO.getStoreAccount().getPassword() : account.getPassword());
         account.setName(storeEmployeeDTO.getStoreAccount().getName());
         account.setGender(storeEmployeeDTO.getStoreAccount().getGender());
         account.setEmail(storeEmployeeDTO.getStoreAccount().getEmail());
@@ -125,11 +131,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (c) {
             throw new AppException(ErrorCode.USERNAME_EXISTED);
         }
-        boolean a = accountRepository.existsByEmailAndStore(storeEmployeeDTO.getEmail(), storeEmployeeDTO.getStoreId());
+        boolean a = accountRepository.existsByEmail(storeEmployeeDTO.getEmail());
         if (a) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
-        boolean b = accountRepository.existsByPhoneNumberAndStore(storeEmployeeDTO.getPhoneNumber(), storeEmployeeDTO.getStoreId());
+        boolean b = accountRepository.existsByPhoneNumber(storeEmployeeDTO.getPhoneNumber());
         if (b) {
             throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
         }

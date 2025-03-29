@@ -389,7 +389,6 @@ const Employee = () => {
                     ...tableParams.pagination,
                     showSizeChanger: true,
                     pageSizeOptions: ['5', '10', '20', '50'],
-                    showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} nhân viên`,
                 }}
                 loading={loading}
                 onChange={handleTableChange}
