@@ -1,5 +1,6 @@
 package org.group5.swp391.controller.employee;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.dto.employee.CustomerUpdateRequest;
 import org.group5.swp391.dto.employee.EmployeeCustomerDTO;
@@ -36,6 +37,7 @@ public class EmployeeCustomerController {
 
     @PutMapping("/customers/edit/{customerId}")
     public ResponseEntity<?> updateCustomer(
+            @Valid
             @PathVariable String customerId,
             @RequestBody Customer customerDetails  )
     {
@@ -43,7 +45,7 @@ public class EmployeeCustomerController {
             return ResponseEntity.ok(updatedCustomer);
     }
     @PutMapping("/customers/editInvoice/{phoneNumber}")
-    public ResponseEntity<?> updateCustomerInvoice(
+    public ResponseEntity<?> updateCustomerInvoice(@Valid
             @PathVariable String phoneNumber,
             @RequestBody CustomerUpdateRequest customerDetails)
     {
@@ -53,7 +55,7 @@ public class EmployeeCustomerController {
 
 
     @PostMapping("/customers/create")
-    public ResponseEntity<?> createCustomer(@RequestBody EmployeeCustomerDTO customerDTO) {
+    public ResponseEntity<?> createCustomer(@Valid @RequestBody EmployeeCustomerDTO customerDTO) {
             customerService.createCustomer(customerDTO);
             return ResponseEntity.ok("tạo khách hàng thành công ");
     }

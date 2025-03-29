@@ -116,17 +116,26 @@ const InvoiceDetail2 = () => {
     const calculateTotalSellPrice = (dataSource) => {
         if (!dataSource || !Array.isArray(dataSource)) return 0;
         return dataSource.reduce((sum, item) => {
-            return sum + (item.quantity * (item.pricePay || item.price));
+            const packageOption = packageOptions.find(opt => opt.value === item.packageId);
+            const packageValue = packageOption ? packageOption.packageValue : 1;
+            return sum + (packageValue * item.quantity * (item.pricePay || item.price));
         }, 0);
     };
     const calculateTotalDiscount = (dataSource) => {
-        return dataSource.reduce((sum, item) => sum + (item.discount * item.quantity || 0), 0);
+        if (!dataSource || !Array.isArray(dataSource)) return 0;
+        return dataSource.reduce((sum, item) => {
+            const packageOption = packageOptions.find(opt => opt.value === item.packageId);
+            const packageValue = packageOption ? packageOption.packageValue : 1;
+            return sum + (packageValue * item.quantity * (item.discount || 0));
+        }, 0);
     };
 
     const calculateProductTotal = (dataSource) => {
         if (!dataSource || !Array.isArray(dataSource)) return 0;
         return dataSource.reduce((sum, item) => {
-            const itemTotal = (item.quantity || 0) * (item.pricePay || 0) - ((item.discount || 0) * (item.quantity || 0));
+            const packageOption = packageOptions.find(opt => opt.value === item.packageId);
+            const packageValue = packageOption ? packageOption.packageValue : 1;
+            const itemTotal = (packageValue * item.quantity * (item.pricePay || item.price)) - (packageValue * item.quantity * (item.discount || 0));
             return sum + itemTotal;
         }, 0);
     };
@@ -157,38 +166,6 @@ const InvoiceDetail2 = () => {
             ),
         },
         {
-            title: 'Tên Sản Phẩm',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: 'Giảm Giá/Kg ',
-            key: 'discount',
-            render: (text, record) => (
-                <InputNumber
-                    defaultValue={0}
-                    min={0}
-                    value={record.discount}
-                    onChange={(value) => handleInputChange2(value, record.key, 'discount')}
-                    formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                />
-            ),
-        },
-        {
-            title: 'Số Lượng',
-            dataIndex: 'quantity',
-            key: 'quantity',
-            render: (text, record) => (
-                <InputNumber
-                    defaultValue={1}
-                    min={1}
-                    value={record.quantity}
-                    onChange={(value) => handleInputChange(value, record.key, 'quantity')}
-                />
-            ),
-        },
-        {
             title: 'Đóng Gói',
             dataIndex: 'packageId',
             key: 'packageId',
@@ -204,6 +181,24 @@ const InvoiceDetail2 = () => {
             ),
         },
         {
+            title: 'Tên Sản Phẩm',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Số Lượng(Bao)',
+            dataIndex: 'quantity',
+            key: 'quantity',
+            render: (text, record) => (
+                <InputNumber
+                    defaultValue={1}
+                    min={1}
+                    value={record.quantity}
+                    onChange={(value) => handleInputChange(value, record.key, 'quantity')}
+                />
+            ),
+        },
+        {
             title: 'Giá Nhập/kg',
             dataIndex: 'pricePay',
             key: 'pricePay',
@@ -213,6 +208,20 @@ const InvoiceDetail2 = () => {
                     min={0}
                     value={record.pricePay}
                     onChange={(value) => handleInputChange(value, record.key, 'pricePay')}
+                    formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                />
+            ),
+        },
+        {
+            title: 'Giảm Giá/Kg ',
+            key: 'discount',
+            render: (text, record) => (
+                <InputNumber
+                    defaultValue={0}
+                    min={0}
+                    value={record.discount}
+                    onChange={(value) => handleInputChange2(value, record.key, 'discount')}
                     formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                     parser={value => value.replace(/\$\s?|(,*)/g, '')}
                 />
@@ -235,21 +244,23 @@ const InvoiceDetail2 = () => {
         setItems(prevItems =>
             prevItems.map(item => {
                 if (item.key === activeKey) {
-                    const updatedDataSource = item.children.props.dataSource.map(row =>
-                        row.key === key
-                            ? {
+                    const updatedDataSource = item.children.props.dataSource.map(row => {
+                        if (row.key === key) {
+                            const packageOption = packageOptions.find(opt => opt.value === row.packageId);
+                            const packageValue = packageOption ? packageOption.packageValue : 1;
+                            const newPricePay = field === 'pricePay' ? finalValue : (row.pricePay || row.price);
+                            const newQuantity = field === 'quantity' ? finalValue : row.quantity;
+                            const total = (packageValue * newQuantity * newPricePay) - (packageValue * newQuantity * (row.discount || 0));
+                            return {
                                 ...row,
                                 [field]: finalValue,
-                                total:
-                                    field === 'quantity'
-                                        ? finalValue * (row.pricePay || 0) - (row.discount * finalValue || 0)
-                                        : row.quantity * (field === 'pricePay' ? finalValue : row.pricePay || 0) - (row.discount * row.quantity || 0),
-                            }
-                            : row
-                    );
+                                total: total,
+                            };
+                        }
+                        return row;
+                    });
                     setTotalAmount(calculateProductTotal(updatedDataSource));
                     setTotalWithoutDiscount(calculateTotalWithoutDiscount(updatedDataSource));
-
                     return {
                         ...item,
                         children: (
@@ -272,18 +283,21 @@ const InvoiceDetail2 = () => {
         setItems(prevItems =>
             prevItems.map(item => {
                 if (item.key === activeKey) {
-                    const updatedDataSource = item.children.props.dataSource.map(row =>
-                        row.key === key
-                            ? {
+                    const updatedDataSource = item.children.props.dataSource.map(row => {
+                        if (row.key === key) {
+                            const packageOption = packageOptions.find(opt => opt.value === row.packageId);
+                            const packageValue = packageOption ? packageOption.packageValue : 1;
+                            const total = (packageValue * row.quantity * (row.pricePay || row.price)) - (packageValue * row.quantity * finalValue);
+                            return {
                                 ...row,
                                 [field]: finalValue,
-                                total: row.quantity * (row.pricePay || 0) - (finalValue * row.quantity || 0),
-                            }
-                            : row
-                    );
+                                total: total,
+                            };
+                        }
+                        return row;
+                    });
                     setTotalAmount(calculateProductTotal(updatedDataSource));
                     setTotalWithoutDiscount(calculateTotalWithoutDiscount(updatedDataSource));
-
                     return {
                         ...item,
                         children: (
@@ -304,11 +318,21 @@ const InvoiceDetail2 = () => {
         setItems(prevItems =>
             prevItems.map(item => {
                 if (item.key === activeKey) {
-                    const updatedDataSource = item.children.props.dataSource.map(row =>
-                        row.key === key
-                            ? { ...row, packageId: value }
-                            : row
-                    );
+                    const updatedDataSource = item.children.props.dataSource.map(row => {
+                        if (row.key === key) {
+                            const packageOption = packageOptions.find(opt => opt.value === value);
+                            const packageValue = packageOption ? packageOption.packageValue : 1;
+                            const newTotal = (packageValue * row.quantity * (row.pricePay || row.price)) - (packageValue * row.quantity * (row.discount || 0));
+                            return {
+                                ...row,
+                                packageId: value,
+                                total: newTotal,
+                            };
+                        }
+                        return row;
+                    });
+                    setTotalAmount(calculateProductTotal(updatedDataSource));
+                    setTotalWithoutDiscount(calculateTotalWithoutDiscount(updatedDataSource));
                     return {
                         ...item,
                         children: (
@@ -348,16 +372,22 @@ const InvoiceDetail2 = () => {
 
                 let updatedDataSource;
                 if (productIndex !== -1) {
-                    updatedDataSource = existingProducts.map((product, index) =>
-                        index === productIndex
-                            ? {
+                    updatedDataSource = existingProducts.map((product, index) => {
+                        if (index === productIndex) {
+                            const packageOption = packageOptions.find(opt => opt.value === product.packageId);
+                            const packageValue = packageOption ? packageOption.packageValue : 1;
+                            return {
                                 ...product,
                                 quantity: product.quantity + 1,
-                                total: (product.quantity + 1) * (product.pricePay || product.price) - (product.discount * (product.quantity + 1) || 0),
-                            }
-                            : product
-                    );
+                                total: (packageValue * (product.quantity + 1) * (product.pricePay || product.price)) - (packageValue * (product.quantity + 1) * (product.discount || 0)),
+                            };
+                        }
+                        return product;
+                    });
                 } else {
+                    const defaultPackageId = packageOptions.length > 0 ? packageOptions[0].value : undefined;
+                    const packageOption = packageOptions.find(opt => opt.value === defaultPackageId);
+                    const packageValue = packageOption ? packageOption.packageValue : 1;
                     updatedDataSource = [
                         ...existingProducts,
                         {
@@ -369,8 +399,8 @@ const InvoiceDetail2 = () => {
                             image: selectedProduct.image,
                             productID: selectedProduct.productID,
                             discount: 0,
-                            total: 1 * selectedProduct.price,
-                            packageId: packageOptions.length > 0 ? packageOptions[0].value : undefined,
+                            total: packageValue * 1 * selectedProduct.price,
+                            packageId: defaultPackageId,
                         },
                     ];
                 }
@@ -419,9 +449,6 @@ const InvoiceDetail2 = () => {
             })
         );
     };
-
-
-
 
     const add = () => {
         const newKey = Date.now().toString();
@@ -593,10 +620,24 @@ const InvoiceDetail2 = () => {
             },
         })
             .then(response => {
-                const formattedOptions = response.data.map(item => ({
-                    value: item.id,
-                    label: item.description
-                }));
+                const formattedOptions = response.data.map(item => {
+                    const description = item.description.toLowerCase();
+                    let packageValue = 1;
+                    if (description.includes("25kg/bao")) {
+                        packageValue = 25;
+                    } else if (description.includes("50kg/bao")) {
+                        packageValue = 50;
+                    } else if (description.includes("75kg/bao")) {
+                        packageValue = 75;
+                    } else {
+                        packageValue = 100;
+                    }
+                    return {
+                        value: item.id,
+                        label: item.description,
+                        packageValue: packageValue,
+                    };
+                });
                 setPackageOptions(formattedOptions);
             })
             .catch(error => {

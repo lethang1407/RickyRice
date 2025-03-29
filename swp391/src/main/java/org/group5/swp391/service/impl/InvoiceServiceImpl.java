@@ -115,11 +115,12 @@ public class InvoiceServiceImpl implements InvoiceService {
                     Package packageEntity = packageRepository.findPackageByStringId(detail.getPackageId());
                     Product product = productRepository.findByStringId(detail.getProductID());
                     Category categoryProduct = categoryRepository.findByStringId(product.getCategory().getId());
+                    int value=getValueByPackageId(detail.getPackageId());
                     long lastQuantity = 0;
                     if (invoiceRequest.getInvoice().isType()) {
-                        lastQuantity = product.getQuantity() + detail.getQuantity();
+                        lastQuantity = product.getQuantity() + (detail.getQuantity()*value);
                     } else {
-                        lastQuantity = product.getQuantity() - detail.getQuantity();
+                        lastQuantity = product.getQuantity() - (detail.getQuantity()*value);
                         if (lastQuantity < 0) {
                             notificationService.sendNotification(SendNotificationRequest.builder()
                                     .message("Xử lý hóa đơn thất bại. Số lượng sản phẩm " + product.getName() + " không đủ trong kho!")
@@ -165,7 +166,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tài khoản không tồn tại"));
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
-
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
@@ -240,6 +240,20 @@ public class InvoiceServiceImpl implements InvoiceService {
             if (detail.getQuantity() <= 0) {
                 throw new IllegalArgumentException("Số lượng sản phẩm phải lớn hơn 0!");
             }
+        }
+    }
+
+    public int  getValueByPackageId(String pacId){
+        if (pacId == null) {
+            return 0;
+        } else if (pacId.equals("1")) {
+            return 25;
+        } else if (pacId.equals("2")) {
+            return 50;
+        } else if (pacId.equals("3")) {
+            return 75;
+        }else {
+            return 100;
         }
     }
 }

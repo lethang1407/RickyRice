@@ -79,7 +79,7 @@ const InvoiceDetail = () => {
                                 ...item,
                                 customerPhone: values.phoneNumberNew,
                                 customerName: values.name,
-                            } 
+                            }
                             : item
                     )
                 );
@@ -109,26 +109,27 @@ const InvoiceDetail = () => {
         console.log('Số điện thoại từ component con là là là:', phoneNumber);
     };
     const calculateTotalWithoutDiscount = (dataSource) => {
-        return dataSource.reduce((sum, item) => {
-            return sum + (item.quantity * item.price);
-        }, 0);
-    };
-    const calculateTotalSellPrice = (dataSource) => {
-        if (!dataSource || !Array.isArray(dataSource)) return 0;
-        return dataSource.reduce((sum, item) => {
-            return sum + (item.quantity * (item.pricePay || item.price));
-        }, 0);
-    };
-    const calculateTotalDiscount = (dataSource) => {
-        return dataSource.reduce((sum, item) => sum + (item.discount * item.quantity || 0), 0);
+        return dataSource.reduce((sum, item) => sum + (item.quantity * item.price), 0);
     };
 
+    const calculateTotalSellPrice = (dataSource) => {
+        if (!dataSource || !Array.isArray(dataSource)) return 0;
+        return dataSource.reduce((sum, item) => sum + (item.quantity * (item.pricePay || item.price)), 0);
+    };
+
+    const calculateTotalDiscount = (dataSource) => {
+        return dataSource.reduce((sum, item) => {
+            const discountPerKg = (item.price || 0) - (item.pricePay || item.price);
+            const packageOption = packageOptions.find(opt => opt.value === item.packageId);
+            const packageValue = packageOption ? packageOption.packageValue : 1;
+            const totalDiscount = discountPerKg * item.quantity * packageValue;
+            return sum + (totalDiscount > 0 ? totalDiscount : 0);
+        }, 0);
+    };
+    //ở đây 
     const calculateProductTotal = (dataSource) => {
         if (!dataSource || !Array.isArray(dataSource)) return 0;
-        return dataSource.reduce((sum, item) => {
-            const itemTotal = (item.quantity || 0) * (item.pricePay || item.price || 0) - ((item.discount || 0) * (item.quantity || 0));
-            return sum + itemTotal;
-        }, 0);
+        return dataSource.reduce((sum, item) => sum + (item.total || 0), 0);
     };
 
     const calculateTotalAmount = (dataSource, moneyShip) => {
@@ -138,8 +139,7 @@ const InvoiceDetail = () => {
     const calculateFinalAmount = () => {
         const activeTab = items.find(item => item.key === activeKey);
         if (!activeTab) return 0;
-        const baseAmount = calculateTotalAmount(activeTab.children.props.dataSource, activeTab.moneyShip || 0);
-        return baseAmount - (discount || 0);
+        return calculateTotalAmount(activeTab.children.props.dataSource, activeTab.moneyShip || 0);
     };
 
     const calculateChange = () => {
@@ -154,38 +154,6 @@ const InvoiceDetail = () => {
                 <Button type="link" danger onClick={() => handleDeleteRow(record.key)}>
                     <i class="bi bi-trash"></i>
                 </Button>
-            ),
-        },
-        {
-            title: 'Tên Sản Phẩm',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: 'Giảm Giá/Kg ',
-            key: 'discount',
-            render: (text, record) => (
-                <InputNumber
-                    defaultValue={0}
-                    min={0}
-                    value={record.discount}
-                    onChange={(value) => handleInputChange2(value, record.key, 'discount')}
-                    formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                />
-            ),
-        },
-        {
-            title: 'Số Lượng',
-            dataIndex: 'quantity',
-            key: 'quantity',
-            render: (text, record) => (
-                <InputNumber
-                    defaultValue={1}
-                    min={1}
-                    value={record.quantity}
-                    onChange={(value) => handleInputChange(value, record.key, 'quantity')}
-                />
             ),
         },
         {
@@ -204,7 +172,25 @@ const InvoiceDetail = () => {
             ),
         },
         {
-            title: 'Giá Nhập/Kg',
+            title: 'Tên Sản Phẩm',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Số Lượng(Bao)',
+            dataIndex: 'quantity',
+            key: 'quantity',
+            render: (text, record) => (
+                <InputNumber
+                    defaultValue={1}
+                    min={1}
+                    value={record.quantity}
+                    onChange={(value) => handleInputChange(value, record.key, 'quantity')}
+                />
+            ),
+        },
+        {
+            title: 'Giá Bán Thực/Kg',
             dataIndex: 'price',
             key: 'price',
             render: (text) => (text || 0).toLocaleString(),
@@ -223,6 +209,17 @@ const InvoiceDetail = () => {
                     parser={value => value.replace(/\$\s?|(,*)/g, '')}
                 />
             ),
+        },
+        {
+            title: 'Giảm Giá/Kg ',
+            key: 'discount',
+            render: (text, record) => {
+                const discountPerKg = (record.price || 0) - (record.pricePay || record.price);
+                const packageOption = packageOptions.find(opt => opt.value === record.packageId);
+                const packageValue = packageOption ? packageOption.packageValue : 1;
+                const totalDiscount = discountPerKg * record.quantity * packageValue;
+                return (totalDiscount > 0 ? totalDiscount : 0).toLocaleString();
+            },
         },
         {
             title: 'Thành Tiền(VND)',
@@ -244,23 +241,36 @@ const InvoiceDetail = () => {
                     const updatedDataSource = item.children.props.dataSource.map(row => {
                         if (row.key === key) {
                             const productOption = options.find(opt => opt.productID === row.productID);
-                            const maxQuantity = productOption ? productOption.quantity : Infinity;
-                            const cappedValue = field === 'quantity' ? Math.min(finalValue, maxQuantity) : finalValue;
+                            const packageOption = packageOptions.find(opt => opt.value === row.packageId);
+                            const packageValue = packageOption ? packageOption.packageValue : 1;
+                            let cappedValue = finalValue;
+
+                            if (field === 'quantity') {
+                                const maxQuantityPerPackage = productOption ? Math.floor(productOption.quantity / packageValue) : Infinity;
+                                cappedValue = Math.max(1, Math.min(finalValue, maxQuantityPerPackage));
+                                if (finalValue >= maxQuantityPerPackage) {
+                                    messageApi.warning(`Số lượng tối đa cho sản phẩm này là ${maxQuantityPerPackage} bao!`);
+                                }
+                            }
+
+                            const newPricePay = field === 'pricePay' ? cappedValue : (row.pricePay || row.price);
+                            const newQuantity = field === 'quantity' ? cappedValue : row.quantity;
+                            const total = packageValue * newQuantity * newPricePay;
 
                             return {
                                 ...row,
                                 [field]: cappedValue,
-                                total:
-                                    field === 'quantity'
-                                        ? cappedValue * (row.pricePay || 0) - (row.discount * cappedValue || 0)
-                                        : row.quantity * (field === 'pricePay' ? cappedValue : row.pricePay || 0) - (row.discount * row.quantity || 0),
+                                total: total,
                             };
                         }
                         return row;
                     });
+
                     const exceeds = updatedDataSource.some(row => {
                         const productOption = options.find(opt => opt.productID === row.productID);
-                        return productOption && row.quantity > productOption.quantity;
+                        const packageOption = packageOptions.find(opt => opt.value === row.packageId);
+                        const packageValue = packageOption ? packageOption.packageValue : 1;
+                        return productOption && row.quantity * packageValue > productOption.quantity;
                     });
                     setIsExceedingQuantity(exceeds);
                     setTotalAmount(calculateProductTotal(updatedDataSource));
@@ -283,52 +293,37 @@ const InvoiceDetail = () => {
         );
     };
 
-    const handleInputChange2 = (value, key, field) => {
-        const finalValue = value === null || value < 0 ? 0 : value;
+
+    const handlePackageChange = (value, key) => {
         setItems(prevItems =>
             prevItems.map(item => {
                 if (item.key === activeKey) {
                     const updatedDataSource = item.children.props.dataSource.map(row => {
                         if (row.key === key) {
-                            const maxDiscount = row.pricePay || row.price || 0;
-                            const finalValue = value === null || value < 0 ? 0 : Math.min(value, maxDiscount);
+                            const productOption = options.find(opt => opt.productID === row.productID);
+                            const packageOption = packageOptions.find(opt => opt.value === value);
+                            const packageValue = packageOption ? packageOption.packageValue : 1;
+                            const maxQuantityPerPackage = productOption ? Math.floor(productOption.quantity / packageValue) : Infinity;
+
+                            const newQuantity = Math.min(row.quantity, maxQuantityPerPackage);
+                            if (row.quantity > maxQuantityPerPackage) {
+                                messageApi.info(`Số lượng đã được điều chỉnh xuống ${maxQuantityPerPackage} bao do thay đổi loại đóng gói!`);
+                            }
+                            const newTotal = packageValue * newQuantity * (row.pricePay || row.price);
 
                             return {
                                 ...row,
-                                [field]: finalValue,
-                                total: row.quantity * (row.pricePay || 0) - (finalValue * row.quantity || 0),
+                                packageId: value,
+                                quantity: newQuantity,
+                                total: newTotal,
                             };
                         }
                         return row;
                     });
+
                     setTotalAmount(calculateProductTotal(updatedDataSource));
                     setTotalWithoutDiscount(calculateTotalWithoutDiscount(updatedDataSource));
 
-                    return {
-                        ...item,
-                        children: (
-                            <Table
-                                columns={columns}
-                                dataSource={updatedDataSource}
-                                pagination={false}
-                                size={size}
-                            />
-                        ),
-                    };
-                }
-                return item;
-            })
-        );
-    };
-    const handlePackageChange = (value, key) => {
-        setItems(prevItems =>
-            prevItems.map(item => {
-                if (item.key === activeKey) {
-                    const updatedDataSource = item.children.props.dataSource.map(row =>
-                        row.key === key
-                            ? { ...row, packageId: value }
-                            : row
-                    );
                     return {
                         ...item,
                         children: (
@@ -373,11 +368,14 @@ const InvoiceDetail = () => {
                             ? {
                                 ...product,
                                 quantity: product.quantity + 1,
-                                total: (product.quantity + 1) * (product.pricePay || product.price) - (product.discount * (product.quantity + 1) || 0),
+                                total: packageOptions.find(opt => opt.value === product.packageId)?.packageValue * (product.quantity + 1) * (product.pricePay || product.price),
                             }
                             : product
                     );
                 } else {
+                    const defaultPackageId = packageOptions.length > 0 ? packageOptions[0].value : undefined;
+                    const packageValue = packageOptions.find(opt => opt.value === defaultPackageId)?.packageValue || 1;
+
                     updatedDataSource = [
                         ...existingProducts,
                         {
@@ -388,9 +386,8 @@ const InvoiceDetail = () => {
                             pricePay: selectedProduct.price,
                             image: selectedProduct.image,
                             productID: selectedProduct.productID,
-                            discount: 0,
-                            total: 1 * selectedProduct.price,
-                            packageId: packageOptions.length > 0 ? packageOptions[0].value : undefined,
+                            total: packageValue * 1 * selectedProduct.price,
+                            packageId: defaultPackageId,
                         },
                     ];
                 }
@@ -614,10 +611,25 @@ const InvoiceDetail = () => {
             },
         })
             .then(response => {
-                const formattedOptions = response.data.map(item => ({
-                    value: item.id,
-                    label: item.description
-                }));
+                const formattedOptions = response.data.map(item => {
+                    const description = item.description.toLowerCase();
+                    let packageValue = 1;
+                    if (description.includes("25kg/bao")) {
+                        packageValue = 25;
+                    } else if (description.includes("50kg/bao")) {
+                        packageValue = 50;
+                    } else if (description.includes("75kg/bao")) {
+                        packageValue = 75;
+                    } else {
+                        packageValue = 100;
+                    }
+
+                    return {
+                        value: item.id,
+                        label: item.description,
+                        packageValue: packageValue,
+                    };
+                });
                 setPackageOptions(formattedOptions);
             })
             .catch(error => {
@@ -687,7 +699,7 @@ const InvoiceDetail = () => {
                 packageId: product.packageId,
                 quantity: product.quantity,
                 price: product.pricePay || product.price,
-                discount: product.discount,
+                discount: (product.price || 0) - (product.pricePay || 0),
             })),
         };
 
@@ -716,7 +728,6 @@ const InvoiceDetail = () => {
                     const newActiveKey = remainingItems[0].key;
                     setActiveKey(newActiveKey);
                     const activeTabDataSource = remainingItems.find(item => item.key === newActiveKey)?.children.props.dataSource || [];
-                    // setTotalAmount(calculateTotalAmount(activeTabDataSource, remainingItems.find(item => item.key === newActiveKey)?.moneyShip || 0));
                     setTotalAmount(calculateProductTotal(activeTabDataSource));
                     setTotalWithoutDiscount(calculateTotalWithoutDiscount(activeTabDataSource));
                     setCustomerPayment(remainingItems.find(item => item.key === newActiveKey)?.customerPayment || 0);
@@ -724,7 +735,6 @@ const InvoiceDetail = () => {
                     setActiveKey(null);
                     setTotalAmount(0);
                     setCustomerPayment(0);
-                    setDiscount(0);
                 }
             })
             .catch(err => {
@@ -772,6 +782,7 @@ const InvoiceDetail = () => {
             description: autoDescription || "Không có sản phẩm mua",
             type: "NEGATIVE_KH_VAY",
         };
+        console.log("Invoice Data:", invoiceData);
         axios.post(API.EMPLOYEE.CREATE_DEBT,
             invoiceData, {
             headers: { Authorization: `Bearer ${token}` },
@@ -1041,19 +1052,15 @@ const InvoiceDetail = () => {
             <div className="invoice-footer">
                 <div className="total-section">
                     <div className="detail-line">
-                        <span className="detail-label">Tiền hàng sản phẩm gốc :</span>
-                        <span>{totalwithoutdiscount.toLocaleString()} VND</span>
-                    </div>
-                    <div className="detail-line">
-                        <span className="detail-label">Tiền hàng sản phẩm bán :</span>
-                        <span>{calculateTotalSellPrice(items.find(item => item.key === activeKey)?.children.props.dataSource || []).toLocaleString()} VND</span>
+                        <span className="detail-label">Tiền hàng sản phẩm :</span>
+                        <span>{(calculateTotalDiscount(items.find(item => item.key === activeKey)?.children.props.dataSource || []) + totalAmount).toLocaleString()} VND</span>
                     </div>
                     <div className="detail-line">
                         <span className="detail-label">Tổng tiền giảm giá : </span>
                         <span> - {calculateTotalDiscount(items.find(item => item.key === activeKey)?.children.props.dataSource || []).toLocaleString()} VND</span>
                     </div>
                     <div className="detail-line">
-                        <span className="detail-label">Tiền hàng sản phẩm :</span>
+                        <span className="detail-label">Tiền hàng sản phẩm còn lại :</span>
                         <span>{totalAmount.toLocaleString()} VND</span>
                     </div>
                     <div className="detail-line">

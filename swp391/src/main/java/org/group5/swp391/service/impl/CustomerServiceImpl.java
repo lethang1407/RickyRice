@@ -149,7 +149,6 @@ public class CustomerServiceImpl implements CustomerService {
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
         existingCustomer.setEmail(updatedCustomer.getEmail());
         existingCustomer.setAddress(updatedCustomer.getAddress());
-        existingCustomer.setBalance(updatedCustomer.getBalance());
         existingCustomer.setUpdatedAt(LocalDateTime.now());
         return customerRepository.save(existingCustomer);
     }
@@ -167,7 +166,7 @@ public class CustomerServiceImpl implements CustomerService {
         Employee a = employeeRepository.findStoreIdByAccountEmpId(account.getId());
         Customer existingCustomer = customerRepository.findByPhoneNumber(phoneNumber);
         Customer existingCustomerByNewPhone = customerRepository.findByPhoneNumber(updatedCustomer.getPhoneNumberNew());
-        if(existingCustomerByNewPhone!=null) {
+        if(existingCustomerByNewPhone!=null && !existingCustomerByNewPhone.getId().equals(existingCustomer.getId())) {
                 throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
         }
         validatePhoneNumber(updatedCustomer.getPhoneNumberNew());

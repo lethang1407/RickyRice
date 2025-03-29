@@ -5,12 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1eec8c2e-66ba-4a78-9a0d-e4163162dcbd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Front-End/swp_interface/src/Components/StoreOwner/Layout/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front-End/swp_interface/src/Components/StoreOwner/Layout/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/swp391/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -38,7 +43,7 @@
   &quot;associatedIndex&quot;: 1
 }</component>
   <component name="ProjectId" id="2uisbM3Rp0HBBnAPM5mECPCqIqX" />
-  <component name="ProjectLevelVcsManager">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
@@ -54,17 +59,33 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "Spring Boot.Swp391Application.executor": "Run",
-    "git-widget-placeholder": "HongChien",
+    "git-widget-placeholder": "TuanMinh",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Lenovo/Documents/IntelijiProject/HSF/Main_SWP/swp391",
+    "last_opened_file_path": "D:/Chuyen Nganh ki V/RickyRice_SWP_main/swp391",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="swp391" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="swp391" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -123,7 +144,7 @@
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/EmployeeService.java</url>
           <line>16</line>
-          <properties class="org.group5.swp391.service.EmployeeService" method="updateStoreEmployeeImage">
+          <properties class="org.group5.swp391.service.EmployeeService">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
