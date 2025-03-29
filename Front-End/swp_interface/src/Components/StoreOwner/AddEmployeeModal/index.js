@@ -28,30 +28,15 @@ const uploadImageAPI = async (url, token, file) => {
             },
         });
         if (response.data) {
-             if (typeof response.data === 'string' && response.data.startsWith('http')) {
-                return response.data;
-            }
-            if (typeof response.data === 'object' && response.data.url) {
-                return response.data.url;
-            }
-             if (typeof response.data === 'object' && response.data.link) {
-                return response.data.link;
-            }
-            console.warn("Unexpected avatar upload response format:", response.data);
-            throw new Error("Tải ảnh đại diện lên thất bại: Định dạng phản hồi không mong đợi.");
+            return response.data;
         } else {
-            throw new Error("Tải ảnh đại diện lên thất bại: Không có dữ liệu trả về.");
+            throw new Error("Tải ảnh đại diện lên thất bại: Không có URL trả về.");
         }
     } catch (err) {
         console.error("Lỗi khi tải ảnh đại diện lên (API):", err);
-         const errorMsg = err.response?.data?.message || err.message || "Tải ảnh đại diện lên thất bại.";
-        if (errorMsg.toLowerCase().includes("invalid file") || errorMsg.toLowerCase().includes("unsupported image type")) {
-            throw new Error("Tải ảnh đại diện lên thất bại: Định dạng file không hợp lệ hoặc không được hỗ trợ.");
-        }
-        throw new Error(errorMsg);
+        throw new Error(err.response?.data?.message || "Tải ảnh đại diện lên thất bại.");
     }
 };
-
 
 const createEmployeeAPI = async (url, token, employeeData) => {
     try {
@@ -97,21 +82,10 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
 
         try {
             if (fileList.length > 0 && fileList[0].originFileObj) {
-                messageApi.open({ type: 'loading', content: 'Đang tải ảnh đại diện...', duration: 0 });
-                try {
-                    avatarUrl = await uploadImageAPI(UPLOAD_URL, token, fileList[0].originFileObj);
-                    messageApi.destroy();
-                    if (!avatarUrl || typeof avatarUrl !== 'string') {
-                         throw new Error("URL ảnh đại diện không hợp lệ trả về.");
-                    }
-                } catch (uploadError) {
-                     messageApi.destroy();
-                     error(`Lỗi tải ảnh: ${uploadError.message}`, messageApi);
-                     setIsSubmitting(false);
-                     return;
+                avatarUrl = await uploadImageAPI(UPLOAD_URL, token, fileList[0].originFileObj);
+                if (!avatarUrl) {
+                    throw new Error("Không nhận được URL ảnh sau khi tải lên.");
                 }
-            } else {
-                avatarUrl = "";
             }
 
             const employeePayload = {
@@ -126,34 +100,32 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                 storeId: values.storeId ? String(values.storeId) : null,
             };
 
-            messageApi.open({ type: 'loading', content: 'Đang thêm nhân viên...', duration: 0 });
             await createEmployeeAPI(CREATE_URL, token, employeePayload);
-            messageApi.destroy();
-            success('Thêm nhân viên thành công!', messageApi);
 
+            success('Thêm nhân viên thành công!', messageApi);
+            
             setTimeout(() => {
                 form.resetFields();
                 setFileList([]);
-                if (onSuccess) onSuccess();
+                onSuccess();
                 onClose();
-            }, 1000);
+            }, 1500);
 
         } catch (err) {
-            messageApi.destroy();
-            console.error("Add employee failed:", err);
             error(err.message || "Thêm nhân viên thất bại", messageApi);
+            setTimeout(() => {
+                setIsSubmitting(false);
+            }, 1500);
+            
+            return;
+        } finally {
             setIsSubmitting(false);
         }
     };
 
     const handlePreview = async (file) => {
         if (!file.url && !file.preview) {
-             try {
-                file.preview = await getBase64(file.originFileObj);
-            } catch (e) {
-                messageApi.error("Không thể xem trước file!");
-                return;
-            }
+            file.preview = await getBase64(file.originFileObj);
         }
         setPreviewImage(file.url || file.preview);
         setPreviewVisible(true);
@@ -165,24 +137,20 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
             setFileList([]);
             return;
         }
-
-        if (file.originFileObj && file.status !== 'error' && file.status !== 'uploading') {
-             try {
-                const base64 = await getBase64(file.originFileObj);
-                setFileList([{
-                    uid: file.uid,
-                    name: file.name,
-                    status: 'done',
-                    originFileObj: file.originFileObj,
-                    url: base64
-                }]);
-            } catch (e) {
-                messageApi.error('Không thể đọc file ảnh.');
-                setFileList([]);
-            }
+        const fileToProcess = file.originFileObj || file;
+        try {
+            const preview = await getBase64(fileToProcess);
+            setFileList([{
+                uid: file.uid,
+                name: file.name,
+                status: 'done',
+                originFileObj: fileToProcess,
+                url: preview
+            }]);
+        } catch (e) {
+            messageApi.error('Không thể xem trước ảnh.');
         }
     };
-
 
     const uploadButton = (
         <div>
@@ -199,31 +167,16 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
             footer={null}
             width={800}
             destroyOnClose
-            className="add-employee-modal"
         >
             {contextHolder}
-            <Spin spinning={isSubmitting} tip="Đang xử lý...">
+            <Spin spinning={isSubmitting}>
                 <Form form={form} layout="vertical" onFinish={handleAddEmployee} className="add-employee-form">
-                    <Form.Item
-                        name="avatar_display"
-                        label="Ảnh đại diện"
-                        className="avatar-uploader-item-modal"
-                     >
+                    <Form.Item name="avatar_display" label="Ảnh đại diện" className="avatar-uploader-item-modal">
                          <Upload
                             listType="picture-card"
                             className="avatar-uploader"
                             fileList={fileList}
-                            beforeUpload={(file) => {
-                                const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-                                if (!isJpgOrPng) {
-                                    messageApi.error('Bạn chỉ có thể tải lên file JPG/PNG!');
-                                }
-                                const isLt2M = file.size / 1024 / 1024 < 2;
-                                if (!isLt2M) {
-                                    messageApi.error('Ảnh phải nhỏ hơn 2MB!');
-                                }
-                                return isJpgOrPng && isLt2M ? false : Upload.LIST_IGNORE;
-                            }}
+                            beforeUpload={() => false} 
                             onPreview={handlePreview}
                             onChange={handleAvatarChange}
                             onRemove={() => { setFileList([]); return true; }}
@@ -355,8 +308,8 @@ const AddEmployeeModal = ({ visible, onClose, onSuccess, stores, token }) => {
                         <Button onClick={onClose} style={{ marginRight: 8 }} disabled={isSubmitting}>
                             Hủy
                         </Button>
-                        <Button type="primary" htmlType="submit" loading={isSubmitting} disabled={isSubmitting}>
-                            {isSubmitting ? 'Đang thêm...' : 'Thêm Nhân Viên'}
+                        <Button type="primary" htmlType="submit" loading={isSubmitting}>
+                            Thêm Nhân Viên
                         </Button>
                     </Form.Item>
                 </Form>

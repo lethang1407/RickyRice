@@ -5,23 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1eec8c2e-66ba-4a78-9a0d-e4163162dcbd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front-End/swp_interface/src/Components/StoreOwner/AddEmployeeModal/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front-End/swp_interface/src/Components/StoreOwner/AddEmployeeModal/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front-End/swp_interface/src/Pages/ShopOwner/Employee/Employee.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front-End/swp_interface/src/Pages/ShopOwner/Employee/Employee.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front-End/swp_interface/src/Pages/ShopOwner/EmployeeUpdate/EmployeeUpdate.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front-End/swp_interface/src/Pages/ShopOwner/EmployeeUpdate/EmployeeUpdate.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front-End/swp_interface/src/Pages/ShopOwner/ProductUpdate/ProductUpdate.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front-End/swp_interface/src/Pages/ShopOwner/ProductUpdate/ProductUpdate.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front-End/swp_interface/src/Pages/ShopOwner/StatisticChart/StatisticChart.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front-End/swp_interface/src/Pages/ShopOwner/StatisticChart/StatisticChart.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/controller/store_owner/StoreOwnerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/controller/store_owner/StoreOwnerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/dto/store_owner/all_employee/StoreAccountOfEmployeeDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/dto/store_owner/all_employee/StoreAccountOfEmployeeDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/dto/store_owner/all_employee/StoreAddEmployeeDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/dto/store_owner/all_employee/StoreAddEmployeeDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/dto/store_owner/all_employee/StoreEmployeeDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/dto/store_owner/all_employee/StoreEmployeeDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/dto/store_owner/all_product/StoreProductDetailDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/dto/store_owner/all_product/StoreProductDetailDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/dto/store_owner/all_store/StoreInfoDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/dto/store_owner/all_store/StoreInfoDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/exception/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/impl/EmployeeServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/impl/EmployeeServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/impl/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/impl/ProductServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/swp391/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -137,7 +121,9 @@
       <workItem from="1743164588505" duration="189000" />
       <workItem from="1743223059126" duration="1388000" />
       <workItem from="1743233360070" duration="5689000" />
-      <workItem from="1743239097932" duration="1887000" />
+      <workItem from="1743239097932" duration="2516000" />
+      <workItem from="1743245837309" duration="78000" />
+      <workItem from="1743255901248" duration="1869000" />
     </task>
     <servers />
   </component>
