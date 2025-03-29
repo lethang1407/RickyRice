@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Form, Input, Button, Alert, Spin, Row, Col } from "antd";
+import { Form, Input, Button, Alert, Row, Col } from "antd";
 import { getToken } from "../../Utils/UserInfoUtils";
 import API from "../../Utils/API/API.js";
 
@@ -36,7 +36,7 @@ const ChangePassword = () => {
     return errors;
   };
 
-  const validateFields = () => {
+  const validateFields = (oldPassword, newPassword, confirmPassword) => {
     let errors = [];
     if (!oldPassword) {
       errors.push("Mật khẩu hiện tại không được để trống.");
@@ -54,10 +54,10 @@ const ChangePassword = () => {
     return errors;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (values) => {
+    const { oldPassword, newPassword, confirmPassword } = values;
 
-    const errors = validateFields();
+    const errors = validateFields(oldPassword, newPassword, confirmPassword);
     if (errors.length > 0) {
       setMessage(errors.join(" "));
       setMessageType("error");
