@@ -17,6 +17,7 @@ import "./style.css";
 import CustomFooter from "../../Components/Footer";
 import NavbarAccount from "../Account/NavbarAccount";
 import logo from "../../assets/img/logo-no-background.png";
+import { WebSocketProvider } from "../../Utils/Websocket/WebsocketContextProvider";
 
 const { Header, Sider, Content } = Layout;
 
@@ -124,7 +125,7 @@ const Employee_Customer = () => {
                 height: 64,
               }}
             />
-            <NavbarAccount />
+            <WebSocketProvider><NavbarAccount /></WebSocketProvider>
           </Header>
           <Content
             style={{

@@ -31,6 +31,7 @@ import { getToken } from "../../../Utils/UserInfoUtils";
 import moment from "moment";
 import "../ProductIndex.css";
 import NavbarAccount from "../../Account/NavbarAccount";
+import { WebSocketProvider } from "../../../Utils/Websocket/WebsocketContextProvider";
 
 const { Header, Sider, Content } = Layout;
 
@@ -342,7 +343,7 @@ AEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaA
                 height: 64,
               }}
             />
-            <NavbarAccount />
+            <WebSocketProvider><NavbarAccount /></WebSocketProvider>
           </Header>
           <Content
             style={{

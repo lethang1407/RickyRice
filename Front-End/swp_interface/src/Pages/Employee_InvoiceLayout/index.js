@@ -26,7 +26,7 @@ import {
 } from "antd";
 import "./styleInvoices.css";
 import CustomFooter from "../../Components/Footer";
-import { useWebSocket } from "../../Utils/Websocket/WebsocketContextProvider";
+import { useWebSocket, WebSocketProvider } from "../../Utils/Websocket/WebsocketContextProvider";
 import { openNotification } from "../../Utils/AntdNotification";
 import NavbarAccount from "../Account/NavbarAccount";
 
@@ -166,7 +166,7 @@ const Employee_Invoices = () => {
                 height: 64,
               }}
             />
-            <NavbarAccount />
+            <WebSocketProvider><NavbarAccount /></WebSocketProvider>
           </Header>
           <Content
             style={{

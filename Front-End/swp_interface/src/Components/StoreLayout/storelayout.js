@@ -20,6 +20,7 @@ import {
 import CustomFooter from "../../Components/Footer";
 import NavbarAccount from "../../Pages/Account/NavbarAccount";
 import logo from "../../assets/img/logo-no-background.png";
+import { WebSocketProvider } from "../../Utils/Websocket/WebsocketContextProvider";
 
 const { Header, Sider, Content } = Layout;
 
@@ -41,6 +42,8 @@ const StoreLayout = () => {
     ? "3"
     : location.pathname.startsWith(`/store/${storeID.id}/category`)
     ? "5"
+    : location.pathname.startsWith(`/store/${storeID.id}/package`)
+    ? "6"
     : "";
 
   return (
@@ -144,6 +147,18 @@ const StoreLayout = () => {
                   </Link>
                 ),
               },
+              {
+                key: "6",
+                icon: <FileTextOutlined />,
+                label: (
+                  <Link
+                    to={`/store/${storeID.id}/package`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    Quy cách đóng gói
+                  </Link>
+                ),
+              },
             ]}
           />
         </Sider>
@@ -167,7 +182,7 @@ const StoreLayout = () => {
                 height: 64,
               }}
             />
-            <NavbarAccount />
+            <WebSocketProvider><NavbarAccount /></WebSocketProvider>
           </Header>
           <Content
             style={{
