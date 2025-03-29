@@ -119,7 +119,7 @@ const InvoiceCustomerCreate = ({ onCustomerCreated }) => {
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Nhập tên khách hàng di',
+                                        message: 'Nhập tên khách hàng(đại lý)!!!',
                                     },
                                     {
                                         validator: (_, value) => {

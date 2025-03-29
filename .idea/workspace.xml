@@ -5,8 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1eec8c2e-66ba-4a78-9a0d-e4163162dcbd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front-End/swp_interface/src/Pages/Employee_CustomerLayout/components/customerCreate.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front-End/swp_interface/src/Pages/Employee_CustomerLayout/components/customerCreate.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/swp391/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/swp391/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -133,7 +131,7 @@
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/swp391/src/main/java/org/group5/swp391/service/EmployeeService.java</url>
           <line>16</line>
-          <properties class="org.group5.swp391.service.EmployeeService">
+          <properties class="org.group5.swp391.service.EmployeeService" method="updateStoreEmployeeImage">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
