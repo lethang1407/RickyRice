@@ -56,4 +56,6 @@ public interface AppStatisticsRepository extends JpaRepository<AppStatistics, St
     @Query("SELECT SUM(a.subcriptionPlanPrice) FROM AppStatistics a")
     Double calculateTotalRevenue();
 
+    @Query("SELECT DISTINCT a.subcriptionPlanName FROM AppStatistics a WHERE a.createdBy = :createdBy")
+    List<String> findSubscriptionNamesByCreatedBy(String createdBy);
 }

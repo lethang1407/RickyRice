@@ -35,7 +35,6 @@
   justify-content: space-between;
 }
 
-
 /* Tăng kích thước nút thanh toán */
 .subscription-card button {
   font-size: 18px;
@@ -86,4 +85,17 @@
   justify-content: center;
   width: 100%;
   flex-wrap: wrap;
+}
+
+.subscription-plans-wrapper {
+  /* background-image: url("/assets/images/background.jpg"); */
+  background-size: cover; /* Đảm bảo ảnh phủ kín màn hình */
+  background-position: center; /* Căn giữa ảnh */
+  background-repeat: no-repeat; /* Không lặp lại ảnh */
+  width: 100vw; /* Chiều rộng toàn màn hình */
+  height: 100vh; /* Chiều cao toàn màn hình */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }

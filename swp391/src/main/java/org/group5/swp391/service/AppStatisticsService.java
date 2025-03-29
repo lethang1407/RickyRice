@@ -14,4 +14,6 @@ public interface AppStatisticsService {
     List<String> getAllSubscriptionPlanNames();
 
     Double calculateTotalRevenue();
+
+    List<String> getSubscriptionPlansByUsername(String username);
 }

@@ -47,6 +47,7 @@ import UpdateStore from "./Pages/StoreManagement/StoreInfor/UpdateStore.js";
 import StatisticChart from "./Pages/ShopOwner/StatisticChart/StatisticChart.js";
 import DebtEmploy from "./Pages/Employee_DebtLayout/index.js";
 import Package from "./Pages/Package/index.js";
+import Transactions from "./Pages/ShopOwner/TransactionOwner/Transaction.js";
 
 function App() {
   return (
@@ -130,6 +131,7 @@ function App() {
                 path="create-store/:transactionNo"
                 element={<CreateStore />}
               ></Route>
+              <Route path="transaction-history" element={<Transactions />}></Route>
             </Route>
             <Route path="/vnpay/payment-return" element={<PaymentReturn />} />
           </Route>
