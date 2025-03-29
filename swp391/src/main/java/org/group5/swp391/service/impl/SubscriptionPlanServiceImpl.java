@@ -118,6 +118,4 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
 
         return response;
     }
-
-
 }

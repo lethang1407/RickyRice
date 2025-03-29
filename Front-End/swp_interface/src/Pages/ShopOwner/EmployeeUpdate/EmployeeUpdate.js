@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Spin, Card, Input, Button, Form, DatePicker, Radio, Upload, Modal, message, Avatar } from "antd";
-import { UserOutlined, PlusOutlined } from "@ant-design/icons";
+import { UserOutlined, PlusOutlined, LockOutlined } from "@ant-design/icons";
 import axios from "axios";
 import API from "../../../Utils/API/API";
 import { getToken } from "../../../Utils/UserInfoUtils";
@@ -9,7 +9,6 @@ import { getDataWithToken } from "../../../Utils/FetchUtils";
 import "./style.scss";
 import { success, error } from '../../../Utils/AntdNotification';
 import moment from 'moment';
-
 
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -19,12 +18,10 @@ const getBase64 = (file) =>
         reader.onerror = reject;
     });
 
-
 const uploadAvatarAPI = async (url, token, file) => {
     try {
         const formData = new FormData();
         formData.append("file", file);
-
 
         const response = await axios.put(url, formData, {
             headers: {
@@ -33,18 +30,30 @@ const uploadAvatarAPI = async (url, token, file) => {
             },
         });
 
-
         if (response.data) {
-            return response.data;
+            if (typeof response.data === 'string' && response.data.startsWith('http')) {
+                return response.data;
+            }
+            if (typeof response.data === 'object' && response.data.url) {
+                return response.data.url;
+            }
+            if (typeof response.data === 'object' && response.data.link) {
+                return response.data.link;
+            }
+            console.warn("Unexpected avatar upload response format:", response.data);
+            throw new Error("Tải ảnh đại diện lên thất bại: Định dạng phản hồi không mong đợi.");
         } else {
-            throw new Error("Tải ảnh đại diện lên thất bại: Không có URL trả về.");
+            throw new Error("Tải ảnh đại diện lên thất bại: Không có dữ liệu trả về.");
         }
     } catch (err) {
         console.error("Lỗi khi tải ảnh đại diện lên (API):", err);
-        throw new Error(err.response?.data?.message || "Tải ảnh đại diện lên thất bại.");
+        const errorMsg = err.response?.data?.message || err.message || "Tải ảnh đại diện lên thất bại.";
+        if (errorMsg.toLowerCase().includes("invalid file") || errorMsg.toLowerCase().includes("unsupported image type")) {
+            throw new Error("Tải ảnh đại diện lên thất bại: Định dạng file không hợp lệ hoặc không được hỗ trợ.");
+        }
+        throw new Error(errorMsg);
     }
 };
-
 
 const updateEmployeeAPI = async (url, token, employee) => {
     try {
@@ -64,7 +73,6 @@ const updateEmployeeAPI = async (url, token, employee) => {
     }
 };
 
-
 const EmployeeUpdate = () => {
     const location = useLocation();
     const { employeeID } = location.state || {};
@@ -81,82 +89,103 @@ const EmployeeUpdate = () => {
 
     const UPLOAD_AVATAR_URL = `${API.STORE_OWNER.UPLOAD_EMPLOYEE_AVATAR}`;
     const UPDATE_EMPLOYEE_URL = `${API.STORE_OWNER.UPDATE_STORE_EMPLOYEE}/${employeeID}`;
+    const GET_EMPLOYEE_DETAIL_URL = `${API.STORE_OWNER.GET_STORE_EMPLOYEE_DETAIL}?id=${employeeID}`;
 
     useEffect(() => {
         const fetchData = async () => {
+            if (!employeeID) {
+                error("Không tìm thấy ID nhân viên.", messageApi);
+                navigate("/store-owner/employee");
+                return;
+            }
             setLoading(true);
             try {
-                const response = await getDataWithToken(
-                    `${API.STORE_OWNER.GET_STORE_EMPLOYEE_DETAIL}?id=${employeeID}`,
-                    token
-                );
-                const initialFileList = response.storeAccount.avatar
-                    ? [{ uid: '-1', name: 'avatar.png', status: 'done', url: response.storeAccount.avatar }]
+                const response = await getDataWithToken(GET_EMPLOYEE_DETAIL_URL, token);
+
+                if (!response || !response.storeAccount) {
+                    throw new Error("Dữ liệu nhân viên không hợp lệ trả về từ API.");
+                }
+
+                const { storeAccount, storeInfo } = response;
+
+                const initialFileList = storeAccount.avatar
+                    ? [{ uid: '-1', name: 'avatar.png', status: 'done', url: storeAccount.avatar }]
                     : [];
                 setFileList(initialFileList);
 
-
                 form.setFieldsValue({
-                    name: response.storeAccount.name,
-                    email: response.storeAccount.email,
-                    phoneNumber: response.storeAccount.phoneNumber,
-                    gender: response.storeAccount.gender,
-                    birthDate: response.storeAccount.birthDate ? moment(response.storeAccount.birthDate) : null,
-                    storeName: response.storeInfo.storeName,
-                    storeID: response.storeInfo.storeID,
+                    name: storeAccount.name,
+                    username: storeAccount.username,
+                    email: storeAccount.email,
+                    phoneNumber: storeAccount.phoneNumber,
+                    gender: storeAccount.gender,
+                    birthDate: storeAccount.birthDate ? moment(storeAccount.birthDate) : null,
+                    storeName: storeInfo?.storeName,
+                    storeID: storeInfo?.storeID,
                 });
 
-
             } catch (err) {
+                console.error("Error fetching employee details:", err);
                 error(err.message || "Không thể tải chi tiết nhân viên", messageApi);
-                navigate("/store-owner/employee");
             } finally {
                 setLoading(false);
             }
         };
 
-
-        if (employeeID) {
-            fetchData();
-        }
-    }, [employeeID, token, navigate, form, messageApi]);
+        fetchData();
+    }, [employeeID, token, navigate, form, messageApi, GET_EMPLOYEE_DETAIL_URL]);
 
 
     const handleUpdate = async (values) => {
         setIsSubmitting(true);
         let avatarUrl = null;
 
-
         try {
             if (fileList.length > 0 && fileList[0].originFileObj) {
-                avatarUrl = await uploadAvatarAPI(UPLOAD_AVATAR_URL, token, fileList[0].originFileObj);
-                if (!avatarUrl) return;
+                messageApi.open({ type: 'loading', content: 'Đang tải ảnh đại diện...', duration: 0 });
+                try {
+                    avatarUrl = await uploadAvatarAPI(UPLOAD_AVATAR_URL, token, fileList[0].originFileObj);
+                    messageApi.destroy();
+                    if (!avatarUrl || typeof avatarUrl !== 'string') {
+                        throw new Error("URL ảnh đại diện không hợp lệ trả về.");
+                    }
+                } catch (uploadError) {
+                    messageApi.destroy();
+                    error(`Lỗi tải ảnh: ${uploadError.message}`, messageApi);
+                    setIsSubmitting(false);
+                    return;
+                }
             } else if (fileList.length > 0 && fileList[0].url) {
                 avatarUrl = fileList[0].url;
             } else {
                 avatarUrl = "";
             }
 
-
-            const employee = {
+            const employeeUpdatePayload = {
                 employeeID: employeeID,
                 storeAccount: {
                     name: values.name,
+                    username: values.username,
                     email: values.email,
                     phoneNumber: values.phoneNumber,
                     gender: values.gender,
-                    birthDate: values.birthDate ? values.birthDate.toISOString() : null,
+                    birthDate: values.birthDate ? values.birthDate.format('YYYY-MM-DD') : null,
                     avatar: avatarUrl,
+                    ...(values.password && { password: values.password }),
                 },
             };
-            await updateEmployeeAPI(UPDATE_EMPLOYEE_URL, token, employee);
+
+            messageApi.open({ type: 'loading', content: 'Đang cập nhật thông tin nhân viên...', duration: 0 });
+            await updateEmployeeAPI(UPDATE_EMPLOYEE_URL, token, employeeUpdatePayload);
+            messageApi.destroy();
             success('Cập nhật nhân viên thành công!', messageApi);
             setTimeout(() =>
                 navigate("/store-owner/employee"),
                 1000
-            )
+            );
         } catch (err) {
-            console.log(err);
+            messageApi.destroy();
+            console.error("Update failed:", err);
             error(err.message || "Cập nhật nhân viên thất bại", messageApi);
         } finally {
             setIsSubmitting(false);
@@ -166,11 +195,37 @@ const EmployeeUpdate = () => {
 
     const handlePreview = async (file) => {
         if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
+            try {
+                file.preview = await getBase64(file.originFileObj);
+            } catch (e) {
+                messageApi.error("Không thể xem trước file!");
+                return;
+            }
         }
         setPreviewImage(file.url || file.preview);
         setPreviewVisible(true);
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+    };
+
+    const handleAvatarChange = ({ file, fileList: newFileList }) => {
+        if (file.originFileObj && file.status !== 'error' && file.status !== 'uploading') {
+            getBase64(file.originFileObj)
+                .then(base64 => {
+                    setFileList([{
+                        uid: file.uid,
+                        name: file.name,
+                        status: 'done',
+                        originFileObj: file.originFileObj,
+                        url: base64
+                    }]);
+                })
+                .catch(() => {
+                    messageApi.error('Không thể đọc file ảnh.');
+                    setFileList([]);
+                });
+        } else if (file.status === 'removed') {
+            setFileList([]);
+        }
     };
 
 
@@ -180,123 +235,108 @@ const EmployeeUpdate = () => {
             <div style={{ marginTop: 8 }}>Tải lên</div>
         </div>
     );
+
     return (
         <div className="update-employee-container">
             {contextHolder}
             {loading ? (
                 <Spin size="large" style={{ display: "block", margin: "50px auto" }} />
             ) : (
-                <Card title="Cập nhật nhân viên" className="update-employee-card">
+                <Card title="Cập nhật thông tin nhân viên" className="update-employee-card">
                     <Form form={form} layout="vertical" onFinish={handleUpdate} className="update-employee-form">
                         <Form.Item
-                            name="avatar"
                             label="Ảnh đại diện"
                             className="avatar-uploader-item"
                         >
                             <Upload
                                 listType="picture-card"
                                 className="avatar-uploader"
-                                showUploadList={false}
+                                fileList={fileList}
                                 beforeUpload={(file) => {
                                     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
                                     if (!isJpgOrPng) {
                                         messageApi.error('Bạn chỉ có thể tải lên file JPG/PNG!');
-                                        return Upload.LIST_IGNORE;
                                     }
                                     const isLt2M = file.size / 1024 / 1024 < 2;
                                     if (!isLt2M) {
                                         messageApi.error('Ảnh phải nhỏ hơn 2MB!');
-                                        return Upload.LIST_IGNORE;
                                     }
-                                    return false;
+                                    return isJpgOrPng && isLt2M ? false : Upload.LIST_IGNORE;
                                 }}
                                 onPreview={handlePreview}
-                                onChange={async ({ file, fileList }) => {
-                                    if (file.status === 'removed') {
-                                        setFileList([]);
-                                        return;
-                                    }
-
-
-                                    try {
-                                        const preview = await getBase64(file);
-                                        setFileList([{
-                                            uid: file.uid,
-                                            name: file.name,
-                                            status: 'done',
-                                            originFileObj: file,
-                                            url: preview
-                                        }]);
-                                    } catch (error) {
-                                        messageApi.error('Không thể tải ảnh lên');
-                                    }
-                                }}
+                                onChange={handleAvatarChange}
                                 maxCount={1}
                             >
-                                {fileList.length > 0 ? (
-                                    <Avatar
-                                        size={100}
-                                        src={fileList[0].url}
-                                        icon={<UserOutlined />}
-                                        className="uploaded-avatar"
-                                    />
-                                ) : (
-                                    uploadButton
-                                )}
+                                {fileList.length < 1 && uploadButton}
                             </Upload>
                         </Form.Item>
-
 
                         <div className="form-columns">
                             <div className="form-column">
                                 <Form.Item
                                     name="name"
                                     label="Họ và tên"
-                                    rules={[{ required: true, message: "Vui lòng nhập họ và tên" }]}
+                                    rules={[
+                                        { required: true, message: "Vui lòng nhập họ và tên" },
+                                        { min: 2, message: "Họ tên phải có ít nhất 2 ký tự" },
+                                        { max: 100, message: "Họ tên không được vượt quá 100 ký tự" }
+                                    ]}
                                 >
-                                    <Input prefix={<UserOutlined />} />
+                                    <Input prefix={<UserOutlined />} placeholder="Nguyễn Văn A" />
                                 </Form.Item>
 
+                                <Form.Item
+                                    name="username"
+                                    label="Tên đăng nhập"
+                                    rules={[
+                                        { required: true, message: "Vui lòng nhập tên đăng nhập" },
+                                        { min: 3, message: "Tên đăng nhập phải có ít nhất 3 ký tự" },
+                                        { max: 50, message: "Tên đăng nhập không được vượt quá 50 ký tự" }
+                                    ]}
+                                >
+                                    <Input prefix={<UserOutlined />} placeholder="tendangnhap" />
+                                </Form.Item>
 
                                 <Form.Item
                                     name="email"
                                     label="Email"
                                     rules={[
-                                        {
-                                            required: true,
-                                            message: 'Please input your Email!',
-                                        }, {
-                                            pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                                            message: 'Email is not Valid!'
-                                        }
+                                        { required: true, message: 'Vui lòng nhập Email' },
+                                        { type: 'email', message: 'Email không hợp lệ' },
+                                        { max: 100, message: "Email không được vượt quá 100 ký tự" }
                                     ]}
                                 >
-                                    <Input />
+                                    <Input placeholder="example@email.com" />
                                 </Form.Item>
-
 
                                 <Form.Item
                                     name="phoneNumber"
                                     label="Số điện thoại"
                                     rules={[
-                                        {
-                                            required: true,
-                                            message: 'Please input your Phone Number!',
-                                        },
-                                        {
-                                            pattern: /^(0[3|5|7|8|9])(\d{8})$/,
-                                            message: 'Phone Number is not Valid!'
-                                        }
+                                        { required: true, message: 'Vui lòng nhập số điện thoại' },
+                                        { pattern: /^(0[3|5|7|8|9])(\d{8})$/, message: 'Số điện thoại không hợp lệ' }
                                     ]}
                                 >
-                                    <Input />
+                                    <Input placeholder="0912345678" maxLength={10} />
                                 </Form.Item>
                             </div>
+
                             <div className="form-column">
+                                <Form.Item
+                                    name="password"
+                                    label="Mật khẩu mới"
+                                    tooltip="Để trống nếu không muốn thay đổi mật khẩu"
+                                    rules={[
+                                        { min: 6, message: 'Mật khẩu mới phải có ít nhất 6 ký tự' },
+                                        { max: 100, message: 'Mật khẩu mới không được vượt quá 100 ký tự' },
+                                    ]}
+                                >
+                                    <Input.Password prefix={<LockOutlined />} placeholder="Nhập mật khẩu mới" />
+                                </Form.Item>
+
                                 <Form.Item
                                     name="gender"
                                     label="Giới tính"
-                                    rules={[{ required: true, message: "Vui lòng chọn giới tính" }]}
                                 >
                                     <Radio.Group className="gender-radio-group">
                                         <Radio value={true}>Nam</Radio>
@@ -304,45 +344,41 @@ const EmployeeUpdate = () => {
                                     </Radio.Group>
                                 </Form.Item>
 
-
                                 <Form.Item
                                     name="birthDate"
                                     label="Ngày sinh"
-                                    rules={[{ required: true, message: "Vui lòng chọn ngày sinh" }]}
                                 >
-                                    <DatePicker className="full-width-datepicker" format="DD/MM/YYYY" />
+                                    <DatePicker className="full-width-datepicker" format="DD/MM/YYYY" placeholder="Chọn ngày" />
                                 </Form.Item>
+
                                 <Form.Item name="storeName" label="Cửa hàng">
                                     <Input disabled />
                                 </Form.Item>
                             </div>
                         </div>
 
-
                         <Form.Item name="storeID" hidden>
                             <Input />
                         </Form.Item>
 
-
                         <div className="update-employee-actions">
-                            <Button type="primary" htmlType="submit" loading={isSubmitting}>
-                                Cập nhật
+                            <Button type="primary" htmlType="submit" loading={isSubmitting} disabled={isSubmitting}>
+                                {isSubmitting ? 'Đang cập nhật...' : 'Cập nhật'}
                             </Button>
-                            <Button onClick={() => navigate("/store-owner/employee")} danger className="cancel-button">
+                            <Button onClick={() => navigate("/store-owner/employee")} danger className="cancel-button" disabled={isSubmitting}>
                                 Hủy
                             </Button>
                         </div>
                     </Form>
 
-
                     <Modal
-                        visible={previewVisible}
+                        open={previewVisible}
                         title={previewTitle}
                         footer={null}
                         onCancel={() => setPreviewVisible(false)}
                         className="preview-modal"
                     >
-                        <img alt="preview" style={{ width: "100%" }} src={previewImage} />
+                        <img alt="Xem trước" style={{ width: "100%" }} src={previewImage} />
                     </Modal>
                 </Card>
             )}
@@ -350,6 +386,4 @@ const EmployeeUpdate = () => {
     );
 };
 
-
 export default EmployeeUpdate;
-

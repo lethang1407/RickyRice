@@ -13,6 +13,7 @@ import {
   TableOutlined,
   ArrowLeftOutlined,
   BarChartOutlined,
+  CreditCardOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import "./style.scss";
@@ -20,6 +21,7 @@ import CustomFooter from "../../Footer";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import NavbarAccount from "../../../Pages/Account/NavbarAccount";
 import logo from "../../../assets/img/logo-no-background.png";
+import { WebSocketProvider } from "../../../Utils/Websocket/WebsocketContextProvider";
 const { Header, Sider, Content } = Layout;
 
 const StoreOwnerLayout = () => {
@@ -43,6 +45,8 @@ const StoreOwnerLayout = () => {
     ? "5.1"
     : location.pathname.startsWith("/store-owner/statistic/chart")
     ? "5.2"
+    : location.pathname.startsWith("/store-owner/transaction-history")
+    ? "6"
     : "";
 
   return (
@@ -168,6 +172,18 @@ const StoreOwnerLayout = () => {
                   },
                 ],
               },
+              {
+                key: "6",
+                icon: <CreditCardOutlined />,
+                label: (
+                  <Link
+                    to="/store-owner/transaction-history"
+                    style={{ textDecoration: "none" }}
+                  >
+                    Lịch sử thanh toán
+                  </Link>
+                ),
+              },
             ]}
           />
         </Sider>
@@ -191,7 +207,7 @@ const StoreOwnerLayout = () => {
                 height: 64,
               }}
             />
-            <NavbarAccount />
+            <WebSocketProvider><NavbarAccount /></WebSocketProvider>
           </Header>
           <Content
             style={{

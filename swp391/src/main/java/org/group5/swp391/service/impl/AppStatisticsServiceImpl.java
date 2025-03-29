@@ -54,4 +54,9 @@ public class AppStatisticsServiceImpl implements AppStatisticsService {
     public Double calculateTotalRevenue() {
         return appStatisticsRepository.calculateTotalRevenue();
     }
+
+    // lấy danh sách các gói đăng kí theo username
+    public List<String> getSubscriptionPlansByUsername(String username) {
+        return appStatisticsRepository.findSubscriptionNamesByCreatedBy(username);
+    }
 }

@@ -167,12 +167,16 @@ const SubscriptionPlan = () => {
   ];
 
   return (
-    <div>
+    <div className="mt-3 container">
       {successMessage && (
-        <Alert message={successMessage} type="success" showIcon />
+        <Alert
+          message={successMessage}
+          type="success"
+          showIcon
+          style={{ marginBottom: 20 }}
+        />
       )}
-      <br />
-      <h2>Subscription Plans</h2>
+      <h2 className="mb-4 text-center">Gói đăng kí</h2>
       <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
         <Col>
           <Input

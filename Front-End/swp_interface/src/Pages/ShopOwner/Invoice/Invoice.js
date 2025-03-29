@@ -29,6 +29,7 @@ const Invoice = () => {
     const [filters, setFilters] = useState({
         phoneNumber: '',
         invoiceNumber: '',
+        customerName: '',
         store: [],
         totalMoneyMin: null,
         totalMoneyMax: null,
@@ -157,6 +158,7 @@ const Invoice = () => {
         return qs.stringify({
             phoneNumber: filters.phoneNumber,
             invoiceNumber: filters.invoiceNumber,
+            customerName: filters.customerName,
             store: filters.store,
             totalMoneyMin: filters.totalMoneyMin,
             totalMoneyMax: filters.totalMoneyMax,
@@ -222,6 +224,7 @@ const Invoice = () => {
         setFilters({
             phoneNumber: values.phoneNumber || '',
             invoiceNumber: values.invoiceNumber || '',
+            customerName: values.customerName || '',
             store: values.store || [],
             totalMoneyMin: values.totalMoneyMin || null,
             totalMoneyMax: values.totalMoneyMax || null,
@@ -239,6 +242,7 @@ const Invoice = () => {
         setFilters({
             phoneNumber: '',
             invoiceNumber: '',
+            customerName: '',
             store: [],
             totalMoneyMin: null,
             totalMoneyMax: null,
@@ -280,6 +284,11 @@ const Invoice = () => {
                 <Row gutter={16} className="filter-form-row">
                     <Col span={4} className="filter-form-col">
                         <Form.Item label="Mã Hóa Đơn" name="invoiceNumber">
+                            <Input placeholder="Nhập mã hóa đơn" className="filter-form-input" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} className="filter-form-col">
+                        <Form.Item label="Tên khách hàng" name="customerName">
                             <Input placeholder="Nhập mã hóa đơn" className="filter-form-input" />
                         </Form.Item>
                     </Col>
