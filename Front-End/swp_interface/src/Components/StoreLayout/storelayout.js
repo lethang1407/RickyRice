@@ -7,6 +7,7 @@ import {
   ShopOutlined,
   TeamOutlined,
   IdcardOutlined,
+  RollbackOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 // import './style.css';
@@ -44,6 +45,8 @@ const StoreLayout = () => {
     ? "5"
     : location.pathname.startsWith(`/store/${storeID.id}/package`)
     ? "6"
+    : location.pathname.startsWith(`/store-owner/store`)
+    ? "7"
     : "";
 
   return (
@@ -159,6 +162,18 @@ const StoreLayout = () => {
                   </Link>
                 ),
               },
+              {
+                key: "7",
+                icon: <RollbackOutlined />,
+                label: (
+                  <Link
+                    to={`/store-owner/store`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    Cửa hàng của bạn
+                  </Link>
+                ),
+              }
             ]}
           />
         </Sider>

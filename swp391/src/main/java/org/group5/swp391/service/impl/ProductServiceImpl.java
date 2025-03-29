@@ -379,7 +379,7 @@ public class ProductServiceImpl implements ProductService {
         updatingProduct.setName(storeDetailProductDTO.getName());
         updatingProduct.setPrice(storeDetailProductDTO.getPrice());
         updatingProduct.setInformation(storeDetailProductDTO.getInformation());
-        updatingProduct.setQuantity(storeDetailProductDTO.getQuantity());
+        updatingProduct.setQuantity(updatingProduct.getQuantity());
         updatingProduct.setProductImage(storeDetailProductDTO.getProductImage());
         Category cateExisting = categoryRepository
                 .findById(storeDetailProductDTO.getCategoryID())

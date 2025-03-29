@@ -10,7 +10,7 @@ import moment from 'moment';
 import CreateProduct from './CreateProduct';
 import UpdateProduct from './UpdateProduct';
 import Filter from './filter';
-
+import rice_default from '../../../assets/img/rice_default.jpg';
 
 const Product = () => {
     const [messageApi, contextHolder] = message.useMessage();
@@ -105,13 +105,14 @@ const Product = () => {
             title: 'Ảnh',
             dataIndex: 'productImage',
             key: 'productImage',
+            align: 'center',
             width: '10%',
             render: (productImage) => (
-                <img style={{ width: '100%' }} src={productImage} alt="" />
+                <img style={{ width: '70px', height: '70px' }} src={productImage ? productImage : rice_default} alt="" />
             ),
         },
         { title: 'Tên Sản Phẩm', dataIndex: 'name', key: 'name', width: '15%' },
-        { title: 'Giá', dataIndex: 'price', key: 'price', width: '5%', sorter: true },
+        { title: 'Giá', dataIndex: 'price', key: 'price', width: '5%', sorter: true, align: 'right', render: (price) => currencyFormat(price)},
         {
             title: 'Thuộc Tính Sản Phẩm',
             dataIndex: 'storeDetailProductAttributeDTOList',
@@ -123,8 +124,8 @@ const Product = () => {
                     return <Tag color={randomColor}>{productAttributeDTO.value}</Tag>;
                 }),
         },
-        { title: 'Số Lượng', dataIndex: 'quantity', key: 'quantity', width: '5%', sorter: true },
-        { title: 'Thông Tin Sản Phẩm', dataIndex: 'information', key: 'information', width: '15%' },
+        { title: 'Số Lượng', dataIndex: 'quantity', key: 'quantity', width: '7%', align: 'right', sorter: true },
+        { title: 'Thông Tin Sản Phẩm', dataIndex: 'information', key: 'information', align: 'left', width: '15%' },
         {
             title: 'Tạo Lúc',
             dataIndex: 'createdAt',
@@ -168,7 +169,7 @@ const Product = () => {
                                 });
                         }}
                         title="Thông tin chi tiết"
-                        style={{marginLeft: '10px', marginRight: '10px'}}
+                        style={{ marginLeft: '10px', marginRight: '10px' }}
                     >
                         <InfoOutlined />
                     </Button>
@@ -192,7 +193,7 @@ const Product = () => {
                                     messageApi.error('Không thể tải thông tin danh mục');
                                 });
                         }}
-                        style={{marginRight: '10px'}}
+                        style={{ marginRight: '10px' }}
                     >
                         <EditOutlined />
                     </Button>
@@ -250,13 +251,17 @@ const Product = () => {
         }));
     };
 
+    function currencyFormat(num) {
+        return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+
     return (
         <div>
             {contextHolder}
             <Button className="btn-create" title="Thêm sản phẩm mới" onClick={() => setIsCreateModalOpen(true)}>
                 Thêm mới
             </Button>
-            <Filter params={params} setParams={setParams}/>
+            <Filter params={params} setParams={setParams} />
             <Table
                 columns={columns}
                 rowKey="id"
@@ -294,7 +299,7 @@ const Product = () => {
                                             </tr>
                                             <tr>
                                                 <td><strong>Giá:</strong></td>
-                                                <td>{selectedProduct.price}</td>
+                                                <td>{currencyFormat(selectedProduct.price)}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Thuộc Tính Sản Phẩm:</strong></td>

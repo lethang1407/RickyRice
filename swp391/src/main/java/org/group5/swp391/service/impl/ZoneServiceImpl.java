@@ -155,7 +155,7 @@ public class ZoneServiceImpl implements ZoneService {
 
     @Override
     public Page<StoreDetailZoneDTO> getZonesByFilter(
-            String storeID, String name, String location, String productName, LocalDate fromCreatedAt,
+            String storeID, String name, String location, LocalDate fromCreatedAt,
             LocalDate toCreatedAt, LocalDate fromUpdateAt, LocalDate toUpdateAt,
             int page, int size, String sortBy, boolean descending) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
@@ -164,7 +164,7 @@ public class ZoneServiceImpl implements ZoneService {
         LocalDateTime endCreatedDateTime = toCreatedAt != null ? toCreatedAt.atTime(LocalTime.MAX) : null;
         LocalDateTime startUpdatedDateTime = fromUpdateAt != null ? fromUpdateAt.atStartOfDay() : null;
         LocalDateTime endUpdatedDateTime = toUpdateAt != null ? toUpdateAt.atTime(LocalTime.MAX) : null;
-        Page<Zone> zones = zoneRepository.findZonesByFilters(storeID, name, location, productName, startCreatedDateTime, endCreatedDateTime, startUpdatedDateTime, endUpdatedDateTime, pageable);
+        Page<Zone> zones = zoneRepository.findZonesByFilters(storeID, name, location, startCreatedDateTime, endCreatedDateTime, startUpdatedDateTime, endUpdatedDateTime, pageable);
         return zones.map(zoneConverter::toStoreZoneDTO);
     }
 

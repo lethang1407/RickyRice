@@ -73,6 +73,8 @@ public class ProductAttributeServiceImpl implements ProductAttributeService {
     @Override
     public void deleteProductAttribute(String id) {
         ProductAttribute productAttribute = productAttributeRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        productAttribute.setProducts(null);
+        productAttribute.setStore(null);
         productAttributeRepository.delete(productAttribute);
     }
 }

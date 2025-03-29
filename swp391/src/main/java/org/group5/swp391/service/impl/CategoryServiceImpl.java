@@ -157,6 +157,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(String categoryId) {
-        categoryRepository.deleteById(categoryId);
+        Category category = categoryRepository.getReferenceById(categoryId);
+        category.setStore(null);
+        category.setProducts(null);
+        categoryRepository.delete(category);
     }
 }
