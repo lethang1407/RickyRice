@@ -7,9 +7,12 @@ import org.group5.swp391.dto.request.account_request.UpdateAccountRequest;
 import org.group5.swp391.dto.request.admin_request.UpdateAccountActiveRequest;
 import org.group5.swp391.dto.response.account_response.AccountResponse;
 import org.group5.swp391.entity.Account;
+import org.group5.swp391.entity.SubscriptionPlan;
 import org.group5.swp391.exception.AppException;
 import org.group5.swp391.exception.ErrorCode;
 import org.group5.swp391.repository.AccountRepository;
+import org.group5.swp391.repository.StoreRepository;
+import org.group5.swp391.repository.SubscriptionPlanRepository;
 import org.group5.swp391.service.AccountService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
+    private final StoreRepository storeRepository;
 
     // lấy danh sách tài khoản theo role
     public List<AccountResponse> getAccountsByRole(String roleCode) {
@@ -175,5 +179,4 @@ public class AccountServiceImpl implements AccountService {
     public Long getTotalStoreOwners() {
         return accountRepository.countStoreOwners();
     }
-
 }

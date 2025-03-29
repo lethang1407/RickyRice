@@ -154,7 +154,7 @@ const AdminViewStores = () => {
   ];
 
   return (
-    <div className="mt-4">
+    <div className="mt-3 container">
       <h2 className="mb-4 text-center">Danh sách cửa hàng</h2>
 
       <Row gutter={16} className="mb-3" justify="space-between" align="middle">

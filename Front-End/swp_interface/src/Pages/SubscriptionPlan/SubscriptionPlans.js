@@ -7,6 +7,7 @@ import "./style.css";
 import { Card, Col, Row, Button } from "antd";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import background from "../../assets/img/ricebackgr.png";
 
 const SubscriptionPlans = () => {
   const { storeID } = useParams(); // Lấy storeID nếu có
@@ -26,24 +27,25 @@ const SubscriptionPlans = () => {
       window.location.href = "/login";
       return;
     }
-  
+
     try {
       // Kiểm tra nếu storeID tồn tại thì thêm vào API
       const paymentUrl = storeID
-        ? API.VNPAY.CREATE_PAYMENT(plan.price, plan.subscriptionPlanID) + `&storeID=${storeID}`
+        ? API.VNPAY.CREATE_PAYMENT(plan.price, plan.subscriptionPlanID) +
+          `&storeID=${storeID}`
         : API.VNPAY.CREATE_PAYMENT(plan.price, plan.subscriptionPlanID);
-  
+
       const response = await axios.get(paymentUrl, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       if (response.status === 403) {
         alert("Vui lòng sử dụng tài khoản chủ cửa hàng để sử dụng dịch vụ.");
         return;
       }
-  
+
       if (response.data.data) {
         window.location.href = response.data.data;
       } else {
@@ -53,16 +55,18 @@ const SubscriptionPlans = () => {
       console.error("Payment error:", error);
     }
   };
-  
 
   return (
-    <>
+    <div
+      className="subscription-plans-wrapper"
+      style={{ backgroundImage: `url(${background})` }}
+    >
       <div className="subscription-plans-header">
         <HomeHeader />
       </div>
 
       <Container className="subscription-plans-container">
-        <h2 className="text-center mb-4">Chọn Gói Đăng Ký</h2>
+        {/* <h2 className="text-center mb-4">Chọn Gói Đăng Ký</h2> */}
         <Row gutter={[16, 16]} justify="center">
           {plans.map((plan) => (
             <Col span={8} key={plan.subscriptionPlanID}>
@@ -82,7 +86,7 @@ const SubscriptionPlans = () => {
           ))}
         </Row>
       </Container>
-    </>
+    </div>
   );
 };
 

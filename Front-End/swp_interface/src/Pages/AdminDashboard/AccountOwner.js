@@ -5,7 +5,6 @@ import {
   Input,
   Select,
   Pagination,
-  Typography,
   Spin,
   Row,
   Col,
@@ -17,7 +16,6 @@ import API from "../../Utils/API/API.js";
 import { getToken } from "../../Utils/UserInfoUtils";
 
 const { Option } = Select;
-const { Title } = Typography;
 
 const AccountOwner = ({ setTotalAccounts }) => {
   const [userData, setUserData] = useState([]);
@@ -221,10 +219,8 @@ const AccountOwner = ({ setTotalAccounts }) => {
   ];
 
   return (
-    <div className="mt-5 container">
-      <Title level={2} className="text-center">
-        Tài khoản của chủ cửa hàng
-      </Title>
+    <div className="mt-3 container">
+      <h2 className="mb-4 text-center"> Tài khoản của chủ cửa hàng</h2>
       <Row gutter={16} className="mb-3">
         <Col span={8}>
           <Input

@@ -1,11 +1,21 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { message, Input, Spin, Pagination, Button, Row, Col, Dropdown, Menu } from "antd";
+import {
+  message,
+  Input,
+  Spin,
+  Pagination,
+  Button,
+  Row,
+  Col,
+  Dropdown,
+  Menu,
+} from "antd";
 import StoreCard from "../../../Components/StoreOwner/StoreCard";
 import { getToken } from "../../../Utils/UserInfoUtils";
 import API from "../../../Utils/API/API";
 import { getDataWithToken } from "../../../Utils/FetchUtils";
 import { useNavigate } from "react-router-dom";
-import './style.scss';
+import "./style.scss";
 
 const { Search } = Input;
 
@@ -30,13 +40,21 @@ const Store = () => {
         page: pagination.current - 1,
         size: pagination.pageSize,
       };
-      const storeResponse = await getDataWithToken(`${API.STORE_OWNER.GET_STORE}?${new URLSearchParams(storeParams)}`, token);
+      const storeResponse = await getDataWithToken(
+        `${API.STORE_OWNER.GET_STORE}?${new URLSearchParams(storeParams)}`,
+        token
+      );
       setStores(storeResponse.content);
-      setPagination(prev => ({ ...prev, total: storeResponse.totalElements }));
+      setPagination((prev) => ({
+        ...prev,
+        total: storeResponse.totalElements,
+      }));
 
-      const requestResponse = await getDataWithToken(API.STORE_OWNER.GET_REQUEST_STORE, token);
+      const requestResponse = await getDataWithToken(
+        API.STORE_OWNER.GET_REQUEST_STORE,
+        token
+      );
       setStoreRequests(requestResponse.data || []);
-
     } catch (error) {
       message.error("Đã xảy ra lỗi khi tải dữ liệu.");
     } finally {
@@ -49,9 +67,9 @@ const Store = () => {
   }, [fetchData]);
 
   const handleSearch = useCallback((e) => {
-     const value = e.target.value;
+    const value = e.target.value;
     setSearchValue(value);
-    setPagination(prev => ({ ...prev, current: 1 }));
+    setPagination((prev) => ({ ...prev, current: 1 }));
   }, []);
 
   const handlePaginationChange = (page, pageSize) => {
@@ -64,21 +82,30 @@ const Store = () => {
         storeRequests.map((store) => (
           <Menu.Item
             key={store.transactionNo}
-            onClick={() => navigate(`/store-owner/create-store/${store.transactionNo}`)}
+            onClick={() =>
+              navigate(`/store-owner/create-store/${store.transactionNo}`)
+            }
             className="store-menu-item"
           >
-             Cửa hàng {store.subcriptionTimeOfExpiration} tháng
+            Cửa hàng mới ({store.subcriptionTimeOfExpiration} tháng)
           </Menu.Item>
         ))
       ) : (
-        <Menu.Item disabled className="store-menu-item">Không có cửa hàng mới</Menu.Item>
+        <Menu.Item disabled className="store-menu-item">
+          Không có cửa hàng mới
+        </Menu.Item>
       )}
     </Menu>
   );
 
   return (
     <div className="store-page">
-      <Row gutter={16} align="middle" justify="space-between" className="store-header">
+      <Row
+        gutter={16}
+        align="middle"
+        justify="space-between"
+        className="store-header"
+      >
         <Col>
           <Dropdown overlay={storeMenu} trigger={["click"]}>
             <Button type="primary" className="create-store-button">
@@ -104,7 +131,10 @@ const Store = () => {
               urlStore={`/store/${store.storeID}/zone`}
               storeName={store.storeName}
               expireAt={store.expireAt}
-              urlImg={store.imageUrl || "http://res.cloudinary.com/do9tp2bph/image/upload/v1742791281/cfljln3xgjvt82cmu39t.png"}
+              urlImg={
+                store.imageUrl ||
+                "http://res.cloudinary.com/do9tp2bph/image/upload/v1742791281/cfljln3xgjvt82cmu39t.png"
+              }
               onUpdateExpiration={() => navigate(`/service/${store.storeID}`)}
             />
           ))}

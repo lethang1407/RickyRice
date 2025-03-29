@@ -235,7 +235,18 @@ public class StoreServiceImpl implements StoreService {
             throw new IllegalArgumentException("Thời hạn gói đăng ký không hợp lệ.");
         }
 
-        store.setExpireAt(LocalDateTime.now().plusMonths(subscriptionTime));
+        // Lấy thời gian hết hạn hiện tại từ database
+        LocalDateTime currentExpireAt = store.getExpireAt();
+        LocalDateTime newExpireAt;
+
+        // Kiểm tra nếu cửa hàng vẫn còn hạn thì cộng thêm vào, nếu đã hết hạn thì bắt đầu từ thời điểm hiện tại
+        if (currentExpireAt != null && currentExpireAt.isAfter(LocalDateTime.now())) {
+            newExpireAt = currentExpireAt.plusMonths(subscriptionTime);
+        } else {
+            newExpireAt = LocalDateTime.now().plusMonths(subscriptionTime);
+        }
+
+        store.setExpireAt(newExpireAt);
         storeRepository.save(store);
 
         String message = "Cập nhật ngày hết hạn thành công cho cửa hàng " + store.getStoreName();
