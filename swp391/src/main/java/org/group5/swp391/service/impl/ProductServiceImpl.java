@@ -103,15 +103,15 @@ public class ProductServiceImpl implements ProductService {
         }
         String username = authentication.getName();
         List<Store> stores = storeRepository.findByUserName(username);
+        Product product = checkProductOfUser(productID);
+        boolean a = product.getName().equals(dto.getName());
         boolean checkExist = productRepository.existsByNameAndStoreIn(dto.getName(), stores);
-        if(checkExist){
+        if(checkExist && !a){
             throw new AppException(ErrorCode.PRODUCT_NAME_EXISTED);
         }
-        Product product = checkProductOfUser(productID);
         product.setName(dto.getName());
         product.setPrice(dto.getPrice());
         product.setInformation(dto.getInformation());
-        product.setQuantity(dto.getQuantity());
         product.setProductImage(dto.getProductImage());
         Category category = categoryRepository.findById(dto.getCategory().getId())
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));

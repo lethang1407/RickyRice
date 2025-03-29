@@ -1,6 +1,7 @@
 package org.group5.swp391.controller.store_owner;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.group5.swp391.dto.store_owner.all_employee.StoreAddEmployeeDTO;
 import org.group5.swp391.dto.store_owner.all_employee.StoreEmployeeDTO;
@@ -262,7 +263,7 @@ public class StoreOwnerController {
     @PutMapping(value = "/employee/update/{id}")
     public ResponseEntity<String> updateEmployee(
             @PathVariable String id,
-            @RequestBody StoreEmployeeDTO employee) {
+            @Valid @RequestBody StoreEmployeeDTO employee) {
         employeeService.updateStoreEmployee(id, employee);
         return ResponseEntity.ok("Cập nhật sản phẩm thành công");
     }

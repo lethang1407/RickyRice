@@ -143,7 +143,7 @@ const StatisticChart = () => {
             </div>
             <Row gutter={[16, 16]} className="store-stats">
                 <Col xs={24} sm={12} md={12} lg={6} xl={4}>
-                    <Card className="stat-card products">
+                    <Card className="stat-card debt">
                         <div className="stat-title">Tổng sản phẩm</div>
                         <div className="stat-value">
                             {loading ? <Spin /> : storeStats.totalProducts}
@@ -151,7 +151,7 @@ const StatisticChart = () => {
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={6} xl={4}>
-                    <Card className="stat-card import">
+                    <Card className="stat-card debt">
                         <div className="stat-title">Tổng nhập</div>
                         <div className="stat-value">
                             {loading ? (
@@ -163,7 +163,7 @@ const StatisticChart = () => {
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={6} xl={4}>
-                    <Card className="stat-card export">
+                    <Card className="stat-card debt">
                         <div className="stat-title">Tổng xuất</div>
                         <div className="stat-value">
                             {loading ? (
@@ -175,7 +175,7 @@ const StatisticChart = () => {
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={6} xl={4}>
-                    <Card className="stat-card transactions">
+                    <Card className="stat-card debt">
                         <div className="stat-title">Tổng giao dịch</div>
                         <div className="stat-value">
                             {loading ? <Spin /> : storeStats.totalTransactions}
