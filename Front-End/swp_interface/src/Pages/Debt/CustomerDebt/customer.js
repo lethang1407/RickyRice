@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import noimg from '../../../assets/img/notavailable.jpg';
 import { useEffect, useState } from 'react';
 import { getDataWithToken } from '../../../Utils/FetchUtils';
-import { getToken, getUsername } from '../../../Utils/UserInfoUtils';
+import { formatNumberVN, getToken, getUsername } from '../../../Utils/UserInfoUtils';
 import Filter from "./filter";
 import { EditOutlined, InfoOutlined, PlusOutlined } from "@ant-design/icons";
 import Detail from "./detail";
@@ -112,10 +112,12 @@ function CustomerDebt(){
       key: 'email',
     },
     {
-      title: 'Tổng tiền nợ',
+      title: 'Số dư',
       dataIndex: 'balance',
       key: 'balance',
-      sorter: true
+      sorter: true,
+      align: 'right',
+      render: (balance) => formatNumberVN(balance)
     },
     {
       title: 'Cửa hàng',
@@ -133,11 +135,6 @@ function CustomerDebt(){
       key: 'createdAt',
       render: (text) => (text ? dayjs(text).format("HH:mm:ss DD/MM/YYYY") : "-"),
       sorter: true
-    },
-    {
-      title: 'Cập nhật bởi',
-      dataIndex: 'updatedBy',
-      key: 'updatedBy',
     },
     {
       title: 'Cập nhật khi',
@@ -165,13 +162,13 @@ function CustomerDebt(){
     <>
       {contextHolder}
       <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'10px'}}>
-        <h2>Danh sách người nợ</h2>
+        <h2>Danh sách khách hàng</h2>
         <Button onClick={() => setCreateCustomer(true)} style={{marginRight:'20px'}} type="primary">
-          Tạo mới người nợ
+          Tạo mới khách hàng
         </Button>
       </div>
 
-      <Modal width={1050} open={open} title={`Thông tin người nợ:`} onCancel={() => {setOpen(false); setId(null)}}>
+      <Modal width={1050} open={open} title={`Thông tin khách hàng:`} onCancel={() => {setOpen(false); setId(null)}}>
         <Detail setId={setId} id={id} />
       </Modal>
 

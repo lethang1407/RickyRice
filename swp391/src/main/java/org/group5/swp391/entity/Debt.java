@@ -52,7 +52,7 @@ public class Debt {
     @Column(name = "Amount", nullable = false)
     Double amount;
 
-    @Column(name = "Description", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "Description", columnDefinition = "NVARCHAR(1000)")
     String description;
 
     @Column(name = "Status", nullable = false)

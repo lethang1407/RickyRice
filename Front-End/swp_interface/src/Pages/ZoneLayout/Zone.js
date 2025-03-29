@@ -35,6 +35,7 @@ import Search from "antd/es/transfer/search";
 import { getToken } from "../../Utils/UserInfoUtils";
 import API from "../../Utils/API/API";
 import NavbarAccount from "../Account/NavbarAccount";
+import { WebSocketProvider } from "../../Utils/Websocket/WebsocketContextProvider";
 
 const { Header, Sider, Content } = Layout;
 
@@ -349,7 +350,9 @@ const ZoneList = () => {
                 height: 64,
               }}
             />
-            <NavbarAccount />
+            <WebSocketProvider>
+              <NavbarAccount />
+            </WebSocketProvider>
           </Header>
           <Content
             style={{

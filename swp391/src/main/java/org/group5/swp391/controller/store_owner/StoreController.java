@@ -47,11 +47,11 @@ public class StoreController {
     @PreAuthorize("@securityService.hasAccessToStore(#storeID)")
     @GetMapping("/zoness")
     public Page<StoreDetailZoneDTO> getStoreZoness(@RequestParam(value = "zoneName", required = false) String zoneName,
-                                                  @RequestParam(value = "storeID") String storeID,
-                                                  @RequestParam(value = "page", defaultValue = "0") int page,
-                                                  @RequestParam(value = "size", defaultValue = "100") int size,
-                                                  @RequestParam(defaultValue = "createdAt") String sortBy,
-                                                  @RequestParam(defaultValue = "false") boolean descending) throws Exception {
+                                                   @RequestParam(value = "storeID") String storeID,
+                                                   @RequestParam(value = "page", defaultValue = "0") int page,
+                                                   @RequestParam(value = "size", defaultValue = "100") int size,
+                                                   @RequestParam(defaultValue = "createdAt") String sortBy,
+                                                   @RequestParam(defaultValue = "false") boolean descending) throws Exception {
         if (zoneName == null || zoneName.isEmpty()) {
             return zoneService.getStoreZones(zoneName, storeID, page, size, sortBy, descending);
         }
@@ -126,7 +126,6 @@ public class StoreController {
             @RequestParam(value = "storeID") String storeID,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "location", required = false) String location,
-            @RequestParam(value= "productName", required = false) String productName,
             @RequestParam(value = "fromCreatedAt", required = false) LocalDate fromCreatedAt,
             @RequestParam(value = "toCreatedAt", required = false) LocalDate toCreatedAt,
             @RequestParam(value = "fromUpdatedAt", required = false) LocalDate fromUpdatedAt,
@@ -138,7 +137,7 @@ public class StoreController {
     ) {
 
         return zoneService.getZonesByFilter(
-                storeID, name, location, productName,
+                storeID, name, location,
                 fromCreatedAt, toCreatedAt, fromUpdatedAt, toUpdatedAt, page, size, sortBy, descending
         );
     }

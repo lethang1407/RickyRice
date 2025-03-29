@@ -22,7 +22,7 @@ public class AppStatistics extends AbstractEntity {
     @Column(name = "SubcriptionPlanPrice")
     Double subcriptionPlanPrice;
 
-    @Column(name = "SubcriptionDescription", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "SubcriptionDescription", columnDefinition = "NVARCHAR(1000)")
     String subcriptionDescription;
 
     @Column(name = "SubcriptionTimeOfExpiration")

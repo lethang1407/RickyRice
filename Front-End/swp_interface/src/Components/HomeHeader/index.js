@@ -25,7 +25,7 @@ function HomeHeader() {
   };
   const handleLogout = () => {
     setLoading(true);
-    successWSmile("See you later!", messageApi);
+    successWSmile("Hẹn gặp lại bạn!", messageApi);
     logout();
     setTimeout(() => {
       setLoading(false);

@@ -34,7 +34,7 @@ public class InvoiceDetail {
     @Column(name = "ProductName", columnDefinition = "NVARCHAR(255)")
     String productName;
 
-    @Column(name = "ProductInformation", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "ProductInformation", columnDefinition = "NVARCHAR(1000)")
     String productInformation;
 
     @Column(name = "ProductImage")
@@ -43,10 +43,10 @@ public class InvoiceDetail {
     @Column(name = "ProductPrice")
     Double productPrice;
 
-    @Column(name = "ProductCategoryName")
+    @Column(name = "ProductCategoryName" , columnDefinition = "NVARCHAR(255)")
     String productCategoryName;
 
-    @Column(name = "ProductCategoryDescription")
+    @Column(name = "ProductCategoryDescription", columnDefinition = "NVARCHAR(1000)")
     String productCategoryDescription;
 
 }

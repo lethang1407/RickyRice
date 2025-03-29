@@ -19,7 +19,7 @@ public interface ZoneService {
     public StoreDetailZoneDTO getZone(String zoneID);
     public void addZone(StoreDetailZoneDTO storeZoneDTO) throws Exception;
     public void updateZone(String zoneID, StoreDetailZoneDTO storeZoneDTO) throws Exception;
-    public Page<StoreDetailZoneDTO> getZonesByFilter(String storeID, String name, String location, String productName, LocalDate fromCreatedAt, LocalDate toCreatedAt, LocalDate fromUpdateAt, LocalDate toUpdateAt, int page, int size, String sortBy, boolean descending);
+    public Page<StoreDetailZoneDTO> getZonesByFilter(String storeID, String name, String location, LocalDate fromCreatedAt, LocalDate toCreatedAt, LocalDate fromUpdateAt, LocalDate toUpdateAt, int page, int size, String sortBy, boolean descending);
     public List<StoreZoneIdAndNameDTO> getEmptyZoneIdAndNameForStore(String storeId);
 
 }

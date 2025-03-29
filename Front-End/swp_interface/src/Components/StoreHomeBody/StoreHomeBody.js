@@ -53,7 +53,7 @@ const StoreHomeBody = () => {
 
   const fetchProducts = async (query = "", page = 1, sortBy = "price", orderBy = "false", minPrice = 0, maxPrice = 1000000, categoryID = "") => {
     try {
-      let url = `${API.CUSTOMER.GET_ALL_PRODUCT_BY_STORE}?storeID=${storeID}&page=${page - 1}&size=${pageSize}&sortBy=${sortBy}&descending=${orderBy}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+      let url = `${API.CUSTOMER.GET_ALL_PRODUCT}?storeID=${storeID}&page=${page - 1}&size=${pageSize}&sortBy=${sortBy}&descending=${orderBy}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
       if (query) {
         url += `&query=${encodeURIComponent(query)}`;
       } if (categoryID) {
@@ -96,6 +96,10 @@ const StoreHomeBody = () => {
     setSelectedCategory(value);
     fetchProducts(query, 1, sortBy, orderBy, minPrice, maxPrice, value);
   };
+
+  function currencyFormat(num) {
+    return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+  }
 
   return (
     <>
@@ -213,7 +217,7 @@ const StoreHomeBody = () => {
               />
               <div className="sub-product">
                 <h5>{product.name}</h5>
-                <p><em>Giá: {product.price} VNĐ/kg</em></p>
+                <p><em>Giá: {currencyFormat(product.price)} VNĐ/kg</em></p>
                 <Button
                   type="primary"
                   onClick={() => {
@@ -261,7 +265,7 @@ const StoreHomeBody = () => {
             <h2>{selectedProduct.name}</h2>
             <p>Mô tả: {selectedProduct.information}</p>
             <i>Số lượng: {selectedProduct.quantity}</i><br />
-            <i>Giá: {selectedProduct.price} VNĐ/kg</i>
+            <i>Giá: {currencyFormat(selectedProduct.price)} VNĐ/kg</i>
           </Modal>
         )}
         <FloatButton.BackTop />

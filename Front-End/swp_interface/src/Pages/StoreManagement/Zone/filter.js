@@ -38,7 +38,7 @@ function Filter(props) {
 
     return (
         <Form onValuesChange={onFormChange} name="filter" layout="vertical">
-            <Row gutter={16}>
+            <Row gutter={12}>
                 <Col span={3}>
                     <Form.Item label="Tên khu vực" name="name">
                         <Input placeholder="Nhập tên khu vực" />
@@ -47,11 +47,6 @@ function Filter(props) {
                 <Col span={4}>
                     <Form.Item label="Thông tin khu vực" name="location">
                         <Input placeholder="Nhập thông tin khu vực" />
-                    </Form.Item>
-                </Col>
-                <Col span={4}>
-                    <Form.Item label="Tên sản phẩm" name="productName">
-                        <Input placeholder="Nhập tên sản phẩm" />
                     </Form.Item>
                 </Col>
                 <Col span={3}>

@@ -40,22 +40,63 @@ function CreateCustomer(props){
         span: 16,
       }}>
         <Form.Item label="Tên" name="name"
-        rules={[{ required: true, message: "Vui lòng nhập tên!" }]}
+        rules={[{ required: true, message: "Vui lòng nhập tên!" },
+          {
+            pattern: /^[A-Za-zÀ-ỹà-ỹ\s']{2,50}$/,
+            message: 'Tên chỉ được chứa chữ cái và khoảng trắng (2–50 ký tự)!',
+          },
+          {
+            validator: (_, value) => {
+              if (value && value.trim().length === 0) {
+                return Promise.reject(new Error('Tên không được chỉ chứa khoảng trắng!'));
+              }
+              return Promise.resolve();
+            },
+          }
+        ]}
         >
           <Input placeholder="Nhập tên" />
         </Form.Item>
 
         <Form.Item label="Số điện thoại" name="phoneNumber"
-        rules={[{ required: true, message: "Vui lòng số điện thoại!" }]}
+        rules={[{ required: true, message: "Vui lòng số điện thoại!" },
+          { 
+            pattern: /^(0[3|5|7|8|9])(\d{8})$/,
+            message: 'Số điện thoại không đúng định dạng!'
+          }
+        ]}
         >
           <Input placeholder="Nhập số điện thoại" />
         </Form.Item>
 
-        <Form.Item label="Email" name="email">
+        <Form.Item label="Email" name="email"
+          rules={[
+            { 
+              pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+              message: 'Email không đúng định dạng!'
+            }
+          ]}
+        >
           <Input placeholder="Nhập email" />
         </Form.Item>
 
-        <Form.Item label="Địa chỉ" name="address">
+        <Form.Item label="Địa chỉ" name="address"
+          rules={[
+            {
+              pattern: /^[A-Za-zÀ-ỹà-ỹ\s']{2,200}$/,
+              message: 'Địa chỉ được chứa chữ cái và khoảng trắng (2–200 ký tự)!',
+            },
+            {
+              validator: (_, value) => {
+                if (value && value.trim().length === 0) {
+                  return Promise.reject(new Error('Địa chỉ không được chỉ chứa khoảng trắng!'));
+                }
+                return Promise.resolve();
+              },
+            }
+            
+          ]}
+        >
           <Input placeholder="Nhập địa chỉ" />
         </Form.Item>
 
