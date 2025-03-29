@@ -13,6 +13,7 @@ import {
   TableOutlined,
   ArrowLeftOutlined,
   BarChartOutlined,
+  CreditCardOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import "./style.scss";
@@ -43,6 +44,8 @@ const StoreOwnerLayout = () => {
     ? "5.1"
     : location.pathname.startsWith("/store-owner/statistic/chart")
     ? "5.2"
+    : location.pathname.startsWith("/store-owner/transaction-history")
+    ? "6"
     : "";
 
   return (
@@ -167,6 +170,18 @@ const StoreOwnerLayout = () => {
                     ),
                   },
                 ],
+              },
+              {
+                key: "6",
+                icon: <CreditCardOutlined />,
+                label: (
+                  <Link
+                    to="/store-owner/transaction-history"
+                    style={{ textDecoration: "none" }}
+                  >
+                    Lịch sử thanh toán
+                  </Link>
+                ),
               },
             ]}
           />

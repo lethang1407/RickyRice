@@ -342,7 +342,7 @@ public class StoreOwnerController {
         Page<AppStatisticsResponse> statistics = appStatisticsService.getStatistics(
                 page, size, sortBy, sortDirection, subscriptionPlanName, username);
 
-        List<String> subscriptionPlans = appStatisticsService.getAllSubscriptionPlanNames();
+        List<String> subscriptionPlans = appStatisticsService.getSubscriptionPlansByUsername(username);
 
         Map<String, Object> response = Map.of(
                 "statistics", statistics,
