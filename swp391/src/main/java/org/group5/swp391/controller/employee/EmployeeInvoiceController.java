@@ -1,6 +1,7 @@
 package org.group5.swp391.controller.employee;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.group5.swp391.config.RabbitMqConfig;
@@ -47,7 +48,7 @@ public class EmployeeInvoiceController {
     }
 
     @PostMapping("/invoice/invoice-create")
-    public ResponseEntity<String> createInvoice(@RequestBody InvoiceRequest invoiceRequest) {
+    public ResponseEntity<String> createInvoice(@Valid @RequestBody InvoiceRequest invoiceRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             log.info("controller"+authentication.getName());

@@ -89,9 +89,20 @@ const CustomerIN4Create = ({ isVisible, closeModal, refreshData }) => {
                     <Form.Item
                         label="Tên khách hàng"
                         name="name"
-                        rules={[{ required: true, message: 'Vui lòng nhập tên khách hàng!' }]}
+                        rules={[{ required: true, message: 'Vui lòng nhập tên khách hàng!' },
+                        {
+                            validator: (_, value) => {
+                                if (!value || value.trim() === '') {
+                                    return Promise.reject(new Error('Tên không được chỉ chứa khoảng trắng!'));
+                                }
+                                if (value.length > 50) {
+                                    return Promise.reject(new Error('Tên không được vượt quá 50 ký tự!'));
+                                }
+                                return Promise.resolve();
+                            },
+                        }]}
                     >
-                        <Input placeholder="Nhập tên khách hàng" />
+                        <Input maxLength={50} placeholder="Nhập tên khách hàng" />
                     </Form.Item>
                     <Form.Item
                         label="Số điện thoại"
@@ -111,7 +122,7 @@ const CustomerIN4Create = ({ isVisible, closeModal, refreshData }) => {
                         <Input placeholder="Nhập email (nếu có)" />
                     </Form.Item>
                     <Form.Item label="Địa chỉ" name="address">
-                        <TextArea rows={3} placeholder="Nhập địa chỉ của khách hàng" />
+                        <TextArea maxLength={100} rows={3} placeholder="Nhập địa chỉ của khách hàng" />
                     </Form.Item>
                     <Form.Item>
                         <Button type="default" onClick={() => form.resetFields()}>

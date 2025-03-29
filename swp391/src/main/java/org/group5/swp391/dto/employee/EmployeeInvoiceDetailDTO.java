@@ -18,6 +18,7 @@ public class EmployeeInvoiceDetailDTO {
     private String productName;
     private String productInformation;
     private String productImage;
+    private String packageId;
     private double productPrice;
     private String productCategoryName;
     private String productCategoryDescription;

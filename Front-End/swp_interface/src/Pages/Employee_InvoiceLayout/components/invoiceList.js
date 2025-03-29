@@ -110,33 +110,63 @@ const InvoiceList = () => {
             title: 'STT',
             key: 'stt',
             render: (text, record, index) => index + 1,
-            width: '10%',
+            width: '8%',
         },
         {
             title: 'Tên sản phẩm',
             dataIndex: 'productName',
             key: 'productName',
-            width: '25%',
+            width: '20%',
+        },
+        {
+            title: 'Đóng gói',
+            dataIndex: 'packageId',
+            key: 'packageId',
+            width: '17%',
+            render: (text) => {
+                switch (text) {
+                    case '1':
+                        return '25kg/bao';
+                    case '2':
+                        return '50kg/bao';
+                    case '3':
+                        return '75kg/bao';
+                    case '4':
+                        return '100kg/bao';
+                    default:
+                        return 'Không xác định';
+                }
+            },
         },
         {
             title: 'Số lượng',
             dataIndex: 'quantity',
             key: 'quantity',
-            width: '15%',
+            width: '12%',
         },
         {
             title: 'Đơn giá',
             dataIndex: 'price',
             key: 'price',
             render: (price) => `${(price || 0).toLocaleString()} đ`,
-            width: '20%',
+            width: '15%',
         },
         {
-            title: 'Giảm Giá',
+            title: 'Giảm giá',
             dataIndex: 'discount',
             key: 'discount',
             render: (_, record) => `${(record.discount).toLocaleString()} đ`,
-            width: '20%',
+            width: '15%',
+        },
+        {
+            title: 'Giá thực',
+            dataIndex: 'pricePay',
+            key: 'pricePay',
+            render: (_, record) => {
+                const actualPrice = (record.price || 0) - (record.discount || 0);
+                return `${actualPrice.toLocaleString()} đ`;
+            },
+            width: '15%',
         },
     ];
 
@@ -410,7 +440,7 @@ const InvoiceList = () => {
                                     : 'N/A'}
                             </Descriptions.Item>
                             <Descriptions.Item label="Tổng tiền sản phẩm">
-                                {(selectedInvoice.totalAmount - selectedInvoice.totalShipping || 0).toLocaleString()} đ
+                                {(selectedInvoice.totalAmount || 0).toLocaleString()} đ
                             </Descriptions.Item>
                             <Descriptions.Item label="Tiền vận chuyển">
                                 {(selectedInvoice.totalShipping || 0).toLocaleString()} đ
