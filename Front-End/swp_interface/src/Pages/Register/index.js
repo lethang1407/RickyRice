@@ -78,7 +78,7 @@ function Register(){
           error('Upload Failed!', messageApi);
         }
       }else{
-        const response = await register(API.AUTH.REGISTER,acc)
+        const response = await register(API.AUTH.REGISTER, {...acc, role: 'STORE_OWNER'})
         if(response && response.code === 201){
           setTimeout(()=>{
             setLoading(false);
@@ -137,8 +137,8 @@ function Register(){
             <>
               <div style={{height:'70vh'}} className='register__overlay'></div>
               <div className='register__form'>
-                <h2 className='register__title'>CONTINUE FORM</h2>
-                <h5 style={{marginBottom:"30px"}} className='register__slogan'>Join Us Today and Start Your Journey to Success!</h5>
+                <h2 className='register__title'>ĐIỀN FORM</h2>
+                <h5 style={{marginBottom:"30px"}} className='register__slogan'>Tham gia cùng chúng tôi và bắt đầu hành trình của bạn!</h5>
                 
                 <Form 
                   onFinish={handleRegister}
@@ -154,11 +154,11 @@ function Register(){
                     rules={[
                       {
                         required: true,
-                        message: 'Please input your Name!',
+                        message: 'Vui lòng điền tên!',
                       }
                     ]}
                   >
-                    <Input size='large' placeholder='Input your Name' className='register__form__item__input register__form__item__input__mail' addonAfter={<UserOutlined />}/>
+                    <Input size='large' placeholder='Tên của bạn' className='register__form__item__input register__form__item__input__mail' addonAfter={<UserOutlined />}/>
                   </Form.Item>
 
 
@@ -169,14 +169,14 @@ function Register(){
                     rules={[
                       {
                         required: true,
-                        message: 'Please input your Email!',
+                        message: 'Vui lòng điền email!',
                       },{ 
                         pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                        message: 'Email is not Valid!'
+                        message: 'Email không đúng định dạng!'
                       }
                     ]}
                   >
-                    <Input size='large' className='register__form__item__input register__form__item__input__pass' placeholder='Input Email' addonAfter={<MailOutlined />} />
+                    <Input size='large' className='register__form__item__input register__form__item__input__pass' placeholder='Email' addonAfter={<MailOutlined />} />
                   </Form.Item>
 
                   <Form.Item
@@ -186,15 +186,15 @@ function Register(){
                     rules={[
                       {
                         required: true,
-                        message: 'Please input your Phone Number!',
+                        message: 'Vui lòng điền số điện thoại!',
                       },
                       { 
                         pattern: /^(0[3|5|7|8|9])(\d{8})$/,
-                        message: 'Phone Number is not Valid!'
+                        message: 'Số điện thoại không đúng định dạng!'
                       }
                     ]}
                   >
-                    <Input size='large' className='register__form__item__input register__form__item__input__pass' addonAfter={<PhoneOutlined />} placeholder='Input Phone Number'/>
+                    <Input size='large' className='register__form__item__input register__form__item__input__pass' addonAfter={<PhoneOutlined />} placeholder='Số điện thoại'/>
                   </Form.Item>
 
                   <Form.Item
@@ -219,8 +219,8 @@ function Register(){
                     className='register__form__item'
                   >
                     <Radio.Group className='register__form__item__checkbox' options={[
-                        { label: 'Male', value:0 },
-                        { label: 'Female', value: 1 },
+                        { label: 'Nam', value:0 },
+                        { label: 'Nữ', value: 1 },
                     ]} />
                   </Form.Item>
 
@@ -228,7 +228,7 @@ function Register(){
                     name="date"
                     className='register__form__item'
                   >
-                    <DatePicker defaultValue={acc.birthDate ? acc.birthDate : null} placeholder='Select birth Date' className='register__form__item__input register__form__item__input__pass'/>
+                    <DatePicker defaultValue={acc.birthDate ? acc.birthDate : null} placeholder='Ngày sinh' className='register__form__item__input register__form__item__input__pass'/>
                   </Form.Item>
 
                   <Form.Item
@@ -236,19 +236,19 @@ function Register(){
                     className='register__form__item'
                   >
                     <Upload beforeUpload={() => false} fileList={file} onChange={handleChangeFile} maxCount={1} listType="picture">
-                      <Button icon={<UploadOutlined />}>Click to Upload Your Avatar</Button>
+                      <Button icon={<UploadOutlined />}>Tải lên ảnh đại diện</Button>
                     </Upload>
                   </Form.Item>
 
 
                   <div style={{display:'flex', justifyContent:'center', alignItems:'center'}}>
                     <Form.Item style={{margin:'20px 5px'}} className='register__form__b'>
-                      <Button className='register__form__b__button' onClick={handleBack} >Back
+                      <Button className='register__form__b__button' onClick={handleBack} >Quay lại
                       </Button>
                     </Form.Item>
 
                     <Form.Item style={{margin:'20px 5px'}} className='register__form__b'>
-                      <Button className='register__form__b__button' htmlType="submit">Register
+                      <Button className='register__form__b__button' htmlType="submit">Đăng kí
                       </Button>
                     </Form.Item>
                   </div>
@@ -259,12 +259,10 @@ function Register(){
           <>
             <div className='register__overlay'></div>
             <div className='register__form'>
-              <h2 className='register__title'>REGISTER</h2>
-              <h5 className='register__slogan'>Join Us Today and Start Your Journey to Success!</h5>
+              <h2 className='register__title'>ĐĂNG KÍ</h2>
+              <h5 className='register__slogan'>Tham gia cùng chúng tôi và bắt đầu hành trình của bạn!</h5>
               <div className='register__icon'>
-                <GoogleOutlined className='register__icon__i'/>
-                <FacebookOutlined className='register__icon__i'/>
-                <GithubOutlined className='register__icon__i'/>
+                
               </div>
               <Form 
                 initialValues={{
@@ -279,7 +277,7 @@ function Register(){
                   rules={[
                     {
                       required: true,
-                      message: 'Please input your username!',
+                      message: 'Vui lòng điền tên đăng nhập!',
                     }
                   ]}
                 >
@@ -293,7 +291,7 @@ function Register(){
                   rules={[
                     {
                       required: true,
-                      message: 'Please input your password!',
+                      message: 'Vui lòng điền mật khẩu!',
                     }
                   ]}
                 >
@@ -308,13 +306,13 @@ function Register(){
                   rules={[
                     {
                       required: true,
-                      message: 'Please input your password again!',
+                      message: 'Vui lòng điền vào kiểm tra mật khẩu!',
                     },({ getFieldValue }) => ({
                       validator(_, value) {
                         if (!value || getFieldValue('password') === value) {
                           return Promise.resolve();
                         }
-                        return Promise.reject(new Error('Passwords do not match!'));
+                        return Promise.reject(new Error('Mật khẩu không trùng khớp!'));
                       },
                     })
                   ]}
@@ -322,10 +320,10 @@ function Register(){
                   <Input.Password size='large' className='register__form__item__input register__form__item__input__pass' placeholder='Input password again'/>
                 </Form.Item>
 
-                <h5 style={{marginTop:'10px'}} className='register__form__text'>You've already had an account. <span onClick={naviLogin} className='register__form__text__bold'>Sign in here!</span></h5>
+                <h5 style={{marginTop:'10px'}} className='register__form__text'>Đã có tài khoản. <span onClick={naviLogin} className='register__form__text__bold'>Đăng nhập tại đây!</span></h5>
 
                 <Form.Item style={{marginTop:'20px'}} className='register__form__b'>
-                  <Button className='register__form__b__button' htmlType="submit">Next
+                  <Button className='register__form__b__button' htmlType="submit">Tiếp tục
                   </Button>
                 </Form.Item>
               </Form>

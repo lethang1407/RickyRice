@@ -21,8 +21,10 @@ import {
   UserOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
+import { useWebSocket, WebSocketProvider } from "../../Utils/Websocket/WebsocketContextProvider";
 
 const NavbarAccount = () => {
+  const { messages } = useWebSocket();
   const [notifications, setNotifications] = useState([]);
   const token = getToken();
   const [messageApi] = message.useMessage();
@@ -68,7 +70,7 @@ const NavbarAccount = () => {
         }
       })
       .catch((error) => console.error("Error fetching notifications:", error));
-  }, [token]);
+  }, [token, messages]);
 
   const markAllAsRead = async () => {
     const unreadIds = notifications
@@ -133,104 +135,104 @@ const NavbarAccount = () => {
   );
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-      <Dropdown
-        overlay={
-          <div
-            style={{
-              width: "550px",
-              background: "white",
-              borderRadius: "5px",
-              padding: "10px",
-              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            <Space
+      <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+        <Dropdown
+          overlay={
+            <div
               style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "space-between",
+                width: "550px",
+                background: "white",
+                borderRadius: "5px",
+                padding: "10px",
+                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
               }}
             >
-              <b>Thông báo</b>
-              <Button
-                type="link"
-                onClick={markAllAsRead}
-                disabled={notifications.every((notif) => notif.isRead)}
+              <Space
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
               >
-                Đánh dấu tất cả đã xem
-              </Button>
-            </Space>
+                <b>Thông báo</b>
+                <Button
+                  type="link"
+                  onClick={markAllAsRead}
+                  disabled={notifications.every((notif) => notif.isRead)}
+                >
+                  Đánh dấu tất cả đã xem
+                </Button>
+              </Space>
 
-            <div style={{ maxHeight: "300px", overflowY: "auto" }}>
-              {notifications.length > 0 ? (
-                <List
-                  bordered
-                  dataSource={notifications}
-                  renderItem={(notif) => (
-                    <List.Item
-                      style={{
-                        background: notif.isRead ? "#f5f5f5" : "#fff",
-                        cursor: "pointer",
-                        padding: "10px",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "5px",
-                        alignItems: "flex-start",
-                      }}
-                    >
-                      <b>{notif.message}</b>
-
-                      <div
+              <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+                {notifications.length > 0 ? (
+                  <List
+                    bordered
+                    dataSource={notifications}
+                    renderItem={(notif) => (
+                      <List.Item
                         style={{
+                          background: notif.isRead ? "#f5f5f5" : "#fff",
+                          cursor: "pointer",
+                          padding: "10px",
                           display: "flex",
-                          justifyContent: "space-between",
-                          width: "100%",
-                          alignItems: "center",
+                          flexDirection: "column",
+                          gap: "5px",
+                          alignItems: "flex-start",
                         }}
                       >
-                        <span style={{ fontSize: "12px", color: "gray" }}>
-                          Người gửi: {notif.createdBy} | Thời gian:{" "}
-                          {new Date(notif.createdAt).toLocaleDateString(
-                            "vi-VN"
-                          )}
-                        </span>
+                        <b>{notif.message}</b>
 
-                        {notif.isRead ? (
-                          <span style={{ fontSize: "12px", color: "black" }}>
-                            (Đã xem)
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                            alignItems: "center",
+                          }}
+                        >
+                          <span style={{ fontSize: "12px", color: "gray" }}>
+                            Người gửi: {notif.createdBy} | Thời gian:{" "}
+                            {new Date(notif.createdAt).toLocaleDateString(
+                              "vi-VN"
+                            )}
                           </span>
-                        ) : (
-                          <Checkbox
-                            onChange={() => markAsRead(notif.notificationId)}
-                          />
-                        )}
-                      </div>
-                    </List.Item>
-                  )}
-                />
-              ) : (
-                <div style={{ padding: "20px", textAlign: "center" }}>
-                  Không có thông báo
-                </div>
-              )}
+
+                          {notif.isRead ? (
+                            <span style={{ fontSize: "12px", color: "black" }}>
+                              (Đã xem)
+                            </span>
+                          ) : (
+                            <Checkbox
+                              onChange={() => markAsRead(notif.notificationId)}
+                            />
+                          )}
+                        </div>
+                      </List.Item>
+                    )}
+                  />
+                ) : (
+                  <div style={{ padding: "20px", textAlign: "center" }}>
+                    Không có thông báo
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        }
-        trigger={["click"]}
-        placement="bottomRight"
-      >
-        <Badge count={notifications.filter((notif) => !notif.isRead).length}>
-          <BellOutlined style={{ fontSize: "25px", cursor: "pointer", marginRight: "3px" }} />
-        </Badge>
-      </Dropdown>
+          }
+          trigger={["click"]}
+          placement="bottomRight"
+        >
+          <Badge count={notifications.filter((notif) => !notif.isRead).length}>
+            <BellOutlined style={{ fontSize: "25px", cursor: "pointer", marginRight: "3px" }} />
+          </Badge>
+        </Dropdown>
 
-      <Dropdown overlay={menu} placement="bottomRight">
-        <Avatar src={avatarUrl} size={40} style={{ cursor: "pointer", marginRight: "10px" }} />
-      </Dropdown>
+        <Dropdown overlay={menu} placement="bottomRight">
+          <Avatar src={avatarUrl} size={40} style={{ cursor: "pointer", marginRight: "10px" }} />
+        </Dropdown>
 
-      {/* {loading && <Spin />} */}
-    </div>
+        {/* {loading && <Spin />} */}
+      </div>
   );
 };
 

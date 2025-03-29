@@ -13,6 +13,7 @@ import CustomFooter from "../../Components/Footer";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import logo from "../../assets/img/logo-no-background.png";
 import NavbarAccount from "../Account/NavbarAccount";
+import { WebSocketProvider } from "../../Utils/Websocket/WebsocketContextProvider";
 
 const { Header, Sider, Content } = Layout;
 
@@ -121,7 +122,7 @@ const AdminDashboard = () => {
                 height: 64,
               }}
             />
-            <NavbarAccount />
+            <WebSocketProvider><NavbarAccount /></WebSocketProvider>
           </Header>
 
           <Content
