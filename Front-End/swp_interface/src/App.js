@@ -59,8 +59,7 @@ function App() {
         <Route path="/register" element={<Register />}></Route>
         <Route path="/authenticate" element={<Authenticate />}></Route>
         <Route path="/unauthorized" element={<Unauthorized />}></Route>
-        <Route path="/storehome" element={<StoreHome />}></Route>
-        <Route path="/storehome" element={<StoreHome />}></Route>
+        <Route path="/storehome/:storeID" element={<StoreHome />}></Route>
         <Route path="/service/:storeID?" element={<SubscriptionPlan />} />
         <Route element={<CommonProtected />}>
           <Route element={<AdminProtected />}>

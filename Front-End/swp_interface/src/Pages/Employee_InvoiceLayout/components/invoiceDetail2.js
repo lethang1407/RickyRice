@@ -171,7 +171,7 @@ const InvoiceDetail2 = () => {
             key: 'packageId',
             render: (text, record) => (
                 <Select
-                    style={{ width: 120 }}
+                    style={{ width: 200 }}
                     value={record.packageId}
                     onChange={(value) => handlePackageChange(value, record.key)}
                     options={packageOptions}
@@ -179,6 +179,7 @@ const InvoiceDetail2 = () => {
                     loading={loading}
                 />
             ),
+            width: 200
         },
         {
             title: 'Tên Sản Phẩm',
@@ -621,7 +622,7 @@ const InvoiceDetail2 = () => {
         })
             .then(response => {
                 const formattedOptions = response.data.map(item => {
-                    const description = item.description.toLowerCase();
+                    const description = item.name +' - ' + item.quantity  + ' kg/bao';
                     let packageValue = 1;
                     if (description.includes("25kg/bao")) {
                         packageValue = 25;
@@ -634,8 +635,8 @@ const InvoiceDetail2 = () => {
                     }
                     return {
                         value: item.id,
-                        label: item.description,
-                        packageValue: packageValue,
+                        label: description,
+                        packageValue: item.quantity,
                     };
                 });
                 setPackageOptions(formattedOptions);

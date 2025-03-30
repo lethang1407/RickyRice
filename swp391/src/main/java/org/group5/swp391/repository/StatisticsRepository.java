@@ -58,7 +58,7 @@ public interface StatisticsRepository extends JpaRepository<Statistics, String> 
     FROM Statistics s
     WHERE s.store.id IN :storeIds
     AND (:createdAtStart IS NULL OR s.createdAt >= :createdAtStart)
-    AND (:createdAtEnd IS NULL OR s.createdAt <= :createdAtEnd)
+    AND (:createdAtEnd IS NULL OR s.createdAt < :createdAtEnd)
     AND (:type IS NULL OR s.type = :type)
 """)
     List<Statistics> findStatisticsByType(

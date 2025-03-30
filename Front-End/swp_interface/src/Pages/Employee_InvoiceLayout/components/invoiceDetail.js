@@ -155,6 +155,7 @@ const InvoiceDetail = () => {
                     <i class="bi bi-trash"></i>
                 </Button>
             ),
+        
         },
         {
             title: 'Đóng Gói',
@@ -162,7 +163,7 @@ const InvoiceDetail = () => {
             key: 'packageId',
             render: (text, record) => (
                 <Select
-                    style={{ width: 120 }}
+                    style={{ width: 200 }}
                     value={record.packageId}
                     onChange={(value) => handlePackageChange(value, record.key)}
                     options={packageOptions}
@@ -170,6 +171,7 @@ const InvoiceDetail = () => {
                     loading={loading}
                 />
             ),
+            width: 200
         },
         {
             title: 'Tên Sản Phẩm',
@@ -612,7 +614,7 @@ const InvoiceDetail = () => {
         })
             .then(response => {
                 const formattedOptions = response.data.map(item => {
-                    const description = item.description.toLowerCase();
+                    const description = item.name +' - ' + item.quantity  + ' kg/bao';
                     let packageValue = 1;
                     if (description.includes("25kg/bao")) {
                         packageValue = 25;
@@ -626,8 +628,8 @@ const InvoiceDetail = () => {
 
                     return {
                         value: item.id,
-                        label: item.description,
-                        packageValue: packageValue,
+                        label: description,
+                        packageValue: item.quantity,
                     };
                 });
                 setPackageOptions(formattedOptions);

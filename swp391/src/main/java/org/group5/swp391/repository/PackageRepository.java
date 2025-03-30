@@ -16,8 +16,7 @@ import java.util.List;
 
 @Repository
 public interface PackageRepository extends JpaRepository<Package, Long> {
-    @Query("Select z from Package z where "+
-            "(z.store.id = :storeId)")
+    @Query("SELECT z FROM Package z WHERE z.store.id = :storeId ORDER BY z.quantity ASC")
     List<Package> findPackagesByStoreId(String storeId);
     @Query("Select z from Package z where "+
             "(z.id= :id)")

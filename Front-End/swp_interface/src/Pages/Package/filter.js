@@ -1,4 +1,4 @@
-import { Col, Form, Input, Row } from "antd";
+import { Col, Form, Input, InputNumber, Row } from "antd";
 
 function Filter(props){
   const { params, setParams } = props;
@@ -26,7 +26,7 @@ function Filter(props){
             </Col>
             <Col span={4}>
               <Form.Item label="Số lượng" name="quantity">
-                <Input />
+                <InputNumber />
               </Form.Item>
             </Col>
           </Row>

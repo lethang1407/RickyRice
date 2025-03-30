@@ -43,14 +43,20 @@ public class ProductConverter {
     public CustomerProductDTO toCustomerProductDTO(Product product) {
         CustomerProductDTO customerProductDTO = modelMapper.map(product, CustomerProductDTO.class);
         customerProductDTO.setProductID(product.getId());
-        List<CustomerProductAttributeDTO> pads = product.getProductAttributes().stream().map(productAttributeConverter::toProductAttributeDTO).collect(Collectors.toList());
-        customerProductDTO.setProductAttributes(pads);
+        if(product.getProductAttributes()!=null){
+            List<CustomerProductAttributeDTO> pads = product.getProductAttributes().stream().map(productAttributeConverter::toProductAttributeDTO).collect(Collectors.toList());
+            customerProductDTO.setProductAttributes(pads);
+        }
 
-        List<CustomerZoneDTO> zds = product.getZones().stream().map(zoneConverter::toZoneDTO).collect(Collectors.toList());
-        customerProductDTO.setZones(zds);
+       if(product.getZones()!=null){
+           List<CustomerZoneDTO> zds = product.getZones().stream().map(zoneConverter::toZoneDTO).collect(Collectors.toList());
+           customerProductDTO.setZones(zds);
+       }
 
-        CustomerCategoryDTO cd = categoryConverter.toCategoryDTO(product.getCategory());
-        customerProductDTO.setCustomerCategoryDTO(cd);
+       if(product.getCategory()!=null){
+           CustomerCategoryDTO cd = categoryConverter.toCategoryDTO(product.getCategory());
+           customerProductDTO.setCustomerCategoryDTO(cd);
+       }
         return customerProductDTO;
     }
 

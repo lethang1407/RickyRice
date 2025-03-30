@@ -7,6 +7,7 @@ import org.group5.swp391.dto.packagee.PackageDTO;
 import org.group5.swp391.entity.Package;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 @RequiredArgsConstructor
@@ -21,6 +22,10 @@ public class PackageConverter {
     }
 
     public Package toPackageEntity(PackageCreationRequest request){
+        request.setName(request.getName().trim());
+        if(StringUtils.hasLength(request.getDescription())){
+            request.setDescription(request.getDescription().trim());
+        }
         Package pack  = modelMapper.map(request, Package.class);
         pack.setId(null);
         return pack;

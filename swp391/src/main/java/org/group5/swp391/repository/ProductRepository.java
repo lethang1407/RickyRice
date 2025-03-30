@@ -125,16 +125,19 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("Select s from Product  s where s.category.id = :categoryId AND s.store.id = :storeID")
     Page<Product> findAllProductStoreByCategoryId(String storeID, String categoryId, Pageable pageable);
 
-    @Query("SELECT p FROM Product p\n" +
-            "WHERE (:storeID IS NULL OR p.store.id = :storeID)\n" +
-            " AND (:name IS NULL OR TRIM(:name) <> '' AND LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))\n" +
-            " AND (:fromPrice IS NULL OR p.price >= :fromPrice)\n" +
-            " AND (:toPrice IS NULL OR p.price <= :toPrice)\n" +
-            " AND (:information IS NULL OR TRIM(:information) <> '' AND LOWER(p.information) LIKE LOWER(CONCAT('%', :information, '%')))\n" +
-            " AND (:fromCreatedAt IS NULL OR p.createdAt >= :fromCreatedAt)\n" +
-            " AND (:toCreatedAt IS NULL OR p.createdAt <= :toCreatedAt)\n" +
-            " AND (:fromUpdatedAt IS NULL OR p.updatedAt >= :fromUpdatedAt)\n" +
-            " AND (:toUpdatedAt IS NULL OR p.updatedAt <= :toUpdatedAt)")
+
+    @Query("""
+        SELECT p FROM Product p
+        WHERE (:storeID IS NULL OR p.store.id = :storeID)
+        AND (:name IS NULL OR TRIM(:name) <> '' AND LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))
+        AND (:fromPrice IS NULL OR p.price >= :fromPrice)
+        AND (:toPrice IS NULL OR p.price <= :toPrice)
+        AND (:information IS NULL OR TRIM(:information) <> '' AND LOWER(p.information) LIKE LOWER(CONCAT('%', :information, '%')))
+        AND (:fromCreatedAt IS NULL OR p.createdAt >= :fromCreatedAt)
+        AND (:toCreatedAt IS NULL OR p.createdAt <= :toCreatedAt)
+        AND (:fromUpdatedAt IS NULL OR p.updatedAt >= :fromUpdatedAt)
+        AND (:toUpdatedAt IS NULL OR p.updatedAt <= :toUpdatedAt)
+    """)
     Page<Product> findProducts(@Param("storeID") String storeID,
                                @Param("name") String name,
                                @Param("fromPrice") Double fromPrice,

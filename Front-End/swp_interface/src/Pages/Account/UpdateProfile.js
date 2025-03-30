@@ -3,6 +3,8 @@ import { Modal, Button, Form, Input, Select, DatePicker, message } from "antd";
 import API from "../../Utils/API/API.js";
 import { getToken } from "../../Utils/UserInfoUtils";
 import moment from "moment";
+import { error } from "../../Utils/AntdNotification/index.js";
+import axios from "axios";
 
 const { Option } = Select;
 
@@ -21,6 +23,7 @@ const UpdateProfile = ({
   });
   const [loading, setLoading] = useState(false);
   const token = getToken();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const handleChange = (value, name) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -32,7 +35,7 @@ const UpdateProfile = ({
     return phoneRegex.test(phoneNumber);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Kiểm tra validate số điện thoại
     if (!validatePhoneNumber(formData.phoneNumber)) {
       message.error("Số điện thoại không hợp lệ! Vui lòng nhập số điện thoại đúng.");
@@ -40,32 +43,32 @@ const UpdateProfile = ({
     }
 
     setLoading(true);
-    fetch(API.ACCOUNT.UPDATE_ACCOUNT, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.code === 200) {
-          message.success("Cập nhật thành công!");
-          onUpdateSuccess(data.data);
-        } else {
-          message.error("Cập nhật thất bại!");
-          onUpdateFail("Cập nhật thất bại!");
-        }
-      })
-      .catch(() => {
-        message.error("Có lỗi xảy ra, vui lòng thử lại!");
-        onUpdateFail("Có lỗi xảy ra, vui lòng thử lại!");
-      })
-      .finally(() => setLoading(false));
+  
+    try {
+      const response = await axios.patch(API.ACCOUNT.UPDATE_ACCOUNT, formData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      if (response.data.code === 200) {
+        message.success("Cập nhật thành công!");
+        onUpdateSuccess(response.data.data);
+      } else {
+        message.error("Cập nhật thất bại!");
+        onUpdateFail("Cập nhật thất bại!");
+      }
+    } catch (err) {
+      error(err.response?.data?.message || "Có lỗi xảy ra", messageApi);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
+    <>
+    {contextHolder}
     <Modal
       title="Cập nhật thông tin"
       visible={show}
@@ -122,6 +125,7 @@ const UpdateProfile = ({
         </div>
       </Form>
     </Modal>
+    </>
   );
 };
 

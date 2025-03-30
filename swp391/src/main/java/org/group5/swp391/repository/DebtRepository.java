@@ -73,7 +73,7 @@ public interface DebtRepository extends JpaRepository<Debt, String> {
     FROM Debt d
     WHERE d.store.id IN :storeIds
     AND (:createdAtStart IS NULL OR d.createdAt >= :createdAtStart)
-    AND (:createdAtEnd IS NULL OR d.createdAt <= :createdAtEnd)
+    AND (:createdAtEnd IS NULL OR d.createdAt < :createdAtEnd)
     AND (d.type = 'NEGATIVE_CH_TRA' OR d.type = 'POSITIVE_CH_VAY')
 """)
     List<Debt> findDebtOfCHByTime(
@@ -87,7 +87,7 @@ public interface DebtRepository extends JpaRepository<Debt, String> {
     FROM Debt d
     WHERE d.store.id IN :storeIds
     AND (:createdAtStart IS NULL OR d.createdAt >= :createdAtStart)
-    AND (:createdAtEnd IS NULL OR d.createdAt <= :createdAtEnd)
+    AND (:createdAtEnd IS NULL OR d.createdAt < :createdAtEnd)
     AND (d.type = 'POSITIVE_KH_TRA' OR d.type = 'NEGATIVE_KH_VAY')
 """)
     List<Debt> findDebtOfKHByTime(

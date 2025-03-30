@@ -135,7 +135,7 @@ public class StoreController {
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "descending", required = false) boolean descending
     ) {
-
+        System.out.println(name);
         return zoneService.getZonesByFilter(
                 storeID, name, location,
                 fromCreatedAt, toCreatedAt, fromUpdatedAt, toUpdatedAt, page, size, sortBy, descending

@@ -122,6 +122,7 @@ const EmployeeUpdate = () => {
                     birthDate: storeAccount.birthDate ? moment(storeAccount.birthDate) : null,
                     storeName: storeInfo?.storeName,
                     storeID: storeInfo?.storeID,
+                    password: undefined
                 });
 
             } catch (err) {

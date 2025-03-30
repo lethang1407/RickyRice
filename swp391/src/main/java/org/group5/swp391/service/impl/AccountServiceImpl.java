@@ -109,6 +109,9 @@ public class AccountServiceImpl implements AccountService {
     public AccountResponse updateAccountInfor(String username, UpdateAccountRequest request) {
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Not found username: " + username));
+        if(accountRepository.existsByPhoneNumber(request.getPhoneNumber()) && !request.getPhoneNumber().equals(account.getPhoneNumber())){
+            throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
+        }
 
         if (request.getName() != null) account.setName(request.getName());
         if (request.getPhoneNumber() != null) account.setPhoneNumber(request.getPhoneNumber());

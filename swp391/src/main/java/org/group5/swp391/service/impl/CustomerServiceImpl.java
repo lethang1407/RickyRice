@@ -147,7 +147,7 @@ public class CustomerServiceImpl implements CustomerService {
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
         existingCustomer.setEmail(updatedCustomer.getEmail());
         String add = "";
-        if(updatedCustomer.getAddress()!=null){
+        if(StringUtils.hasLength(updatedCustomer.getAddress())){
             add=updatedCustomer.getAddress().trim();
         }else{
             add=updatedCustomer.getAddress();
@@ -179,7 +179,9 @@ public class CustomerServiceImpl implements CustomerService {
         existingCustomer.setName(capitalizeFirstLetters(updatedCustomer.getName()));
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumberNew());
         existingCustomer.setEmail(existingCustomer.getEmail());
-        existingCustomer.setAddress(existingCustomer.getAddress().trim());
+        if(StringUtils.hasLength(existingCustomer.getAddress())){
+            existingCustomer.setAddress(existingCustomer.getAddress().trim());
+        }
         existingCustomer.setUpdatedAt(LocalDateTime.now());
         return customerRepository.save(existingCustomer);
     }
