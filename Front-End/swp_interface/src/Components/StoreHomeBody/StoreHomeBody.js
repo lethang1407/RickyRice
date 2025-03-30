@@ -197,7 +197,7 @@ const StoreHomeBody = () => {
           {products.map((product) => (
             <div key={product.productID} className="container-product">
               <TiltedCard
-                imageSrc="https://th.bing.com/th/id/OIP.jbXWti_ufkFCWaPna_p79gHaHa?rs=1&pid=ImgDetMain"
+                imageSrc={product.productImage ? product.productImage : "https://th.bing.com/th/id/OIP.jbXWti_ufkFCWaPna_p79gHaHa?rs=1&pid=ImgDetMain"}
                 altText={product.name}
                 captionText={product.name}
                 containerHeight="300px"
