@@ -119,7 +119,7 @@ function Register(){
       });
       setNext(true);
     }else{
-      error('Tên đăng nhập đã tổn tại!',messageApi);
+      error('Tên đăng nhập đã tồn tại!',messageApi);
     }
   }
 

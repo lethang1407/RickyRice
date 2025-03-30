@@ -48,6 +48,7 @@ import StatisticChart from "./Pages/ShopOwner/StatisticChart/StatisticChart.js";
 import DebtEmploy from "./Pages/Employee_DebtLayout/index.js";
 import Package from "./Pages/Package/index.js";
 import Transactions from "./Pages/ShopOwner/TransactionOwner/Transaction.js";
+import ExpiredProtected from "./Pages/Protected/ExpiredProtected.js";
 
 function App() {
   return (
@@ -136,12 +137,14 @@ function App() {
           </Route>
           <Route element={<StoreOwnerProtected />}>
             <Route path="/store/:id" element={<StoreLayout />}>
-              <Route path="zone" element={<Zone />}></Route>
-              <Route path="package" element={<Package />}></Route>
-              <Route path="product" element={<StoreProduct />}></Route>
-              <Route path="update-info" element={<UpdateStore />}></Route>
-              <Route path="category" element={<StoreDetailCategory />}></Route>
-              <Route path="productattribute" element={<StoreDetailProductAttribute />}></Route>
+              <Route element={<ExpiredProtected/>}>
+                <Route path="zone" element={<Zone />}></Route>
+                <Route path="package" element={<Package />}></Route>
+                <Route path="product" element={<StoreProduct />}></Route>
+                <Route path="update-info" element={<UpdateStore />}></Route>
+                <Route path="category" element={<StoreDetailCategory />}></Route>
+                <Route path="productattribute" element={<StoreDetailProductAttribute />}></Route>
+              </Route>
             </Route>
           </Route>
           <Route path="/account-info" element={<AccountInfo />} />

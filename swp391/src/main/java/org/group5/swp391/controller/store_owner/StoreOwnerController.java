@@ -13,8 +13,10 @@ import org.group5.swp391.dto.store_owner.all_product.*;
 import org.group5.swp391.dto.store_owner.all_statistic.StoreStatisticDTO;
 import org.group5.swp391.dto.store_owner.all_statistic.StoreStatisticDataDTO;
 import org.group5.swp391.dto.store_owner.all_store.StoreInfoDTO;
+import org.group5.swp391.entity.Store;
 import org.group5.swp391.exception.AppException;
 import org.group5.swp391.exception.ErrorCode;
+import org.group5.swp391.repository.StoreRepository;
 import org.group5.swp391.service.*;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -28,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +49,7 @@ public class StoreOwnerController {
     private final ProductAttributeService productAttributeService;
     private final ZoneService zoneService;
     private final AppStatisticsService appStatisticsService;
+    private final StoreRepository storeRepository;
 
     @GetMapping("/invoices")
     public Page<StoreInvoiceDTO> getInvoices(
@@ -352,6 +356,18 @@ public class StoreOwnerController {
                 .code(HttpStatus.OK.value())
                 .message("Fetched transaction history successfully")
                 .data(response)
+                .build();
+    }
+
+    @GetMapping("/check-expired")
+    public ApiResponse<Boolean> checkExpired(@RequestParam String storeId){
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+
+        Boolean isValid = store.getExpireAt().isAfter(LocalDateTime.now());
+
+        return ApiResponse.<Boolean>builder()
+                .data(isValid)
                 .build();
     }
 }

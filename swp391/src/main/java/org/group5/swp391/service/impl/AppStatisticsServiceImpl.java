@@ -29,7 +29,7 @@ public class AppStatisticsServiceImpl implements AppStatisticsService {
 
         Page<AppStatistics> statistics = appStatisticsRepository.findAllWithFilters(
                 subscriptionPlanName, searchQuery, pageable);
-        System.out.println(statistics.getContent().get(0).getSubcriptionPlanName());
+
         return statistics.map(stat -> AppStatisticsResponse.builder()
                 .appStatisticsID(stat.getId())
                 .storeID(stat.getStore() != null ? stat.getStore().getId() : null)

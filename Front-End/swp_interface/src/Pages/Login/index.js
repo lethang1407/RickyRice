@@ -81,7 +81,7 @@ function Login(){
               }
             ]}
           >
-            <Input size='large' placeholder='Input your Username' className='login__form__item__input login__form__item__input__mail' addonAfter={<UserOutlined />}/>
+            <Input size='large' placeholder='Tên đăng nhập' className='login__form__item__input login__form__item__input__mail' addonAfter={<UserOutlined />}/>
           </Form.Item>
 
           <Form.Item
@@ -95,7 +95,7 @@ function Login(){
             ]}
           >
 
-            <Input.Password size='large' className='login__form__item__input login__form__item__input__pass' placeholder='Input password'/>
+            <Input.Password size='large' className='login__form__item__input login__form__item__input__pass' placeholder='Mật khẩu'/>
           </Form.Item>
           <h5 className='login__form__text'>Chưa có tài khoản. <span onClick={naviRegister} className='login__form__text__bold'>Đăng kí ngay!</span></h5>
           <h5 style={{margin:'5px 0px'}} className='login__form__text'> <span onClick={naviForgetPassword} className='login__form__text__bold'> Quên mật khẩu?</span></h5>

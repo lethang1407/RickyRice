@@ -41,7 +41,7 @@ const RevenueStatistics = ({ setTotalRevenue }) => {
           setTotalRevenue(totalRevenue); // Cập nhật tổng doanh thu ở DashboardContent
           setSubscriptionPlanOptions(subcriptionPlans || []); // Cập nhật danh sách các gói đăng ký
         } else {
-          setError("Không thể lấy dữ liệu");
+          
         }
       })
       .catch(() => setError("Lỗi khi lấy dữ liệu"))

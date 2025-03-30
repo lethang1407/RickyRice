@@ -9,6 +9,7 @@ import org.group5.swp391.dto.notification.SendNotificationRequest;
 import org.group5.swp391.dto.response.PageResponse;
 import org.group5.swp391.entity.Customer;
 import org.group5.swp391.entity.Debt;
+import org.group5.swp391.entity.Statistics;
 import org.group5.swp391.entity.Store;
 import org.group5.swp391.enums.DebtType;
 import org.group5.swp391.enums.Status;
@@ -16,9 +17,11 @@ import org.group5.swp391.exception.AppException;
 import org.group5.swp391.exception.ErrorCode;
 import org.group5.swp391.repository.CustomerRepository;
 import org.group5.swp391.repository.DebtRepository;
+import org.group5.swp391.repository.StatisticsRepository;
 import org.group5.swp391.repository.StoreRepository;
 import org.group5.swp391.service.DebtService;
 import org.group5.swp391.service.NotificationService;
+import org.group5.swp391.service.StatisticsService;
 import org.group5.swp391.utils.CurrentUserDetails;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,6 +45,7 @@ public class DebtServiceImpl implements DebtService {
     private final DebtRepository debtRepository;
     private final DebtConverter debtConverter;
     private final NotificationService notificationService;
+    private final StatisticsRepository statisticsRepository;
 
     @Transactional
     @Override
