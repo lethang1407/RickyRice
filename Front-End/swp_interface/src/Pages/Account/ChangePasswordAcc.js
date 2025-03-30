@@ -29,10 +29,6 @@ const ChangePassword = () => {
     if (!/[0-9]/.test(password)) {
       errors.push("Mật khẩu phải chứa ít nhất một chữ số.");
     }
-
-    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      errors.push("Mật khẩu không được chứa ký tự đặc biệt.");
-    }
     return errors;
   };
 

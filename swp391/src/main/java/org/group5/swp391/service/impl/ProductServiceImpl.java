@@ -322,7 +322,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public void addProduct(String storeID, StoreDetailProductDTO storeDetailProductDTO) throws Exception {
         try {
-            if (productRepository.existsProductByNameAndStore_Id(storeID, storeDetailProductDTO.getName() )) {
+            if (productRepository.existsProductByNameAndStore_Id(storeDetailProductDTO.getName(),storeID)) {
                 throw new AppException(ErrorCode.PRODUCT_NAME_EXISTED);
             }
             Product newProduct = new Product();
@@ -369,7 +369,7 @@ public class ProductServiceImpl implements ProductService {
             newProduct.setStore(storeRepository.getReferenceById(storeID));
             productRepository.save(newProduct);
         } catch (Exception e) {
-            throw new Exception("Failed to save product: " + e.getMessage());
+            throw new AppException(ErrorCode.PRODUCT_NAME_EXISTED);
         }
     }
 
@@ -378,7 +378,7 @@ public class ProductServiceImpl implements ProductService {
         Product updatingProduct = productRepository
                 .findById(productID)
                 .orElseThrow(() -> new Exception("Product not found for ID: " + storeDetailProductDTO.getId()));
-        if(productRepository.existsProductByNameAndStore_IdAndIdNot(storeDetailProductDTO.getName(), storeID, productID)) {
+        if(productRepository.existsProductByNameAndStore_IdAndIdNot(storeDetailProductDTO.getName(), storeID, productID) && !storeDetailProductDTO.getName().equals(updatingProduct.getName())) {
             throw new AppException(ErrorCode.PRODUCT_NAME_EXISTED);
         }
         updatingProduct.setName(storeDetailProductDTO.getName());

@@ -37,7 +37,7 @@ const PaymentTransactions = () => {
           setTotalPages(data.data.statistics.totalPages);
           setPlans(["All", ...data.data.subcriptionPlans]);
         } else {
-          setError("Lỗi khi tải dữ liệu");
+          
         }
       } catch {
         setError("Lỗi kết nối API");
