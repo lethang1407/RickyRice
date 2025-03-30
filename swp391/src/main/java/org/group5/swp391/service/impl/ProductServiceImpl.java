@@ -187,6 +187,7 @@ public class ProductServiceImpl implements ProductService {
         LocalDateTime endCreatedDateTime = toCreatedAt != null ? toCreatedAt.atTime(LocalTime.MAX) : null;
         LocalDateTime startUpdatedDateTime = fromUpdatedAt != null ? fromUpdatedAt.atStartOfDay() : null;
         LocalDateTime endUpdatedDateTime = toUpdatedAt != null ? toUpdatedAt.atTime(LocalTime.MAX) : null;
+        System.out.println(name);
         Page<Product> products = productRepository.findProducts(
                 storeID, name, fromPrice, toPrice, information,
                 startCreatedDateTime, endCreatedDateTime, startUpdatedDateTime, endUpdatedDateTime, pageable);

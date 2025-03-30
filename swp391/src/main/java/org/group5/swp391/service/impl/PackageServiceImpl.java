@@ -105,7 +105,7 @@ public class PackageServiceImpl implements PakageService {
 
     @Override
     public void createPackage(PackageCreationRequest request) {
-        if(packageRepository.existsByName(request.getName())){
+        if(packageRepository.existsByName(request.getName().trim())){
             throw new AppException(ErrorCode.PACKAGE_EXISTED);
         }
         Package pack = packageConverter.toPackageEntity(request);

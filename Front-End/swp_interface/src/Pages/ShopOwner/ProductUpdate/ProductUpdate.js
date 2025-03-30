@@ -221,7 +221,8 @@ const ProductUpdate = () => {
                             label="Giá"
                             rules={[
                                 { required: true, message: "Vui lòng nhập giá" },
-                                { type: 'number', min: 0, message: 'Giá phải là số không âm', max: 1000000000},
+                                { type: 'number', min: 0, message: 'Giá phải là số không âm'},
+                                { type: 'number', max: 1000000000, message: 'Giá quá cao!'},
                             ]}
                         >
                             <InputNumber style={{ width: '100%' }} step={1000} />

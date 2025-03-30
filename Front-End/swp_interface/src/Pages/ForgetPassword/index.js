@@ -48,6 +48,8 @@ function ForgetPassword(){
             },1000)
           }
         }
+      }else{
+        error('OTP không tồn tại, Hãy thử lại', messageApi);
       }
     }else{
       error('Vui lòng điền OTP!', messageApi);

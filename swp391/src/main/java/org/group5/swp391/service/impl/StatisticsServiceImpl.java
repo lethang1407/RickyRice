@@ -109,7 +109,6 @@ public class StatisticsServiceImpl implements StatisticsService {
         LocalDateTime endDateTime = createdAtEnd != null ? createdAtEnd.atTime(LocalTime.MAX) : null;
         List<Debt> debtList = debtRepository.findDebtOfKHByTime(storeIds, startDateTime, endDateTime);
         return debtList.stream()
-                .filter(debt -> debt.getType() == DebtType.POSITIVE_KH_TRA || debt.getType() == DebtType.NEGATIVE_KH_VAY)
                 .collect(Collectors.groupingBy(
                         stat -> stat.getCreatedAt().toLocalDate().toString(),
                         Collectors.groupingBy(
@@ -134,7 +133,6 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<Debt> debtList = debtRepository.findDebtOfCHByTime(storeIds, startDateTime, endDateTime);
 
         return debtList.stream()
-                .filter(debt -> debt.getType() == DebtType.NEGATIVE_CH_TRA || debt.getType() == DebtType.POSITIVE_CH_VAY)
                 .collect(Collectors.groupingBy(
                         stat -> stat.getCreatedAt().toLocalDate().toString(),
                         Collectors.groupingBy(
