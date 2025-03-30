@@ -302,7 +302,7 @@ const InvoiceList = () => {
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
                         <Input
                             placeholder="Tìm SDT"
-                            maxLength={10}
+                           
                             style={{ width: 220 }}
                             allowClear onChange={(e) => handleFilterChange('phonesearch', e.target.value)}
 
@@ -317,7 +317,7 @@ const InvoiceList = () => {
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
                         <Input
                             placeholder="Tìm tên"
-                            maxLength={10}
+                           
                             style={{ width: 220 }}
                             allowClear onChange={(e) => handleFilterChange('namesearch', e.target.value)}
 
